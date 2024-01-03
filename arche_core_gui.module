@@ -1,0 +1,35 @@
+<?php
+
+function arche_core_gui_page_attachments(array &$page) {
+    $page['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
+    $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+    $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
+    $roles = array();
+    $roles = \Drupal::currentUser()->getRoles();
+    if(count($roles) > 0){ $roles = implode(",", $roles); }
+    $page['#attached']['drupalSettings']['arche_core_gui']['users']['roles'] = $roles;
+}
+
+/*
+ * Create a hook for the admin form page to we can use an external javascript file
+ * 
+ */
+function arche_core_gui_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+ 
+    //form and user permission settings for the collection download views
+    $form['#attached']['library'][] = 'arche_core_gui/repo-collection-dl';
+    
+    $form['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
+    $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+    $form['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
+    $roles = array();
+    $roles = \Drupal::currentUser()->getRoles();
+    if(count($roles) > 0){ $roles = implode(",", $roles); }
+    $form['#attached']['drupalSettings']['arche_core_gui']['users']['roles'] = $roles;
+    
+    $current_path = \Drupal::service('path.current')->getPath();
+    
+    return $form;
+}
+
+

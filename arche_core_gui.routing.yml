@@ -1,0 +1,33 @@
+arche_discover:
+  path: '/discover/'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::discoverView'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+
+arche_metadata:
+  path: '/metadata/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::detailView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'      
+
+arche_discover_web:
+  path: '/web/discover/'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::discoverView'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+    
+arche_detail:
+  path: '/detail/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::detailView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'       
