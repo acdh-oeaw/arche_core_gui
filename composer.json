@@ -2,7 +2,7 @@
     "name": "acdh-oeaw/arche_core_gui",
     "description": "Drupal module to ACDH ARCHE repository",
     "type": "drupal-module",
-    "homepage": "https://github.com/acdh-oeaw/arche-gui",
+    "homepage": "https://github.com/acdh-oeaw/arche_core_gui",
     "license": "MIT",
     "authors": [
         {
@@ -36,8 +36,20 @@
             "Drupal\\arche_core_gui\\Traits\\": "src/Traits"
         }
     },
-    "extra": {
-        
+     "extra": {
+        "drupal-scaffold": {
+            "file-mapping": {
+                "[web-root]/.htaccess": "inst/htaccess",
+                "[web-root]/sites/default/default.services.yml": "inst/sites/default/default.services.yml",
+                "[web-root]/sites/default/services.yml": "inst/sites/default/services.yml",
+		"[web-root]/sites/default/default.settings.php": "inst/sites/default/default.settings.php",
+                "[web-root]/sites/default/settings.local.php": "inst/sites/default/settings.local.php",
+                "[web-root]/sites/default/settings.php": "inst/sites/default/settings.php",
+                "[web-root]/sites/default/development.services.yml": "inst/sites/default/development.services.yml",
+                "[web-root]/sites/default/files/.htaccess": "inst/sites/default/files/htaccess",
+                "[web-root]/sites/default/files/coll_dl_script/collection_download_repo.py": "inst/sites/default/files/coll_dl_script/collection_download_repo.py"
+            }
+        }
     },
     "config": {
         "allow-plugins": true
