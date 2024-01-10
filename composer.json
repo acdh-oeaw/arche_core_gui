@@ -19,8 +19,7 @@
         "acdh-oeaw/easyrdf": ">= 0.15.5 <1",
         "twig/extra-bundle": "*",
         "phpunit/phpunit": "^9",
-        "phpspec/prophecy-phpunit": "*",
-	"maennchen/zipstream-php" : "^2.1"
+        "phpspec/prophecy-phpunit": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9",
