@@ -1,0 +1,56 @@
+{{ attach_library('arche_core_gui/home-page') }}
+SLIDER
+
+<div id="home-collections-slider"></div>
+
+
+
+<div class="container px-5">
+    <div class="row gx-5 align-items-center justify-content-center">
+        <div class="col">
+            <div class="my-5 text-center">
+                <p class="section-header-title-small">{{ "COLLECTIONS"|trans }}</p>
+                <p class="section-header-title">{{ "Find, submit and reuse data"|trans }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container px-5 collections-container">
+    <div class="row gx-5">
+
+        <div class="container mt-5">
+            <div id="multi-item-carousel" class="carousel slide" data-bs-ride="carousel">
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <div class="carousel-item active" >
+                        <div class="row" id="home-carousel-first-page">
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="carousel-item" >
+                        <div class="row" id="home-carousel-second-page">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <a class="carousel-control-prev" href="#multi-item-carousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#multi-item-carousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

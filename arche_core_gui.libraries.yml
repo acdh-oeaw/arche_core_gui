@@ -26,4 +26,14 @@ smart-search:
         - core/drupal.form
         - core/jquery   
         - core/drupalSettings
-       
+
+home-page:
+    version: 1.0
+    header: true
+    js:
+        js/arche_home.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupal.form
+        - core/drupalSettings
+        - core/jquery          

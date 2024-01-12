@@ -1,5 +1,5 @@
 arche_discover:
-  path: '/discover/'
+  path: '/discover'
   defaults:
     _controller: '\Drupal\arche_core_gui\Controller\MetadataController::discoverView'
   requirements:
@@ -23,3 +23,4 @@ arche_detail:
     identifier: '^[^\?]*$'
     _permission: 'access content'
     _access: 'TRUE'       
+    

@@ -16,10 +16,15 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         parent::__construct();
         $this->helper = new \Drupal\arche_core_gui\Helper\ArcheCoreHelper();
     }
+    
+     public function detail() {
+         echo 'sss';
+        return [];
+    }
 
     
     public function discoverView() {
-        echo "discover";
+        
         return [];
     }
     
