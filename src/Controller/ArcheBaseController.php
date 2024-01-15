@@ -19,10 +19,9 @@ class ArcheBaseController extends ControllerBase
 
     public function __construct()
     {
-        
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language']) : $this->siteLang = "en";
         $this->config = \Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config.yaml';
-        
+       
         try {
             $this->repoDb = \acdhOeaw\arche\lib\RepoDb::factory($this->config);
         } catch (\Exception $ex) {
