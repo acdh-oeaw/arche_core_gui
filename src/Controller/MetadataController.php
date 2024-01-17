@@ -17,19 +17,26 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         $this->helper = new \Drupal\arche_core_gui\Helper\ArcheCoreHelper();
     }
     
-     public function detail() {
-         echo 'sss';
-        return [];
+    public function detailView(string $identifier) {
+        
+       
+         $return = [
+            '#theme' => 'arche-detail',
+            '#identifier' => $identifier,
+            '#cache' => ['max-age' => 0],
+            '#attached' => [
+                'library' => [
+                    'arche_core_gui/detail-view',
+                ]
+            ]
+        ];
+
+        return $return;
     }
 
     
     public function discoverView() {
-        
-        return [];
-    }
-    
-     public function detailView(string $identifier) {
-         echo $identifier;
+        echo "discover view";
         return [];
     }
     
@@ -65,11 +72,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             '#identifier' => $identifier,
             '#data' => $obj,
             '#cache' => ['max-age' => 0],
-            '#attached' => [
-                'library' => [
-                    'acdh_repo_gui/core-api-styles',
-                ]
-            ]
+            
         ];
 
         return $return;

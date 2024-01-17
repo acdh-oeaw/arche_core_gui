@@ -36,4 +36,16 @@ home-page:
         - core/drupal
         - core/drupal.form
         - core/drupalSettings
-        - core/jquery          
+        - core/jquery
+        
+detail-view:
+    version: 1.0
+    header: true
+    js:
+        js/arche_detail.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupal.form
+        - core/drupalSettings
+        - core/jquery              
+        

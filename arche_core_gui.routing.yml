@@ -15,12 +15,3 @@ arche_metadata:
     _permission: 'access content'
     _access: 'TRUE'      
     
-arche_detail:
-  path: '/detail/{identifier}'
-  defaults:
-    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::detailView'
-  requirements:
-    identifier: '^[^\?]*$'
-    _permission: 'access content'
-    _access: 'TRUE'       
-    

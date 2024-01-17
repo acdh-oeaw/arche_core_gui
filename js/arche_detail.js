@@ -2,9 +2,10 @@ jQuery(function ($) {
 
     "use strict";
     
-    fetchTopcollections();
+  
     
     $(document).ready(function () {
+        console.log('detail');
     });
     
     function fetchTopcollections() {

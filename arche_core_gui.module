@@ -32,4 +32,14 @@ function arche_core_gui_form_alter(&$form, \Drupal\Core\Form\FormStateInterface 
     return $form;
 }
 
+function arche_core_gui_theme($existing, $type, $theme, $path)
+{
+    return [
+        'arche-detail' => [
+            'variables' => ['data' => NULL, 'identifier' => NULL],
+        ]
+    ];
+}
+
+
 
