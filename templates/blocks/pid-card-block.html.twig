@@ -1,13 +1,16 @@
-<div class="card">
+{% set themeDir = "{{ arche_theme }}" %}
+
+<div class="card metadata">
     <div class="card-header">
-        <h6>{{ "Map"|trans }}</h6>
+        <h6>{{ "PID"|trans }}</h6>
+        <img src="themeDir ~ '/images/common/tooltip_icon.png'">
         <h5 class="mb-0">
-            <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseExample">
+            <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#pidBody">
                 Toggle Content
             </button>
         </h5>
     </div>
-    <div id="collapseExample" class="collapse">
+    <div id="pidBody" class="collapse show">
         <div class="card-body">
             <!-- Your hideable content goes here -->
             <p>This is the hideable content.</p>

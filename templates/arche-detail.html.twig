@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-9 metadata-breadcrumb" >
-            BREADCRUMB
+            HOME / COllection / SubCollection
         </div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="btn btn-arche-blue" href="#" id="expertView">{{ "Expert view"|trans }}</a>
@@ -41,12 +41,21 @@
         </div>
         <div class="col-lg-3 metadata-right" >
             
-            
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data } ) }}
             
             {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data } ) }}
             
-          eee
+            {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
               
         </div>
     </div>
