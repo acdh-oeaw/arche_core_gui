@@ -1,4 +1,4 @@
-detail view
+{% set moduleDir = "{{ arche_core_gui_path }}" %}
 
 <div class="container">
     <div class="row">
@@ -6,12 +6,12 @@ detail view
             BREADCRUMB
         </div>
         <div class="col-lg-3 metadata-expert"  >
-            EXPERT VIEW
+            <a class="btn btn-arche-blue" href="#" id="expertView">{{ "Expert view"|trans }}</a>
         </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container mt-3">
     <div class="row">
         <div class="col-lg-9 metadata-main basic-content-div" >
             MAIN
@@ -40,8 +40,14 @@ detail view
             </div>
         </div>
         <div class="col-lg-3 metadata-right" >
-            RIGHT SIDE
             
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data } ) }}
+            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data } ) }}
+            
+          eee
+              
         </div>
     </div>
 </div>
