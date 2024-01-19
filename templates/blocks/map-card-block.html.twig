@@ -1,9 +1,16 @@
+
+
 <div class="card metadata">
     <div class="card-header">
-        <h6>{{ "Map"|trans }}</h6>
-            <a class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#mapContent">
-               <span class="toggle-icon">&#9660;</span>
-            </a>
+        <div class="row">
+            <div class="col-8"><h6>{{ "Map"|trans }}</h6></div>
+            <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
+            <div class="col-2 text-end">
+                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#mapContent">
+                    <i class="fa fa-solid fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
     </div>
     <div id="mapContent" class="collapse show">
         <div class="card-body">

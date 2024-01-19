@@ -5,8 +5,27 @@ jQuery(function ($) {
   
     
     $(document).ready(function () {
-        console.log('detail');
+        checkDetailCardEvents();
+        
     });
+    
+    function checkDetailCardEvents() {
+         $(".mdr-card-collapse-btn").click(function () {
+             var dataValue = $(this).data('bs-target');
+             
+             var targetLink = $('a[data-bs-target="' + dataValue + '"]');
+
+             console.log(dataValue);
+             console.log(targetLink.html());
+            if(targetLink.html() === '<i class="fa fa-solid fa-chevron-up"></i>') {
+                console.log("now up change to down");
+                targetLink.html('<i class="fa fa-solid fa-chevron-down"></i>');
+            } else {
+                console.log("now change to up");
+                targetLink.html('<i class="fa fa-solid fa-chevron-up"></i>');
+            }
+        });
+    }
     
     function fetchTopcollections() {
         $.ajax({
