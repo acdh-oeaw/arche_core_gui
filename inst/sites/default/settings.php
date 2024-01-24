@@ -771,12 +771,13 @@ $settings['file_scan_ignore_directories'] = [
  
  
 $databases['default']['default'] = array (
-  'database' => $pgauth[3],
-  'username' => $pgauth[4],
-  'password' => $pgauth[5],
-  'host' => $pgauth[1],
+  'database' => 'arche_hephaistos',
+  'username' => 'arche_hephaistos',
+  'password' => '',
+  'host' => 'host.docker.internal',
+  'port' => 5433,
   'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
-  'driver' => 'pgsql',
+  'driver' => 'pgsql'
 );
 
 $pswd = "";
@@ -797,6 +798,7 @@ $databases['repo']['default'] = array (
   'host' => '127.0.0.1',
   'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
   'driver' => 'pgsql',
+    'port' => 5432,
 );
 
 if( substr(\Drupal::VERSION, 0, 1) == "8") {
@@ -806,3 +808,5 @@ if( substr(\Drupal::VERSION, 0, 1) == "8") {
     $config_directories['sync'] = 'sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync'; 
     $settings['config_sync_directory']   = 'sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';
 }
+
+$settings['environment'] = 'dev';

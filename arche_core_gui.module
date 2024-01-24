@@ -37,6 +37,9 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
     return [
         'arche-detail' => [
             'variables' => ['data' => NULL, 'identifier' => NULL],
+        ],
+         'arche-discover' => [
+            'variables' => ['data' => NULL, 'identifier' => NULL],
         ]
     ];
 }

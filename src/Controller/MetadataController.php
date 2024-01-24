@@ -30,14 +30,23 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                 ]
             ]
         ];
-
         return $return;
+       
     }
 
     
     public function discoverView() {
-        echo "discover view";
-        return [];
+        
+         $return = [
+            '#theme' => 'arche-discover',
+            '#cache' => ['max-age' => 0],
+            '#attached' => [
+                'library' => [
+                    'arche_core_gui/discover-view',
+                ]
+            ]
+        ];
+         return $return;
     }
     
     
