@@ -7,7 +7,7 @@
         </div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue" href="#" id="expertView">{{ "Expert view"|trans }}</a>
-             <a class="ms-auto d-flex btn btn-arche-blue" href="/browser/metadata/11213" id="archeHref">{{ "11213 test load"|trans }}</a>
+            <a class="ms-auto d-flex btn btn-arche-blue" href="/browser/metadata/11213" id="archeHref">{{ "11213 test load"|trans }}</a>
         </div>
     </div>
 </div>
@@ -15,7 +15,11 @@
 <div class="container mt-3">
     <div class="row">
         <div class="col-lg-9 metadata-main basic-content-div" >
-            <div class="container-fluid">
+            <div class="loader-overlay metadata-main-loader">
+                <div class="loader"></div>
+            </div>
+
+            <div class="container-fluid" id="meta-content-container" style="display: none;">
 
                 <!-- Available Date and type -->
                 <div class="row">
@@ -82,14 +86,14 @@
                             <li>Zeitliche Abdeckung Beginn: 50</li>
                             <li>Zeitliche Abdeckung Ende: 1700</li>
                         </ul>
-                            Sed nec ornare tellus. Ut condimentum volutpat libero. Morbi non purus odio. Morbi consectetur ligula sit amet ipsum interdum, ut semper ex scelerisque. Ut lobortis cursus dolor. Phasellus sed fringilla metus, aliquet tempus ligula. Maecenas ut tellus diam. Cras lobortis porta ultricies.
-                            <br> <br>
-                            Etiam lacinia diam non risus pellentesque mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse pellentesque id ligula quis placerat. Proin vulputate arcu vitae urna ultricies semper. Integer eu magna vel risus finibus fermentum. Nunc hendrerit lacinia malesuada. Maecenas luctus volutpat lobortis....Weiterlesen 
+                        Sed nec ornare tellus. Ut condimentum volutpat libero. Morbi non purus odio. Morbi consectetur ligula sit amet ipsum interdum, ut semper ex scelerisque. Ut lobortis cursus dolor. Phasellus sed fringilla metus, aliquet tempus ligula. Maecenas ut tellus diam. Cras lobortis porta ultricies.
+                        <br> <br>
+                        Etiam lacinia diam non risus pellentesque mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse pellentesque id ligula quis placerat. Proin vulputate arcu vitae urna ultricies semper. Integer eu magna vel risus finibus fermentum. Nunc hendrerit lacinia malesuada. Maecenas luctus volutpat lobortis....Weiterlesen 
                         </p>
                     </div>
                 </div>
 
-                 <!-- Child elements -->
+                <!-- Child elements -->
                 <div class="row basic-inside-content-div">
                     <div class="col-lg-12 ">
                         <h5>{{ "Child Resources"|trans }}</h5>
@@ -98,28 +102,32 @@
                         Child Resources table
                     </div>
                 </div>
-                    
+
 
             </div>
         </div>
         <div class="col-lg-3 metadata-right" >
+            <!-- 
+            <div class="loader-overlay metadata-right-loader">
+                <div class="loader"></div>
+            </div>
+           -->
+          
+                {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data } ) }}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data } ) }}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data } ) }}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data } ) }}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
-
-            {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
-
-        </div>
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
+          </div>
     </div>
 </div>

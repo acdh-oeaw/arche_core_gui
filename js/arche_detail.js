@@ -6,6 +6,7 @@ jQuery(function ($) {
     var resId = "";
 
     $(document).ready(function () {
+        $('#meta-content-container').hide();
         resId = $("#resId").val();
         console.log(resId);
         checkDetailCardEvents();
@@ -61,6 +62,11 @@ jQuery(function ($) {
         //showBreadcrumb();
 
 
+        $('#meta-content-container').show();
+        $('#meta-right-container').show();
+        $('.metadata-main-loader').hide();
+        $('.metadata-right-loader').hide();
+
     }
 
     function showRightSide() {
@@ -111,7 +117,7 @@ jQuery(function ($) {
                 console.log("Res obj: ");
                 resObj = new $.fn.MetadataClass(data);
                 showUI();
-
+                
             },
             error: function (xhr, status, error) {
                 $('#home-collections-slider-loader').fadeOut('slow');
