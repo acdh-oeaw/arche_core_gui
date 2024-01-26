@@ -8,6 +8,7 @@ function arche_core_gui_page_attachments(array &$page) {
     $roles = \Drupal::currentUser()->getRoles();
     if(count($roles) > 0){ $roles = implode(",", $roles); }
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['roles'] = $roles;
+    $attachments['#attached']['library'][] = 'custom_jquery/metadata-class';
 }
 
 /*

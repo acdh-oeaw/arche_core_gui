@@ -1,5 +1,5 @@
 {% set moduleDir = "{{ arche_core_gui_path }}" %}
-
+<input type="hidden" value="{{ identifier }}" id="resId"/>
 <div class="container">
     <div class="row">
         <div class="col-lg-9 metadata-breadcrumb" >
@@ -7,6 +7,7 @@
         </div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue" href="#" id="expertView">{{ "Expert view"|trans }}</a>
+             <a class="ms-auto d-flex btn btn-arche-blue" href="/browser/metadata/11213" id="archeHref">{{ "11213 test load"|trans }}</a>
         </div>
     </div>
 </div>
@@ -18,20 +19,20 @@
 
                 <!-- Available Date and type -->
                 <div class="row">
-                    <div class="col-lg-6 ">
-                        <p>Available date Verfügbar seit März 2008</p>
+                    <div class="col-lg-6" id="ad-hasAvailableDate">
+                        <p id="av-hasAvailableDate">{{ "Available since"|trans }} </p>
                     </div>
-                    <div class="col-lg-6 flex-gap-col flex-reverse">
+                    <div class="col-lg-6 flex-gap-col flex-reverse" id="ad-rdfType">
                         <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
-                        <a href='#' class="btn btn-arche-grey">Collection</a> 
+                        <a href='#' class="btn btn-arche-grey" id="av-rdfType">{{ "Collection"|trans }}</a> 
                     </div>
                 </div>
 
                 <!-- Title -->
                 <div class="row">
-                    <div class="col-lg-12 ">
+                    <div class="col-lg-12 " id="ad-hasTitle">
                         <hr style="color:#e1edf3;">
-                        <h4>Legionslager Carnuntum: Ausgrabungen 1968-1977</h4>
+                        <h4 id="av-hasTitle"></h4>
                     </div>
                 </div>
                 <!-- CITE BLOCK -->

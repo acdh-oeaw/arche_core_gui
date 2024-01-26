@@ -31,6 +31,7 @@ detail-view:
     version: 1.0
     header: true
     js:
+        js/metadataClass.js: {}
         js/arche_detail.js: {}
     dependencies:
         - core/drupal
