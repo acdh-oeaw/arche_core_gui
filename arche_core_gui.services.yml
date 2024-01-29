@@ -1,0 +1,5 @@
+services:
+    arche_core_gui.twig_extension:
+        class: Drupal\arche_core_gui\TwigExtension\ArcheTwigDateExtension
+        tags:
+            - { name: twig.extension }

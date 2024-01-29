@@ -6,32 +6,71 @@ jQuery(function ($) {
     var resId = "";
 
     $(document).ready(function () {
-        $('#meta-content-container').hide();
+        //$('#meta-content-container').hide();
         resId = $("#resId").val();
         console.log(resId);
         checkDetailCardEvents();
 
         //call basic data
-        fetchMetadata();
+        //fetchMetadata();
 
 
 
     });
+    
+    
+    $(document).delegate("a#copyPid", "click", function (e) {
+        // Select the input field content
+        $('#pidValue').attr('href');
+
+        // Copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Deselect the input field
+        $('#pidValue').blur();
+
+        // Display a feedback message (optional)
+        alert('Link copied to clipboard!');
+        e.preventDefault();
+    });
+    
+    
+    function reloadDetail(id) {
+        $.ajax({
+            url: '/browser/metadata_ajax/'+id,
+            type: "GET",
+            success: function (data, status) {
+                $('#meta-content-container').show();
+                $('#block-arche-theme-content').html(data);
+                var currentUrl = window.location.href;
+                var textToKeep = "/browser/metadata/";
+                var position = currentUrl.indexOf(textToKeep);
+                if (position !== -1) {
+                    currentUrl = currentUrl.substring(0, position + textToKeep.length);
+                }
+                window.history.replaceState({}, '', currentUrl+id);
+            },
+            error: function (xhr, status, error) {
+                $('#block-arche-theme-content').html(error);
+            }
+        });//
+    }
 
     $(document).delegate("a#archeHref", "click", function (e) {
+        $('#meta-content-container').hide();
         var url = $(this).attr('href');
         if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
             $('html, body').animate({scrollTop: '0px'}, 0);
-            
+
             var id = url;
             console.log(id);
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
-           
+
             console.log(id);
-            resId= id;
-            fetchMetadata();
-            
+            resId = id;
+            //fetchMetadata();
+            reloadDetail(id);
             e.preventDefault();
         } else {
             e.preventDefault();
@@ -49,9 +88,12 @@ jQuery(function ($) {
     function showUI() {
         console.log("Update UI:");
         console.log(resObj);
+        console.log("avdate: ");
         showAvailableDate();
+        console.log("type: ");
         showType();
         //showRightSide();
+        console.log("title: ");
         showTitle();
         //showCite();
         //showSummary();
@@ -98,6 +140,8 @@ jQuery(function ($) {
     }
 
     function showAvailableDate() {
+        console.log("showAvailableDate");
+        console.log(resObj.getAvailableDate());
         if (resObj.getAvailableDate()) {
             var text = $('#av-hasAvailableDate').text();
             $('#av-hasAvailableDate').html(text + resObj.getAvailableDate());
@@ -115,13 +159,24 @@ jQuery(function ($) {
                 console.log("van data");
                 console.log(data);
                 console.log("Res obj: ");
-                resObj = new $.fn.MetadataClass(data);
-                showUI();
-                
+                try {
+                    resObj = new $.fn.MetadataClass(data);
+
+                    showUI();
+                } catch (error) {
+                    // Code to handle the exception
+                    console.error("An error occurred:", error.message);
+                    $('#meta-content-container').show().html('Error during the data fetch! Please report it!');
+                    $('#meta-right-container').hide();
+                    $('.metadata-main-loader').hide();
+                    $('.metadata-right-loader').hide();
+                }
             },
             error: function (xhr, status, error) {
-                $('#home-collections-slider-loader').fadeOut('slow');
-                $('#detail-overview-api-div').html(error);
+                $('#meta-content-container').show().html('Error during the data fetch! Please report it!');
+                $('#meta-right-container').hide();
+                $('.metadata-main-loader').hide();
+                $('.metadata-right-loader').hide();
             }
         });
     }

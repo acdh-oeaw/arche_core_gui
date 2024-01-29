@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\acdh_repo_gui\Object;
+namespace Drupal\arche_core_gui\Object;
 
 use Drupal\acdh_repo_gui\Helper\ArcheHelper as Helper;
 
@@ -17,7 +17,7 @@ class ResourceCoreObject
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
 
-    public function __construct(array $data, $config, string $language = 'en')
+    public function __construct(array $data, object $config, string $language = 'en')
     {
         $this->properties = array();
         $this->config = $config;
@@ -122,7 +122,7 @@ class ResourceCoreObject
         if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
                 //filter out the baseurl related identifiers and which contains the id.acdh
-                if ((strpos($v['value'], $this->config->getBaseUrl()) === false) &&
+                if ((strpos($v['value'], $this->config->baseUrl) === false) &&
                         (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false)
                 ) {
                     $result[] = $v;
@@ -143,7 +143,7 @@ class ResourceCoreObject
         if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
                 //filter out the baseurl related identifiers
-                if ((strpos($v['value'], $this->config->getBaseUrl()) === false)) {
+                if ((strpos($v['value'], $this->config->baseUrl) === false)) {
                     $result[] = $v;
                 }
             }
@@ -245,7 +245,7 @@ class ResourceCoreObject
         if (!isset($this->repoid) && empty($this->repoid)) {
             $this->getRepoID();
         }
-        return $this->config->getBaseUrl() . $this->repoid;
+        return $this->config->baseUrl . $this->repoid;
     }
 
     /**
@@ -257,7 +257,7 @@ class ResourceCoreObject
         if (!isset($this->repoid) && empty($this->repoid)) {
             $this->getRepoID();
         }
-        return str_replace('/api/', '/browser/detail/', $this->config->getBaseUrl()) . $this->repoid;
+        return str_replace('/api/', '/browser/detail/', $this->config->baseUrl) . $this->repoid;
     }
 
     /**
@@ -272,9 +272,9 @@ class ResourceCoreObject
                     $this->repoid = $v['id'];
                     return $v['id'];
                 } else {
-                    if (strpos($v['value'], $this->config->getBaseUrl()) !== false) {
-                        $this->repoid = str_replace($this->config->getBaseUrl(), '', $v['value']);
-                        return str_replace($this->config->getBaseUrl(), '', $v['value']);
+                    if (strpos($v['value'], $this->config->baseUrl) !== false) {
+                        $this->repoid = str_replace($this->config->baseUrl, '', $v['value']);
+                        return str_replace($this->config->baseUrl, '', $v['value']);
                     }
                 }
             }
@@ -697,4 +697,48 @@ class ResourceCoreObject
         }
         return false;
     }
+    
+    /**
+     * Return the metadata view right box License card content
+     * @return array
+     */
+    public function getLicenseData(): array {
+        $result = [];
+        $props = ['acdh:hasLicense', 'acdh:hasLicenseSummary', 'acdh:hasLicensor',
+            'acdh:hasAccessRestriction','acdh:hasOwner'];
+        foreach ($props as $p) {
+       
+            if (isset($this->properties[$p])) {
+                echo "<pre>";
+                var_dump($this->getData($p));
+                echo "</pre>";
+
+                
+                $result[$p] = $this->getData($p)->value;
+            }
+        }
+       
+
+        die();
+        return $result;
+    }
+    
+    /**
+     * Return the metadata view right box Source card content
+     * @return array
+     */
+    public function getSourceData(): array {
+        $result = [];
+        $props = ['acdh:hasEditor', 'acdh:hasAuthor'];
+        foreach ($props as $p) {
+            if (isset($this->properties[$p])) {
+                $result[$p] = $this->properties[$p];
+            }
+        }
+        return $result;
+    }
+    
+    
+    
+    
 }

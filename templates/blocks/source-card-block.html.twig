@@ -14,7 +14,9 @@
     <div id="sourceBody" class="collapse show">
         <div class="card-body">
             <!-- Your hideable content goes here -->
-            <p>This is the hideable content.</p>
+            {% for key, value in data %}
+                {{ key }} : {{ value.value }} <br>
+            {% endfor %}
         </div>
     </div>
 </div>

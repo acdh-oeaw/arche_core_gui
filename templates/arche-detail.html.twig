@@ -1,5 +1,6 @@
 {% set moduleDir = "{{ arche_core_gui_path }}" %}
 <input type="hidden" value="{{ identifier }}" id="resId"/>
+
 <div class="container">
     <div class="row">
         <div class="col-lg-9 metadata-breadcrumb" >
@@ -19,16 +20,16 @@
                 <div class="loader"></div>
             </div>
 
-            <div class="container-fluid" id="meta-content-container" style="display: none;">
+            <div class="container-fluid" id="meta-content-container">
 
                 <!-- Available Date and type -->
                 <div class="row">
-                    <div class="col-lg-6" id="ad-hasAvailableDate">
-                        <p id="av-hasAvailableDate">{{ "Available since"|trans }} </p>
+                    <div class="col-lg-6">
+                        <p >{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
                     </div>
-                    <div class="col-lg-6 flex-gap-col flex-reverse" id="ad-rdfType">
+                    <div class="col-lg-6 flex-gap-col flex-reverse" >
                         <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
-                        <a href='#' class="btn btn-arche-grey" id="av-rdfType">{{ "Collection"|trans }}</a> 
+                        <a href='#' class="btn btn-arche-grey" >{{ data.getAcdhType() }}</a> 
                     </div>
                 </div>
 
@@ -36,13 +37,13 @@
                 <div class="row">
                     <div class="col-lg-12 " id="ad-hasTitle">
                         <hr style="color:#e1edf3;">
-                        <h4 id="av-hasTitle"></h4>
+                        <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
                     </div>
                 </div>
                 <!-- CITE BLOCK -->
                 <div class="row">
                     <div class="col-lg-12 ">
-                        <h5>Ressource zitieren</h5>
+                        <h5>{{ "Cite Resource"|trans  }}</h5>
                         <div class="basic-inside-content-div">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -73,23 +74,36 @@
                 </div>
 
                 <!-- SUMMARY -->
-                <div class="row">
+                <div class="row" id="ad-summary">
                     <div class="col-lg-12 ">
-                        <h5>{{ "Summary"|trans  }}</h5>
+                        <h5>{{ "Summary"|trans }}</h5>
                     </div>
-                    <div class="col-lg-12 ">
-                        <p>
-                        <ul>
-                            <li>Fachdisziplin(en): Archäologie , Archäologische Prospektion</li>
-                            <li>Betreff: römische Funde , römische Keramik , Siedlungsarchäologie</li>
-                            <li>Geografische Abdeckung: Bad Deutsch-Altenburg , Niederösterreich , Österreich , Petronell-Carnuntum</li>
-                            <li>Zeitliche Abdeckung Beginn: 50</li>
-                            <li>Zeitliche Abdeckung Ende: 1700</li>
-                        </ul>
-                        Sed nec ornare tellus. Ut condimentum volutpat libero. Morbi non purus odio. Morbi consectetur ligula sit amet ipsum interdum, ut semper ex scelerisque. Ut lobortis cursus dolor. Phasellus sed fringilla metus, aliquet tempus ligula. Maecenas ut tellus diam. Cras lobortis porta ultricies.
-                        <br> <br>
-                        Etiam lacinia diam non risus pellentesque mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse pellentesque id ligula quis placerat. Proin vulputate arcu vitae urna ultricies semper. Integer eu magna vel risus finibus fermentum. Nunc hendrerit lacinia malesuada. Maecenas luctus volutpat lobortis....Weiterlesen 
-                        </p>
+                    <div class="col-lg-12 " id="av-summary">
+                        {% if data.getAcdhType()|lower == 'person'  %}
+                            person
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/person-block.html.twig', {'result': data } ) }}
+                        {% elseif data.getAcdhType()|lower == 'project' %}
+                            project
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/project-block.html.twig', {'result': data  } ) }}
+                        {% elseif data.getAcdhType()|lower == 'organisation' %}
+                            organisation
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/organisation-block.html.twig', {'result': data  } ) }}
+                        {% elseif data.getAcdhType()|lower == 'place' %}
+                            place
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'result': data } ) }}
+                        {% elseif data.getAcdhType()|lower == 'publication' %}
+                            publication
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/publication-block.html.twig', {'result': data } ) }} 
+                        {% elseif data.getSkosType()|lower == 'concept' %}
+                            conecpt
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/concept-block.html.twig', {'result': data } ) }}      
+                        {% elseif data.getSkosType()|lower == 'conceptscheme' %}
+                            conecptscheme
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/conceptscheme-block.html.twig', {'result': data } ) }}          
+                        {% else  %}
+                            basic
+                            {{ include(arche_core_gui_path ~ '/templates/metadata/basic-block.html.twig', {'result': data } ) }}
+                        {% endif %}
                     </div>
                 </div>
 
@@ -111,23 +125,39 @@
             <div class="loader-overlay metadata-right-loader">
                 <div class="loader"></div>
             </div>
-           -->
-          
-                {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data } ) }}
+            -->
 
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data } ) }}
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getAcdhID() } ) }}
 
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data } ) }}
-
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data } ) }}
-
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data } ) }}
-
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}
-
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
-
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
-          </div>
+            {% if data.getMapType()|lower == 'polygon'  %}
+                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
+            {% elseif data.getMapType()|lower == 'multipolygon' %}
+                  {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getMultiPolygonFirstCoordinate() } ) }}
+            {% endif %}    
+           
+            {% if data.getPid()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPid() } ) }}
+            {% endif %}    
+            
+            {% if data.getLicenseData()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data.getLicenseData() } ) }}
+            {% endif %}    
+            
+            {% if data.getSourceData()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data.getSourceData() } ) }}
+            {% endif %}        
+            
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+            {% endif %}
+            
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+            
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+        </div>
     </div>
 </div>

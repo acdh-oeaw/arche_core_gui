@@ -13,5 +13,17 @@ arche_metadata:
   requirements:
     identifier: '^[^\?]*$'
     _permission: 'access content'
-    _access: 'TRUE'      
+    _access: 'TRUE'    
+    
+
+arche_metadata_ajax:
+  path: '/metadata_ajax/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\MetadataController::detailAjaxView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'    
+
+        
     
