@@ -22,23 +22,13 @@ class ResourceCoreObject
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-      
+       
         foreach ($data as $k => $v) {
-            
-            if (isset($v[$language])) {
-                $this->setData($k, $v[$language]);
-            } else {
-                if (($language == 'en') && isset($v['de'])) {
-                    $this->setData($k, $v['de']);
-                } elseif (($language == 'de') && isset($v['en'])) {
-                    $this->setData($k, $v['en']);
-                } else {
-                    if(is_array($v)) {
-                        $this->setData($k, reset($v));
-                    }
+            if(is_array($v)) {
+                foreach($v as $propval) {
+                    $this->setData($k, array($propval));
                 }
             }
-           
         }
 
         //set acdhid /repoid / repourl
@@ -709,17 +699,14 @@ class ResourceCoreObject
         foreach ($props as $p) {
        
             if (isset($this->properties[$p])) {
-                echo "<pre>";
-                var_dump($this->getData($p));
-                echo "</pre>";
-
+               
                 
                 $result[$p] = $this->getData($p)->value;
             }
         }
        
 
-        die();
+        
         return $result;
     }
     

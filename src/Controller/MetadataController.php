@@ -65,11 +65,6 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
         }
 
-        echo "<pre>";
-        var_dump($obj->getLicenseData());
-        echo "</pre>";
-
-        die();
         $return = [
             '#theme' => 'arche-detail',
             '#identifier' => $identifier,
