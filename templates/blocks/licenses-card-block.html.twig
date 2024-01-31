@@ -12,10 +12,13 @@
         
     </div>
     <div id="licensesBody" class="collapse show">
-        <div class="card-body">
-            <!-- Your hideable content goes here -->
-            {% for key, value in data %}
-                {{ key }} : {{ value.value }} <br>
+        <div class="card-body meta-sidebar flex-column">
+            {% for key, value in obj %}
+                <b>{{ key|trans }}:</b><br>  
+                {% for val in value %}
+                    {{ val }} <br>
+                {% endfor %}    
+                <br>
             {% endfor %}
         </div>
     </div>

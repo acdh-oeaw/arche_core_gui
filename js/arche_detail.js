@@ -14,11 +14,11 @@ jQuery(function ($) {
         //call basic data
         //fetchMetadata();
 
-
+        initExpertView();
 
     });
-    
-    
+
+
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
         $('#pidValue').attr('href');
@@ -33,11 +33,20 @@ jQuery(function ($) {
         alert('Link copied to clipboard!');
         e.preventDefault();
     });
-    
-    
+
+
+    function initExpertView() {
+        
+         
+        $('#expertDT').DataTable({
+            "dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
+            
+        });
+    }
+
     function reloadDetail(id) {
         $.ajax({
-            url: '/browser/metadata_ajax/'+id,
+            url: '/browser/metadata_ajax/' + id,
             type: "GET",
             success: function (data, status) {
                 $('#meta-content-container').show();
@@ -48,7 +57,7 @@ jQuery(function ($) {
                 if (position !== -1) {
                     currentUrl = currentUrl.substring(0, position + textToKeep.length);
                 }
-                window.history.replaceState({}, '', currentUrl+id);
+                window.history.replaceState({}, '', currentUrl + id);
             },
             error: function (xhr, status, error) {
                 $('#block-arche-theme-content').html(error);

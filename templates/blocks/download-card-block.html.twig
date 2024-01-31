@@ -11,9 +11,18 @@
         </div>
     </div>
     <div id="downloadBody" class="collapse show">
-        <div class="card-body">
-            <!-- Your hideable content goes here -->
-            <p>This is the hideable content.</p>
+        <div class="card-body meta-sidebar downloadcard">
+            {% set resourceApiUrl = data.getRepoUrl() ~ data.getRepId()  %}
+            
+            <a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+            
+            {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
+                <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+                <a href="{{ data.getRepoBaseUrl }}oeaw_coll_dl_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+            {% elseif data.acdhType|lower == "resource" %}
+                <a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Binary"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+            {% endif  %}
+            
         </div>
     </div>
 </div>

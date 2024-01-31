@@ -11,9 +11,11 @@
         </div>
     </div>
     <div id="viewshareBody" class="collapse show">
-        <div class="card-body">
-            <!-- Your hideable content goes here -->
-            <p>This is the hideable content.</p>
+        <div class="card-body meta-sidebar flex-column">
+            <a href="{{ data.getRepoBaseUrl }}oeaw_coll_dl_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "PDF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            <a href="{{ data.getRepoBaseUrl }}oeaw_coll_dl_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Audio Player"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+            <a href="{{ data.getRepoBaseUrl }}oeaw_coll_dl_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Add to CLARIN Virtual Collection"|trans }} <img src="{{ arche_theme_img_url }}icons/plus_ico.png"/></a>
+            
         </div>
     </div>
 </div>

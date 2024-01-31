@@ -58,24 +58,30 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, "en");
         $content = $data->getContent();
-        if (!empty($content)) {
+
+        $return = [
+                '#theme' => 'arche-detail-empty'
+        ];
+         
+        if (!empty($content) && $content !== '["There is no resource"]') {
             $content = json_decode($content, true);
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
-            $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
-        }
 
-        $return = [
-            '#theme' => 'arche-detail',
-            '#identifier' => $identifier,
-            '#data' => $obj,
-            '#cache' => ['max-age' => 0],
-            '#attached' => [
-                'library' => [
-                    'arche_core_gui/detail-view',
+            $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
+
+            $return = [
+                '#theme' => 'arche-detail',
+                '#identifier' => $identifier,
+                '#data' => $obj,
+                '#cache' => ['max-age' => 0],
+                '#attached' => [
+                    'library' => [
+                        'arche_core_gui/detail-view',
+                    ]
                 ]
-            ]
-        ];
+            ];
+        } 
         return $return;
     }
 

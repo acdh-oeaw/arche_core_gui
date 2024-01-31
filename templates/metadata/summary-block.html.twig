@@ -1,0 +1,30 @@
+<div class="col-lg-12 " id="av-summary">
+    <ul>
+        
+     
+        {% if data.getData('acdh:hasRelatedDiscipline') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Related Discipline(s)' } ) }}</li>
+        {% endif %}
+        {% if data.getData('acdh:hasSubject') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasSubject'), 'label':  'Subject(s)' } ) }}</li>
+        {% endif %}
+        {% if data.getData('acdh:hasSpatialCoverage') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasSpatialCoverage'), 'label':  'Spatial Coverage' } ) }}</li>
+        {% endif %}
+        {% if data.getData('acdh:hasNote') %}
+        
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}</li>
+        {% endif %}
+       
+    </ul>
+    
+        <p>{{ data.getData('acdh:hasDescription')[0].value }}</p>
+    
+    
+</div>
+
+

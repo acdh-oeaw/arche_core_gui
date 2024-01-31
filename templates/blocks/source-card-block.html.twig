@@ -9,13 +9,16 @@
                 </a>
             </div>
         </div>
-       
+
     </div>
     <div id="sourceBody" class="collapse show">
-        <div class="card-body">
-            <!-- Your hideable content goes here -->
+        <div class="card-body meta-sidebar flex-column">
             {% for key, value in data %}
-                {{ key }} : {{ value.value }} <br>
+                <b>{{ key|trans }}:</b><br>  
+                {% for val in value %}
+                    {{ val }} <br>
+                {% endfor %}    
+                <br>
             {% endfor %}
         </div>
     </div>

@@ -30,9 +30,14 @@ smart-search:
 detail-view:
     version: 1.0
     header: true
+    css:
+        base:
+            https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css: { type: external, minified: true }
     js:
         js/metadataClass.js: {}
+        https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js: { type: external, minified: true }
         js/arche_detail.js: {}
+        
     dependencies:
         - core/drupal
         - core/drupal.form

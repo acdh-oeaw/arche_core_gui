@@ -22,6 +22,12 @@
 
             <div class="container-fluid" id="meta-content-container">
 
+                <div class="row expert-dt-div">
+                    <div class="col-lg-12">
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
+                    </div>
+                </div>
+                
                 <!-- Available Date and type -->
                 <div class="row">
                     <div class="col-lg-6">
@@ -74,11 +80,22 @@
                 </div>
 
                 <!-- SUMMARY -->
-                <div class="row" id="ad-summary">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Summary"|trans }}</h5>
+                
+                {% if data.getAcdhType()|lower != 'person'  %} 
+                    <div class="row" id="ad-summary">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "Summary"|trans }}</h5>
+                        </div>
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
                     </div>
-                    <div class="col-lg-12 " id="av-summary">
+                {% endif %}
+                
+                <div class="row" id="ad-custom properties">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Custom Properties"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 " id="av-custom properties">
+
                         {% if data.getAcdhType()|lower == 'person'  %}
                             person
                             {{ include(arche_core_gui_path ~ '/templates/metadata/person-block.html.twig', {'result': data } ) }}
@@ -130,31 +147,31 @@
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getAcdhID() } ) }}
 
             {% if data.getMapType()|lower == 'polygon'  %}
-                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}
-                  {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getMultiPolygonFirstCoordinate() } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getMultiPolygonFirstCoordinate() } ) }}
             {% endif %}    
-           
+
             {% if data.getPid()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPid() } ) }}
             {% endif %}    
-            
-            {% if data.getLicenseData()  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'data': data.getLicenseData() } ) }}
+
+            {% if data.getLicenseData()|length > 0 %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'obj': data.getLicenseData() } ) }}
             {% endif %}    
-            
-            {% if data.getSourceData()  %}
+
+            {% if data.getSourceData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data.getSourceData() } ) }}
             {% endif %}        
-            
+
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
             {% endif %}
-            
+
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
             {% endif %}
-            
+
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
             {% endif %}

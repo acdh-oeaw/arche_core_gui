@@ -4,8 +4,8 @@ namespace Drupal\arche_core_gui\Object;
 
 use Drupal\acdh_repo_gui\Helper\ArcheHelper as Helper;
 
-class ResourceCoreObject
-{
+class ResourceCoreObject {
+
     private $config;
     private $properties;
     private $acdhid;
@@ -17,16 +17,15 @@ class ResourceCoreObject
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
 
-    public function __construct(array $data, object $config, string $language = 'en')
-    {
+    public function __construct(array $data, object $config, string $language = 'en') {
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-       
+
         foreach ($data as $k => $v) {
-            if(is_array($v)) {
-                foreach($v as $propval) {
-                    $this->setData($k, array($propval));
+            if (is_array($v)) {
+                foreach ($v as $propval) {
+                    $this->setData($k, $propval);
                 }
             }
         }
@@ -39,8 +38,7 @@ class ResourceCoreObject
      * Get the biblatex disserv url
      * @return string
      */
-    public function getBiblatexUrl(): string
-    {
+    public function getBiblatexUrl(): string {
         return $this->biblatexUrl . '?id=' . $this->getRepoUrl() . '&lang=' . $this->language;
     }
 
@@ -50,9 +48,7 @@ class ResourceCoreObject
      * @param string $property
      * @return array
      */
-    public function getData(string $property): array
-    {
-       echo $property;
+    public function getData(string $property): array {
         return (isset($this->properties[$property]) && !empty($this->properties[$property])) ? $this->properties[$property] : array();
     }
 
@@ -63,12 +59,16 @@ class ResourceCoreObject
      * @param string $prop
      * @param array $v
      */
-    private function setData(string $prop = null, array $v = array())
-    {
+    private function setData(string $prop = null, array $v = array()) {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
-            $this->properties[$prop] = $v;
+            if(isset($this->properties[$prop]) && count($this->properties[$prop]) === 0) {
+                $this->properties[$prop] = $v;
+            } else {
+                $this->properties[$prop][] = $v;
+            }
+            
         }
     }
 
@@ -77,9 +77,8 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getTitle(): string
-    {
-       
+    public function getTitle(): string {
+
         if (isset($this->properties["acdh:hasTitle"][0]['title']) && !empty($this->properties["acdh:hasTitle"][0]['title'])) {
             return $this->properties["acdh:hasTitle"][0]['title'];
         }
@@ -96,8 +95,7 @@ class ResourceCoreObject
      *
      * @return array
      */
-    public function getIdentifiers(): array
-    {
+    public function getIdentifiers(): array {
         return (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) ? $this->properties["acdh:hasIdentifier"] : array();
     }
 
@@ -106,8 +104,7 @@ class ResourceCoreObject
      *
      * @return type
      */
-    public function getNonAcdhIdentifiers(): array
-    {
+    public function getNonAcdhIdentifiers(): array {
         $result = array();
         if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
@@ -121,14 +118,13 @@ class ResourceCoreObject
         }
         return $result;
     }
-    
+
     /**
      * Get all identifiers which are not acdh api related
      *
      * @return type
      */
-    public function getNonAcdhApiIdentifiers(): array
-    {
+    public function getNonAcdhApiIdentifiers(): array {
         $result = array();
         if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
@@ -146,11 +142,10 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getPid(): string
-    {
+    public function getPid(): string {
         return (
                 isset($this->properties["acdh:hasPid"][0]['value']) && !empty($this->properties["acdh:hasPid"][0]['value']) && (
-                    (strpos($this->properties["acdh:hasPid"][0]['value'], 'http://') !== false) ||
+                (strpos($this->properties["acdh:hasPid"][0]['value'], 'http://') !== false) ||
                 (strpos($this->properties["acdh:hasPid"][0]['value'], 'https://') !== false)
                 )
                 ) ? $this->properties["acdh:hasPid"][0]['value'] : "";
@@ -161,8 +156,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getInsideUrl(): string
-    {
+    public function getInsideUrl(): string {
         if (isset($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (isset($v->acdhid) && !empty($v->acdhid)) {
@@ -177,8 +171,7 @@ class ResourceCoreObject
      * Get the available date in a specified format
      * @return string
      */
-    public function getAvailableDate(): string
-    {
+    public function getAvailableDate(): string {
         if (isset($this->properties["acdh:hasAvailableDate"])) {
             foreach ($this->properties["acdh:hasAvailableDate"] as $v) {
                 if (isset($v['value'])) {
@@ -195,8 +188,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getUUID(): string
-    {
+    public function getUUID(): string {
         if (isset($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (isset($v->acdhid) && !empty($v->acdhid)) {
@@ -212,8 +204,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getAcdhID(): string
-    {
+    public function getAcdhID(): string {
         if (isset($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (strpos($v['value'], '/id.acdh.oeaw.ac.at/') !== false &&
@@ -230,8 +221,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getRepoUrl(): string
-    {
+    public function getRepoUrl(): string {
         if (!isset($this->repoid) && empty($this->repoid)) {
             $this->getRepoID();
         }
@@ -242,20 +232,25 @@ class ResourceCoreObject
      * Get the Gui related url for the resource
      * @return string
      */
-    public function getRepoGuiUrl(): string
-    {
+    public function getRepoGuiUrl(): string {
         if (!isset($this->repoid) && empty($this->repoid)) {
             $this->getRepoID();
         }
         return str_replace('/api/', '/browser/detail/', $this->config->baseUrl) . $this->repoid;
+    }
+    /**
+     * Get the GUI base url
+     * @return string
+     */
+    public function getRepoBaseUrl(): string {
+        return str_replace('/api/', '/browser/', $this->config->baseUrl);
     }
 
     /**
      * Get the repo identifier
      * @return string
      */
-    public function getRepoID(): string
-    {
+    public function getRepoID(): string {
         if (isset($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (isset($v['id']) && !empty($v['id'])) {
@@ -277,8 +272,7 @@ class ResourceCoreObject
      *
      * @return array
      */
-    public function getAccessRestriction(): array
-    {
+    public function getAccessRestriction(): array {
         $result = array();
         if (isset($this->properties["acdh:hasAccessRestriction"])) {
             foreach ($this->properties["acdh:hasAccessRestriction"] as $v) {
@@ -303,8 +297,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getTitleImage(string $width = '200px'): string
-    {
+    public function getTitleImage(string $width = '200px'): string {
         $img = '';
         $width = str_replace('px', '', $width);
         //check the thumbnail service first
@@ -326,8 +319,7 @@ class ResourceCoreObject
      * @param string $width
      * @return string
      */
-    public function getTitleImageUrl(string $width = '200px'): string
-    {
+    public function getTitleImageUrl(string $width = '200px'): string {
         $img = '';
         $imgBinary = '';
         $width = str_replace('px', '', $width);
@@ -349,8 +341,7 @@ class ResourceCoreObject
      * Check if we have a titleimage id or not
      * @return bool
      */
-    public function isTitleImage(): bool
-    {
+    public function isTitleImage(): bool {
         if (!empty($this->getAcdhID())) {
             return true;
         }
@@ -362,8 +353,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getAcdhType(): string
-    {
+    public function getAcdhType(): string {
         if (isset($this->properties["rdf:type"])) {
             foreach ($this->properties["rdf:type"] as $v) {
                 if (isset($v['title']) && !empty($v['title']) && (strpos($v['title'], 'https://vocabs.acdh.oeaw.ac.at/schema#') !== false)) {
@@ -380,8 +370,7 @@ class ResourceCoreObject
      * Display all RDF:Type Values
      * @return array
      */
-    public function getRdfTypes(): array
-    {
+    public function getRdfTypes(): array {
         $result = array();
         if (isset($this->properties["rdf:type"])) {
             foreach ($this->properties["rdf:type"] as $v) {
@@ -400,8 +389,7 @@ class ResourceCoreObject
      *
      * @return string
      */
-    public function getSkosType(): string
-    {
+    public function getSkosType(): string {
         if (isset($this->properties["rdf:type"])) {
             foreach ($this->properties["rdf:type"] as $v) {
                 if (isset($v['title']) && !empty($v['title']) && (strpos($v['title'], 'http://www.w3.org/2004/02/skos/core#') !== false)) {
@@ -419,8 +407,7 @@ class ResourceCoreObject
      *
      * @return array
      */
-    public function getExpertTableData(): array
-    {
+    public function getExpertTableData(): array {
         return $this->properties;
     }
 
@@ -431,8 +418,7 @@ class ResourceCoreObject
      * @param string $dateFormat
      * @return string
      */
-    public function getFormattedDateByProperty(string $property, string $dateFormat = 'Y'): string
-    {
+    public function getFormattedDateByProperty(string $property, string $dateFormat = 'Y'): string {
         if (isset($this->properties[$property])) {
             if (isset($this->properties[$property][0]['value'])) {
                 $val = strtotime($this->properties[$property][0]['value']);
@@ -448,19 +434,18 @@ class ResourceCoreObject
      * REDMINE ID: #19888
      * @return string
      */
-    public function getCopyResourceLink(): string
-    {
+    public function getCopyResourceLink(): string {
         if (!empty($this->getPid())) {
             return $this->getPid();
         }
-        
+
         if (!empty($this->getAcdhID())) {
             return $this->getAcdhID();
         }
         if (!empty($this->getRepoUrl())) {
             return $this->getRepoUrl();
         }
-        
+
         return "";
     }
 
@@ -468,8 +453,7 @@ class ResourceCoreObject
      * Create the JS string for the leaflet map MultiPolyLang from Multipolygon data
      * @return string
      */
-    public function getMultiPolygonFirstCoordinate(): string
-    {
+    public function getMultiPolygonFirstCoordinate(): string {
         $str = "";
         if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
             $data = array_filter(explode(" ", $this->checkMultiPolygonMapString()));
@@ -483,8 +467,7 @@ class ResourceCoreObject
      * Create the JS string for the leaflet map MultiPolyLang from Polygon data
      * @return string
      */
-    public function getPolygonFirstCoordinate(): string
-    {
+    public function getPolygonFirstCoordinate(): string {
         $str = "";
         if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
             $data = array_filter(explode(" ", $this->checkMultiPolygonMapString()));
@@ -505,8 +488,7 @@ class ResourceCoreObject
      * Transform Multipolygon string
      * @return string
      */
-    private function checkMultiPolygonMapString(): string
-    {
+    private function checkMultiPolygonMapString(): string {
         if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'multipolygon') !== false) {
             return str_replace(')', '', str_replace('(', '', str_replace('MULTIPOLYGON', '', $this->properties["acdh:hasWKT"][0]['title'])));
         } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'polygon') !== false) {
@@ -519,8 +501,7 @@ class ResourceCoreObject
      * Get the WKT map type
      * @return string
      */
-    public function getMapType(): string
-    {
+    public function getMapType(): string {
         if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
             if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'multipolygon') !== false) {
                 return 'multipolygon';
@@ -535,8 +516,7 @@ class ResourceCoreObject
      * Add Multipolygon string for the polygon dataset, othwerwise the js plugin cant handle it
      * @return string
      */
-    public function getPolygonData(): string
-    {
+    public function getPolygonData(): string {
         if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
             if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'polygon') !== false) {
                 $data = str_replace('Polygon', 'MultiPolygon', $this->properties["acdh:hasWKT"][0]['title']);
@@ -546,13 +526,12 @@ class ResourceCoreObject
         }
         return "";
     }
-    
+
     /**
      * Check the resource has an audio, to display the audio player
      * @return bool
      */
-    public function isAudio(): bool
-    {
+    public function isAudio(): bool {
         $cat = false;
         if (!$this->isPublic()) {
             return false;
@@ -560,32 +539,31 @@ class ResourceCoreObject
         //check the sound categories
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (in_array(strtolower($category['value']), (array)$this->audioCategories)) {
+                if (in_array(strtolower($category['value']), (array) $this->audioCategories)) {
                     $cat = true;
                 }
             }
         }
         //check the binarysize
         if (isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
-                (int)$this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
+                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
                 $cat) {
             return true;
         }
 
         return false;
     }
-    
+
     /**
      * Check if the resource is a pdf file
      * @return bool
      */
-    public function isPDF(): bool
-    {
+    public function isPDF(): bool {
         $isPDF = false;
         if (!$this->isPublic()) {
             return false;
         }
-        
+
         if (isset($this->properties["acdh:hasFormat"])) {
             foreach ($this->properties["acdh:hasFormat"] as $format) {
                 if ($format['value'] == 'application/pdf') {
@@ -593,79 +571,76 @@ class ResourceCoreObject
                 }
             }
         }
-        
+
         if (isset($this->properties["acdh:hasBinarySize"])) {
             foreach ($this->properties["acdh:hasBinarySize"] as $binary) {
-                if ((int)$binary['value'] > 1 && $isPDF) {
+                if ((int) $binary['value'] > 1 && $isPDF) {
                     return true;
                 }
             }
         }
         return false;
     }
-    
+
     /**
      * Check the resource is public or not
      * @return bool
      */
-    public function isPublic(): bool
-    {
+    public function isPublic(): bool {
         $result = false;
         $access = $this->getAccessRestriction();
-        
+
         if (
-                count((array)$access) > 0 &&
+                count((array) $access) > 0 &&
                 isset($access['vocabsid']) &&
                 $access['vocabsid'] = $this->publicAccessValue) {
             $result = true;
-        } elseif (count((array)$access) > 0 &&
+        } elseif (count((array) $access) > 0 &&
                 isset($access['title']) &&
                 in_array($access['title'], $this->publicAccessTitle)) {
             $result = true;
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Create the VCR data json string
      * REDMINE ID: #19076
      * @return string
      */
-    public function getVCRData(): string
-    {
+    public function getVCRData(): string {
         $res = new \stdClass();
-        
+
         if (!empty($this->getDataString('acdh:hasDescription'))) {
             $res->description = $this->getDataString('acdh:hasDescription');
         } else {
             if ($this->getAcdhType() == "Resource") {
-                $res->description = $this->getDataString('acdh:hasCategory').", ".$this->getDataString('acdh:hasBinarySize');
+                $res->description = $this->getDataString('acdh:hasCategory') . ", " . $this->getDataString('acdh:hasBinarySize');
             } elseif ($this->getAcdhType() == "Collection" || $this->getAcdhType() == "TopCollection") {
-                $res->description = $this->getAcdhType().", ".$this->getDataString('acdh:hasNumberOfItems'). ' items';
+                $res->description = $this->getAcdhType() . ", " . $this->getDataString('acdh:hasNumberOfItems') . ' items';
             } else {
                 $res->description = "";
             }
         }
-        
+
         if (!empty($this->getPid())) {
             $res->uri = $this->getPid();
         } else {
             $res->uri = $this->getAcdhID();
         }
-        
+
         $res->label = $this->getTitle();
-        
+
         return \GuzzleHttp\json_encode($res);
     }
-    
+
     /**
      * Get the defined property String values
      * @param string $property
      * @return string
      */
-    public function getDataString(string $property): string
-    {
+    public function getDataString(string $property): string {
         if (isset($this->properties[$property][0]['title']) && !empty($this->properties[$property][0]['title'])) {
             return $this->properties[$property][0]['title'];
         } elseif (isset($this->properties[$property][0]['value']) && !empty($this->properties[$property][0]['value'])) {
@@ -673,12 +648,10 @@ class ResourceCoreObject
         }
         return "";
     }
-    
-    
-    public function isContactDetails(): bool
-    {
+
+    public function isContactDetails(): bool {
         $props = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:Postcode',
-            'acdh:hasCity','acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail',
+            'acdh:hasCity', 'acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail',
             'acdh:hasUrl'];
         foreach ($props as $p) {
             if (isset($this->properties[$p])) {
@@ -687,45 +660,49 @@ class ResourceCoreObject
         }
         return false;
     }
-    
+
     /**
      * Return the metadata view right box License card content
      * @return array
      */
     public function getLicenseData(): array {
         $result = [];
-        $props = ['acdh:hasLicense', 'acdh:hasLicenseSummary', 'acdh:hasLicensor',
-            'acdh:hasAccessRestriction','acdh:hasOwner'];
-        foreach ($props as $p) {
-       
-            if (isset($this->properties[$p])) {
-               
-                
-                $result[$p] = $this->getData($p)->value;
+        $props = ['acdh:hasLicense' => 'License', 'acdh:hasLicenseSummary' => 'License Summary', 'acdh:hasLicensor' => 'Licensor',
+            'acdh:hasAccessRestriction' => 'Access Restriction', 'acdh:hasOwner' => 'Owner'];
+        
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $result[$v][] = $val['value'];
+                        }
+                    }
+                }
             }
         }
-       
-
-        
         return $result;
     }
-    
+
     /**
      * Return the metadata view right box Source card content
      * @return array
      */
     public function getSourceData(): array {
         $result = [];
-        $props = ['acdh:hasEditor', 'acdh:hasAuthor'];
-        foreach ($props as $p) {
-            if (isset($this->properties[$p])) {
-                $result[$p] = $this->properties[$p];
+        $props = ['acdh:hasEditor' => 'Editor', 'acdh:hasAuthor' => 'Author'];
+
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $result[$v][] = $val['value'];
+                        }
+                    }
+                }
             }
         }
         return $result;
     }
-    
-    
-    
-    
 }
