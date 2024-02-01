@@ -7,8 +7,7 @@
             HOME / COllection / SubCollection
         </div>
         <div class="col-lg-3 metadata-expert"  >
-            <a class="ms-auto d-flex btn btn-arche-blue" href="#" id="expertView">{{ "Expert view"|trans }}</a>
-            <a class="ms-auto d-flex btn btn-arche-blue" href="/browser/metadata/11213" id="archeHref">{{ "11213 test load"|trans }}</a>
+            <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
         </div>
     </div>
 </div>
@@ -20,22 +19,25 @@
                 <div class="loader"></div>
             </div>
 
-            <div class="container-fluid" id="meta-content-container">
-
+            <div class="container-fluid" id="expertdt-container">
                 <div class="row expert-dt-div">
                     <div class="col-lg-12">
                         {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
                     </div>
                 </div>
-                
+            </div>
+
+            <div class="container-fluid" id="meta-content-container">
                 <!-- Available Date and type -->
                 <div class="row">
                     <div class="col-lg-6">
                         <p >{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
                     </div>
                     <div class="col-lg-6 flex-gap-col flex-reverse" >
-                        <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
-                        <a href='#' class="btn btn-arche-grey" >{{ data.getAcdhType() }}</a> 
+                        {% if data.getAcdhType %}
+                            <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
+                            <a href='#' class="btn btn-arche-grey" >{{ data.getAcdhType() }}</a> 
+                        {% endif %}
                     </div>
                 </div>
 
@@ -80,7 +82,7 @@
                 </div>
 
                 <!-- SUMMARY -->
-                
+
                 {% if data.getAcdhType()|lower != 'person'  %} 
                     <div class="row" id="ad-summary">
                         <div class="col-lg-12 ">
@@ -89,7 +91,7 @@
                         {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
                     </div>
                 {% endif %}
-                
+
                 <div class="row" id="ad-custom properties">
                     <div class="col-lg-12 ">
                         <h5>{{ "Custom Properties"|trans }}</h5>
@@ -131,6 +133,30 @@
                     </div>
                     <div class="col-lg-12 ">
                         Child Resources table
+
+
+                        <div class="basic-inside-content-div" id="childDtDiv">
+                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
+                                <div style="font-size: 14px; font-weight: bold;">
+                                    <label>{{ "Order the result by"|trans }}:</label>
+                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
+                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
+                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
+                                    </select>
+                                </div>
+                                <br>
+                                <thead >
+                                    <tr>
+                                        <th>{{ "title"|trans }}</th>
+                                        <th>{{ "image"|trans }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                        </div>
                     </div>
                 </div>
 
@@ -144,7 +170,7 @@
             </div>
             -->
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getAcdhID() } ) }}
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
 
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}

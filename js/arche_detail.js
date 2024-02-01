@@ -13,11 +13,15 @@ jQuery(function ($) {
 
         //call basic data
         //fetchMetadata();
+        loadAdditionalData();
 
-        initExpertView();
 
     });
 
+    function loadAdditionalData() {
+        initExpertView();
+        fetchChild();
+    }
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
@@ -35,12 +39,98 @@ jQuery(function ($) {
     });
 
 
-    function initExpertView() {
-        
+    function fetchChild() {
+        $('#child-div-content').show();
+        var limit = 10;
+        var page = 0;
+        var order = 'titledesc';
+
+        console.log("chil url: ");
+        console.log("/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order);
+        var childTable = $('.child-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "pageLength": 10,
+            "processing": true,
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order,
+                complete: function (response) {
+                    console.log('response: ');
+                    console.log(response.responseJSON);
+                },
+                error: function (xhr, status, error) {
+                    //$(".loader-versions-div").hide();
+                    console.log('error');
+                    console.log(error);
+                }
+            },
+            'columns': [
+                {data: 'title', render: function (data, type, row, meta) {
+                        var shortcut = row.type;
+                        shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
+                        var text = '<div class="col-block col-lg-12">';
+                        //title
+                        text += '<div class="res-property">';
+                        text += '<span class="res-title">' + getAccessResIcon(row.accessres) + '&nbsp;';
+                        text += '<a href="/browser/detail/' + row.id + '">' + row.title + '</a></span></div>';
+                        //type
+                        text += '<div class="res-property">';
+                        text += '<i class="material-icons">&#xE54E;</i>';
+                        text += '<span class="res-prop-label">' + Drupal.t("Type") + ': </span>';
+                        text += '<span class="res-rdfType"><a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false">' + shortcut + '</a></span>';
+                        text += '</div>';
+
+                        //avdate
+
+                        text += '</div>';
+                        return  text;
+                    }
+
+
+                },
+                {data: 'image', width: "20%", render: function (data, type, row, meta) {
+                        let acdhid = row.acdhid.replace('https://', '');
+                        return '<div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resId + '?width=600" data-lightbox="detail-titleimage-' + row.id + '">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resId + '?width=75">\n\
+                            </a></center>\n\
+                            </div>';
+                    }
+                },
+                {data: 'id', visible: false},
+                {data: 'avDate', visible: false},
+                {data: 'class', visible: false},
+                {data: 'shortcut', visible: false},
+                {data: 'identifier', visible: false},
+                {data: 'order', visible: false}
+            ],
+            fnDrawCallback: function () {
+                //$(".child-table thead").remove();
+            }
+        });
+        /*
+         $("#sortBy").change(function () {
+         var colIdx = $('#sortBy :selected').val();
+         let id = colIdx.substring(0, 1);
+         let order = colIdx.substring(2, 3);
+         orderVal = 'asc';
+         if (order > 0) {
+         orderVal = 'desc';
+         }
          
+         childTable.order([id, orderVal]).draw();
+         });*/
+    }
+
+    function initExpertView() {
         $('#expertDT').DataTable({
-            "dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
-            
+            //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
+
         });
     }
 
@@ -64,6 +154,28 @@ jQuery(function ($) {
             }
         });//
     }
+
+
+    //expertDtDiv
+
+    $(document).delegate("#expertViewBtn", "click", function (e) {
+        console.log('clicked expert');
+        if ($(this).hasClass('basic')) {
+            $('#meta-content-container').hide();
+            $('#expertdt-container').fadeIn(200);
+            $(this).removeClass('basic');
+            $(this).addClass('expert');
+            $(this).text(Drupal.t('Basic-View'));
+
+        } else {
+            $('#expertdt-container').hide();
+            $('#meta-content-container').fadeIn(200);
+            $(this).removeClass('expert');
+            $(this).addClass('basic');
+            $(this).text(Drupal.t('Expert-View'));
+        }
+
+    });
 
     $(document).delegate("a#archeHref", "click", function (e) {
         $('#meta-content-container').hide();
