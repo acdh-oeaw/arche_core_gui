@@ -44,7 +44,7 @@ jQuery(function ($) {
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
-
+        var timeout = 10000; // in milliseconds
         console.log("chil url: ");
         console.log("/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order);
         var childTable = $('.child-table').DataTable({
@@ -52,6 +52,7 @@ jQuery(function ($) {
             "searching": true,
             "pageLength": 10,
             "processing": true,
+            "bInfo": false,   // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
             },
@@ -59,6 +60,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order,
+                //'url': "https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/child/214536/en",
                 complete: function (response) {
                     console.log('response: ');
                     console.log(response.responseJSON);
@@ -67,22 +69,22 @@ jQuery(function ($) {
                     //$(".loader-versions-div").hide();
                     console.log('error');
                     console.log(error);
+                    $('.child-elements-div').hide();
                 }
             },
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
+                        console.log("ROW: ");
+                        console.log(row);
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
-                        var text = '<div class="col-block col-lg-12">';
+                        var text = '<div class="col-block col-lg-12 child-table-content-div">';
                         //title
                         text += '<div class="res-property">';
-                        text += '<span class="res-title">' + getAccessResIcon(row.accessres) + '&nbsp;';
-                        text += '<a href="/browser/detail/' + row.id + '">' + row.title + '</a></span></div>';
+                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
                         //type
                         text += '<div class="res-property">';
-                        text += '<i class="material-icons">&#xE54E;</i>';
-                        text += '<span class="res-prop-label">' + Drupal.t("Type") + ': </span>';
-                        text += '<span class="res-rdfType"><a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false">' + shortcut + '</a></span>';
+                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-grey">' + shortcut + '</a>';
                         text += '</div>';
 
                         //avdate
@@ -94,23 +96,24 @@ jQuery(function ($) {
 
                 },
                 {data: 'image', width: "20%", render: function (data, type, row, meta) {
-                        let acdhid = row.acdhid.replace('https://', '');
+                        var acdhid = row.acdhid.replace('https://', '');
+                        acdhid = row.acdhid.replace('http://', '');
                         return '<div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resId + '?width=600" data-lightbox="detail-titleimage-' + row.id + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resId + '?width=75">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=600" data-lightbox="detail-titleimage-' + row.id + '">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=75">\n\
                             </a></center>\n\
                             </div>';
                     }
                 },
-                {data: 'id', visible: false},
+                {data: 'property', visible: false},
+                {data: 'type', visible: false},
                 {data: 'avDate', visible: false},
-                {data: 'class', visible: false},
                 {data: 'shortcut', visible: false},
-                {data: 'identifier', visible: false},
-                {data: 'order', visible: false}
+                {data: 'acdhid', visible: false},
+                {data: 'sumcount', visible: false}
             ],
             fnDrawCallback: function () {
-                //$(".child-table thead").remove();
+                $(".child-table thead").remove();
             }
         });
         /*
