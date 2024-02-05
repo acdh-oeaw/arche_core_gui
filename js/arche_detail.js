@@ -4,7 +4,9 @@ jQuery(function ($) {
 
     var resObj = {};
     var resId = "";
-
+    /** CTRL PRess check for the tree view  #19924 **/
+    var cntrlIsPressed = false;
+    
     $(document).ready(function () {
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
@@ -14,7 +16,7 @@ jQuery(function ($) {
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
-
+        fetchChildTree();
 
     });
 
@@ -39,6 +41,76 @@ jQuery(function ($) {
     });
 
 
+    function fetchChildTree() {
+
+        //get the data
+        var url = $('#resId').val();
+
+        if (url) {
+
+            $('#child-tree').jstree({
+                'core': {
+                    'data': {
+                        'url': function (node) {
+                            var acdhid = $('#resId').val();
+
+                            if (node.id != "#") {
+                                acdhid = node.id;
+                            }
+
+                            return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.language;
+                        },
+                        'data': function (node) {
+                            return {'id': node.id};
+                        },
+                        'success': function (nodes) {
+                        }
+                    },
+                    themes: {stripes: true},
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
+                    },
+                    search: {
+                        "ajax": {
+                            "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.language,
+                            "data": function (str) {
+                                return {
+                                    "operation": "search",
+                                    "q": str
+                                };
+                            }
+                        },
+                        case_sensitive: false
+                    },
+                    plugins: ['search']
+                }
+            });
+            // not ready yet
+            $("#search-input").keyup(function () {
+                var searchString = $(this).val();
+                $('#child-tree').jstree('search', searchString);
+            });
+
+            $('#child-tree').bind("click.jstree", function (node, data) {
+                if (node.originalEvent.target.id) {
+                    var node = $('#child-tree').jstree(true).get_node(node.originalEvent.target.id);
+                    if (node.original.uri) {
+                        if (cntrlIsPressed)
+                        {
+                            window.open("/browser/metadata/" + node.original.uri, '_blank');
+                        } else {
+                            window.location.href = "/browser/metadata/" + node.original.uri;
+                        }
+                    }
+                }
+            });
+
+        }
+
+
+
+    }
+
     function fetchChild() {
         $('#child-div-content').show();
         var limit = 10;
@@ -52,16 +124,22 @@ jQuery(function ($) {
             "searching": true,
             "pageLength": 10,
             "processing": true,
-            "bInfo": false,   // Hide table information
+            "bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
             },
             "serverSide": true,
             "serverMethod": "post",
             "ajax": {
-                'url': "/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order,
+                'url': "/browser/api/child/" + resId + "/en",
                 //'url': "https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/child/214536/en",
                 complete: function (response) {
+                    if (response === undefined) {
+                        console.log('response error');
+                        console.log(error);
+                        $('.child-elements-div').hide();
+                        return;
+                    }
                     console.log('response: ');
                     console.log(response.responseJSON);
                 },
@@ -74,8 +152,6 @@ jQuery(function ($) {
             },
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
-                        console.log("ROW: ");
-                        console.log(row);
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
                         var text = '<div class="col-block col-lg-12 child-table-content-div">';

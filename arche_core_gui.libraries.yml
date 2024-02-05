@@ -33,9 +33,12 @@ detail-view:
     css:
         base:
             https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css: { type: external, minified: true }
+            css/jqtree/themes/default/style.min.css: {}
     js:
         js/metadataClass.js: {}
         https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js: { type: external, minified: true }
+        js/citation/citation-js-0.5.0.min.js: {}
+        js/tree/jstree.min.js: {}
         js/arche_detail.js: {}
         
     dependencies:
