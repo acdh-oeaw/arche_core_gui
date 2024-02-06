@@ -6,7 +6,9 @@ jQuery(function ($) {
     var resId = "";
     /** CTRL PRess check for the tree view  #19924 **/
     var cntrlIsPressed = false;
-    
+    const Cite = require('citation-js');
+
+
     $(document).ready(function () {
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
@@ -16,13 +18,27 @@ jQuery(function ($) {
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
-        fetchChildTree();
+
 
     });
 
+    $(document).keydown(function (event) {
+        if (event.which == "17")
+            cntrlIsPressed = true;
+    });
+
+    $(document).keyup(function () {
+        cntrlIsPressed = false;
+    });
+    /** CTRL PRess check for the tree view   #19924  END **/
+
+
+
     function loadAdditionalData() {
         initExpertView();
-        fetchChild();
+        fetchChildTree();
+        //fetchChild();
+        showCiteBlock();
     }
 
     $(document).delegate("a#copyPid", "click", function (e) {
@@ -436,4 +452,165 @@ jQuery(function ($) {
             }
         });
     }
+
+    ///////////// CITE ////////////////////
+    /**
+     * Generate the cite tab header
+     * @param string type
+     * @param string first
+     * @param string typeid -> id for the handle event
+     * @returns string
+     */
+    function createCiteTab(type, first, typeid) {
+        var selected = 'selected';
+        if (!first) {
+            selected = '';
+        }
+        var html = "<div class='cite-style " + selected + "' id='cite-tab-" + typeid.toLowerCase() + "'>" + type.toUpperCase() + "</a></div>";
+        //<a href='javascript://' id='cite-tooltip-" + type.toLowerCase() + "' data-toggle='cite-tooltip-" + type.toLowerCase() + "'  data-placement='right' data-html='true' data-trigger='focusv title='" + type.toLowerCase() + "'><i class='material-icons'>&#xE88F;</i>
+        $('#cite-selector-div').append(html);
+        $('#cite-dropdown').append($('<option></option>').attr('value', typeid.toLowerCase()).text(type.toUpperCase()));
+
+    }
+
+    /**
+     * Generate the cite block content
+     * @param string data
+     * @param string typeid -> id for the handle event
+     * @param string first
+     * @returns string
+     */
+    function createCiteContent(data, typeid, first) {
+        var selected = 'selected';
+        if (!first) {
+            selected = 'hidden';
+        }
+
+        var html = "<span class='cite-content " + selected + "' id='highlight-" + typeid.toLowerCase() + "'>" + data + "</span>";
+        $('#cite-content-figure').append(html);
+    }
+
+    /**
+     * Show the CITE block
+     * @returns {undefined}
+     */
+    function showCiteBlock() {
+
+        var url = $('#biblaTexUrl').val();
+        console.log(url);
+        if (url) {
+            url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
+            $.get(url).done(function (data) {
+                $('#cite-content-div').addClass('show');
+                $('#cite-content-div').removeClass('hidden');
+                $('#cite-loader').addClass('hidden');
+
+                try {
+                    let cite = new Cite(data);
+
+                    var apa_loaded = true;
+
+                    let templateName = 'apa-6th';
+                    var template = "";
+                    url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl").done(function (data) {
+
+                        template = data;
+                        Cite.CSL.register.addTemplate(templateName, template);
+
+                        var opt = {
+                            format: 'string'
+                        };
+                        opt.type = 'html';
+                        opt.style = 'citation-' + templateName;
+                        opt.lang = 'en-US';
+                        createCiteTab('apa 6th', true, 'apa-6th');
+                        createCiteContent(cite.get(opt), 'apa-6th', true);
+                        apa_loaded = false;
+                    }).then(function (d) {
+
+                        //harvard
+                        var opt = {
+                            format: 'string'
+                        };
+                        opt.type = 'html';
+                        opt.style = 'citation-harvard1';
+                        opt.lang = 'en-US';
+
+                        createCiteTab('harvard', apa_loaded, 'harvard');
+                        createCiteContent(cite.get(opt), 'harvard', apa_loaded);
+
+                        //Vancouver
+                        var opt = {
+                            format: 'string'
+                        };
+                        opt.type = 'html';
+                        opt.style = 'citation-vancouver';
+                        opt.lang = 'en-US';
+
+                        createCiteTab('vancouver', false, 'vancouver');
+                        createCiteContent(cite.get(opt), 'vancouver', false);
+
+                        createCiteTab('BiblaTex', false, 'biblatex');
+                        createCiteContent(data, 'BiblaTex', false);
+                    });
+                } catch (error) {
+                    createCiteErrorResponse(error);
+                    return false;
+                }
+
+            }).fail(function (data) {
+                createCiteErrorResponse("The Resource does not have CITE data.");
+            });
+        }
+    }
+
+    /**
+     * Display Cite error message
+     * @param {type} errorText
+     * @returns {undefined}
+     */
+    function createCiteErrorResponse(errorText) {
+        $('#cite-content-div').addClass('show');
+        $('#cite-content-div').removeClass('hidden');
+        $('#cite-loader').addClass('hidden');
+        $('#cite-selector-div').hide();
+        $('#cite-content-figure').hide();
+        $('.bd-clipboard').hide();
+        //stop spinner
+        $('#cite-content-div').append('<div class="messages messages--warning">' + Drupal.t(errorText) + '</>');
+    }
+
+    function url_csl_content(url) {
+        return $.get(url);
+    }
+
+    /**
+     * CITE TAB EVENTS
+     * @param {type} obj
+     * @param {type} selected
+     * @returns {undefined}
+     */
+    function handleCiteTabEvents(obj, selected) {
+        $('#' + selected).removeClass('selected');
+        let figId = selected.replace('cite-tab-', 'highlight-');
+        $('#' + figId).removeClass('selected').addClass('hidden');
+
+        var id = obj.attr('id');
+        $('#' + id).addClass('selected');
+        let contentId = id.replace('cite-tab-', 'highlight-');
+        $('#' + contentId).removeClass('hidden').addClass('selected');
+    }
+    $('#cite-dropdown').on('change', function (e) {
+        e.preventDefault();
+        var selectedOption = $(this).val(); // Get the selected option value
+        console.log('Selected option:', selectedOption);
+        handleCiteTabEvents($(this), $("#cite-selector-div").find(".selected").attr('value'));
+        // Perform actions based on the selected option
+    });
+    $(document).delegate(".cite-style", "click", function (e) {
+        e.preventDefault();
+        handleCiteTabEvents($(this), $("#cite-selector-div").find(".selected").attr('id'));
+    });
+
+
 });
