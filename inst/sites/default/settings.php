@@ -771,11 +771,11 @@ $settings['file_scan_ignore_directories'] = [
  
  
 $databases['default']['default'] = array (
-  'database' => 'arche_hephaistos',
-  'username' => 'arche_hephaistos',
-  'password' => '',
-  'host' => 'host.docker.internal',
-  'port' => 5433,
+  'database' => %GUI_DB_DBNAME%,
+  'username' => %GUI_DB_USERNAME%,
+  'password' => %GUI_DB_PASSWORD%,
+  'host' => %GUI_DB_HOST%,
+  'port' => %GUI_DB_PORT%,
   'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
   'driver' => 'pgsql'
 );
