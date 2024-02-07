@@ -8,6 +8,7 @@ jQuery(function ($) {
     });
     
     function fetchTopcollections() {
+        console.log("fetch top collections");
         $.ajax({
             url: '/browser/api/topcollections/8/en',
             type: "GET",
@@ -15,6 +16,9 @@ jQuery(function ($) {
                 if(data) {
                     var i = 0;
                     $.each(data, function(index, value) {
+                        console.log(index);
+                        console.log(value);
+                        /*
                         var html = '<div class="col-md-3 arche-home-card">';
                         html += '<div class="card">';
                         html += '<img src="https://arche-thumbnails.acdh.oeaw.ac.at/'+value.acdhid.replace('https://', '')+'?width=350" class="card-img-top" alt="'+value.title.value+'">';
@@ -30,7 +34,7 @@ jQuery(function ($) {
                             $('#home-carousel-first-page').append(html);
                         } else {
                             $('#home-carousel-second-page').append(html);
-                        }
+                        }*/
                         i++;
                     });
                 }

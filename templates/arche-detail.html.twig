@@ -53,11 +53,8 @@
                 {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' or  data.getAcdhType()|lower == 'resource' or  data.getAcdhType()|lower == 'metadata' or  data.getAcdhType()|lower == 'publication' or  data.getAcdhType()|lower == 'project' %}
 
                     <div class="row">
-                        <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />   
-
-
+                        <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />
                         <div class="col-lg-12 ">
-
                             <h5>{{ "Cite Resource"|trans  }}</h5>
                             <div class="basic-inside-content-div">
                                 <div class="row mt-4">
@@ -81,18 +78,13 @@
  
                                                         </div>
                                                         <div class="col-auto">
-                                                            <div class="bd-clipboard">
-                                                                <span id="copy-cite-btn" class="btn-clipboard" title="" data-original-title="Copy to clipboard">Copy</span>
-                                                                <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
-                                                            </div>
-                                                            <a href="#" class="ms-auto btn btn-arche-blue">{{ "Copy"|trans }}</a>
+                                                            <a href="#" class="ms-auto btn btn-arche-blue" id="copyCite">{{ "Copy"|trans }}</a><br>
+                                                            <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
 

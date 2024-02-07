@@ -461,14 +461,7 @@ jQuery(function ($) {
      * @param string typeid -> id for the handle event
      * @returns string
      */
-    function createCiteTab(type, first, typeid) {
-        var selected = 'selected';
-        if (!first) {
-            selected = '';
-        }
-        var html = "<div class='cite-style " + selected + "' id='cite-tab-" + typeid.toLowerCase() + "'>" + type.toUpperCase() + "</a></div>";
-        //<a href='javascript://' id='cite-tooltip-" + type.toLowerCase() + "' data-toggle='cite-tooltip-" + type.toLowerCase() + "'  data-placement='right' data-html='true' data-trigger='focusv title='" + type.toLowerCase() + "'><i class='material-icons'>&#xE88F;</i>
-        $('#cite-selector-div').append(html);
+    function createCiteTab(type, typeid) {
         $('#cite-dropdown').append($('<option></option>').attr('value', typeid.toLowerCase()).text(type.toUpperCase()));
 
     }
@@ -497,7 +490,6 @@ jQuery(function ($) {
     function showCiteBlock() {
 
         var url = $('#biblaTexUrl').val();
-        console.log(url);
         if (url) {
             url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
             $.get(url).done(function (data) {
@@ -523,7 +515,7 @@ jQuery(function ($) {
                         opt.type = 'html';
                         opt.style = 'citation-' + templateName;
                         opt.lang = 'en-US';
-                        createCiteTab('apa 6th', true, 'apa-6th');
+                        createCiteTab('apa 6th', 'apa-6th');
                         createCiteContent(cite.get(opt), 'apa-6th', true);
                         apa_loaded = false;
                     }).then(function (d) {
@@ -536,7 +528,7 @@ jQuery(function ($) {
                         opt.style = 'citation-harvard1';
                         opt.lang = 'en-US';
 
-                        createCiteTab('harvard', apa_loaded, 'harvard');
+                        createCiteTab('harvard', 'harvard');
                         createCiteContent(cite.get(opt), 'harvard', apa_loaded);
 
                         //Vancouver
@@ -547,10 +539,10 @@ jQuery(function ($) {
                         opt.style = 'citation-vancouver';
                         opt.lang = 'en-US';
 
-                        createCiteTab('vancouver', false, 'vancouver');
+                        createCiteTab('vancouver', 'vancouver');
                         createCiteContent(cite.get(opt), 'vancouver', false);
 
-                        createCiteTab('BiblaTex', false, 'biblatex');
+                        createCiteTab('BiblaTex', 'biblatex');
                         createCiteContent(data, 'BiblaTex', false);
                     });
                 } catch (error) {
@@ -585,32 +577,39 @@ jQuery(function ($) {
     }
 
     /**
-     * CITE TAB EVENTS
-     * @param {type} obj
-     * @param {type} selected
+     * Handle the cite content changes on select
+     * @param {type} selectedOption
      * @returns {undefined}
      */
-    function handleCiteTabEvents(obj, selected) {
-        $('#' + selected).removeClass('selected');
-        let figId = selected.replace('cite-tab-', 'highlight-');
-        $('#' + figId).removeClass('selected').addClass('hidden');
-
-        var id = obj.attr('id');
-        $('#' + id).addClass('selected');
-        let contentId = id.replace('cite-tab-', 'highlight-');
-        $('#' + contentId).removeClass('hidden').addClass('selected');
+    function handleCiteSelectEvents(selectedOption) {
+        $('#cite-content-figure span').removeClass('selected').addClass('hidden');
+        $('#highlight-' + selectedOption).addClass('selected').removeClass('hidden');
     }
+
     $('#cite-dropdown').on('change', function (e) {
         e.preventDefault();
         var selectedOption = $(this).val(); // Get the selected option value
-        console.log('Selected option:', selectedOption);
-        handleCiteTabEvents($(this), $("#cite-selector-div").find(".selected").attr('value'));
-        // Perform actions based on the selected option
-    });
-    $(document).delegate(".cite-style", "click", function (e) {
-        e.preventDefault();
-        handleCiteTabEvents($(this), $("#cite-selector-div").find(".selected").attr('id'));
+        handleCiteSelectEvents(selectedOption);
     });
 
+
+    $(document).delegate("a#copyCite", "click", function (e) {
+        var $tempTextarea = $('<textarea>');
+        // Set the textarea value to the content of the div
+        $tempTextarea.val($('.csl-entry').text());
+        // Append the textarea to the body
+        $('body').append($tempTextarea);
+        // Select the textarea content
+        $tempTextarea.select();
+        // Copy the selected content to the clipboard
+        document.execCommand('copy');
+        // Remove the temporary textarea
+        $tempTextarea.remove();
+        $('#copy-cite-btn-confirmation').show();
+        setTimeout(function () {
+            $('#copy-cite-btn-confirmation').hide();
+        }, 5000);
+        e.preventDefault();
+    });
 
 });
