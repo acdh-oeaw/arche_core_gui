@@ -729,6 +729,7 @@ $settings['trusted_host_patterns'] = array(
     '^localhost$', 
     '^127.0.0.1$', 
     '^arche-dev.acdh-dev.oeaw.ac.at$',
+    '^arche-design.acdh-dev.oeaw.ac.at$',
     '^arche-curation.acdh-dev.oeaw.ac.at$',
     '^arche.acdh.oeaw.ac.at$'
 );
@@ -771,10 +772,10 @@ $settings['file_scan_ignore_directories'] = [
  
  
 $databases['default']['default'] = array (
-  'database' => %GUI_DB_DBNAME%,
-  'username' => %GUI_DB_USERNAME%,
-  'password' => %GUI_DB_PASSWORD%,
-  'host' => %GUI_DB_HOST%,
+  'database' => '%GUI_DB_DBNAME%',
+  'username' => '%GUI_DB_USERNAME%',
+  'password' => '%GUI_DB_PASSWORD%',
+  'host' => '%GUI_DB_HOST%',
   'port' => %GUI_DB_PORT%,
   'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
   'driver' => 'pgsql'
