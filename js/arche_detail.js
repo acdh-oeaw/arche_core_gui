@@ -7,14 +7,15 @@ jQuery(function ($) {
     /** CTRL PRess check for the tree view  #19924 **/
     var cntrlIsPressed = false;
     const Cite = require('citation-js');
-
-
+    var expertTable;
+    var childTable;
+    
     $(document).ready(function () {
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
         console.log(resId);
         checkDetailCardEvents();
-
+        console.l
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
@@ -140,6 +141,7 @@ jQuery(function ($) {
             "searching": true,
             "pageLength": 10,
             "processing": true,
+            "deferRender": true,
             "bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
@@ -223,7 +225,10 @@ jQuery(function ($) {
     }
 
     function initExpertView() {
-        $('#expertDT').DataTable({
+        console.log('INIT expert view');
+        
+        expertTable = $('#expertDT').DataTable({
+            "deferRender": true,
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
 
         });
@@ -278,15 +283,20 @@ jQuery(function ($) {
         if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
             $('html, body').animate({scrollTop: '0px'}, 0);
 
+            
             var id = url;
             console.log(id);
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
 
+            expertTable.ajax.reload();
+            fetchChildTree();
             console.log(id);
             resId = id;
             //fetchMetadata();
             reloadDetail(id);
+            checkDetailCardEvents();
+            //loadAdditionalData();
             e.preventDefault();
         } else {
             e.preventDefault();
