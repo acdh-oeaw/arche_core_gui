@@ -21,7 +21,9 @@ jQuery(function ($) {
             "searching": false,
             "pageLength": 10,
             "processing": true,
-            "dom": 'pt',
+            //"dom": 'pt',
+            "dom": '<"row discover-line-bottom"<"col-md-4 discover-count"><"col-md-4 text-center"p><"col-md-4 discover-sort">><"row"<"col-md-12"rt>><"row discover-line-top"<"col-md-4 discover-count"> <"col-md-4 text-center"p><"col-md-4 discover-sort">><"clear">',
+
             //"bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
@@ -42,8 +44,8 @@ jQuery(function ($) {
                         $('.child-elements-div').hide();
                         return;
                     }
-                    console.log('response: ');
-                    console.log(response.responseJSON);
+                    $('.discover-count').html(response.responseJSON.iTotalRecords + Drupal.t("Result(s)"));
+                    $('.discover-sort').html('<div class="dropdown"><button class="btn btn-secondary dropdown-toggle discover-dropdown-btn" type="button" id="discoverSortDropDown" data-bs-toggle="dropdown" aria-expanded="false">Ordering</button><ul class="dropdown-menu discover-dropdown discover-dropdown-btn" aria-labelledby="discoverSortDropDown"><li><a class="dropdown-item" href="#">Title Asc</a></li><li><a class="dropdown-item" href="#">Title Desc</a></li><li><a class="dropdown-item" href="#">Date Asc</a></li><li><a class="dropdown-item" href="#">Date Desc</a></li></ul></div>');
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
@@ -55,18 +57,20 @@ jQuery(function ($) {
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
 
-                        var text = '<div class="col-block col-lg-12 child-table-content-div">';
+                        var text = '<div class="col-block col-lg-12 discover-table-content-div">';
                         //title
                         text += '<div class="res-property">';
                         text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.acdhresId + '">' + row.title + '</a></h5></div>';
                         //type
                         text += '<div class="res-property">';
                         text += '<p>' + row.description + '</p>';
+                        text += '</div>';
+                        text += '<div class="res-property discover-content-toolbar">';
                         text += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">acdh:TopCollection</p>';
                         text += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(row.avDate) + '</p>';
-                        if(row.version) {
-                        text += '<p class="btn btn-toolbar-green btn-toolbar-text no-btn">'+row.version+'</p>';
-                            
+                        if (row.version) {
+                            text += '<p class="btn btn-toolbar-green btn-toolbar-text no-btn">' + row.version + '</p>';
+
                         }
                         text += '</div>';
 
@@ -81,11 +85,11 @@ jQuery(function ($) {
                 {data: 'image', width: "20%", render: function (data, type, row, meta) {
                         console.log(row);
                         var acdhid = row.identifier.replace(/^https?:\/\//i, '');
-                        return '<div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                        return '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=600" data-lightbox="detail-titleimage-' + row.acdhresId + '">\n\
                                 <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=300">\n\
                             </a></center>\n\
-                            </div>';
+                            </div></div>';
                     }
                 },
                 {data: 'avDate', visible: false},
@@ -95,9 +99,12 @@ jQuery(function ($) {
             ],
             fnDrawCallback: function () {
                 $("#rootDT thead").remove();
+                
             }
         });
-
+       
+        
+        
         $('.dataTables_paginate').appendTo('.dataTables_wrapper .dataTables_filter');
         /*
          $("#sortBy").change(function () {
@@ -109,7 +116,7 @@ jQuery(function ($) {
          orderVal = 'desc';
          }
          
-         childTable.order([id, orderVal]).draw();
+         rootTable.order([id, orderVal]).draw();
          });*/
     }
 

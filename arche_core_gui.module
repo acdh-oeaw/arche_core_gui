@@ -1,6 +1,10 @@
 <?php
 
 function arche_core_gui_page_attachments(array &$page) {
+    $languageManager = \Drupal::languageManager();
+    // Get the current language object
+    $currentLanguage = $languageManager->getCurrentLanguage();
+    $page['#attached']['drupalSettings']['arche_core_gui']['gui_lang'] = $currentLanguage->getId();
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
     $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();

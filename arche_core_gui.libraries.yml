@@ -56,6 +56,7 @@ discover-view:
     js:
         https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js: { type: external, minified: true }
         js/arche_discover.js: {}
+        js/smartsearch-map.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
