@@ -10,7 +10,7 @@ jQuery(function ($) {
     function fetchTopcollections() {
         console.log("fetch top collections");
         $.ajax({
-            url: '/browser/api/topcollections/8/en',
+            url: '/browser/api/topcollections/8/' + drupalSettings.arche_core_gui.gui_lang,
             type: "GET",
             success: function (data, status) {
                 if(data) {

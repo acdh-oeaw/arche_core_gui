@@ -9,13 +9,17 @@ jQuery(function ($) {
     const Cite = require('citation-js');
     var expertTable;
     var childTable;
+    var versionVisible = false;
     
     $(document).ready(function () {
+        if($('#resourceHasVersion').val()) {
+            versionVisible = true;
+        }
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
         console.log(resId);
         checkDetailCardEvents();
-        console.l
+        
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
@@ -34,12 +38,15 @@ jQuery(function ($) {
     /** CTRL PRess check for the tree view   #19924  END **/
 
 
-
     function loadAdditionalData() {
         initExpertView();
         fetchChildTree();
         //fetchChild();
         showCiteBlock();
+        if(versionVisible) {
+            fetchVersionsBlock();
+        }
+        
     }
 
     $(document).delegate("a#copyPid", "click", function (e) {
@@ -58,13 +65,76 @@ jQuery(function ($) {
     });
 
 
-    function fetchChildTree() {
-
+    function fetchVersionsBlock() {
         //get the data
         var url = $('#resId').val();
-
+        var acdhid = $('#resId').val();
         if (url) {
+            $('#versions-tree').jstree({
+                'core': {
+                    'data': {
+                        'url': function (node) {
+                            console.log(node);
+                            console.log(node.id);
+                            if (node.id !== "#") {
+                                acdhid = node.id;
+                            }
+                            console.log(acdhid);
+                            console.log(drupalSettings.arche_core_gui.gui_lang);
+                            console.log("URL" + '/browser/api/versions-list/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang);
+                            return '/browser/api/versions-list/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
+                        },
+                        'data': function (node) {
+                            return {'id': node.id};
+                        },
+                        'success': function (nodes) {
+                        }
+                    },
+                    themes: {stripes: true},
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('#versions-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
+                    },
+                    search: {
+                        "ajax": {
+                            "url": '/browser/api/versions-list/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
+                            "data": function (str) {
+                                return {
+                                    "operation": "search",
+                                    "q": str
+                                };
+                            }
+                        },
+                        case_sensitive: false
+                    },
+                    plugins: ['search']
+                }
+            });
+            // not ready yet
+            $("#search-input").keyup(function () {
+                var searchString = $(this).val();
+                $('#versions-tree').jstree('search', searchString);
+            });
 
+            $('#versions-tree').bind("click.jstree", function (node, data) {
+                if (node.originalEvent.target.id) {
+                    var node = $('#versions-tree').jstree(true).get_node(node.originalEvent.target.id);
+                    if (node.original.uri) {
+                        if (cntrlIsPressed)
+                        {
+                            window.open("/browser/metadata/" + node.original.uri, '_blank');
+                        } else {
+                            window.location.href = "/browser/metadata/" + node.original.uri;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function fetchChildTree() {
+        //get the data
+        var url = $('#resId').val();
+        if (url) {
             $('#child-tree').jstree({
                 'core': {
                     'data': {
@@ -75,7 +145,7 @@ jQuery(function ($) {
                                 acdhid = node.id;
                             }
 
-                            return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.language;
+                            return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
                         },
                         'data': function (node) {
                             return {'id': node.id};
@@ -89,7 +159,7 @@ jQuery(function ($) {
                     },
                     search: {
                         "ajax": {
-                            "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.language,
+                            "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.arche_core_gui.gui_lang,
                             "data": function (str) {
                                 return {
                                     "operation": "search",

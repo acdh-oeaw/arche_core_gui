@@ -35,7 +35,7 @@ jQuery(function ($) {
             "serverSide": true,
             "serverMethod": "post",
             "ajax": {
-                'url': "/browser/api/topcollections-dt/en",
+                'url': "/browser/api/topcollections-dt/" + drupalSettings.arche_core_gui.gui_lang,
                 //'url': "https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/child/214536/en",
                 complete: function (response) {
                     if (response === undefined) {

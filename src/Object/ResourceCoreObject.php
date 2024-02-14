@@ -705,4 +705,15 @@ class ResourceCoreObject {
         }
         return $result;
     }
+    
+    /**
+     * Check if we have to display the version box
+     * @return bool
+     */
+    public function hasVersion(): bool {
+        if(isset($this->properties['acdh:hasVersion'])) {
+            return true;
+        }
+        return false;
+    }
 }
