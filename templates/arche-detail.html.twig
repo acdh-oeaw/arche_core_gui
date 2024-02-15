@@ -75,7 +75,7 @@
                                                                 <select id="cite-dropdown" class="btn btn-secondary dropdown-toggle">
                                                                 </select>
                                                             </div>
- 
+
                                                         </div>
                                                         <div class="col-auto">
                                                             <a href="#" class="ms-auto btn btn-arche-blue" id="copyCite">{{ "Copy"|trans }}</a><br>
@@ -103,39 +103,6 @@
                     </div>
                 {% endif %}
 
-                <div class="row" id="ad-custom properties">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Custom Properties"|trans }}</h5>
-                    </div>
-                    <div class="col-lg-12 " id="av-custom properties">
-
-                        {% if data.getAcdhType()|lower == 'person'  %}
-                            person
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/person-block.html.twig', {'result': data } ) }}
-                        {% elseif data.getAcdhType()|lower == 'project' %}
-                            project
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/project-block.html.twig', {'result': data  } ) }}
-                        {% elseif data.getAcdhType()|lower == 'organisation' %}
-                            organisation
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/organisation-block.html.twig', {'result': data  } ) }}
-                        {% elseif data.getAcdhType()|lower == 'place' %}
-                            place
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'result': data } ) }}
-                        {% elseif data.getAcdhType()|lower == 'publication' %}
-                            publication
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/publication-block.html.twig', {'result': data } ) }} 
-                        {% elseif data.getSkosType()|lower == 'concept' %}
-                            conecpt
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/concept-block.html.twig', {'result': data } ) }}      
-                        {% elseif data.getSkosType()|lower == 'conceptscheme' %}
-                            conecptscheme
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/conceptscheme-block.html.twig', {'result': data } ) }}          
-                        {% else  %}
-                            basic
-                            {{ include(arche_core_gui_path ~ '/templates/metadata/basic-block.html.twig', {'result': data } ) }}
-                        {% endif %}
-                    </div>
-                </div>
 
                 <!-- Child elements -->
                 <div class="row basic-inside-content-div child-elements-div">
@@ -168,9 +135,72 @@
                     </div>-->
                 </div>
 
+                <div class="row basic-inside-content-div rcr-elements-div">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "See also Related Collections and Resources"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 rcr-table-div">
+                        TABLE
+                    </div>
+
+                    <!--
+                    <div class="col-lg-12 ">
+                        <div class="basic-inside-content-div" id="childDtDiv">
+                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
+                                <div style="font-size: 14px; font-weight: bold;">
+                                    <label>{{ "Order the result by"|trans }}:</label>
+                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
+                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
+                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
+                                    </select>
+                                </div>
+                                <br>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>-->
+                </div>  
+
+
+                <div class="row basic-inside-content-div publications-elements-div">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Publications"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 publications-table-div">
+                        TABLE
+                    </div>
+
+                    <!--
+                    <div class="col-lg-12 ">
+                        <div class="basic-inside-content-div" id="childDtDiv">
+                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
+                                <div style="font-size: 14px; font-weight: bold;">
+                                    <label>{{ "Order the result by"|trans }}:</label>
+                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
+                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
+                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
+                                    </select>
+                                </div>
+                                <br>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>-->
+                </div>  
 
             </div>
         </div>
+
+
+
         <div class="col-lg-3 metadata-right" >
             <!-- 
             <div class="loader-overlay metadata-right-loader">
@@ -194,9 +224,13 @@
                 {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'obj': data.getLicenseData() } ) }}
             {% endif %}    
 
-            {% if data.getSourceData()|length > 0  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/source-card-block.html.twig', {'data': data.getSourceData() } ) }}
-            {% endif %}        
+            {% if data.getCreditsData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
+            {% endif %}     
+
+            {% if data.getSizeData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/size-card-block.html.twig', {'data': data.getSizeData() } ) }}
+            {% endif %}     
 
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
@@ -205,9 +239,7 @@
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
             {% endif %}
-version
-            {{ data.hasVersion }}
-            version end
+
             {% if data.hasVersion  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
             {% endif %}

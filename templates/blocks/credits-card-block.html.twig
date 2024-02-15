@@ -1,7 +1,7 @@
 <div class="card metadata">
     <div class="card-header">
         <div class="row">
-            <div class="col-8"><h6>{{ "Source"|trans }}</h6></div>
+            <div class="col-8"><h6>{{ "Credits"|trans }}</h6></div>
             <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
             <div class="col-2 text-end">
                 <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#sourceBody">
@@ -14,11 +14,12 @@
     <div id="sourceBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
             {% for key, value in data %}
-                <b>{{ key|trans }}:</b><br>  
+                <div>
+                    <b>{{ key|trans }}:</b></br>
                 {% for val in value %}
                     {{ val }} <br>
                 {% endfor %}    
-                <br>
+                </div>
             {% endfor %}
         </div>
     </div>

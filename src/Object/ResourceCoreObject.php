@@ -667,8 +667,15 @@ class ResourceCoreObject {
      */
     public function getLicenseData(): array {
         $result = [];
-        $props = ['acdh:hasLicense' => 'License', 'acdh:hasLicenseSummary' => 'License Summary', 'acdh:hasLicensor' => 'Licensor',
-            'acdh:hasAccessRestriction' => 'Access Restriction', 'acdh:hasOwner' => 'Owner'];
+        $props = [
+            'acdh:hasLicense' => 'License', 
+            'acdh:hasLicenseSummary' => 'License Summary', 
+            'acdh:hasAccessRestriction' => 'Access Restriction', 
+            'acdh:hasAccessRestrictionSummary' => 'Access Restriction Summary',
+            'acdh:hasRightsInformation' => 'Rights Information',
+            'acdh:hasLicensor' => 'Licensor',
+            'acdh:hasOwner' => 'Owner'
+        ];
         
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
@@ -685,12 +692,45 @@ class ResourceCoreObject {
     }
 
     /**
-     * Return the metadata view right box Source card content
+     * Return the metadata view right box Credits card content
      * @return array
      */
-    public function getSourceData(): array {
+    public function getCreditsData(): array {
         $result = [];
-        $props = ['acdh:hasEditor' => 'Editor', 'acdh:hasAuthor' => 'Author'];
+        $props = [
+            'acdh:hasPrincipalInvestigator' => 'Principal Investigator', 
+            'acdh:hasContact' => 'Contact', 
+            'acdh:hasEditor' => 'Editor',
+            'acdh:hasAuthor' => 'Author',
+            'acdh:hasCreator' => 'Creator', 
+            'acdh:hasContributor' => 'With the Collaboration of'
+            ];
+
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $result[$v][] = $val['value'];
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Return the metadata view right box Size card content
+     * @return array
+     */
+    public function getSizeData(): array {
+        $result = [];
+        $props = [
+            'acdh:hasExtent' => 'Extent', 
+            'acdh:hasNumberOfItems' => 'Number Of Items', 
+            'acdh:hasBinarySize' => 'Binary Size'
+            ];
 
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {

@@ -14,6 +14,40 @@
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSpatialCoverage'), 'label':  'Spatial Coverage' } ) }}</li>
         {% endif %}
+        
+        
+        
+        {% if data.getData('acdh:hasCoverageStartDate') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCoverageStartDate'), 'label':  'Coverage Start Date' } ) }}
+            </li>
+        {% endif %}
+        
+        {% if data.getData('acdh:hasCoverageEndDate') %}
+            <li>
+                {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCoverageEndDate'), 'label':  'Coverage End Date' } ) }}
+            </li>
+        {% endif %}
+       
+        
+        
+        {% if data.getData('acdh:hasCreatedStartDateOriginal') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCreatedStartDateOriginal'), 'label':  'Creation Date of Original' } ) }}</li>
+        {% endif %}
+        
+        {% if data.getData('acdh:hasCreatedEndDateOriginal') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCreatedEndDateOriginal'), 'label':  'Creation Date of Original' } ) }}</li>
+        {% endif %}
+       
+        
+        {% if data.getData('acdh:hasTemporalCoverage') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasTemporalCoverage'), 'label':  'Era' } ) }}</li>
+        {% endif %}
+        
         {% if data.getData('acdh:hasNote') %}
         
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
@@ -21,9 +55,9 @@
         {% endif %}
        
     </ul>
-    
+     {% if data.getData('acdh:hasDescription') %}
         <p>{{ data.getData('acdh:hasDescription')[0].value }}</p>
-    
+    {% endif %}
     
 </div>
 
