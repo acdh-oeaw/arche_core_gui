@@ -10,16 +10,16 @@ jQuery(function ($) {
     var expertTable;
     var childTable;
     var versionVisible = false;
-    
+
     $(document).ready(function () {
-        if($('#resourceHasVersion').val()) {
+        if ($('#resourceHasVersion').val()) {
             versionVisible = true;
         }
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
         console.log(resId);
         checkDetailCardEvents();
-        
+
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
@@ -43,10 +43,11 @@ jQuery(function ($) {
         fetchChildTree();
         //fetchChild();
         showCiteBlock();
-        if(versionVisible) {
+        if (versionVisible) {
             fetchVersionsBlock();
         }
-        
+        fetchBreadcrumb();
+
     }
 
     $(document).delegate("a#copyPid", "click", function (e) {
@@ -64,6 +65,44 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+
+    function fetchBreadcrumb() {
+
+        var acdhid = $('#resId').val();
+        $.ajax({
+            url: '/browser/api/breadcrumb/' + acdhid + '/'+drupalSettings.arche_core_gui.gui_lang,
+            type: "GET",
+            success: function (data, status) {
+                var currentUrl = window.location.href;
+                var textToKeep = "/browser/metadata/";
+                var position = currentUrl.indexOf(textToKeep);
+                if (position !== -1) {
+                    currentUrl = currentUrl.substring(0, position + textToKeep.length);
+                }
+                // 
+                if(data) {
+                    var str = "";
+                    $.each(data, function (index, value) {
+                        console.log("INDEX");
+                        console.log(index);
+                        console.log("VALUE");
+                        console.log(value);
+                        str += "<a href='"+currentUrl+value.id+"'>"+value.title+"</a>";
+                        if(index !== data.length -1 ){
+                            str += " \\ ";
+                        }
+                    });
+                    console.log(str);
+                    $('.metadata-breadcrumb').html(str);
+                }
+                
+                
+            },
+            error: function (xhr, status, error) {
+               console.log("breadcrumb error" + error);
+            }
+        });//
+    }
 
     function fetchVersionsBlock() {
         //get the data
@@ -296,7 +335,7 @@ jQuery(function ($) {
 
     function initExpertView() {
         console.log('INIT expert view');
-        
+
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
@@ -353,7 +392,7 @@ jQuery(function ($) {
         if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
             $('html, body').animate({scrollTop: '0px'}, 0);
 
-            
+
             var id = url;
             console.log(id);
             id = id.replace("/browser/metadata/", "");
