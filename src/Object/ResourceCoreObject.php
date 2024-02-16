@@ -14,6 +14,7 @@ class ResourceCoreObject {
     private $thumbUrl = 'https://arche-thumbnails.acdh.oeaw.ac.at/';
     private $biblatexUrl = 'https://arche-biblatex.acdh.oeaw.ac.at/';
     private $audioCategories = array('audio', 'sound', 'speechrecording', 'speech');
+    private $iiifFormats = array('image/jpeg', 'image/png', 'image/tiff');
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
 
@@ -63,12 +64,11 @@ class ResourceCoreObject {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
-            if(isset($this->properties[$prop]) && count($this->properties[$prop]) === 0) {
+            if (isset($this->properties[$prop]) && count($this->properties[$prop]) === 0) {
                 $this->properties[$prop] = $v;
             } else {
                 $this->properties[$prop][] = $v;
             }
-            
         }
     }
 
@@ -238,6 +238,7 @@ class ResourceCoreObject {
         }
         return str_replace('/api/', '/browser/detail/', $this->config->baseUrl) . $this->repoid;
     }
+
     /**
      * Get the GUI base url
      * @return string
@@ -528,6 +529,59 @@ class ResourceCoreObject {
     }
 
     /**
+     * Check the resource is a 3d object
+     * @return bool
+     */
+    public function is3DObject(): bool {
+        $cat = false;
+        if (!$this->isPublic()) {
+            return false;
+        }
+        if (isset($this->properties["acdh:hasCategory"])) {
+            foreach ($this->properties["acdh:hasCategory"] as $category) {
+                if (in_array(strtolower($category['value']), strtolower("3d data"))) {
+                    $cat = true;
+                }
+            }
+        }
+        if (isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
+                $cat) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Check if the resource supports IIIF viewer
+     * @return bool
+     */
+    public function isIIIF(): bool {
+        $cat = false;
+        if (!$this->isPublic()) {
+            return false;
+        }
+        
+        if (isset($this->properties["acdh:hasCategory"])) {
+            foreach ($this->properties["acdh:hasCategory"] as $category) {
+                if (in_array(strtolower($category['value']), strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image"))) {
+                    $cat = true;
+                }
+            }
+        }
+        
+        if (isset($this->properties["acdh:hasFormat"]) && $cat !== false) {
+            foreach ($this->properties["acdh:hasFormat"] as $category) {
+                if (in_array(strtolower($category['value']), (array) $this->iiifFormats)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check the resource has an audio, to display the audio player
      * @return bool
      */
@@ -668,15 +722,15 @@ class ResourceCoreObject {
     public function getLicenseData(): array {
         $result = [];
         $props = [
-            'acdh:hasLicense' => 'License', 
-            'acdh:hasLicenseSummary' => 'License Summary', 
-            'acdh:hasAccessRestriction' => 'Access Restriction', 
+            'acdh:hasLicense' => 'License',
+            'acdh:hasLicenseSummary' => 'License Summary',
+            'acdh:hasAccessRestriction' => 'Access Restriction',
             'acdh:hasAccessRestrictionSummary' => 'Access Restriction Summary',
             'acdh:hasRightsInformation' => 'Rights Information',
             'acdh:hasLicensor' => 'Licensor',
             'acdh:hasOwner' => 'Owner'
         ];
-        
+
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
                 if (is_array($this->properties[$k])) {
@@ -698,13 +752,13 @@ class ResourceCoreObject {
     public function getCreditsData(): array {
         $result = [];
         $props = [
-            'acdh:hasPrincipalInvestigator' => 'Principal Investigator', 
-            'acdh:hasContact' => 'Contact', 
+            'acdh:hasPrincipalInvestigator' => 'Principal Investigator',
+            'acdh:hasContact' => 'Contact',
             'acdh:hasEditor' => 'Editor',
             'acdh:hasAuthor' => 'Author',
-            'acdh:hasCreator' => 'Creator', 
+            'acdh:hasCreator' => 'Creator',
             'acdh:hasContributor' => 'With the Collaboration of'
-            ];
+        ];
 
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
@@ -719,7 +773,7 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     /**
      * Return the metadata view right box Size card content
      * @return array
@@ -727,10 +781,10 @@ class ResourceCoreObject {
     public function getSizeData(): array {
         $result = [];
         $props = [
-            'acdh:hasExtent' => 'Extent', 
-            'acdh:hasNumberOfItems' => 'Number Of Items', 
+            'acdh:hasExtent' => 'Extent',
+            'acdh:hasNumberOfItems' => 'Number Of Items',
             'acdh:hasBinarySize' => 'Binary Size'
-            ];
+        ];
 
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
@@ -745,13 +799,13 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     /**
      * Check if we have to display the version box
      * @return bool
      */
     public function hasVersion(): bool {
-        if(isset($this->properties['acdh:hasVersion'])) {
+        if (isset($this->properties['acdh:hasVersion'])) {
             return true;
         }
         return false;

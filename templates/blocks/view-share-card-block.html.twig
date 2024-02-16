@@ -22,8 +22,13 @@
                 <a href="{{ data.getRepoBaseUrl }}dissemination/pdf/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "PDF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
             {% endif%} 
 
-            <a href="{{ data.getRepoBaseUrl }}dissemination/3d/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "3D Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
-            <a href="{{ data.getRepoBaseUrl }}dissemination/iiif/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "IIF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% if data.is3DObject() %}
+                <a href="{{ data.getRepoBaseUrl }}dissemination/3d/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "3D Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% endif%} 
+
+            {% if data.isIIIF() %}
+                <a href="{{ data.getRepoBaseUrl }}dissemination/iiif/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "IIF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% endif%} 
             
             {% if data.getVCRData() %}
                 <a href="{{ data.getRepoBaseUrl }}dissemination/add-to-clarin/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Add to CLARIN Virtual Collection"|trans }} <img src="{{ arche_theme_img_url }}icons/plus_ico.png"/></a>
