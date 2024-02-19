@@ -4,9 +4,9 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-9 metadata-breadcrumb" >
-            
-            
-            
+
+
+
         </div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
@@ -142,29 +142,16 @@
                         <h5>{{ "See also Related Collections and Resources"|trans }}</h5>
                     </div>
                     <div class="col-lg-12 rcr-table-div">
-                        TABLE
+                        <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
+                            <thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Property"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
-
-                    <!--
-                    <div class="col-lg-12 ">
-                        <div class="basic-inside-content-div" id="childDtDiv">
-                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
-                                <div style="font-size: 14px; font-weight: bold;">
-                                    <label>{{ "Order the result by"|trans }}:</label>
-                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
-                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
-                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
-                                    </select>
-                                </div>
-                                <br>
-
-                                <tbody>
-                                </tbody>
-                            </table>
-
-
-                        </div>
-                    </div>-->
                 </div>  
 
 
@@ -173,29 +160,16 @@
                         <h5>{{ "Publications"|trans }}</h5>
                     </div>
                     <div class="col-lg-12 publications-table-div">
-                        TABLE
+                        <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
+                            <thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Property"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
-
-                    <!--
-                    <div class="col-lg-12 ">
-                        <div class="basic-inside-content-div" id="childDtDiv">
-                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
-                                <div style="font-size: 14px; font-weight: bold;">
-                                    <label>{{ "Order the result by"|trans }}:</label>
-                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
-                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
-                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
-                                    </select>
-                                </div>
-                                <br>
-
-                                <tbody>
-                                </tbody>
-                            </table>
-
-
-                        </div>
-                    </div>-->
                 </div>  
 
             </div>

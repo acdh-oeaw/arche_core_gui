@@ -47,7 +47,8 @@ jQuery(function ($) {
             fetchVersionsBlock();
         }
         fetchBreadcrumb();
-
+        fetchRPR();
+        fetchPublications();
     }
 
     $(document).delegate("a#copyPid", "click", function (e) {
@@ -67,10 +68,9 @@ jQuery(function ($) {
 
 
     function fetchBreadcrumb() {
-
         var acdhid = $('#resId').val();
         $.ajax({
-            url: '/browser/api/breadcrumb/' + acdhid + '/'+drupalSettings.arche_core_gui.gui_lang,
+            url: '/browser/api/breadcrumb/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
             type: "GET",
             success: function (data, status) {
                 var currentUrl = window.location.href;
@@ -80,26 +80,19 @@ jQuery(function ($) {
                     currentUrl = currentUrl.substring(0, position + textToKeep.length);
                 }
                 // 
-                if(data) {
+                if (data) {
                     var str = "";
                     $.each(data, function (index, value) {
-                        console.log("INDEX");
-                        console.log(index);
-                        console.log("VALUE");
-                        console.log(value);
-                        str += "<a href='"+currentUrl+value.id+"'>"+value.title+"</a>";
-                        if(index !== data.length -1 ){
+                        str += "<a href='" + currentUrl + value.id + "'>" + value.title + "</a>";
+                        if (index !== data.length - 1) {
                             str += " \\ ";
                         }
                     });
-                    console.log(str);
                     $('.metadata-breadcrumb').html(str);
                 }
-                
-                
             },
             error: function (xhr, status, error) {
-               console.log("breadcrumb error" + error);
+                console.log("breadcrumb error" + error);
             }
         });//
     }
@@ -113,14 +106,9 @@ jQuery(function ($) {
                 'core': {
                     'data': {
                         'url': function (node) {
-                            console.log(node);
-                            console.log(node.id);
                             if (node.id !== "#") {
                                 acdhid = node.id;
                             }
-                            console.log(acdhid);
-                            console.log(drupalSettings.arche_core_gui.gui_lang);
-                            console.log("URL" + '/browser/api/versions-list/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang);
                             return '/browser/api/versions-list/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
                         },
                         'data': function (node) {
@@ -237,14 +225,134 @@ jQuery(function ($) {
 
     }
 
+
+    function fetchPublications() {
+        var limit = 10;
+        var page = 0;
+        var order = 'titledesc';
+        var timeout = 10000; // in milliseconds
+        var rcrTable = $('.publications-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/publicationsDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    if (response === undefined) {
+                        console.log('response error');
+                        console.log(error);
+                        //$('.child-elements-div').hide();
+                        return;
+                    }
+                    console.log('response: ');
+                    console.log(response.responseJSON);
+                },
+                error: function (xhr, status, error) {
+                    //$(".loader-versions-div").hide();
+                    console.log('error');
+                    console.log(error);
+                    //$('.publications-elements-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'customCitation', render: function (data, type, row, meta) {
+                        if(row.customCitation) {
+                            return row.customCitation;
+                        }
+                        return "";
+                    }
+                },
+                {data: 'property', visible: true},
+                {data: 'title', visible: false},
+                {data: 'type', visible: false},
+                {data: 'acdhid', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
+
+    function fetchRPR() {
+        var limit = 10;
+        var page = 0;
+        var order = 'titledesc';
+        var timeout = 10000; // in milliseconds
+        var rcrTable = $('.rcr-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    if (response === undefined) {
+                        console.log('response error');
+                        console.log(error);
+                        //$('.child-elements-div').hide();
+                        return;
+                    }
+                    console.log('response: ');
+                    console.log(response.responseJSON);
+                },
+                error: function (xhr, status, error) {
+                    //$(".loader-versions-div").hide();
+                    console.log('error');
+                    console.log(error);
+                    $('.rcr-elements-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'title', render: function (data, type, row, meta) {
+                        return '<a href="'+row.id+'">'+row.title+'</a>';
+                        var shortcut = row.type;
+                        shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
+                        var text = '<div class="col-block col-lg-12 child-table-content-div">';
+                        //title
+                        text += '<div class="res-property">';
+                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
+                        //type
+                        text += '<div class="res-property">';
+                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-grey">' + shortcut + '</a>';
+                        text += '</div>';
+
+                        //avdate
+
+                        text += '</div>';
+                        return  text;
+                    }
+                },
+                {data: 'property', visible: true},
+                {data: 'type', visible: true},
+                {data: 'acdhid', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
     function fetchChild() {
         $('#child-div-content').show();
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
         var timeout = 10000; // in milliseconds
-        console.log("chil url: ");
-        console.log("/browser/api/child/" + resId + "/en/" + limit + '/' + page + '/' + order);
+
         var childTable = $('.child-table').DataTable({
             "paging": true,
             "searching": true,

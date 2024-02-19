@@ -537,9 +537,10 @@ class ResourceCoreObject {
         if (!$this->isPublic()) {
             return false;
         }
+       
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (in_array(strtolower($category['value']), strtolower("3d data"))) {
+                if (isset($category['value']) && strtolower($category['value']) === strtolower("3d data")) {
                     $cat = true;
                 }
             }
@@ -562,10 +563,10 @@ class ResourceCoreObject {
         if (!$this->isPublic()) {
             return false;
         }
-        
+        return false;
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (in_array(strtolower($category['value']), strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image"))) {
+                if (isset($category['value']) && strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image")) {
                     $cat = true;
                 }
             }
