@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\acdh_repo_gui\TwigExtension;
+namespace Drupal\arche_core_gui\TwigExtension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -14,13 +14,13 @@ class ComposerTwigExtension extends \Twig\Extension\AbstractExtension
      */
     public function getName()
     {
-        return 'acdh_repo_gui_composer.twig_extension';
+        return 'arche_core_gui_composer.twig_extension';
     }
 
     public function getFunctions()
     {
         return [
-            new \TwigFilter('get_acdh_composer_versions', [$this, 'get_acdh_composer_versions']),
+            new \Twig\TwigFunction('get_acdh_composer_versions', [$this, 'get_acdh_composer_versions']),
         ];
     }
 
@@ -28,11 +28,8 @@ class ComposerTwigExtension extends \Twig\Extension\AbstractExtension
     {
         $composerContent = $this->getComposerFile('/home/www-data/gui/composer.lock');
          
-        $str = $this->processGuiComposerFile($composerContent);
-        if (!empty($str)) {
-            $str = "Versions:<br> ".$str;
-        }
-        return $str;
+        return $this->processGuiComposerFile($composerContent);
+        
     }
     
     private function processGuiComposerFile(array $file): string
