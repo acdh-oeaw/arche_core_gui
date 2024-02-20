@@ -1,9 +1,9 @@
 {% set moduleDir = "{{ arche_core_gui_path }}" %}
-
+{{ attach_library('arche_core_gui/smart-search') }}
 <div class="container">
     <div class="row">
         <div class="col-lg-12 metadata-breadcrumb" >
-            HOME / COllection / SubCollection
+            
         </div>
 
     </div>
@@ -13,7 +13,6 @@
     <div class="row">
         <div class="col-lg-3 discover-left" >
             {{ include(arche_core_gui_path ~ '/templates/blocks/discover-smart-search.html.twig', {'data': data } ) }}
-
         </div>
 
         <div class="col-lg-9 discover-main " >
@@ -31,8 +30,8 @@
                                     <li><a class="dropdown-item" href="#">{{ "German"|trans }}</a></li>
                                 </ul>
                             </div>
-
-                            <a class="ms-auto d-flex btn btn-root-topbar-grey btn-root-topbar-grey-text" href="#" id="fulltextSearchBtn">{{ "Full text Search"|trans }}</a> 
+                            <input class="smartsearch-btn ms-auto d-flex btn btn-root-topbar-grey btn-root-topbar-grey-text" data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" value="{{ "Full text Search"|trans }}">
+            
                             <img src="{{arche_tooltip_ico}}" class="tooltip-icon">
 
                             <a class="ms-auto d-flex btn btn-root-topbar-grey btn-root-topbar-grey-text" href="#" id="followEntitiesBtn">{{ "Follow entities"|trans }}</a> 

@@ -83,7 +83,6 @@ jQuery(function ($) {
 
                 },
                 {data: 'image', width: "20%", render: function (data, type, row, meta) {
-                        console.log(row);
                         var acdhid = row.identifier.replace(/^https?:\/\//i, '');
                         return '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=600" data-lightbox="detail-titleimage-' + row.acdhresId + '">\n\
