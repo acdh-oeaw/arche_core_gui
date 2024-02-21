@@ -18,7 +18,7 @@ jQuery(function ($) {
         e.preventDefault();
 
         let searchParam = $('#q').val();
-        $('.discover-content-main').html('<div class="container">' +
+        $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
                 '<div class="col-12 mt-5">' +
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
@@ -33,7 +33,7 @@ jQuery(function ($) {
         var coordinates = $(this).attr("data-coordinates");
         console.log(coordinates);
         $('.arche-smartsearch-page-div').show();
-        $('.discover-content-main').html('<div class="container">' +
+        $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
                 '<div class="col-12 mt-5">' +
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
@@ -116,7 +116,7 @@ jQuery(function ($) {
     if (window.location.href.indexOf("browser/search/") >= 0) {
         let searchParams = new URLSearchParams(window.location.search);
         if (searchParams.has('q')) {
-            $('.discover-content-main').html('<div class="container">' +
+            $('.main-content-row').html('<div class="container">' +
                     '<div class="row">' +
                     '<div class="col-12 mt-5">' +
                     '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
@@ -303,7 +303,7 @@ jQuery(function ($) {
                                 $('#linkNamedEntities').prop('checked', true);
                             },
                             error: function (xhr, error, code) {
-                                $('.discover-content-main').html(error);
+                                $('.main-content-row').html(error);
                             }
                         });
                     }
@@ -364,7 +364,7 @@ jQuery(function ($) {
         if (!searchStr) {
             searchStr = $('#q').val();
         }
-
+        addPager();
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -373,8 +373,8 @@ jQuery(function ($) {
                 preferredLang: $('#preferredLang').val(),
                 includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
                 linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
-                page: $('#page').val(),
-                pageSize: $('#pageSize').val(),
+                page: $('#smartPage').val(),
+                pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: []
             }
@@ -482,14 +482,17 @@ jQuery(function ($) {
         data = jQuery.parseJSON(data);
 
 
-        var pages = $('#page').get(0);
+console.log("PAGE");
+console.log($('#smartPage'));
+console.log($('#smartPage').get(0));
+        var pages = $('#smartPage').get(0);
         var pageCount = Math.ceil(data.totalCount / data.pageSize);
-        $('#pageCount').text('/ ' + pageCount);
+        $('#smartPageCount').text('/ ' + pageCount);
         pages.options.length = 0;
         for (var i = 0; i < pageCount; i++) {
             pages.add(new Option(i + 1, i));
         }
-        $('#page').val(data.page);
+        $('#smartPage').val(data.page);
 
 
         $('div.dateValues').text('');
@@ -569,7 +572,7 @@ jQuery(function ($) {
             }
             results += '</div></div></div></div></div></div></div><hr/>';
         });
-        $('.discover-content-main').html(results);
+        $('.main-content-row').html(results);
     }
 
     function getParents(parent, top, prefLang) {
@@ -587,12 +590,44 @@ jQuery(function ($) {
 
     function executeTheSearch() {
         $('.arche-smartsearch-page-div').show();
-        $('.discover-content-main').html('<div class="container">' +
+        $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
                 '<div class="col-12 mt-5">' +
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
         search();
+    }
+    
+    function addPager() {
+        $('.main-content-row').html('<div id="block-mainpagesearchtools" class="col-block col-lg-9 col-md-8 col-sm-12">' +
+            '<div class="container">' +
+                '<div class="row">' +
+                    '<div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">' +
+                        '<div class="row">' +
+                            '<div class="col-lg-6">' +
+                                '<div class="form-outline">        ' +
+                                    '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>' +
+                                    '<input class="form-control  mr-sm-2 w-100" type="number" value="10" min="1" id="pageSize"/>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-lg-6">' +
+                                '<div class="form-outline">' +
+                                    '<label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>' +
+                                    '<div class="input-group  mr-sm-2 w-100">' +
+                                        '<select class="form-control" id="page" onchange="search();">' +
+                                            '<option value="0" selected="selected">1</option>' +
+                                        '</select>' +
+                                        '<div class="input-group-append">' +
+                                            '<div class="input-group-text" id="pageCount">/ 1</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div> ');
     }
 });
