@@ -105,12 +105,12 @@ jQuery(function ($) {
 
     /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE */
     $(document).on("click", function (event) {
-        var popupExtSearch = $("#extendedSearch");
+        var popupExtSearch = $(".extendedSearchCard");
         var extSearchButton = $(".extendedSearcBtn");
         // Check if the clicked element is not the popup or the toggle button
-        if (!popupExtSearch.is(event.target) && !extSearchButton.is(event.target) && popupExtSearch.has(event.target).length === 0) {
-            popupExtSearch.hide();
-        }
+        //if (!popupExtSearch.is(event.target) && !extSearchButton.is(event.target) && popupExtSearch.has(event.target).length === 0) {
+        //    popupExtSearch.hide();
+        //}
     });
 
     if (window.location.href.indexOf("browser/search/") >= 0) {
@@ -481,10 +481,6 @@ jQuery(function ($) {
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
 
-
-console.log("PAGE");
-console.log($('#smartPage'));
-console.log($('#smartPage').get(0));
         var pages = $('#smartPage').get(0);
         var pageCount = Math.ceil(data.totalCount / data.pageSize);
         $('#smartPageCount').text('/ ' + pageCount);
@@ -530,7 +526,7 @@ console.log($('#smartPage').get(0));
                     $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
                 }
             });
-            $('#facets').html(facets + '<hr/>');
+            $('#facets').html(facets);
         }
 
 
@@ -538,39 +534,59 @@ console.log($('#smartPage').get(0));
         var results = '';
         results += '<div class="container">';
         results += '<div class="row">';
-        results += '<div class="col-lg-12">';
+       
         if (data.results.length > 0) {
-            results += '<h5 class="font-weight-bold">Displaying results ' + (data.pageSize * data.page + 1) + ' - ' + Math.min((data.page + 1) * data.pageSize, data.totalCount) + ' from ' + data.totalCount + ' (' + t0 + ' s):</h5>';
+            results += '<h5 class="font-weight-bold">Results ' +  data.totalCount + '</h5>';
         } else {
             results += '<h5 class="font-weight-bold">No results found</h5>';
         }
 
         $.each(data.results, function (k, result) {
-            results += '<div class="row my-3" id="res' + result.id + '" data-value="' + result.id + '">' +
-                    '<div class="col-lg-2">' +
-                    '<a href="https://arche-thumbnails.acdh.oeaw.ac.at/?width=600&id=' + encodeURIComponent(result.url) + '" data-lightbox="detail-titleimage-' + result.id + '" style="border-bottom: none;"><img class="mr-2" src="https://arche-thumbnails.acdh.oeaw.ac.at/?width=150&height=150&id=' + encodeURIComponent(result.url) + '"/></a><br/>' +
-                    //'<button type="button" class="btn btn-info mt-4 btn-xs smartSearchInAdd" data-resourceid="' + result.id + '" style="white-space: normal;">Add to search only in</button> ' +
-                    '</div>' +
-                    '<div class="col-lg-10">' +
-                    '<h5>' +
-                    '<a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a>' +
-                    '</h5>' +
-                    getParents(result.parent || false, true, prefLang) +
-                    'Class: ' + shorten(result.class[0]) + '<br/>' +
-                    'Available date: ' + result.availableDate +
-                    '<div>' +
-                    'Match score: ' + result.matchWeight + '<br/>';
-            if (result.matchProperty.length > 0) {
-                results += 'Matches in:<div class="ml-5">';
-                for (var j = 0; j < result.matchProperty.length; j++) {
-                    if (result.matchHiglight && result.matchHiglight[j]) {
-                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                    } else {
-                        results += shorten(result.matchProperty[j] || '') + '<br/>';
-                    }
-                }
-            }
-            results += '</div></div></div></div></div></div></div><hr/>';
+            console.log(result);
+            results += 
+                    '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
+            
+            results +=  '<div class="col-block col-lg-10 discover-table-content-div">';
+                        //title
+                        results += '<div class="res-property">';
+                        results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                        results += '</div>';
+                        
+                        results += '<div class="res-property">';
+                        results += 'Match score: ' + result.matchWeight + '<br/>';
+                            if (result.matchProperty.length > 0) {
+                                results += 'Matches in:<div class="ml-5">';
+                                for (var j = 0; j < result.matchProperty.length; j++) {
+                                    if (result.matchHiglight && result.matchHiglight[j]) {
+                                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                                    } else {
+                                        results += shorten(result.matchProperty[j] || '') + '<br/>';
+                                    }
+                                }
+                            }
+                            results += getParents(result.parent || false, true, prefLang);
+                        results += '</div>';
+                        results += '<div class="res-property discover-content-toolbar">';
+                        results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">'+shorten(result.class[0])+'</p>';
+                        results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+                       
+                        results += '</div>';
+                        results += '</div>';
+
+                        //avdate
+
+                        results += '</div>';
+            
+            
+        
+            results += '<div class="col-lg-2">' +
+                    '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(result.url)  + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(result.url) + '?width=300">\n\
+                            </a></center>\n\
+                            </div></div>'
+                           '</div>';
+       results += '</div></div></div>';
         });
         $('.main-content-row').html(results);
     }
@@ -629,5 +645,18 @@ console.log($('#smartPage').get(0));
                 '</div>' +
             '</div>' +
         '</div> ');
+    }
+    
+    function formatDate(originalDate) {
+        // Create a new Date object from the original date string
+        var dateObject = new Date(originalDate);
+
+        // Get the day, month, and year components from the date object
+        var day = dateObject.getDate();
+        var month = dateObject.toLocaleString('default', {month: 'short'});
+        var year = dateObject.getFullYear();
+
+        // Concatenate the components to form the desired format
+        return day + ' ' + month + ' ' + year;
     }
 });

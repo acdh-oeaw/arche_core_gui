@@ -21,6 +21,7 @@ jQuery(function ($) {
             "searching": false,
             "pageLength": 10,
             "processing": true,
+            "header": false,
             //"dom": 'pt',
             "dom": '<"row discover-line-bottom"<"col-md-4 discover-count"><"col-md-4 text-center"p><"col-md-4 discover-sort">><"row"<"col-md-12"rt>><"row discover-line-top"<"col-md-4 discover-count"> <"col-md-4 text-center"p><"col-md-4 discover-sort">><"clear">',
 
