@@ -578,11 +578,11 @@ jQuery(function ($) {
                         results += '</div>';
             
             
-        
+            var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
             results += '<div class="col-lg-2">' +
                     '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(result.url)  + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(result.url) + '?width=300">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl)  + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=300">\n\
                             </a></center>\n\
                             </div></div>'
                            '</div>';
