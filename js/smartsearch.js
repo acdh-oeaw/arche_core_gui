@@ -43,7 +43,7 @@ jQuery(function ($) {
         var mapContainer = $('#mapContainer');
         mapContainer.hide();
     });
-    
+
 
     $(document).delegate(".remove_search_only_in", "click", function (e) {
         e.preventDefault();
@@ -92,16 +92,16 @@ jQuery(function ($) {
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER*/
     var form = document.getElementById("smartsearch-left");
-    if(form) {
+    if (form) {
         form.addEventListener("keydown", function (event) {
-        // Check if the pressed key is "Enter" (key code 13)
-        if (event.key === "Enter") {
-            executeTheSearch();
-            event.preventDefault();
-        }
-    });
+            // Check if the pressed key is "Enter" (key code 13)
+            if (event.key === "Enter") {
+                executeTheSearch();
+                event.preventDefault();
+            }
+        });
     }
-    
+
 
     /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE */
     $(document).on("click", function (event) {
@@ -246,71 +246,71 @@ jQuery(function ($) {
 
         fetchFacet();
 
-        if(form) {
-        spatialSelect = new SlimSelect({
-            select: '#spatialSelect',
-            events: {
-                search: function (phrase, curData) {
-                    return new Promise((resolve, reject) => {
-                        if ($('#spatialSource').val() === 'arche') {
-                            fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                                    .then(function (data) {
-                                        data = data.map(function (x) {
-                                            return {
-                                                text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
-                                                value: x.id
-                                            }
-                                        });
-                                        data.unshift({text: 'No filter', value: ''});
+        if (form) {
+            spatialSelect = new SlimSelect({
+                select: '#spatialSelect',
+                events: {
+                    search: function (phrase, curData) {
+                        return new Promise((resolve, reject) => {
+                            if ($('#spatialSource').val() === 'arche') {
+                                fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
+                                        .then(function (response) {
+                                            return response.json();
+                                        })
+                                        .then(function (data) {
+                                            data = data.map(function (x) {
+                                                return {
+                                                    text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
+                                                    value: x.id
+                                                }
+                                            });
+                                            data.unshift({text: 'No filter', value: ''});
 
-                                        resolve(data);
-                                    });
-                        } else {
-                            fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                                    .then(function (data) {
-                                        var options = data.geonames.map(function (x) {
-                                            return {
-                                                text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
-                                                value: x.geonameId
-                                            };
+                                            resolve(data);
                                         });
-                                        options.unshift({text: 'No filter', value: ''});
-                                        resolve(options);
-                                    });
-                        }
-                    });
-                },
-                afterChange: function (value) {
-                    bbox = '';
-                    if (value[0].value !== '') {
-                        $('#wait').show();
-                        $.ajax({
-                            method: 'GET',
-                            url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
-                            success: function (d) {
-                                if (d.bbox || false) {
-                                    d = d.bbox;
-                                    bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
-                                } else {
-                                    bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
-                                }
-                                $('#linkNamedEntities').prop('checked', true);
-                            },
-                            error: function (xhr, error, code) {
-                                $('.main-content-row').html(error);
+                            } else {
+                                fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
+                                        .then(function (response) {
+                                            return response.json();
+                                        })
+                                        .then(function (data) {
+                                            var options = data.geonames.map(function (x) {
+                                                return {
+                                                    text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
+                                                    value: x.geonameId
+                                                };
+                                            });
+                                            options.unshift({text: 'No filter', value: ''});
+                                            resolve(options);
+                                        });
                             }
                         });
+                    },
+                    afterChange: function (value) {
+                        bbox = '';
+                        if (value[0].value !== '') {
+                            $('#wait').show();
+                            $.ajax({
+                                method: 'GET',
+                                url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
+                                success: function (d) {
+                                    if (d.bbox || false) {
+                                        d = d.bbox;
+                                        bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
+                                    } else {
+                                        bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
+                                    }
+                                    $('#linkNamedEntities').prop('checked', true);
+                                },
+                                error: function (xhr, error, code) {
+                                    $('.main-content-row').html(error);
+                                }
+                            });
+                        }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
     });
 
     function updateSearchGui(data) {
@@ -358,7 +358,7 @@ jQuery(function ($) {
     var token = 1;
 
     function search(searchStr = "", coordinates = "") {
-        
+
         token++;
         var localToken = token;
         if (!searchStr) {
@@ -460,7 +460,7 @@ jQuery(function ($) {
             console.log(error);
             console.log(xhr.responseText);
         };
-        if(coordinates) {
+        if (coordinates) {
             param.data.facets['bbox'] = coordinates;
         }
         $.ajax(param);
@@ -533,60 +533,58 @@ jQuery(function ($) {
         var prefLang = $('#preferredLang').val();
         var results = '';
         results += '<div class="container">';
-        results += '<div class="row">';
-       
-        if (data.results.length > 0) {
-            results += '<h5 class="font-weight-bold">Results ' +  data.totalCount + '</h5>';
-        } else {
-            results += '<h5 class="font-weight-bold">No results found</h5>';
-        }
 
+        var countText = '<h5 class="font-weight-bold">No results found</h5>';
+        if (data.results.length > 0) {
+            countText = data.totalCount + ' ' + Drupal.t("Result(s)");
+        }
+        $('#smartSearchCount').html(countText);
         $.each(data.results, function (k, result) {
             console.log(result);
-            results += 
+            results +=
                     '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
-            
-            results +=  '<div class="col-block col-lg-10 discover-table-content-div">';
-                        //title
-                        results += '<div class="res-property">';
-                        results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
-                        results += '</div>';
-                        
-                        results += '<div class="res-property">';
-                        results += 'Match score: ' + result.matchWeight + '<br/>';
-                            if (result.matchProperty.length > 0) {
-                                results += 'Matches in:<div class="ml-5">';
-                                for (var j = 0; j < result.matchProperty.length; j++) {
-                                    if (result.matchHiglight && result.matchHiglight[j]) {
-                                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                                    } else {
-                                        results += shorten(result.matchProperty[j] || '') + '<br/>';
-                                    }
-                                }
-                            }
-                            results += getParents(result.parent || false, true, prefLang);
-                        results += '</div>';
-                        results += '<div class="res-property discover-content-toolbar">';
-                        results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">'+shorten(result.class[0])+'</p>';
-                        results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
-                       
-                        results += '</div>';
-                        results += '</div>';
 
-                        //avdate
+            results += '<div class="col-block col-lg-10 discover-table-content-div">';
+            //title
+            results += '<div class="res-property">';
+            results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+            results += '</div>';
 
-                        results += '</div>';
-            
-            
+            results += '<div class="res-property">';
+            results += 'Match score: ' + result.matchWeight + '<br/>';
+            if (result.matchProperty.length > 0) {
+                results += 'Matches in:<div class="ml-5">';
+                for (var j = 0; j < result.matchProperty.length; j++) {
+                    if (result.matchHiglight && result.matchHiglight[j]) {
+                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                    } else {
+                        results += shorten(result.matchProperty[j] || '') + '<br/>';
+                    }
+                }
+            }
+            results += getParents(result.parent || false, true, prefLang);
+            results += '</div>';
+            results += '<div class="res-property discover-content-toolbar">';
+            results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+            results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+
+            results += '</div>';
+            results += '</div>';
+
+            //avdate
+
+            results += '</div>';
+
+
             var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
             results += '<div class="col-lg-2">' +
                     '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl)  + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
                                 <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=300">\n\
                             </a></center>\n\
                             </div></div>'
-                           '</div>';
-       results += '</div></div></div>';
+            '</div>';
+            results += '</div></div>';
         });
         $('.main-content-row').html(results);
     }
@@ -614,39 +612,39 @@ jQuery(function ($) {
                 '</div>');
         search();
     }
-    
+
     function addPager() {
-        $('.main-content-row').html('<div id="block-mainpagesearchtools" class="col-block col-lg-9 col-md-8 col-sm-12">' +
-            '<div class="container">' +
+        $('.main-content-row').html('<div id="block-mainpagesearchtools" class="col-block col-lg-12">' +
+                '<div class="container">' +
                 '<div class="row">' +
-                    '<div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">' +
-                        '<div class="row">' +
-                            '<div class="col-lg-6">' +
-                                '<div class="form-outline">        ' +
-                                    '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>' +
-                                    '<input class="form-control  mr-sm-2 w-100" type="number" value="10" min="1" id="pageSize"/>' +
-                                '</div>' +
-                            '</div>' +
-                            '<div class="col-lg-6">' +
-                                '<div class="form-outline">' +
-                                    '<label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>' +
-                                    '<div class="input-group  mr-sm-2 w-100">' +
-                                        '<select class="form-control" id="page" onchange="search();">' +
-                                            '<option value="0" selected="selected">1</option>' +
-                                        '</select>' +
-                                        '<div class="input-group-append">' +
-                                            '<div class="input-group-text" id="pageCount">/ 1</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
+                '<div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">' +
+                '<div class="row">' +
+                '<div class="col-lg-6">' +
+                '<div class="form-outline">        ' +
+                '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>' +
+                '<input class="form-control  mr-sm-2 w-50" type="number" value="10" min="1" id="pageSize"/>' +
                 '</div>' +
-            '</div>' +
-        '</div> ');
+                '</div>' +
+                '<div class="col-lg-6">' +
+                '<div class="form-outline">' +
+                '<label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>' +
+                '<div class="input-group  mr-sm-2 w-50">' +
+                '<select class="form-control" id="page" onchange="search();">' +
+                '<option value="0" selected="selected">1</option>' +
+                '</select>' +
+                '<div class="input-group-append">' +
+                '<div class="input-group-text" id="pageCount">/ 1</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div> ');
     }
-    
+
     function formatDate(originalDate) {
         // Create a new Date object from the original date string
         var dateObject = new Date(originalDate);

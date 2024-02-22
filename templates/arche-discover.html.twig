@@ -54,21 +54,26 @@
             <div class="container-fluid basic-content-div discover-content-main">
 
                 <div class="row smartsearch-pager">
-                    <div id="block-mainpagesearchtools" class="col-block col-lg-9 col-md-8 col-sm-12">
+                    <div id="block-mainpagesearchtools" class="col-block col-lg-12">
                         <div class="container">
                             <div class="row">
                                 <div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">
                                     <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-outline">        
-                                                <label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>
-                                                <input class="form-control  mr-sm-2 w-100" type="number" value="10" min="1" id="smartPageSize"/>
+                                        <div class="col-lg-2">
+                                            <div class="form-outline">
+                                                <span id="smartSearchCount"></span>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-5">
+                                            <div class="form-outline">        
+                                                <label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>
+                                                <input class="form-control  mr-sm-2 w-50" type="number" value="10" min="1" id="smartPageSize"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-5">
                                             <div class="form-outline">
                                                 <label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>
-                                                <div class="input-group  mr-sm-2 w-100">
+                                                <div class="input-group  mr-sm-2 w-50">
                                                     <select class="form-control" id="smartPage" onchange="search();">
                                                         <option value="0" selected="selected">1</option>
                                                     </select>
