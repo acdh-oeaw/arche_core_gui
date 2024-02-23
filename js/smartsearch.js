@@ -12,9 +12,7 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
 
     $(document).ready(function () {
-        console.log("smartsearch JS ready");
-        console.log("First load: "+firstLoad);
-        //fetchRoot();
+        
         executeTheSearch();
     });
 
@@ -36,7 +34,6 @@ jQuery(function ($) {
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).attr("data-coordinates");
-        console.log(coordinates);
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -93,7 +90,7 @@ jQuery(function ($) {
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
         firstLoad = false;
-        
+
         executeTheSearch()
         e.preventDefault();
     });
@@ -146,7 +143,6 @@ jQuery(function ($) {
     function getSmartUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
         let instanceUrl = baseUrl.split("/browser")[0];
-        console.log(instanceUrl);
         var smartUrl = "https://arche-smartsearch.acdh.oeaw.ac.at";
 
         if (instanceUrl.indexOf('arche-dev.acdh-dev.oeaw.ac.at') !== -1) {
@@ -195,8 +191,6 @@ jQuery(function ($) {
             url: '/browser/api/smartSearchDateFacet',
             success: function (data) {
                 data = jQuery.parseJSON(data);
-                console.log("SUCCESSS fetchFacet!");
-                console.log(data);
                 $.each(data, function (k, v) {
                     var facet = '<div class="mt-2">' +
                             '<label class="mt-2 font-weight-bold" >' + v.label + '</label><br/>' +
@@ -241,13 +235,20 @@ jQuery(function ($) {
 
     $(document).ready(function () {
 
-        $("#block-smartsearchblock").on("change", "input", function () {
+        $("#block-smartsearchblock").on("change", "input", function (event) {
             executeTheSearch();
             selectedSearchValues.push(createSelectedValuesForForm($(this)));
             event.preventDefault();
         });
+        
+         $("#smartPage").on("change", function (event) {
+            executeTheSearch();
+            //selectedSearchValues.push(createSelectedValuesForForm($(this)));
+            event.preventDefault();
+        });
+        
 
-        $("#block-smartsearchblock").on("change", "select", function () {
+        $("#block-smartsearchblock").on("change", "select", function (event) {
             executeTheSearch();
             selectedSearchValues.push(createSelectedValuesForForm($(this)));
             event.preventDefault();
@@ -388,8 +389,8 @@ jQuery(function ($) {
                 searchIn: []
             }
         };
-        
-        
+
+
 
         $('input.facet:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
@@ -447,42 +448,29 @@ jQuery(function ($) {
         if (bbox !== '') {
             param.data.facets['bbox'] = bbox;
         }
-        
-        if(firstLoad) {
-            console.log(param);
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
-            
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
-            console.log(param.data.facets);
-        }
-        
-        var t0 = new Date();
-        console.log("param");
-        console.log(param);
 
+        if (firstLoad) {
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
+        }
+
+        var t0 = new Date();
         param.success = function (x) {
-            console.log("SUCCESSS fPARAM");
-                console.log(x);
             if (token === localToken) {
                 showResults(x, param.data, t0);
                 updateSearchGui(selectedSearchValues);
             }
         };
         param.fail = function (xhr, textStatus, errorThrown) {
-             console.log(" FAIL PARAM");
-                console.log(xhr);
             alert(xhr.responseText);
         };
 
         param.statusCode = function (response) {
-             console.log("statusCode");
-                console.log(response);
+            console.log("statusCode");
             console.log(response);
         };
 
         param.error = function (xhr, status, error) {
-            console.log("error___");
-                console.log(xhr);
             var err = eval(xhr.responseText);
             console.log(xhr);
             console.log(status);
@@ -504,17 +492,17 @@ jQuery(function ($) {
         search();
     }
 
-    function updateSmartPager(totalCount, pageSize){
+    function updateSmartPager(totalCount, pageSize) {
         var totalPages = 0;
-        if(totalCount > 0) {
+        if (totalCount > 0) {
             totalPages = Math.ceil(totalCount / pageSize);
             console.log("TOTAL PAGES: ");
             console.log(totalPages);
-        } 
+        }
     }
 
     function showResults(data, param, t0) {
-        
+
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
         updateSmartPager();
@@ -576,51 +564,54 @@ jQuery(function ($) {
             countText = data.totalCount + ' ' + Drupal.t("Result(s)");
         }
         $('#smartSearchCount').html(countText);
+        
         $.each(data.results, function (k, result) {
-            results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
+            if (result.title && result.id) {
+                results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
 
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
-                    //title
-                    results += '<div class="res-property">';
-                        results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
-                    results += '</div>';
+                //title
+                results += '<div class="res-property">';
+                results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                results += '</div>';
 
-                    results += '<div class="res-property">';
-                        if(result.description) {
-                            results += getLangValue(result.description, prefLang);   
-                        }
-           
-                        //results += 'Match score: ' + result.matchWeight + '<br/>';
-                        if (result.matchProperty.length > 0) {
-                            results += 'Matches in:<div class="ml-5">';
-                            for (var j = 0; j < result.matchProperty.length; j++) {
-                                if (result.matchHiglight && result.matchHiglight[j]) {
-                                    results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                                } else {
-                                    results += shorten(result.matchProperty[j] || '') + '<br/>';
-                                }
-                            }
-                        }
-                        results += getParents(result.parent || false, true, prefLang);
-                        results += '</div>';
-            if(!firstLoad) {
-                results += '</div>';    
-            }
-            results += '<div class="res-property discover-content-toolbar">';
-                        results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-                        results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
-                    results += '</div>';
-            results += '</div>';
+                results += '<div class="res-property">';
+                if (result.description) {
+                    results += getLangValue(result.description, prefLang);
+                }
 
-            var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
-            results += '<div class="col-lg-2">' +
-                    '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=300">\n\
+                //results += 'Match score: ' + result.matchWeight + '<br/>';
+                if (result.matchProperty.length > 0) {
+                    results += 'Matches in:<div class="ml-5">';
+                    for (var j = 0; j < result.matchProperty.length; j++) {
+                        if (result.matchHiglight && result.matchHiglight[j]) {
+                            results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                        } else {
+                            results += shorten(result.matchProperty[j] || '') + '<br/>';
+                        }
+                    }
+                }
+                results += getParents(result.parent || false, true, prefLang);
+                results += '</div>';
+                if (!firstLoad) {
+                    results += '</div>';
+                }
+                results += '<div class="res-property discover-content-toolbar">';
+                results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+                results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+                results += '</div>';
+                results += '</div>';
+
+                var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
+                results += '<div class="col-lg-2">' +
+                        '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
                             </a></center>\n\
                             </div></div>';
-            results += '</div>';
-            results += '</div></div>';
+                results += '</div>';
+                results += '</div></div>';
+            }
         });
         $('.main-content-row').html(results);
     }
@@ -639,7 +630,6 @@ jQuery(function ($) {
     }
 
     function executeTheSearch() {
-        console.log("First load - executeTheSearch: "+firstLoad);
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
