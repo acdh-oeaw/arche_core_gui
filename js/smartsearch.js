@@ -559,55 +559,49 @@ jQuery(function ($) {
         }
         $('#smartSearchCount').html(countText);
         $.each(data.results, function (k, result) {
-            console.log("RESULT: ");
-            console.log(result);
-            results +=
-                    '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
+            results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
 
-            results += '<div class="col-block col-lg-10 discover-table-content-div">';
-            //title
-            results += '<div class="res-property">';
-            results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
-            results += '</div>';
+                results += '<div class="col-block col-lg-10 discover-table-content-div">';
+                    //title
+                    results += '<div class="res-property">';
+                        results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                    results += '</div>';
 
-            results += '<div class="res-property">';
-            if(result.description) {
-                results += getLangValue(result.description, prefLang);   
-            }
+                    results += '<div class="res-property">';
+                        if(result.description) {
+                            results += getLangValue(result.description, prefLang);   
+                        }
            
-            //results += 'Match score: ' + result.matchWeight + '<br/>';
-            if (result.matchProperty.length > 0) {
-                results += 'Matches in:<div class="ml-5">';
-                for (var j = 0; j < result.matchProperty.length; j++) {
-                    if (result.matchHiglight && result.matchHiglight[j]) {
-                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                    } else {
-                        results += shorten(result.matchProperty[j] || '') + '<br/>';
-                    }
-                }
-            }
-            results += getParents(result.parent || false, true, prefLang);
-            results += '</div>';
-            results += '<div class="res-property discover-content-toolbar">';
-            results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-            results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
-
-            results += '</div>';
-            results += '</div>';
-
-            //avdate
+                        //results += 'Match score: ' + result.matchWeight + '<br/>';
+                        if (result.matchProperty.length > 0) {
+                            results += 'Matches in:<div class="ml-5">';
+                            for (var j = 0; j < result.matchProperty.length; j++) {
+                                if (result.matchHiglight && result.matchHiglight[j]) {
+                                    results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                                } else {
+                                    results += shorten(result.matchProperty[j] || '') + '<br/>';
+                                }
+                            }
+                        }
+                        results += getParents(result.parent || false, true, prefLang);
+                        results += '</div>';
             if(!firstLoad) {
                 results += '</div>';    
             }
-            
+            results += '<div class="res-property discover-content-toolbar">';
+                        results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+                        results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+                    results += '</div>';
+            results += '</div>';
+
             var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
             results += '<div class="col-lg-2">' +
                     '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
                                 <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + encodeURIComponent(resourceUrl) + '?width=300">\n\
                             </a></center>\n\
-                            </div></div>'
-            '</div>';
+                            </div></div>';
+            results += '</div>';
             results += '</div></div>';
         });
         $('.main-content-row').html(results);
