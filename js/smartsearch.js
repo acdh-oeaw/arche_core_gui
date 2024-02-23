@@ -4,14 +4,19 @@ jQuery(function ($) {
 
     var selectedSearchValues = [];
 
-
+    var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
-
 
     /********************** EVENTS *************************************/
 
-
     var archeBaseUrl = getInstanceUrl();
+
+    $(document).ready(function () {
+        console.log("smartsearch JS ready");
+        console.log("First load: "+firstLoad);
+        //fetchRoot();
+        executeTheSearch();
+    });
 
     // let metaValueField = $("input[name='metavalue']").val().replace(/[^a-z0-9öüäéáűúőóüöíß:./-\s]/gi, '').replace(/[\s]/g, '+');
     $(document).delegate("#sks-form-front", "submit", function (e) {
@@ -74,6 +79,7 @@ jQuery(function ($) {
     });
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
+        firstLoad = true;
         e.preventDefault();
         $('#block-smartsearchblock input[type="text"]').val('');
         $('#block-smartsearchblock input[type="search"]').val('');
@@ -86,6 +92,8 @@ jQuery(function ($) {
 
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
+        firstLoad = false;
+        
         executeTheSearch()
         e.preventDefault();
     });
@@ -379,6 +387,8 @@ jQuery(function ($) {
                 searchIn: []
             }
         };
+        
+        
 
         $('input.facet:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
@@ -436,8 +446,18 @@ jQuery(function ($) {
         if (bbox !== '') {
             param.data.facets['bbox'] = bbox;
         }
-
+        
+        if(firstLoad) {
+            console.log(param);
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
+            
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
+            console.log(param.data.facets);
+        }
+        
         var t0 = new Date();
+        console.log("param");
+        console.log(param);
 
         param.success = function (x) {
             if (token === localToken) {
@@ -476,8 +496,7 @@ jQuery(function ($) {
     }
 
     function showResults(data, param, t0) {
-        console.log("Show Results");
-        console.log(data);
+        
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
 
@@ -540,6 +559,7 @@ jQuery(function ($) {
         }
         $('#smartSearchCount').html(countText);
         $.each(data.results, function (k, result) {
+            console.log("RESULT: ");
             console.log(result);
             results +=
                     '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
@@ -551,7 +571,11 @@ jQuery(function ($) {
             results += '</div>';
 
             results += '<div class="res-property">';
-            results += 'Match score: ' + result.matchWeight + '<br/>';
+            if(result.description) {
+                results += getLangValue(result.description, prefLang);   
+            }
+           
+            //results += 'Match score: ' + result.matchWeight + '<br/>';
             if (result.matchProperty.length > 0) {
                 results += 'Matches in:<div class="ml-5">';
                 for (var j = 0; j < result.matchProperty.length; j++) {
@@ -572,10 +596,10 @@ jQuery(function ($) {
             results += '</div>';
 
             //avdate
-
-            results += '</div>';
-
-
+            if(!firstLoad) {
+                results += '</div>';    
+            }
+            
             var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
             results += '<div class="col-lg-2">' +
                     '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
@@ -603,6 +627,7 @@ jQuery(function ($) {
     }
 
     function executeTheSearch() {
+        console.log("First load - executeTheSearch: "+firstLoad);
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +

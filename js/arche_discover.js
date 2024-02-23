@@ -6,7 +6,7 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         console.log("discover JS");
-        fetchRoot();
+        //fetchRoot();
     });
 
 
