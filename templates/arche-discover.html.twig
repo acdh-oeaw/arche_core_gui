@@ -59,18 +59,13 @@
                             <div class="row">
                                 <div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">
                                     <div class="row">
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-2">
                                             <div class="form-outline">
                                                 <span id="smartSearchCount"></span>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3">
-                                            <div class="form-outline">        
-                                                <label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>
-                                                <input class="form-control  mr-sm-2 w-50" type="number" value="10" min="1" id="smartPageSize"/>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3">
+                                       
+                                        <div class="col-lg-6">
                                             <div class="discover-pager dataTables_paginate paging_simple_numbers">
                                                 <a href="#" class="paginate_button previous disabled"><</a>
                                                 <span class="search-paging-numbers">
@@ -79,7 +74,7 @@
                                                 <a href="#" class="paginate_button next disabled">></a>
 
                                                 
-                                                <div class="input-group  mr-sm-2 w-50">
+                                                <div class="input-group  mr-sm-2">
                                                     <select class="form-control" id="smartPage" onchange="search();">
                                                         <option value="0" selected="selected">1</option>
                                                     </select>
@@ -90,10 +85,14 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-lg-3">
+                                         <div class="col-lg-2">
                                             <div class="form-outline">        
-                                                <label class="mx-2 font-weight-bold" for="pageSize">{{ "Ordering"|trans }}:</label>
-                                                <div class="input-group  mr-sm-2 w-50">
+                                                <input class="form-control  mr-sm-2 w-100" type="number" value="10" min="1" id="smartPageSize"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <div class="form-outline">        
+                                                <div class="input-group  mr-sm-2 w-100">
                                                     <select class="form-control" id="smartOrder" onchange="search();">
                                                         <option value="titleasc" selected="selected">{{ "Title ASC"|trans }}</option>
                                                         <option value="titledesc" >{{ "Title DESC"|trans }}</option>

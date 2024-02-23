@@ -504,11 +504,20 @@ jQuery(function ($) {
         search();
     }
 
+    function updateSmartPager(totalCount, pageSize){
+        var totalPages = 0;
+        if(totalCount > 0) {
+            totalPages = Math.ceil(totalCount / pageSize);
+            console.log("TOTAL PAGES: ");
+            console.log(totalPages);
+        } 
+    }
+
     function showResults(data, param, t0) {
         
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
-
+        updateSmartPager();
         var pages = $('#smartPage').get(0);
         var pageCount = Math.ceil(data.totalCount / data.pageSize);
         $('#smartPageCount').text('/ ' + pageCount);
