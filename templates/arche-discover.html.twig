@@ -71,8 +71,14 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
-                                            <div class="form-outline">
-                                                <label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>
+                                            <div class="discover-pager dataTables_paginate paging_simple_numbers">
+                                                <a href="#" class="paginate_button previous disabled"><</a>
+                                                <span class="search-paging-numbers">
+                                                    <a href="#" class="paginate_button current">1</a>
+                                                </span>
+                                                <a href="#" class="paginate_button next disabled">></a>
+
+                                                
                                                 <div class="input-group  mr-sm-2 w-50">
                                                     <select class="form-control" id="smartPage" onchange="search();">
                                                         <option value="0" selected="selected">1</option>
@@ -82,15 +88,19 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="form-outline">        
                                                 <label class="mx-2 font-weight-bold" for="pageSize">{{ "Ordering"|trans }}:</label>
                                                 <div class="input-group  mr-sm-2 w-50">
                                                     <select class="form-control" id="smartOrder" onchange="search();">
-                                                        <option value="0" selected="selected">1</option>
+                                                        <option value="titleasc" selected="selected">{{ "Title ASC"|trans }}</option>
+                                                        <option value="titledesc" >{{ "Title DESC"|trans }}</option>
+                                                        <option value="avdateasc" >{{ "Available Date ASC"|trans }}</option>
+                                                        <option value="avdatedesc" >{{ "Available Date DESC"|trans }}</option>
                                                     </select>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>

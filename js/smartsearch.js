@@ -195,7 +195,8 @@ jQuery(function ($) {
             url: '/browser/api/smartSearchDateFacet',
             success: function (data) {
                 data = jQuery.parseJSON(data);
-
+                console.log("SUCCESSS fetchFacet!");
+                console.log(data);
                 $.each(data, function (k, v) {
                     var facet = '<div class="mt-2">' +
                             '<label class="mt-2 font-weight-bold" >' + v.label + '</label><br/>' +
@@ -372,7 +373,7 @@ jQuery(function ($) {
         if (!searchStr) {
             searchStr = $('#q').val();
         }
-        addPager();
+        //addPager();
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -460,20 +461,28 @@ jQuery(function ($) {
         console.log(param);
 
         param.success = function (x) {
+            console.log("SUCCESSS fPARAM");
+                console.log(x);
             if (token === localToken) {
                 showResults(x, param.data, t0);
                 updateSearchGui(selectedSearchValues);
             }
         };
         param.fail = function (xhr, textStatus, errorThrown) {
+             console.log(" FAIL PARAM");
+                console.log(xhr);
             alert(xhr.responseText);
         };
 
         param.statusCode = function (response) {
+             console.log("statusCode");
+                console.log(response);
             console.log(response);
         };
 
         param.error = function (xhr, status, error) {
+            console.log("error___");
+                console.log(xhr);
             var err = eval(xhr.responseText);
             console.log(xhr);
             console.log(status);
@@ -632,6 +641,8 @@ jQuery(function ($) {
         search();
     }
 
+
+    /** NOT IN USE **/
     function addPager() {
         $('.main-content-row').html('<div id="block-mainpagesearchtools" class="col-block col-lg-12">' +
                 '<div class="container">' +
@@ -640,7 +651,7 @@ jQuery(function ($) {
                 '<div class="row">' +
                 '<div class="col-lg-6">' +
                 '<div class="form-outline">        ' +
-                '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}:</label>' +
+                '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}::</label>' +
                 '<input class="form-control  mr-sm-2 w-50" type="number" value="10" min="1" id="pageSize"/>' +
                 '</div>' +
                 '</div>' +
