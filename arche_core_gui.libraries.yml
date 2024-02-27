@@ -61,3 +61,11 @@ discover-view:
         - core/drupal.form
         - core/drupalSettings
         - core/jquery              
+
+dissemination-threed:
+    version: 1.0
+    dependencies:
+        - core/drupal
+        - core/drupal.form
+        - core/drupalSettings
+        - core/jquery  

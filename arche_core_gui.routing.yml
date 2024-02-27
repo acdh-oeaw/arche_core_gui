@@ -23,7 +23,31 @@ arche_metadata_ajax:
   requirements:
     identifier: '^[^\?]*$'
     _permission: 'access content'
-    _access: 'TRUE'    
-
-        
+    _access: 'TRUE'  
     
+arche_dissemination_3d:
+  path: '/dissemination/3d/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\DisseminationController::threedView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'      
+    
+arche_dissemination_pdf:
+  path: '/dissemination/pdf/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\DisseminationController::pdfView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'   
+        
+arche_dissemination_iiif:
+  path: '/dissemination/iiif/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\DisseminationController::iiifView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'      
