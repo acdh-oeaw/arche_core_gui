@@ -84,6 +84,7 @@ jQuery(function ($) {
         $('#block-smartsearchblock textarea').val('');
         $('#block-smartsearchblock select').val('');
         // do a topcollection search
+        resetSearch();
 
     });
 
@@ -469,8 +470,9 @@ jQuery(function ($) {
         $('input.facet-min').val('');
         $('input.facet-max').val('');
         $('#preferredLang').val('');
+        actualPage = 1;
         spatialSelect.setData([{text: 'No filter', value: ''}]);
-        search();
+        search("", "", 1);
     }
 
     function createPager(totalPages, displayPages) {
@@ -532,7 +534,7 @@ jQuery(function ($) {
         if (data.results.length > 0) {
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
-            var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100" onclick="resetSearch();">Reset filters</button></div></div><br/>';
+            var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100 resetSmartSearch">Reset filters</button></div></div><br/>';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || {};
                 if (fd.values.length > 0) {
