@@ -1,0 +1,38 @@
+<div class="card metadata">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-8"><h6>{{ "View and Share"|trans }}</h6></div>
+            <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
+            <div class="col-2 text-end">
+                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#viewshareBody">
+                    <i class="fa fa-solid fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="viewshareBody" class="collapse show">
+        <div class="card-body meta-sidebar flex-column">
+            {% if data.isAudio() %}
+                /* include('/modules/contrib/arche-gui/templates/acdh-repo-ds-audio-player.html.twig', {'basic':  data , 'audio_url':  data.getRepoUrl() }) */
+                <a href="{{ data.getRepoBaseUrl }}dissemination/audio/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Audio Player"|trans }} <img src="{{ arche_dl_ico }}"/></a>   
+            {% endif%} 
+
+            {% if data.isPDF() %}
+                /* include('/modules/contrib/arche-gui/templates/acdh-repo-ds-pdf-viewer-modal.html.twig', {'basic':  data }) */
+                <a href="{{ data.getRepoBaseUrl }}dissemination/pdf/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "PDF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% endif%} 
+
+            {% if data.is3DObject() %}
+                <a href="{{ data.getRepoBaseUrl }}dissemination/3d/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "3D Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% endif%} 
+
+            {% if data.isIIIF() %}
+                <a href="{{ data.getRepoBaseUrl }}dissemination/iiif/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "IIF Viewer"|trans }} <img src="{{ arche_theme_img_url }}icons/pdf_ico.png"/></a>
+            {% endif%} 
+            
+            {% if data.getVCRData() %}
+                <a href="{{ data.getRepoBaseUrl }}dissemination/add-to-clarin/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Add to CLARIN Virtual Collection"|trans }} <img src="{{ arche_theme_img_url }}icons/plus_ico.png"/></a>
+            {% endif%} 
+        </div>
+    </div>
+</div>

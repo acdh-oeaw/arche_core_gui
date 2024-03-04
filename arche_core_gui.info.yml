@@ -1,0 +1,14 @@
+name: arche_core_gui
+type: module
+description: 'ACDH-CH ARCHE Plugin'
+core_version_requirement: ^10
+package: ACDHCH
+
+libraries:
+    - arche_core_gui/basic
+    - arche_core_gui/smart-search
+    - custom_jquery/metadata-class:
+      js:
+        js/metadataClass.js: {}
+'interface translation project': arche_core_gui
+'interface translation server pattern': modules/contrib/arche_core_gui/translations/arche_core_gui-%language.po    

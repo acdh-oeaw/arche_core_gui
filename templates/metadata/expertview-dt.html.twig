@@ -1,0 +1,75 @@
+{% set properties = {
+    'acdh:hasBinarySize': {
+        'type': 'binary'
+    },
+    'acdh:hasCreatedDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasCreatedStartDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasCreatedEndDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasAvailableDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasStartDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasEndDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasCoverageStartDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    },
+    'acdh:hasCoverageEndDate': {
+        'type': 'date',
+        'dateformat': 'y-MM-dd'
+    }
+}
+%} 
+
+<div class="basic-inside-content-div" id="expertDtDiv">
+    <table class="table " id='expertDT' cellspacing="0" width="100%" style="display: block;">
+        <h5>{{ "Expert view"|trans }}</h5>
+        <thead style="width: 100%; display: table;">
+            <tr>
+                <th width='40%'>Property</th>
+                <th width='60%'>Value(s)</th>
+            </tr>
+        </thead>
+        <tbody style="width: inherit; display: table; word-break: break-all;">
+            {% for key,value in data.getExpertTableData() %}
+                <tr>
+                    <td width='40%'>
+                        {% if extra.getData(key).description %}
+                            <div style='float:left;'>
+                                {{ key }}
+                            </div>
+                            <div style='float:right;'>
+                                <a  class="" data-toggle="tooltip" data-placement="right" data-html="true" title="{{ extra.getData(key).description}}">
+                                    <i class="material-icons" style='font-size:17px; color: #88DBDF;'>&#xE88F;</i>
+                                </a>
+                            </div>
+                        {% else %}
+                            {{ key }}
+                        {% endif %}
+                    </td>
+                    <td width='60%'>
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data':value, 'type':properties[key].type, 'dateformat': properties[key].dateformat, 'delimiter': properties[key].delimiter} ) }}
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

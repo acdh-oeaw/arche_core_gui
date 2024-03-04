@@ -1,0 +1,224 @@
+{% set moduleDir = "{{ arche_core_gui_path }}" %}
+<input type="hidden" value="{{ identifier }}" id="resId"/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-9 metadata-breadcrumb" >
+
+
+
+        </div>
+        <div class="col-lg-3 metadata-expert"  >
+            <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-9 metadata-main basic-content-div" >
+            <div class="loader-overlay metadata-main-loader">
+                <div class="loader"></div>
+            </div>
+
+            <div class="container-fluid" id="expertdt-container">
+                <div class="row expert-dt-div">
+                    <div class="col-lg-12">
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid" id="meta-content-container">
+                <!-- Available Date and type -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p >{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
+                    </div>
+                    <div class="col-lg-6 flex-gap-col flex-reverse" >
+                        {% if data.getAcdhType %}
+                            <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
+                            <a href='#' class="btn btn-toolbar-grey no-btn" >{{ data.getAcdhType() }}</a> 
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="row">
+                    <div class="col-lg-12 " id="ad-hasTitle">
+                        <hr style="color:#e1edf3;">
+                        <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
+                    </div>
+                </div>
+
+                <!-- CITE BLOCK -->
+                {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' or  data.getAcdhType()|lower == 'resource' or  data.getAcdhType()|lower == 'metadata' or  data.getAcdhType()|lower == 'publication' or  data.getAcdhType()|lower == 'project' %}
+
+                    <div class="row">
+                        <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />
+                        <div class="col-lg-12 ">
+                            <h5>{{ "Cite Resource"|trans  }}</h5>
+                            <div class="basic-inside-content-div">
+                                <div class="row mt-4">
+                                    <div class="col-lg-12" id="cite-div"> 
+                                        <div id="cite-loader">
+                                            <center><div class="loader-cite"></div></center>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 hidden"  id='cite-content-div'>
+                                            </div>
+                                            <figure class="highlight" id="cite-content-figure"></figure>
+                                            <div class="col-lg-12">
+                                                <div class="container">
+                                                    <div class="row justify-content-end">
+                                                        <div class="col-auto">
+                                                            <div class="cite-selector" id="cite-selector-div"></div>
+                                                            <div id="dropdown-container">
+                                                                <select id="cite-dropdown" class="btn btn-secondary dropdown-toggle">
+                                                                </select>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <a href="#" class="ms-auto btn btn-arche-blue" id="copyCite">{{ "Copy"|trans }}</a><br>
+                                                            <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endif%} 
+                <!-- SUMMARY -->
+
+                {% if data.getAcdhType()|lower != 'person'  %} 
+                    <div class="row" id="ad-summary">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "Summary"|trans }}</h5>
+                        </div>
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
+                    </div>
+                {% endif %}
+
+
+                <!-- Child elements -->
+                <div class="row basic-inside-content-div child-elements-div">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Child Resources"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 child-tree-div">
+                        <div id="child-tree" class="tree-view-container"></div>
+                    </div>
+
+                    <!--
+                    <div class="col-lg-12 ">
+                        <div class="basic-inside-content-div" id="childDtDiv">
+                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
+                                <div style="font-size: 14px; font-weight: bold;">
+                                    <label>{{ "Order the result by"|trans }}:</label>
+                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
+                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
+                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
+                                    </select>
+                                </div>
+                                <br>
+
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>-->
+                </div>
+
+                <div class="row basic-inside-content-div rcr-elements-div">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "See also Related Collections and Resources"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 rcr-table-div">
+                        <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
+                            <thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Property"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>  
+
+
+                <div class="row basic-inside-content-div publications-elements-div">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Publications"|trans }}</h5>
+                    </div>
+                    <div class="col-lg-12 publications-table-div">
+                        <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
+                            <thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Property"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>  
+
+            </div>
+        </div>
+
+
+
+        <div class="col-lg-3 metadata-right" >
+            <!-- 
+            <div class="loader-overlay metadata-right-loader">
+                <div class="loader"></div>
+            </div>
+            -->
+
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+
+            {% if data.getMapType()|lower == 'polygon'  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
+            {% elseif data.getMapType()|lower == 'multipolygon' %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getMultiPolygonFirstCoordinate() } ) }}
+            {% endif %}    
+
+            {% if data.getPid()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPid() } ) }}
+            {% endif %}    
+
+            {% if data.getLicenseData()|length > 0 %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'obj': data.getLicenseData() } ) }}
+            {% endif %}    
+
+            {% if data.getCreditsData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
+            {% endif %}     
+
+            {% if data.getSizeData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/size-card-block.html.twig', {'data': data.getSizeData() } ) }}
+            {% endif %}     
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+            {% endif %}
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+
+            {% if data.hasVersion  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+        </div>
+    </div>
+</div>
