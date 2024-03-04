@@ -10,9 +10,9 @@ jQuery(function ($) {
     /********************** EVENTS *************************************/
 
     var archeBaseUrl = getInstanceUrl();
-
+    var actualPage = 1;
     $(document).ready(function () {
-        
+        console.log('smartsearch');
         executeTheSearch();
     });
 
@@ -90,10 +90,16 @@ jQuery(function ($) {
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
         firstLoad = false;
-
         executeTheSearch()
         e.preventDefault();
     });
+    
+     $(document).delegate(".paginate_button", "click", function (e) {
+         actualPage = parseInt($(this).text());
+         console.log("new actual page: " + actualPage);
+         executeTheSearch(actualPage)
+        e.preventDefault();
+     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER*/
     var form = document.getElementById("smartsearch-left");
@@ -117,27 +123,6 @@ jQuery(function ($) {
         //    popupExtSearch.hide();
         //}
     });
-
-    if (window.location.href.indexOf("browser/search/") >= 0) {
-        let searchParams = new URLSearchParams(window.location.search);
-        if (searchParams.has('q')) {
-            $('.main-content-row').html('<div class="container">' +
-                    '<div class="row">' +
-                    '<div class="col-12 mt-5">' +
-                    '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
-                    ' </div>' +
-                    '</div>');
-            let param = searchParams.get('q');
-            $('#q').val(param);
-            //we have to wait 2 secs to download all facets
-            setTimeout(
-                    function ()
-                    {
-                        search();
-                    }, 2000);
-
-        }
-    }
 
 
     function getSmartUrl() {
@@ -240,13 +225,6 @@ jQuery(function ($) {
             selectedSearchValues.push(createSelectedValuesForForm($(this)));
             event.preventDefault();
         });
-        
-         $("#smartPage").on("change", function (event) {
-            executeTheSearch();
-            //selectedSearchValues.push(createSelectedValuesForForm($(this)));
-            event.preventDefault();
-        });
-        
 
         $("#block-smartsearchblock").on("change", "select", function (event) {
             executeTheSearch();
@@ -367,13 +345,18 @@ jQuery(function ($) {
     }
     var token = 1;
 
-    function search(searchStr = "", coordinates = "") {
+    function search(searchStr = "", coordinates = "", actualPage = 0) {
 
         token++;
         var localToken = token;
         if (!searchStr) {
             searchStr = $('#q').val();
         }
+        var page = $('a.paginate_button.current').text();
+        if(page && page !== actualPage) {
+            actualPage = page;
+        }
+        
         //addPager();
         var param = {
             url: '/browser/api/smartsearch',
@@ -383,14 +366,12 @@ jQuery(function ($) {
                 preferredLang: $('#preferredLang').val(),
                 includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
                 linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
-                page: $('#smartPage').val(),
+                page: actualPage,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: []
             }
         };
-
-
 
         $('input.facet:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
@@ -492,12 +473,40 @@ jQuery(function ($) {
         search();
     }
 
-    function updateSmartPager(totalCount, pageSize) {
-        var totalPages = 0;
-        if (totalCount > 0) {
-            totalPages = Math.ceil(totalCount / pageSize);
-            console.log("TOTAL PAGES: ");
-            console.log(totalPages);
+    function createPager(totalPages, displayPages) {
+        var startPage = actualPage - Math.floor(displayPages / 2);
+        startPage = Math.max(startPage, 1);
+        var endPage = startPage + displayPages - 1;
+        endPage = Math.min(endPage, totalPages);
+        
+        $('#smartsearch-pager').empty();
+
+        if (actualPage > 1) {
+            $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
+        }
+        
+        $('#smartsearch-pager').append('<span class="search-paging-numbers" >');
+        // Add page numbers
+        for (var i = startPage; i <= endPage; i++) {
+             console.log("i: " + i);
+        console.log("currentPage: " + actualPage);
+            var current = "";
+            if (i === parseInt(actualPage)) {
+                console.log("CURRENT PAGE");
+                current = "current"; 
+            }
+            $('#smartsearch-pager').append('<a href="#"  class="paginate_button '+current+'" data-page="' + i + '">' + i + '</a>');
+        }
+         $('#smartsearch-pager').append('</span>');
+        // Add "..." if there are more pages
+        if (endPage < totalPages) {
+            $('#smartsearch-pager').append('<span>...</span>');
+            $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
+        }
+
+        // Add "Next" button
+        if (actualPage < totalPages) {
+            $('#smartsearch-pager').append('<a href="#"  class="paginate_button next" data-page="' + (actualPage + 1) + '">></a>');
         }
     }
 
@@ -505,16 +514,19 @@ jQuery(function ($) {
 
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
-        updateSmartPager();
-        var pages = $('#smartPage').get(0);
-        var pageCount = Math.ceil(data.totalCount / data.pageSize);
-        $('#smartPageCount').text('/ ' + pageCount);
-        pages.options.length = 0;
-        for (var i = 0; i < pageCount; i++) {
-            pages.add(new Option(i + 1, i));
+        
+        console.log(data);
+        console.log("actualPage" + actualPage);
+        var pageSize = data.pageSize;
+        var totalPages = Math.floor(data.totalCount / pageSize);
+       
+        var currentPage = $('a.paginate_button.current').text();
+        if(!currentPage && data.page === 0) {
+            currentPage = 1;
+        } else {
+            currentPage = data.page;
         }
-        $('#smartPage').val(data.page);
-
+        createPager(totalPages, pageSize, currentPage);
 
         $('div.dateValues').text('');
         if (data.results.length > 0) {
@@ -564,7 +576,7 @@ jQuery(function ($) {
             countText = data.totalCount + ' ' + Drupal.t("Result(s)");
         }
         $('#smartSearchCount').html(countText);
-        
+
         $.each(data.results, function (k, result) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
@@ -575,7 +587,7 @@ jQuery(function ($) {
                 results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
                 results += '</div>';
 
-                results += '<div class="res-property">';
+                results += '<div class="res-property sm-description">';
                 if (result.description) {
                     results += getLangValue(result.description, prefLang);
                 }
@@ -606,7 +618,7 @@ jQuery(function ($) {
                 results += '<div class="col-lg-2">' +
                         '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
+                                <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
                             </a></center>\n\
                             </div></div>';
                 results += '</div>';
@@ -629,7 +641,7 @@ jQuery(function ($) {
         return ret;
     }
 
-    function executeTheSearch() {
+    function executeTheSearch(actualPage) {
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -637,7 +649,7 @@ jQuery(function ($) {
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
-        search();
+        search("","",actualPage);
     }
 
 
