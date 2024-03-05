@@ -7,3 +7,11 @@ services:
         class: Drupal\arche_core_gui\TwigExtension\ComposerTwigExtension
         tags:
             - { name: twig.extension }         
+    arche_core_gui_session.twig_extension:
+        class: Drupal\arche_core_gui\TwigExtension\SessionTwigExtension
+        tags:
+            - { name: twig.extension } 
+    arche_core_gui_site_language.twig_extension:
+        class: Drupal\arche_core_gui\TwigExtension\SiteLanguageTwigExtension
+        tags:
+            - { name: twig.extension }             

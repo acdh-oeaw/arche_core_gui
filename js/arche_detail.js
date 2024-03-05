@@ -53,14 +53,15 @@ jQuery(function ($) {
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
-        $('#pidValue').attr('href');
-
+        var text = $('#pidValue').text();
+        console.log($('#pidValue').text());
+        var tempInput = $("<input>");
+        tempInput.val($('#pidValue').text());
+        $("body").append(tempInput);
+        tempInput.select();
         // Copy the selected text to the clipboard
         document.execCommand('copy');
-
-        // Deselect the input field
-        $('#pidValue').blur();
-
+        tempInput.remove();
         // Display a feedback message (optional)
         alert('Link copied to clipboard!');
         e.preventDefault();
@@ -259,12 +260,12 @@ jQuery(function ($) {
                     //$(".loader-versions-div").hide();
                     console.log('error');
                     console.log(error);
-                    //$('.publications-elements-div').hide();
+                    $('.publications-elements-div').hide();
                 }
             },
             'columns': [
                 {data: 'customCitation', render: function (data, type, row, meta) {
-                        if(row.customCitation) {
+                        if (row.customCitation) {
                             return row.customCitation;
                         }
                         return "";
@@ -319,7 +320,7 @@ jQuery(function ($) {
             },
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
-                        return '<a href="'+row.id+'">'+row.title+'</a>';
+                        return '<a href="' + row.id + '">' + row.title + '</a>';
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
                         var text = '<div class="col-block col-lg-12 child-table-content-div">';

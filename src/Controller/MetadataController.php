@@ -54,13 +54,13 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     }
 
     public function detailView(string $identifier) {
-
+        
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, "en");
         $content = $data->getContent();
 
         $return = [
-                '#theme' => 'arche-detail-empty'
+            '#theme' => 'arche-detail-empty'
         ];
          
         if (!empty($content) && $content !== '["There is no resource"]') {
@@ -86,7 +86,12 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     }
 
     public function discoverView() {
-
+error_log("Discover view: ");
+error_log("GEt: ");
+error_log(print_r($_GET, true));
+error_log("POST: ");
+error_log(print_r($_POST, true));
+                
         $return = [
             '#theme' => 'arche-discover',
             '#cache' => ['max-age' => 0],

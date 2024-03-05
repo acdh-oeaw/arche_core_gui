@@ -49,9 +49,10 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
          'arche-discover' => [
             'variables' => ['data' => NULL, 'identifier' => NULL],
         ],
-         'dissemination-3d-viewer' => [
+        'dissemination-3d-viewer' => [
             'variables' => ['data' => NULL],
-        ]
+        ],
+        
     ];
 }
 
