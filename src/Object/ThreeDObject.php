@@ -103,6 +103,7 @@ class ThreeDObject
     private function createFileTmpDir(string $filename)
     {
         $this->checkTmpDirExists();
+        
         $this->setTmpDir($this->tmpDir . "/tmp_files/" . str_replace(".", "_", $filename) . "/");
         if (!file_exists($this->tmpDir.$filename)) {
             if (!mkdir($this->tmpDir, 0777)) {

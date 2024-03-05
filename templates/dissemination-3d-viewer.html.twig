@@ -18,7 +18,7 @@
 <script type="text/javascript" src="/browser/modules/contrib/arche_core_gui/js/3d/init.js"></script>
 
 <div id="3dhop" class="tdhop" onmousedown="if (event.preventDefault)
-                event.preventDefault()"><div id="tdhlg"></div>
+            event.preventDefault()"><div id="tdhlg"></div>
     <div id="toolbar">
         <img id="home"     title="Home"                  src="/browser/modules/contrib/arche_core_gui/images/viewer/home.png"   /><br/>
         <img id="zoomin"   title="Zoom In"               src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomin.png" /><br/>
@@ -34,12 +34,18 @@
 <script type="text/javascript">
 
     var presenter = null;
-    // "MS_Name": {url: '{{  ObjectUrl|raw  }}'}
+    function handleError(message, source, lineno, colno, error) {
+        console.log("handlerror");
+        console.log(error);
+        console.log(message);
+        $('#3dhop').html('<div>' + message + '</div>');
+    }
+
     function setup3dhop() {
         presenter = new Presenter("draw-canvas");
         presenter.setScene({
             meshes: {
-                "MS_Name": {url: 'https://arche-design.acdh-dev.oeaw.ac.at/browser/sites/default/files/tmp/treeCookieCutter.ply'}
+                "MS_Name": {url: '{{  data|raw  }}'}
             },
             modelInstances: {
                 "Model1": {mesh: "MS_Name"}
@@ -65,5 +71,8 @@
         init3dhop();
         setup3dhop();
         moveToolbar(20, 20);
+        window.onerror = handleError;
+
+        
     });
 </script>

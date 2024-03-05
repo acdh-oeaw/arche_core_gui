@@ -1,7 +1,7 @@
 /*
 3DHOP - 3D Heritage Online Presenter
-Copyright (c) 2014-2016, Visual Computing Lab, ISTI - CNR
-All rights reserved.    
+Copyright (c) 2014-2020, Visual Computing Lab, ISTI - CNR
+All rights reserved.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -680,6 +680,11 @@ var importPly = (function(){
 					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_indices[0], littleEndian); offset += sui32;");
 					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_indices[1], littleEndian); offset += sui32;");
 					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_indices[2], littleEndian); offset += sui32;");
+				}
+				else if (props["vertex_index"]) {
+					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_index[0], littleEndian); offset += sui32;");
+					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_index[1], littleEndian); offset += sui32;");
+					faceLines.push(tabStr + "view.setUint32(offset, element.vertex_index[2], littleEndian); offset += sui32;");
 				}
 				else {
 					facesCount = 0;
