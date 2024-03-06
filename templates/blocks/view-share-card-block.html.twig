@@ -13,7 +13,6 @@
     <div id="viewshareBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
             {% if data.isAudio() %}
-                /* include('/modules/contrib/arche-gui/templates/acdh-repo-ds-audio-player.html.twig', {'basic':  data , 'audio_url':  data.getRepoUrl() }) */
                 <a href="{{ data.getRepoBaseUrl }}dissemination/audio/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Audio Player"|trans }} <img src="{{ arche_dl_ico }}"/></a>   
             {% endif%} 
 

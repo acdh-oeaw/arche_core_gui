@@ -51,3 +51,12 @@ arche_dissemination_iiif:
     identifier: '^[^\?]*$'
     _permission: 'access content'
     _access: 'TRUE'      
+    
+arche_dissemination_audio:
+  path: '/dissemination/audio/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\DisseminationController::audioView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'          

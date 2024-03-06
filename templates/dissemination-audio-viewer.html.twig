@@ -1,0 +1,40 @@
+<script src="/browser/modules/contrib/arche_core_gui/js/audio/wavesurfer.6.4.0.js"></script>
+
+<div class="container">
+    <div class="row">
+        <div class="arche-audio-player-container">
+            <div id="waveform"></div>
+            <div class="controls" style="text-align: center;">
+                <button class="btn btn-primary" data-action="play" id="audioPlayerBtn">
+                    <i class="glyphicon glyphicon-play"></i>
+                    Play
+                    /
+                    <i class="glyphicon glyphicon-pause"></i>
+                    Pause
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+data:
+{{ data }}
+
+
+
+<script type="text/javascript">
+    $(document).delegate("#audioPlayerBtn", "click", function (e) {
+        console.log("clicked");
+        $('#waveform').empty();
+        var player = WaveSurfer.create({container: '#waveform'});
+        player.load('{{ data }}');
+        player.on('ready', function () {
+            console.log("playing");
+            player.play();
+        });
+        // toggle play button
+        document
+                .querySelector('[data-action="play"]')
+                .addEventListener('click', player.playPause.bind(player));
+
+    });
+</script>

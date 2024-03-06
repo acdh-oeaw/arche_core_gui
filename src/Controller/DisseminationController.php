@@ -84,6 +84,17 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         ];
     }
     
+    public function audioView(string $identifier) {
+        
+        return $return = [
+            '#theme' => 'dissemination-audio-viewer',
+            '#data' => $this->repoDb->getBaseUrl().$identifier,
+            '#cache' => ['max-age' => 0],
+            
+        ];
+    }
+    
+    
     /**
      * Get the available diss services for a given resource
      * @param string $id
