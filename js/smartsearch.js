@@ -12,7 +12,6 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     $(document).ready(function () {
-        console.log('smartsearch');
         executeTheSearch();
     });
 
@@ -364,7 +363,7 @@ jQuery(function ($) {
             method: 'get',
             data: {
                 q: searchStr,
-                preferredLang: $('#preferredLang').val(),
+                preferredLang: drupalSettings.arche_core_gui.gui_lang,
                 includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
                 linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
                 page: actualPage,
@@ -462,6 +461,8 @@ jQuery(function ($) {
         if (coordinates) {
             param.data.facets['bbox'] = coordinates;
         }
+        console.log("SMART SEARCH PARAMS: ");
+        console.log(param);
         $.ajax(param);
     }
 

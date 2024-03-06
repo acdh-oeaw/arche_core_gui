@@ -2,10 +2,7 @@ jQuery(function ($) {
 
     "use strict";
 
-
-
     $(document).ready(function () {
-        console.log("discover JS");
         //fetchRoot();
     });
 
@@ -15,7 +12,7 @@ jQuery(function ($) {
         var page = 0;
         var order = 'titledesc';
         var timeout = 10000; // in milliseconds
-        console.log("root url: ");
+        
         var rootTable = $('#rootDT').DataTable({
             "paging": true,
             "searching": false,
@@ -40,8 +37,6 @@ jQuery(function ($) {
                 //'url': "https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/child/214536/en",
                 complete: function (response) {
                     if (response === undefined) {
-                        console.log('response error');
-                        console.log(error);
                         $('.child-elements-div').hide();
                         return;
                     }
@@ -50,8 +45,6 @@ jQuery(function ($) {
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    console.log('error');
-                    console.log(error);
                     $('.child-elements-div').hide();
                 }
             },

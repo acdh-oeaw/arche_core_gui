@@ -17,7 +17,6 @@ jQuery(function ($) {
         }
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
-        console.log(resId);
         checkDetailCardEvents();
 
         //call basic data
@@ -54,7 +53,6 @@ jQuery(function ($) {
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
         var text = $('#pidValue').text();
-        console.log($('#pidValue').text());
         var tempInput = $("<input>");
         tempInput.val($('#pidValue').text());
         $("body").append(tempInput);
@@ -477,7 +475,6 @@ jQuery(function ($) {
     //expertDtDiv
 
     $(document).delegate("#expertViewBtn", "click", function (e) {
-        console.log('clicked expert');
         if ($(this).hasClass('basic')) {
             $('#meta-content-container').hide();
             $('#expertdt-container').fadeIn(200);
@@ -503,13 +500,11 @@ jQuery(function ($) {
 
 
             var id = url;
-            console.log(id);
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
 
             expertTable.ajax.reload();
             fetchChildTree();
-            console.log(id);
             resId = id;
             //fetchMetadata();
             reloadDetail(id);
@@ -530,14 +525,10 @@ jQuery(function ($) {
     //update the UI elements
 
     function showUI() {
-        console.log("Update UI:");
-        console.log(resObj);
-        console.log("avdate: ");
+        
         showAvailableDate();
-        console.log("type: ");
         showType();
         //showRightSide();
-        console.log("title: ");
         showTitle();
         //showCite();
         //showSummary();
@@ -584,8 +575,6 @@ jQuery(function ($) {
     }
 
     function showAvailableDate() {
-        console.log("showAvailableDate");
-        console.log(resObj.getAvailableDate());
         if (resObj.getAvailableDate()) {
             var text = $('#av-hasAvailableDate').text();
             $('#av-hasAvailableDate').html(text + resObj.getAvailableDate());
@@ -600,12 +589,8 @@ jQuery(function ($) {
             url: '/browser/api/expert/' + resId + '/en',
             type: "GET",
             success: function (data, status) {
-                console.log("van data");
-                console.log(data);
-                console.log("Res obj: ");
                 try {
                     resObj = new $.fn.MetadataClass(data);
-
                     showUI();
                 } catch (error) {
                     // Code to handle the exception
@@ -629,16 +614,10 @@ jQuery(function ($) {
     function checkDetailCardEvents() {
         $(".mdr-card-collapse-btn").click(function () {
             var dataValue = $(this).data('bs-target');
-
             var targetLink = $('a[data-bs-target="' + dataValue + '"]');
-
-            console.log(dataValue);
-            console.log(targetLink.html());
             if (targetLink.html() === '<i class="fa fa-solid fa-chevron-up"></i>') {
-                console.log("now up change to down");
                 targetLink.html('<i class="fa fa-solid fa-chevron-down"></i>');
             } else {
-                console.log("now change to up");
                 targetLink.html('<i class="fa fa-solid fa-chevron-up"></i>');
             }
         });

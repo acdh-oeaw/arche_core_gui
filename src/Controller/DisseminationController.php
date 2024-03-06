@@ -34,7 +34,6 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         $obj = new \Drupal\arche_core_gui\Object\ThreeDObject();
         $fileObj = $obj->downloadFile($identifier, $this->tmpDir);
         
-        error_log($fileObj['result']);
         return $return = [
             '#theme' => 'dissemination-3d-viewer',
             '#data' => $fileObj['result'],
