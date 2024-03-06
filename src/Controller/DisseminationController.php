@@ -56,6 +56,16 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
     
     public function pdfView(string $identifier) {
         
+        return $return = [
+            '#theme' => 'dissemination-pdf-viewer',
+            '#data' => $this->repoDb->getBaseUrl().$identifier,
+            '#cache' => ['max-age' => 0],
+            '#attached' => [
+                'library' => [
+                    'arche_core_gui/dissemination-pdf',
+                ]
+            ]
+        ];
     }
     
 }

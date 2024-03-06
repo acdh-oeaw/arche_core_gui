@@ -52,6 +52,9 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
         'dissemination-3d-viewer' => [
             'variables' => ['data' => NULL],
         ],
+        'dissemination-pdf-viewer' => [
+            'variables' => ['data' => NULL, 'basic' => NULL],
+        ],
         
     ];
 }

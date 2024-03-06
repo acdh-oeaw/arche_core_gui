@@ -69,3 +69,23 @@ dissemination-threed:
         - core/drupal.form
         - core/drupalSettings
         - core/jquery  
+        
+dissemination-pdf:  
+    header: true
+    version: 1.0.2
+    css:
+        base:
+            css/pdf_viewer/pdfjs-viewer.css: {}
+            css/pdf_viewer/pdftoolbar.css: {}
+            css/pdf_viewer/arche-pdf-viewer.css: {}
+            https://fonts.googleapis.com/icon?family=Material+Icons: { type: external }
+            https://fonts.googleapis.com/icon?family=Material+Icons+Outlined: { type: external }
+    js:
+        https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js: { type: external, minified: true }
+        https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js: { type: external, minified: true }
+        js/pdf_viewer/pdfjs-viewer.min.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery
+        - core/drupalSettings        
+        
