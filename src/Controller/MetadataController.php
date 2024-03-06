@@ -69,7 +69,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
 
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
-
+            
             $return = [
                 '#theme' => 'arche-detail',
                 '#identifier' => $identifier,

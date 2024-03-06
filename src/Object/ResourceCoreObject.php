@@ -563,10 +563,13 @@ class ResourceCoreObject {
         if (!$this->isPublic()) {
             return false;
         }
-        return false;
+        
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (isset($category['value']) && strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image")) {
+                if (isset($category['value']) && 
+                        (strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image") ||
+                        strtolower($category['value']) === strtolower("image")
+                        )) {
                     $cat = true;
                 }
             }
@@ -644,7 +647,7 @@ class ResourceCoreObject {
     public function isPublic(): bool {
         $result = false;
         $access = $this->getAccessRestriction();
-
+       
         if (
                 count((array) $access) > 0 &&
                 isset($access['vocabsid']) &&
