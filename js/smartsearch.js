@@ -12,8 +12,19 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     $(document).ready(function () {
+
+        //check the url has param
+        var lastSegment = getLastUrlSegment();
+        console.log('Last URL segment:', lastSegment);
+
         executeTheSearch();
     });
+
+    function getLastUrlSegment() {
+        var path = window.location.pathname;
+        var segments = path.split('/');
+        return segments.pop() || segments.pop(); // Remove any trailing slash
+    }
 
     // let metaValueField = $("input[name='metavalue']").val().replace(/[^a-z0-9öüäéáűúőóüöíß:./-\s]/gi, '').replace(/[\s]/g, '+');
     $(document).delegate("#sks-form-front", "submit", function (e) {
@@ -93,16 +104,16 @@ jQuery(function ($) {
         executeTheSearch()
         e.preventDefault();
     });
-    
-     $(document).delegate(".paginate_button", "click", function (e) {
-         actualPage = parseInt($(this).text());
-         console.log("new actual page: " + actualPage);
-         executeTheSearch(actualPage)
+
+    $(document).delegate(".paginate_button", "click", function (e) {
+        actualPage = parseInt($(this).text());
+        console.log("new actual page: " + actualPage);
+        executeTheSearch(actualPage)
         e.preventDefault();
-     });
+    });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER*/
-    var form = document.getElementById("smartsearch-left");
+    var form = document.getElementById("hero-smart-search-form");
     if (form) {
         form.addEventListener("keydown", function (event) {
             // Check if the pressed key is "Enter" (key code 13)
@@ -353,10 +364,10 @@ jQuery(function ($) {
             searchStr = $('#q').val();
         }
         var page = $('a.paginate_button.current').text();
-        if(page && page !== actualPage) {
+        if (page && page !== actualPage) {
             actualPage = page;
         }
-        
+
         //addPager();
         var param = {
             url: '/browser/api/smartsearch',
@@ -476,36 +487,49 @@ jQuery(function ($) {
         search("", "", 1);
     }
 
-    function createPager(totalPages, displayPages) {
-        var startPage = actualPage - Math.floor(displayPages / 2);
-        startPage = Math.max(startPage, 1);
-        var endPage = startPage + displayPages - 1;
-        endPage = Math.min(endPage, totalPages);
-        
+    function createPager(totalPages, resultsPerPage) {
+       
         $('#smartsearch-pager').empty();
 
-        if (actualPage > 1) {
+        
+        // Add page numbers
+        console.log("ENDPAGE: " + endPage);
+        console.log("STARTPAGE: " + startPage);
+        console.log("actualPage: " + actualPage);
+        console.log("totalPages: " + totalPages);
+        
+        
+        
+        var startPage = Math.max(actualPage - 2, 1);
+        var endPage = Math.min(startPage + 5, totalPages);
+
+if (actualPage > 1) {
             $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
         }
-        
+
         $('#smartsearch-pager').append('<span class="search-paging-numbers" >');
-        // Add page numbers
         for (var i = startPage; i <= endPage; i++) {
-             console.log("i: " + i);
-        console.log("currentPage: " + actualPage);
             var current = "";
             if (i === parseInt(actualPage)) {
-                console.log("CURRENT PAGE");
-                current = "current"; 
+                current = "current";
             }
-            $('#smartsearch-pager').append('<a href="#"  class="paginate_button '+current+'" data-page="' + i + '">' + i + '</a>');
+            
+            $('#smartsearch-pager').append('<a href="#"  class="paginate_button ' + current + '" data-page="' + i + '">' + i + '</a>');
+            
         }
-         $('#smartsearch-pager').append('</span>');
+        if(totalPages > endPage) {
+                $('#smartsearch-pager').append('<span>...</span>');
+                $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
+        } 
+        
+        $('#smartsearch-pager').append('</span>');
+        
         // Add "..." if there are more pages
-        if (endPage < totalPages) {
+        /*
+        if (endPage > 6) {
             $('#smartsearch-pager').append('<span>...</span>');
             $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
-        }
+        }*/
 
         // Add "Next" button
         if (actualPage < totalPages) {
@@ -517,14 +541,14 @@ jQuery(function ($) {
 
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
-        
+
         console.log(data);
         console.log("actualPage" + actualPage);
         var pageSize = data.pageSize;
         var totalPages = Math.floor(data.totalCount / pageSize);
-       
+
         var currentPage = $('a.paginate_button.current').text();
-        if(!currentPage && data.page === 0) {
+        if (!currentPage && data.page === 0) {
             currentPage = 1;
         } else {
             currentPage = data.page;
@@ -652,7 +676,7 @@ jQuery(function ($) {
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
-        search("","",actualPage);
+        search("", "", actualPage);
     }
 
 

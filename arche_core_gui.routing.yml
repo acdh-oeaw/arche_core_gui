@@ -1,10 +1,15 @@
 arche_discover:
-  path: '/discover'
+  path: '/discover/{str}'
   defaults:
     _controller: '\Drupal\arche_core_gui\Controller\MetadataController::discoverView'
+    str: null
   requirements:
     _permission: 'access content'
     _access: 'TRUE'
+  options:
+    parameters:
+      param:
+        type: 'string'
 
 arche_metadata:
   path: '/metadata/{identifier}'
