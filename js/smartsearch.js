@@ -449,6 +449,7 @@ jQuery(function ($) {
         }
 
         if (firstLoad) {
+            prama.data.linkNamedEntities = 0;
             param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
             param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
         }
