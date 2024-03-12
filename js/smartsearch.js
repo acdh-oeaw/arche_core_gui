@@ -44,7 +44,7 @@ jQuery(function ($) {
             searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
             var count = $("#searchIn > div[id^='in']").length;
             console.log(count);
-            $('#searchInCount').html(count + Drupal.t('Search In Result(s)')) ;
+            $('#searchInCount').html(count + ' '+Drupal.t('Search In Result(s)')) ;
     });
     
     $(document).delegate("#searchInToggleBtn", "click", function (e) {
