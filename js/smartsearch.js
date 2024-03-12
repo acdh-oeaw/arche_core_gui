@@ -12,9 +12,9 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     $(document).ready(function () {
-        
+
         var currentUrl = window.location.href;
-        
+
         // Check if the URL contains the desired substring
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
             var lastParam = getLastUrlSegment();
@@ -40,7 +40,22 @@ jQuery(function ($) {
         window.location.href = '/browser/search/?q=' + searchParam;
     });
 
-
+    $(document).delegate(".searchInBtn", "click", function (e) {
+            searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
+            var count = $("#searchIn > div[id^='in']").length;
+            console.log(count);
+            $('#searchInCount').html(count + Drupal.t('Search In Result(s)')) ;
+    });
+    
+    $(document).delegate("#searchInToggleBtn", "click", function (e) {
+        $("#searchIn").toggle(); 
+        var areChildDivsVisible = $("#searchIn > div").is(":visible");
+        if (areChildDivsVisible) {
+                $("#searchInToggleBtn").text(Drupal.t("Hide Search In"));
+            } else {
+                $("#searchInToggleBtn").text(Drupal.t("Show Search In"));
+            }
+    });
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).attr("data-coordinates");
@@ -498,18 +513,8 @@ jQuery(function ($) {
     function createPager(totalPages, resultsPerPage) {
 
         $('#smartsearch-pager').empty();
-
-
-        // Add page numbers
-        console.log("ENDPAGE: " + endPage);
-        console.log("STARTPAGE: " + startPage);
-        console.log("actualPage: " + actualPage);
-        console.log("totalPages: " + totalPages);
-
-
-
         var startPage = Math.max(actualPage - 2, 1);
-        var endPage = Math.min(startPage + 5, totalPages);
+        var endPage = Math.min(startPage + 3, totalPages);
 
         if (actualPage > 1) {
             $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
@@ -619,7 +624,7 @@ jQuery(function ($) {
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
                 //title
                 results += '<div class="res-property">';
-                results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' +getLangValue(result.title, prefLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
                 results += '</div>';
 
                 results += '<div class="res-property sm-description">';
@@ -661,6 +666,24 @@ jQuery(function ($) {
             }
         });
         $('.main-content-row').html(results);
+    }
+
+    function searchInAdd(id, title) {
+        console.log("searchaddin:::::::::::::::");
+        console.log(id);
+        console.log(title);
+        if ($('#in' + id).length === 1) {
+            return;
+        }
+        var element = $('#res' + id).clone();
+        console.log(element);
+        //element.find('div:first-child').remove();
+        //element.find('div:last-child').children('div').remove();
+        var btn = element.find('button');
+        btn.text('-');
+        btn.attr('onclick', '$(this).parent().parent().parent().remove();');
+        element.attr('id', 'in' + id);
+        $('#searchIn').append(element);
     }
 
     function getParents(parent, top, prefLang) {

@@ -21,6 +21,11 @@
                 <div class="row">
                     <div class="col-lg-12 d-flex discover-top">
                         <div class="col-9 discover-top-toolbar">
+
+                            <div id="searchInCount"></div>
+                            <button type="button" class="ms-auto d-flex btn btn-arche-blue" id="searchInToggleBtn">{{ "Show Search In"|trans }}</button>
+
+
                             <!-- <select class="form-control mr-sm-2 w-100" id="preferredLang">
                                 <option value="">{{ "Preferred Language"|trans }}</option>
                                 <option value="en">{{ "English"|trans }}</option>
@@ -37,7 +42,7 @@
                         </ul>
                     </div>
                             -->
-                            
+
 
                         </div>
                         <div class="col-3">
@@ -46,6 +51,12 @@
                                 {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}
                             </div>
                         </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="searchIn" class="basic-inside-content-div mb-5"></div>
                     </div>
                 </div>
             </div>
@@ -65,7 +76,7 @@
 
                                         <div class="col-lg-6">
                                             <div class="discover-pager dataTables_paginate paging_simple_numbers" id="smartsearch-pager">
-                                                
+
                                                 <!--
                                                 <a href="#" class="paginate_button previous disabled"><</a>
                                                 <span class="search-paging-numbers" >
