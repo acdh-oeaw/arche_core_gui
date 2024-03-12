@@ -12,25 +12,25 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     $(document).ready(function () {
-
-        //check the url has param
-        var lastSegment = getLastUrlSegment();
-        console.log('Last URL segment:', lastSegment);
-
+        
+        var currentUrl = window.location.href;
+        
+        // Check if the URL contains the desired substring
+        if (currentUrl.indexOf("/browser/discover/") !== -1) {
+            var lastParam = getLastUrlSegment();
+            if (lastParam) {
+                firstLoad = false;
+                $('#sm-hero-str').val(lastParam);
+            }
+        }
         executeTheSearch();
     });
-
-    function getLastUrlSegment() {
-        var path = window.location.pathname;
-        var segments = path.split('/');
-        return segments.pop() || segments.pop(); // Remove any trailing slash
-    }
 
     // let metaValueField = $("input[name='metavalue']").val().replace(/[^a-z0-9öüäéáűúőóüöíß:./-\s]/gi, '').replace(/[\s]/g, '+');
     $(document).delegate("#sks-form-front", "submit", function (e) {
         e.preventDefault();
 
-        let searchParam = $('#q').val();
+        let searchParam = $('#sm-hero-str').val();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
                 '<div class="col-12 mt-5">' +
@@ -135,6 +135,12 @@ jQuery(function ($) {
         //}
     });
 
+
+    function getLastUrlSegment() {
+        var path = window.location.pathname;
+        var segments = path.split('/');
+        return segments.pop() || segments.pop(); // Remove any trailing slash
+    }
 
     function getSmartUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
@@ -361,7 +367,8 @@ jQuery(function ($) {
         token++;
         var localToken = token;
         if (!searchStr) {
-            searchStr = $('#q').val();
+            searchStr = $('#sm-hero-str').val();
+            console.log("VAN SEARCH STR: " + searchStr);
         }
         var page = $('a.paginate_button.current').text();
         if (page && page !== actualPage) {
@@ -488,22 +495,22 @@ jQuery(function ($) {
     }
 
     function createPager(totalPages, resultsPerPage) {
-       
+
         $('#smartsearch-pager').empty();
 
-        
+
         // Add page numbers
         console.log("ENDPAGE: " + endPage);
         console.log("STARTPAGE: " + startPage);
         console.log("actualPage: " + actualPage);
         console.log("totalPages: " + totalPages);
-        
-        
-        
+
+
+
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 5, totalPages);
 
-if (actualPage > 1) {
+        if (actualPage > 1) {
             $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
         }
 
@@ -513,23 +520,23 @@ if (actualPage > 1) {
             if (i === parseInt(actualPage)) {
                 current = "current";
             }
-            
+
             $('#smartsearch-pager').append('<a href="#"  class="paginate_button ' + current + '" data-page="' + i + '">' + i + '</a>');
-            
+
         }
-        if(totalPages > endPage) {
-                $('#smartsearch-pager').append('<span>...</span>');
-                $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
-        } 
-        
-        $('#smartsearch-pager').append('</span>');
-        
-        // Add "..." if there are more pages
-        /*
-        if (endPage > 6) {
+        if (totalPages > endPage) {
             $('#smartsearch-pager').append('<span>...</span>');
             $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
-        }*/
+        }
+
+        $('#smartsearch-pager').append('</span>');
+
+        // Add "..." if there are more pages
+        /*
+         if (endPage > 6) {
+         $('#smartsearch-pager').append('<span>...</span>');
+         $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
+         }*/
 
         // Add "Next" button
         if (actualPage < totalPages) {
