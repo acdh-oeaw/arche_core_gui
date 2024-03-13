@@ -740,7 +740,12 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $result[$v][] = $val['value'];
+                            $obj = [];
+                            if(isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
                         }
                     }
                 }
@@ -769,7 +774,12 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $result[$v][] = $val['value'];
+                            $obj = [];
+                            if(isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
                         }
                     }
                 }

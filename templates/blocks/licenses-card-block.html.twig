@@ -16,9 +16,13 @@
             {% for key, value in obj %}
                 <div>
                     <b>{{ key|trans }}:</b></br>
-                {% for val in value %}
-                    {{ val }} <br>
-                {% endfor %}    
+                    {% for val in value %}
+                        {% if val['id'] %} 
+                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                        {% else %}    
+                            {{ val['value'] }}<br>
+                        {% endif %}
+                    {% endfor %}    
                 </div>
             {% endfor %}
         </div>
