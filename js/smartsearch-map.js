@@ -42,32 +42,33 @@ jQuery(function ($) {
         }, 500);
 
         setTimeout(function () {
-            fetch(archeBaseUrl + '/browser/api/search_coordinates/'+drupalSettings.arche_core_gui.gui_lang+'?_format=json')
+            fetch(archeBaseUrl + '/browser/api/search_coordinates/' + drupalSettings.arche_core_gui.gui_lang + '?_format=json')
                     .then((response) => response.json())
                     .then((data) => {
                         console.log("date response");
                         console.log(data);
                         var heatArr = [];
-                   
-                         $.each(data, function (index, markerData) {
 
-                             console.log(markerData['lat']);
-                             var lon = markerData['lon'];
-                             var lat = markerData['lat'];
-                             var wkt = markerData['wkt'];
-                             var cityName = markerData['title'];
-                             console.log(lat);
-                             console.log(lon);
-                             console.log(wkt);
-                             console.log(cityName);
-                            var marker = L.marker([lat, lon], {
-                                title: cityName, // Set the title property
-                            })
-                                    .bindPopup('<h5>' + cityName + '</h5><br><a href="#" id="SMMapBtn" class="btn btn-info w-100 text-light" data-coordinates="' + wkt + '">Add to Search</a>')
-                                    .addTo(map);
-                            heatArr.push([lat, lon]);
-                            // Add the marker to the array
-                            markersArr.push(marker);
+                        $.each(data, function (index, markerData) {
+                            if (markerData['lon'] && markerData['lat'] && markerData['wkt']) {
+                                console.log(markerData['lat']);
+                                var lon = markerData['lon'];
+                                var lat = markerData['lat'];
+                                var wkt = markerData['wkt'];
+                                var cityName = markerData['title'];
+                                console.log(lat);
+                                console.log(lon);
+                                console.log(wkt);
+                                console.log(cityName);
+                                var marker = L.marker([lat, lon], {
+                                    title: cityName, // Set the title property
+                                })
+                                        .bindPopup('<h5>' + cityName + '</h5><br><a href="#" id="SMMapBtn" class="btn btn-info w-100 text-light" data-coordinates="' + wkt + '">Add to Search</a>')
+                                        .addTo(map);
+                                heatArr.push([lat, lon]);
+                                // Add the marker to the array
+                                markersArr.push(marker);
+                            }
                         });
 
                         var heat = L.heatLayer(data, {
@@ -83,8 +84,8 @@ jQuery(function ($) {
                         console.error('Error loading JSON data: ', error);
                         $(".map-loader").css('display', 'none');
                         $(".sms-map.leaflet-container").html(error);
-                
-                return ;
+
+                        return;
                     });
         }, 2000);
 
@@ -106,7 +107,7 @@ jQuery(function ($) {
         markersArr.forEach(function (marker) {
             var markerName = marker.options.title.toLowerCase();
             if (markerName.includes(query)) {
-               $('.smMapSearchResultsContainer').show();
+                $('.smMapSearchResultsContainer').show();
                 marker.addTo(map);
                 $("#smMapSearchResults").append("<p>" + marker.options.title + "</p>");
             } else {

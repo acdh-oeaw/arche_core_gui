@@ -16,26 +16,28 @@
     </div>
     <div id="searchBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
-            <form class="row gy-2 gx-3 align-items-center" id="smartsearch-left">
-
-                <div class="col-lg-12">
-                    <div class="form-outline">
-                        <input class="form-check-input ml-2" type="checkbox" id="inBinary">&nbsp;
-                        <label class="form-check-label mr-2" for="inBinary">{{ "Search in binary content"|trans }}</label>
-
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="form-outline">
-                        <input class="form-check-input ml-2" type="checkbox" checked="checked" id="linkNamedEntities">&nbsp;
-                        <label class="form-check-label ml-2" for="followNamedEntities">{{ "Follow named entities"|trans }}</label>
-
-                    </div>
+            <form class="d-flex" id="hero-smart-search-form">
+                <div class="input-group">
+                    <input type="search" id="sm-hero-str" class="form-control hero-search-field" placeholder="{{ "Find resources"|trans }}..." aria-label="Search">
+                    <button class="smartsearch-btn btn hero-search-button" type="submit"><img class="img-fluid" src="{{ arche_theme_img_url }}/common/search_icon.png" alt="Search"  /></button>
                 </div>
             </form>
+
+
         </div>
     </div>
 </div>
+
+
+<div class="col-12 mt-2">
+    <form class="form-inline">
+        <button type="button" class="btn btn-arche-blue w-100" id="mapToggleBtn">{{ "Map"|trans }}</button>
+        <div class="arche-sms-popup"  id="mapContainer" style="display: none;">
+            {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}
+        </div>
+    </form>
+</div>
+
 
 <div class="card metadata extendedSearchCard">
     <div class="card-header">
@@ -55,9 +57,29 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-2">
+                        <form class="row gy-2 gx-3 align-items-center" id="smartsearch-left">
+
+                            <div class="col-lg-12">
+                                <div class="form-outline">
+                                    <input class="form-check-input ml-2" type="checkbox" id="inBinary">&nbsp;
+                                    <label class="form-check-label mr-2" for="inBinary">{{ "Search in binary content"|trans }}</label>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-outline">
+                                    <input class="form-check-input ml-2" type="checkbox" checked="checked" id="linkNamedEntities">&nbsp;
+                                    <label class="form-check-label ml-2" for="followNamedEntities">{{ "Follow named entities"|trans }}</label>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-12 mt-2">
                         <div class="arche_search_toggle_div" id="extendedSearch">
-                            <div id="facets"></div>
-                            <div>
+                            
+                            <!--<div>
                                 <h4 class="mt-3">{{ "Spatial area"|trans }}</h4>
                                 <div>
                                     <select class="" id="spatialSelect">
@@ -70,8 +92,8 @@
                                         <option value="geonames">{{ "In Geonames"|trans }}</option>
                                     </select>
                                 </div>    
-                            </div>
-                            <div id="dateFacets"></div>
+                            </div>-->
+                           
                         </div>
                     </div>
                 </div>
@@ -79,8 +101,10 @@
         </div>
     </div>
 </div>
+                                    
+                                    <div id="facets"></div>
 
-
+ <div id="dateFacets"></div>
 
 <div class="col-12 mt-2">
     <form class="form-inline">

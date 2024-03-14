@@ -11,51 +11,127 @@ jQuery(function ($) {
 
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
+    var guiObj = {};
     $(document).ready(function () {
 
         var currentUrl = window.location.href;
 
         // Check if the URL contains the desired substring
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
+            console.log("Discover CLICK");
+            var q = "";
             var lastParam = getLastUrlSegment();
             if (lastParam) {
                 firstLoad = false;
                 $('#sm-hero-str').val(lastParam);
+                guiObj = {'searchStr': lastParam};
             }
         }
+        console.log("READY execute");
+        console.log(guiObj);
         executeTheSearch();
+
+        fetchFacet();
+
+        if (form) {
+            spatialSelect = new SlimSelect({
+                select: '#spatialSelect',
+                events: {
+                    search: function (phrase, curData) {
+                        return new Promise((resolve, reject) => {
+                            if ($('#spatialSource').val() === 'arche') {
+                                fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
+                                        .then(function (response) {
+                                            return response.json();
+                                        })
+                                        .then(function (data) {
+                                            data = data.map(function (x) {
+                                                return {
+                                                    text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
+                                                    value: x.id
+                                                }
+                                            });
+                                            data.unshift({text: 'No filter', value: ''});
+
+                                            resolve(data);
+                                        });
+                            } else {
+                                fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
+                                        .then(function (response) {
+                                            return response.json();
+                                        })
+                                        .then(function (data) {
+                                            var options = data.geonames.map(function (x) {
+                                                return {
+                                                    text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
+                                                    value: x.geonameId
+                                                };
+                                            });
+                                            options.unshift({text: 'No filter', value: ''});
+                                            resolve(options);
+                                        });
+                            }
+                        });
+                    },
+                    afterChange: function (value) {
+                        bbox = '';
+                        if (value[0].value !== '') {
+                            $('#wait').show();
+                            $.ajax({
+                                method: 'GET',
+                                url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
+                                success: function (d) {
+                                    if (d.bbox || false) {
+                                        d = d.bbox;
+                                        bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
+                                    } else {
+                                        bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
+                                    }
+                                    $('#linkNamedEntities').prop('checked', true);
+                                },
+                                error: function (xhr, error, code) {
+                                    $('.main-content-row').html(error);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
     });
 
-    // let metaValueField = $("input[name='metavalue']").val().replace(/[^a-z0-9öüäéáűúőóüöíß:./-\s]/gi, '').replace(/[\s]/g, '+');
-    $(document).delegate("#sks-form-front", "submit", function (e) {
-        e.preventDefault();
 
-        let searchParam = $('#sm-hero-str').val();
-        $('.main-content-row').html('<div class="container">' +
-                '<div class="row">' +
-                '<div class="col-12 mt-5">' +
-                '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
-                ' </div>' +
-                '</div>');
-        window.location.href = '/browser/search/?q=' + searchParam;
+    //// events ////
+
+    $("#block-smartsearchblock").on("change", "input", function (event) {
+        executeTheSearch();
+        selectedSearchValues.push(createSelectedValuesForForm($(this)));
+        event.preventDefault();
+    });
+
+    $("#block-smartsearchblock").on("change", "select", function (event) {
+        executeTheSearch();
+        selectedSearchValues.push(createSelectedValuesForForm($(this)));
+        event.preventDefault();
     });
 
     $(document).delegate(".searchInBtn", "click", function (e) {
-            searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
-            var count = $("#searchIn > div[id^='in']").length;
-            console.log(count);
-            $('#searchInCount').html(count + ' '+Drupal.t('Search In Result(s)')) ;
+        searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
+        var count = $("#searchIn > div[id^='in']").length;
+        console.log(count);
+        $('#searchInCount').html(count + ' ' + Drupal.t('Search In Result(s)'));
     });
-    
+
     $(document).delegate("#searchInToggleBtn", "click", function (e) {
-        $("#searchIn").toggle(); 
+        $("#searchIn").toggle();
         var areChildDivsVisible = $("#searchIn > div").is(":visible");
         if (areChildDivsVisible) {
-                $("#searchInToggleBtn").text(Drupal.t("Hide Search In"));
-            } else {
-                $("#searchInToggleBtn").text(Drupal.t("Show Search In"));
-            }
+            $("#searchInToggleBtn").text(Drupal.t("Hide Search In"));
+        } else {
+            $("#searchInToggleBtn").text(Drupal.t("Show Search In"));
+        }
     });
+
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).attr("data-coordinates");
@@ -115,6 +191,7 @@ jQuery(function ($) {
 
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
+        console.log("smartsearch-btn CLICK");
         firstLoad = false;
         executeTheSearch()
         e.preventDefault();
@@ -125,6 +202,17 @@ jQuery(function ($) {
         console.log("new actual page: " + actualPage);
         executeTheSearch(actualPage)
         e.preventDefault();
+    });
+
+
+    /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE */
+    $(document).on("click", function (event) {
+        var popupExtSearch = $(".extendedSearchCard");
+        var extSearchButton = $(".extendedSearcBtn");
+        // Check if the clicked element is not the popup or the toggle button
+        //if (!popupExtSearch.is(event.target) && !extSearchButton.is(event.target) && popupExtSearch.has(event.target).length === 0) {
+        //    popupExtSearch.hide();
+        //}
     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER*/
@@ -138,18 +226,8 @@ jQuery(function ($) {
             }
         });
     }
-
-
-    /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE */
-    $(document).on("click", function (event) {
-        var popupExtSearch = $(".extendedSearchCard");
-        var extSearchButton = $(".extendedSearcBtn");
-        // Check if the clicked element is not the popup or the toggle button
-        //if (!popupExtSearch.is(event.target) && !extSearchButton.is(event.target) && popupExtSearch.has(event.target).length === 0) {
-        //    popupExtSearch.hide();
-        //}
-    });
-
+    
+    ////// FUNCTIONS //////
 
     function getLastUrlSegment() {
         var path = window.location.pathname;
@@ -171,6 +249,7 @@ jQuery(function ($) {
 
 
     }
+
     function getInstanceUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
         return baseUrl.split("/browser")[0];
@@ -250,125 +329,11 @@ jQuery(function ($) {
         return object;
     }
 
-    $(document).ready(function () {
 
-        $("#block-smartsearchblock").on("change", "input", function (event) {
-            executeTheSearch();
-            selectedSearchValues.push(createSelectedValuesForForm($(this)));
-            event.preventDefault();
-        });
-
-        $("#block-smartsearchblock").on("change", "select", function (event) {
-            executeTheSearch();
-            selectedSearchValues.push(createSelectedValuesForForm($(this)));
-            event.preventDefault();
-        });
-
-        fetchFacet();
-
-        if (form) {
-            spatialSelect = new SlimSelect({
-                select: '#spatialSelect',
-                events: {
-                    search: function (phrase, curData) {
-                        return new Promise((resolve, reject) => {
-                            if ($('#spatialSource').val() === 'arche') {
-                                fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
-                                        .then(function (response) {
-                                            return response.json();
-                                        })
-                                        .then(function (data) {
-                                            data = data.map(function (x) {
-                                                return {
-                                                    text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
-                                                    value: x.id
-                                                }
-                                            });
-                                            data.unshift({text: 'No filter', value: ''});
-
-                                            resolve(data);
-                                        });
-                            } else {
-                                fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
-                                        .then(function (response) {
-                                            return response.json();
-                                        })
-                                        .then(function (data) {
-                                            var options = data.geonames.map(function (x) {
-                                                return {
-                                                    text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
-                                                    value: x.geonameId
-                                                };
-                                            });
-                                            options.unshift({text: 'No filter', value: ''});
-                                            resolve(options);
-                                        });
-                            }
-                        });
-                    },
-                    afterChange: function (value) {
-                        bbox = '';
-                        if (value[0].value !== '') {
-                            $('#wait').show();
-                            $.ajax({
-                                method: 'GET',
-                                url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
-                                success: function (d) {
-                                    if (d.bbox || false) {
-                                        d = d.bbox;
-                                        bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
-                                    } else {
-                                        bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
-                                    }
-                                    $('#linkNamedEntities').prop('checked', true);
-                                },
-                                error: function (xhr, error, code) {
-                                    $('.main-content-row').html(error);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
+    function getGuiSearchParams(prop) {
+        if (guiObj.hasOwnProperty(prop)) {
+            return guiObj[prop];
         }
-    });
-
-    function updateSearchGui(data) {
-        $.each(data, function (k, v) {
-            var elementId = "";
-            var dataValue = "";
-            var elementValue = "";
-            $.each(v, function (key, val) {
-
-                if (key === "id") {
-                    elementId = "#" + val;
-                }
-
-                if (key === "value") {
-                    elementValue = val;
-                }
-
-                if (key === "data") {
-                    dataValue = val;
-                }
-            });
-            if (elementId) {
-                $('#block-smartsearchblock')
-                        .find('[id="' + elementId + '"][value="' + elementValue + '"]')
-                        .each(function () {
-                            $(this).addClass("selected");
-                        });
-            }
-            if (dataValue) {
-                $('#block-smartsearchblock')
-                        .find('[data-value="' + dataValue + '"][value="' + elementValue + '"]')
-                        .each(function () {
-                            $(this).prop("checked", true);
-                        });
-            }
-
-        });
-
     }
 
     function getLangValue(data, prefLang) {
@@ -377,11 +342,14 @@ jQuery(function ($) {
     }
     var token = 1;
 
-    function search(searchStr = "", coordinates = "", actualPage = 0) {
-
+    function search() {
         token++;
         var localToken = token;
-        if (!searchStr) {
+        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : ""; 
+        var coordinates =  (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : ""; 
+        var actualPage =  (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0; 
+      
+        if (searchStr.length !== 0) {
             searchStr = $('#sm-hero-str').val();
             console.log("VAN SEARCH STR: " + searchStr);
         }
@@ -463,6 +431,12 @@ jQuery(function ($) {
             param.data.facets['bbox'] = bbox;
         }
 
+        if (coordinates) {
+            if (searchStr.length === 0) {
+                firstLoad = false;
+            }
+            param.data.facets['bbox'] = coordinates;
+        }
         if (firstLoad) {
             param.data.linkNamedEntities = 0;
             param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
@@ -492,9 +466,7 @@ jQuery(function ($) {
             console.log(error);
             console.log(xhr.responseText);
         };
-        if (coordinates) {
-            param.data.facets['bbox'] = coordinates;
-        }
+
         console.log("SMART SEARCH PARAMS: ");
         console.log(param);
         $.ajax(param);
@@ -621,58 +593,58 @@ jQuery(function ($) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
 
-                    results += '<div class="col-block col-lg-10 discover-table-content-div">';
-                        //title
-                        results += '<div class="res-property">';
-                            results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' +getLangValue(result.title, prefLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
-                        results += '</div>';
-                        //description
-                        results += '<div class="res-property sm-description">';
-                            if (result.description) {
-                                results += getLangValue(result.description, prefLang);
-                            }
+                results += '<div class="col-block col-lg-10 discover-table-content-div">';
+                //title
+                results += '<div class="res-property">';
+                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, prefLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                results += '</div>';
+                //description
+                results += '<div class="res-property sm-description">';
+                if (result.description) {
+                    results += getLangValue(result.description, prefLang);
+                }
 
-                            //results += 'Match score: ' + result.matchWeight + '<br/>';
-                            if (result.matchProperty.length > 0) {
-                                results += 'Matches in:<div class="ml-5">';
-                                for (var j = 0; j < result.matchProperty.length; j++) {
-                                    if (result.matchHiglight && result.matchHiglight[j]) {
-                                        results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                                    } else {
-                                        results += shorten(result.matchProperty[j] || '') + '<br/>';
-                                    }
-                                }
-                                results += '</div>';
-                            }
-                            var parents = getParents(result.parent || false, true, prefLang);
-                            results += parents;
-                
-                        results += '</div>';
-                        results += '<div class="res-property discover-content-toolbar">';
-                            results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-                            results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
-                        results += '</div>';
+                //results += 'Match score: ' + result.matchWeight + '<br/>';
+                if (result.matchProperty.length > 0) {
+                    results += 'Matches in:<div class="ml-5">';
+                    for (var j = 0; j < result.matchProperty.length; j++) {
+                        if (result.matchHiglight && result.matchHiglight[j]) {
+                            results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                        } else {
+                            results += shorten(result.matchProperty[j] || '') + '<br/>';
+                        }
+                    }
                     results += '</div>';
+                }
+                var parents = getParents(result.parent || false, true, prefLang);
+                results += parents;
+
+                results += '</div>';
+                results += '<div class="res-property discover-content-toolbar">';
+                results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+                results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+                results += '</div>';
+                results += '</div>';
 
                 var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
-                    results += '<div class="col-lg-2">' +
-                                    '<div class="col-block discover-table-image-div">\n\
+                results += '<div class="col-lg-2">' +
+                        '<div class="col-block discover-table-image-div">\n\
                                         <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
                                             <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
                                             </a></center>\n\
                                         </div>\n\
                                     </div>';
-                    results += '</div>';
                 results += '</div>';
-                
+                results += '</div>';
+
             }
         });
         $('.main-content-row').html(results);
     }
 
     function searchInAdd(id, title) {
-       
+
         if ($('#in' + id).length === 1) {
             return;
         }
@@ -700,7 +672,7 @@ jQuery(function ($) {
         return ret;
     }
 
-    function executeTheSearch(actualPage) {
+    function executeTheSearch() {
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -708,41 +680,45 @@ jQuery(function ($) {
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
-        search("", "", actualPage);
+        search();
     }
 
+    function updateSearchGui(data) {
+        $.each(data, function (k, v) {
+            var elementId = "";
+            var dataValue = "";
+            var elementValue = "";
+            $.each(v, function (key, val) {
 
-    /** NOT IN USE **/
-    function addPager() {
-        $('.main-content-row').html('<div id="block-mainpagesearchtools" class="col-block col-lg-12">' +
-                '<div class="container">' +
-                '<div class="row">' +
-                '<div class="col-lg-12 arche-smartsearch-page-div" style="display: none;">' +
-                '<div class="row">' +
-                '<div class="col-lg-6">' +
-                '<div class="form-outline">        ' +
-                '<label class="mx-2 font-weight-bold" for="pageSize">{{ "Page size"|trans }}::</label>' +
-                '<input class="form-control  mr-sm-2 w-50" type="number" value="10" min="1" id="pageSize"/>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-lg-6">' +
-                '<div class="form-outline">' +
-                '<label class="mx-2 font-weight-bold" for="page">{{ "Page"|trans }}:</label>' +
-                '<div class="input-group  mr-sm-2 w-50">' +
-                '<select class="form-control" id="page" onchange="search();">' +
-                '<option value="0" selected="selected">1</option>' +
-                '</select>' +
-                '<div class="input-group-append">' +
-                '<div class="input-group-text" id="pageCount">/ 1</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div> ');
+                if (key === "id") {
+                    elementId = "#" + val;
+                }
+
+                if (key === "value") {
+                    elementValue = val;
+                }
+
+                if (key === "data") {
+                    dataValue = val;
+                }
+            });
+            if (elementId) {
+                $('#block-smartsearchblock')
+                        .find('[id="' + elementId + '"][value="' + elementValue + '"]')
+                        .each(function () {
+                            $(this).addClass("selected");
+                        });
+            }
+            if (dataValue) {
+                $('#block-smartsearchblock')
+                        .find('[data-value="' + dataValue + '"][value="' + elementValue + '"]')
+                        .each(function () {
+                            $(this).prop("checked", true);
+                        });
+            }
+
+        });
+
     }
 
     function formatDate(originalDate) {

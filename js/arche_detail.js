@@ -12,6 +12,7 @@ jQuery(function ($) {
     var versionVisible = false;
 
     $(document).ready(function () {
+        $('#cite-loader').removeClass('hidden');
         if ($('#resourceHasVersion').val()) {
             versionVisible = true;
         }
@@ -475,6 +476,7 @@ jQuery(function ($) {
     //expertDtDiv
 
     $(document).delegate("#expertViewBtn", "click", function (e) {
+        e.preventDefault();
         if ($(this).hasClass('basic')) {
             $('#meta-content-container').hide();
             $('#expertdt-container').fadeIn(200);
@@ -695,13 +697,13 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showCiteBlock() {
-
         var url = $('#biblaTexUrl').val();
         if (url) {
             url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
             $.get(url).done(function (data) {
-                $('#cite-content-div').addClass('show');
-                $('#cite-content-div').removeClass('hidden');
+                $('#cite-div').removeClass('hidden');
+                //$('#cite-content-div').addClass('show');
+                //$('#cite-content-div').removeClass('hidden');
                 $('#cite-loader').addClass('hidden');
 
                 try {
