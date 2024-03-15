@@ -116,21 +116,24 @@ jQuery(function ($) {
     });
 
     $(document).delegate(".searchInBtn", "click", function (e) {
-        searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
-        var count = $("#searchIn > div[id^='in']").length;
-        console.log(count);
-        $('#searchInCount').html(count + ' ' + Drupal.t('Search In Result(s)'));
-    });
 
-    $(document).delegate("#searchInToggleBtn", "click", function (e) {
-        $("#searchIn").toggle();
-        var areChildDivsVisible = $("#searchIn > div").is(":visible");
-        if (areChildDivsVisible) {
-            $("#searchInToggleBtn").text(Drupal.t("Hide Search In"));
+        var buttonId = $(this).attr('id'); // Get the id attribute value of the clicked button
+        if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
+            $('#searchIn').empty();
+            $('#searchIn').hide();
+            $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
         } else {
-            $("#searchInToggleBtn").text(Drupal.t("Show Search In"));
+            searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
+            $('#searchIn').show();
+            var count = $('#searchIn').length;
+            console.log("COUNT: ");
+            console.log(count);
+            if (count > 0) {
+                $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', true);
+            }
         }
     });
+
 
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
@@ -146,7 +149,6 @@ jQuery(function ($) {
         var mapContainer = $('#mapContainer');
         mapContainer.hide();
     });
-
 
     $(document).delegate(".remove_search_only_in", "click", function (e) {
         e.preventDefault();
@@ -168,12 +170,12 @@ jQuery(function ($) {
         //element.find('div:last-child').children('div').remove();
         var btn = element.find('button');
         btn.text('-');
-        btn.attr('onclick', '$(this).parent().parent().parent().remove();');
+        btn.attr('id', 'removeSearchInElementBtn');
         element.attr('id', 'in' + id);
         element.attr('class', 'searchInElement');
         element.addClass('row');
         $('#searchIn').append(element);
-        countSearchIn();
+
     });
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
@@ -226,7 +228,7 @@ jQuery(function ($) {
             }
         });
     }
-    
+
     ////// FUNCTIONS //////
 
     function getLastUrlSegment() {
@@ -255,13 +257,7 @@ jQuery(function ($) {
         return baseUrl.split("/browser")[0];
     }
 
-    function countSearchIn() {
-        var count = $('.searchInElement').length;
-        if (count > 0) {
-            $(".searchOnlyInBtn").removeClass('d-none');
-        }
-        $(".searchOnlyInBtn").html('Search only in ( ' + count + ' ) ');
-    }
+
     //////////////// SMART SEARCH ///////////////////
 
     var nmsp = [
@@ -288,6 +284,40 @@ jQuery(function ($) {
             success: function (data) {
                 data = jQuery.parseJSON(data);
                 $.each(data, function (k, v) {
+                    
+                    var idStr = v.label.replace(/[^\w\s]/gi, '');
+                        idStr = idStr.replace(/\s+/g, '_');
+                   var facet = '<div class="card metadata facets">' +
+                        '<div class="card-header">' +
+                            '<div class="row">' +
+                                '<div class="col-8"><h6>' + v.label + '</h6></div>' +
+                                '<div class="col-2 tooltop-icon-div">' +
+                                    '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
+                                '</div>' +
+                                '<div class="col-2 text-end">' +
+                                    '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#'+idStr+'">' +
+                                    '<i class="fa fa-solid fa-chevron-up"></i></a>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div id="'+idStr+'" class="collapse show">' +
+                            '<div class="card-body meta-sidebar flex-column">' +
+                                '<div class="container-fluid">' +
+                                    '<div class="row">' +
+                                        '<div class="col-12 mt-2">' +
+                                        '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
+                            '<input type="checkbox" class="range mt-2" value="1" data-value="' + k + '"/> show range' +
+                            '<div id="' + k + 'Values" class="dateValues"></div>' +
+                            '<div class="row mt-2">' +
+                            '<div class="col-lg-5"> <input class="facet-min w-100" type="number" data-value="' + k + '"/> </div>' +
+                            '<div class="col-lg-1"> - </div>' +
+                            '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    /*
                     var facet = '<div class="mt-2">' +
                             '<label class="mt-2 font-weight-bold" >' + v.label + '</label><br/>' +
                             '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
@@ -299,7 +329,7 @@ jQuery(function ($) {
                             '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
                             '</div>'
                     '</div>'
-                    '<hr/>';
+                    '<hr/>';*/
                     $('#dateFacets').append(facet);
                 });
             }
@@ -345,10 +375,10 @@ jQuery(function ($) {
     function search() {
         token++;
         var localToken = token;
-        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : ""; 
-        var coordinates =  (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : ""; 
-        var actualPage =  (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0; 
-      
+        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
+        var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
+        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+
         if (searchStr.length !== 0) {
             searchStr = $('#sm-hero-str').val();
             console.log("VAN SEARCH STR: " + searchStr);
@@ -447,6 +477,9 @@ jQuery(function ($) {
         param.success = function (x) {
             if (token === localToken) {
                 showResults(x, param.data, t0);
+                console.log("success: ");
+                console.log(param);
+                console.log(selectedSearchValues);
                 updateSearchGui(selectedSearchValues);
             }
         };
@@ -556,16 +589,54 @@ jQuery(function ($) {
                         });
                     }
                     if (!fd.continues) {
+                        //var select = '<select class="facet mt-2">';
                         $.each(fd.values, function (n, i) {
-                            var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
-                            text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
+                         var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
+                         text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
+                         });
+                         
+                        $.each(fd.values, function (n, i) {
+                            //var checkbox = '<input type="checkbox" class="facet-checkbox" value="' + i.value + '">';
+                            //select += '<option value="' + i.value + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            //select += '<option value="' + i.value + '">' + checkbox + ' ' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            //select += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
+                        
                         });
+                        //select += '</select>';
                     }
                     if (div.length === 0) {
                         if (fd.continues && fdp.distribution >= 2) {
                             text += '<input class="facet-min w-25" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-25" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/>';
                         }
-                        facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
+
+                        var idStr = fd.label.replace(/[^\w\s]/gi, '');
+                        idStr = idStr.replace(/\s+/g, '_');
+                        facets += '<div class="card metadata facets">' +
+                                '<div class="card-header">' +
+                                '<div class="row">' +
+                                '<div class="col-8"><h6>' + fd.label + '</h6></div>' +
+                                '<div class="col-2 tooltop-icon-div">' +
+                                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
+                                '</div>' +
+                                '<div class="col-2 text-end">' +
+                                '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
+                                '<i class="fa fa-solid fa-chevron-up"></i>' +
+                                '</a>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div id="' + idStr + '" class="collapse show">' +
+                                ' <div class="card-body meta-sidebar flex-column">' +
+                                '<div class="container-fluid">' +
+                                '<div class="row">' +
+                                '<div class="col-12 mt-2">' + text + '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                        //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
                     } else {
                         div.html(text + '<br/>');
                     }
@@ -654,7 +725,7 @@ jQuery(function ($) {
         //element.find('div:last-child').children('div').remove();
         var btn = element.find('button');
         btn.text('-');
-        btn.attr('onclick', '$(this).parent().parent().parent().remove();');
+        btn.attr('id', 'removeSearchInElementBtn');
         element.attr('id', 'in' + id);
         $('#searchIn').append(element);
     }
