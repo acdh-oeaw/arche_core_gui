@@ -27,8 +27,7 @@ jQuery(function ($) {
                 guiObj = {'searchStr': lastParam};
             }
         }
-        console.log("READY execute");
-        console.log(guiObj);
+        
         executeTheSearch();
 
         fetchFacet();
@@ -126,8 +125,6 @@ jQuery(function ($) {
             searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
             $('#searchIn').show();
             var count = $('#searchIn').length;
-            console.log("COUNT: ");
-            console.log(count);
             if (count > 0) {
                 $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', true);
             }
@@ -193,7 +190,6 @@ jQuery(function ($) {
 
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
-        console.log("smartsearch-btn CLICK");
         firstLoad = false;
         executeTheSearch()
         e.preventDefault();
@@ -375,13 +371,12 @@ jQuery(function ($) {
     function search() {
         token++;
         var localToken = token;
-        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
-        var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
-        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
-
-        if (searchStr.length !== 0) {
+        if(firstLoad){
+            var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
+            var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
+            var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+        } else  {
             searchStr = $('#sm-hero-str').val();
-            console.log("VAN SEARCH STR: " + searchStr);
         }
         var page = $('a.paginate_button.current').text();
         if (page && page !== actualPage) {
@@ -560,7 +555,6 @@ jQuery(function ($) {
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
 
-        console.log(data);
         console.log("actualPage" + actualPage);
         var pageSize = data.pageSize;
         var totalPages = Math.floor(data.totalCount / pageSize);
@@ -720,9 +714,6 @@ jQuery(function ($) {
             return;
         }
         var element = $('#res' + id).clone();
-        console.log(element);
-        //element.find('div:first-child').remove();
-        //element.find('div:last-child').children('div').remove();
         var btn = element.find('button');
         btn.text('-');
         btn.attr('id', 'removeSearchInElementBtn');
