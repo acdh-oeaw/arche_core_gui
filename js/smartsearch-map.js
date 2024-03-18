@@ -45,21 +45,15 @@ jQuery(function ($) {
             fetch(archeBaseUrl + '/browser/api/search_coordinates/' + drupalSettings.arche_core_gui.gui_lang + '?_format=json')
                     .then((response) => response.json())
                     .then((data) => {
-                        console.log("date response");
-                        console.log(data);
                         var heatArr = [];
 
                         $.each(data, function (index, markerData) {
                             if (markerData['lon'] && markerData['lat'] && markerData['wkt']) {
-                                console.log(markerData['lat']);
                                 var lon = markerData['lon'];
                                 var lat = markerData['lat'];
                                 var wkt = markerData['wkt'];
                                 var cityName = markerData['title'];
-                                console.log(lat);
-                                console.log(lon);
-                                console.log(wkt);
-                                console.log(cityName);
+                                
                                 var marker = L.marker([lat, lon], {
                                     title: cityName, // Set the title property
                                 })
@@ -135,6 +129,11 @@ jQuery(function ($) {
     });
 
 
+    $('#resetSMSMapButton').click(function (e) {
+        e.preventDefault();
+        destroyMap(); // Destroy the map when hiding
+        initializeMap();
+    });
 
     $('#closeSMSMapButton').click(function () {
         var mapContainer = $('#mapContainer');

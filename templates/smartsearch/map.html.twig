@@ -12,11 +12,14 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-11">
-            <input type="text" id="searchInput" placeholder="Search for markers">
+        <div class="col-lg-8">
+            <input type="text" id="searchInput" placeholder="{{ "Search for markers"|trans }}">
         </div>
-        <div class="col-lg-1">
-            <button id="closeSMSMapButton">Close Map</button>
+        <div class="col-lg-2">
+            <button id="resetSMSMapButton" class="btn btn-arche-blue w-100">{{ "Reset Map"|trans }}</button>
+        </div>
+        <div class="col-lg-2">
+            <button id="closeSMSMapButton" class="btn btn-arche-blue w-100">{{ "Close Map"|trans }}</button>
         </div>
     </div>
 </div>
