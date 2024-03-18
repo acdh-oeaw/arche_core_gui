@@ -6,6 +6,7 @@ jQuery(function ($) {
 
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
+    var token = 1;
 
     /********************** EVENTS *************************************/
 
@@ -18,85 +19,84 @@ jQuery(function ($) {
 
         // Check if the URL contains the desired substring
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
-            console.log("Discover CLICK");
-            var q = "";
-            var lastParam = getLastUrlSegment();
-            if (lastParam) {
+            var lastParams = getLastUrlSegment();
+            if (lastParams.last) {
                 firstLoad = false;
-                $('#sm-hero-str').val(lastParam);
-                guiObj = {'searchStr': lastParam};
+                $('#sm-hero-str').val(lastParams.last);
+                guiObj = {'searchStr': lastParams.last};
             }
         }
-        
+
         executeTheSearch();
 
-        fetchFacet();
-
-        if (form) {
-            spatialSelect = new SlimSelect({
-                select: '#spatialSelect',
-                events: {
-                    search: function (phrase, curData) {
-                        return new Promise((resolve, reject) => {
-                            if ($('#spatialSource').val() === 'arche') {
-                                fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
-                                        .then(function (response) {
-                                            return response.json();
-                                        })
-                                        .then(function (data) {
-                                            data = data.map(function (x) {
-                                                return {
-                                                    text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
-                                                    value: x.id
-                                                }
-                                            });
-                                            data.unshift({text: 'No filter', value: ''});
-
-                                            resolve(data);
-                                        });
-                            } else {
-                                fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
-                                        .then(function (response) {
-                                            return response.json();
-                                        })
-                                        .then(function (data) {
-                                            var options = data.geonames.map(function (x) {
-                                                return {
-                                                    text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
-                                                    value: x.geonameId
-                                                };
-                                            });
-                                            options.unshift({text: 'No filter', value: ''});
-                                            resolve(options);
-                                        });
-                            }
-                        });
-                    },
-                    afterChange: function (value) {
-                        bbox = '';
-                        if (value[0].value !== '') {
-                            $('#wait').show();
-                            $.ajax({
-                                method: 'GET',
-                                url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
-                                success: function (d) {
-                                    if (d.bbox || false) {
-                                        d = d.bbox;
-                                        bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
-                                    } else {
-                                        bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
-                                    }
-                                    $('#linkNamedEntities').prop('checked', true);
-                                },
-                                error: function (xhr, error, code) {
-                                    $('.main-content-row').html(error);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-        }
+        fetchSearchDateFacet();
+        /*
+         if (form) {
+         spatialSelect = new SlimSelect({
+         select: '#spatialSelect',
+         events: {
+         search: function (phrase, curData) {
+         return new Promise((resolve, reject) => {
+         if ($('#spatialSource').val() === 'arche') {
+         fetch(archeSmartSearchUrl + '/places.php?q=' + encodeURIComponent(phrase))
+         .then(function (response) {
+         return response.json();
+         })
+         .then(function (data) {
+         data = data.map(function (x) {
+         return {
+         text: x.label + ' (' + shorten(x.match_property) + ': ' + x.match_value + ')',
+         value: x.id
+         }
+         });
+         data.unshift({text: 'No filter', value: ''});
+         
+         resolve(data);
+         });
+         } else {
+         fetch('https://secure.geonames.org/searchJSON?fuzzy=0.7&maxRows=10&username=' + encodeURIComponent(geonamesAccount) + '&name=' + encodeURIComponent(phrase))
+         .then(function (response) {
+         return response.json();
+         })
+         .then(function (data) {
+         var options = data.geonames.map(function (x) {
+         return {
+         text: x.name + ' (' + x.fcodeName + ', ' + (x.countryName || '') + ')',
+         value: x.geonameId
+         };
+         });
+         options.unshift({text: 'No filter', value: ''});
+         resolve(options);
+         });
+         }
+         });
+         },
+         afterChange: function (value) {
+         bbox = '';
+         if (value[0].value !== '') {
+         $('#wait').show();
+         $.ajax({
+         method: 'GET',
+         url: 'https://secure.geonames.org/getJSON?username=' + encodeURIComponent(geonamesAccount) + '&geonameId=' + encodeURIComponent(value[0].value),
+         success: function (d) {
+         if (d.bbox || false) {
+         d = d.bbox;
+         bbox = 'POLYGON((' + d.west + ' ' + d.south + ', ' + d.west + ' ' + d.north + ', ' + d.east + ' ' + d.north + ', ' + d.east + ' ' + d.south + ',' + d.west + ' ' + d.south + '))';
+         } else {
+         bbox = 'POINT( ' + d.lng + ' ' + d.lat + ')';
+         }
+         $('#linkNamedEntities').prop('checked', true);
+         },
+         error: function (xhr, error, code) {
+         $('.main-content-row').html(error);
+         }
+         });
+         }
+         }
+         }
+         });
+         }
+         */
     });
 
 
@@ -203,7 +203,7 @@ jQuery(function ($) {
     });
 
 
-    /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE */
+    /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE - CHECK IT */
     $(document).on("click", function (event) {
         var popupExtSearch = $(".extendedSearchCard");
         var extSearchButton = $(".extendedSearcBtn");
@@ -213,7 +213,7 @@ jQuery(function ($) {
         //}
     });
 
-    /* SUBMIT THE SMART SEARCH FORM WITH ENTER*/
+    /* SUBMIT THE SMART SEARCH FORM WITH ENTER - CHECK IT*/
     var form = document.getElementById("hero-smart-search-form");
     if (form) {
         form.addEventListener("keydown", function (event) {
@@ -230,7 +230,9 @@ jQuery(function ($) {
     function getLastUrlSegment() {
         var path = window.location.pathname;
         var segments = path.split('/');
-        return segments.pop() || segments.pop(); // Remove any trailing slash
+        var lastSegment = segments[segments.length - 1];
+        var secondLastSegment = segments[segments.length - 2];
+        return {"last" : lastSegment, "second" : secondLastSegment};
     }
 
     function getSmartUrl() {
@@ -269,53 +271,38 @@ jQuery(function ($) {
         }
         return v;
     }
-    var geonamesAccount = 'zozlak';
+    //var geonamesAccount = 'zozlak';
     var spatialSelect;
     var bbox = '';
 
 
-    function fetchFacet() {
+    function fetchSearchDateFacet() {
         $.ajax({
             url: '/browser/api/smartSearchDateFacet',
             success: function (data) {
                 data = jQuery.parseJSON(data);
                 $.each(data, function (k, v) {
-                    
+
                     var idStr = v.label.replace(/[^\w\s]/gi, '');
-                        idStr = idStr.replace(/\s+/g, '_');
-                   var facet = '<div class="card metadata facets">' +
-                        '<div class="card-header">' +
+                    idStr = idStr.replace(/\s+/g, '_');
+                    var facet = '<div class="card metadata facets">' +
+                            '<div class="card-header">' +
                             '<div class="row">' +
-                                '<div class="col-8"><h6>' + v.label + '</h6></div>' +
-                                '<div class="col-2 tooltop-icon-div">' +
-                                    '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
-                                '</div>' +
-                                '<div class="col-2 text-end">' +
-                                    '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#'+idStr+'">' +
-                                    '<i class="fa fa-solid fa-chevron-up"></i></a>' +
-                                '</div>' +
+                            '<div class="col-8"><h6>' + v.label + '</h6></div>' +
+                            '<div class="col-2 tooltop-icon-div">' +
+                            '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
                             '</div>' +
-                        '</div>' +
-                        '<div id="'+idStr+'" class="collapse show">' +
+                            '<div class="col-2 text-end">' +
+                            '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
+                            '<i class="fa fa-solid fa-chevron-up"></i></a>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div id="' + idStr + '" class="collapse show">' +
                             '<div class="card-body meta-sidebar flex-column">' +
-                                '<div class="container-fluid">' +
-                                    '<div class="row">' +
-                                        '<div class="col-12 mt-2">' +
-                                        '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
-                            '<input type="checkbox" class="range mt-2" value="1" data-value="' + k + '"/> show range' +
-                            '<div id="' + k + 'Values" class="dateValues"></div>' +
-                            '<div class="row mt-2">' +
-                            '<div class="col-lg-5"> <input class="facet-min w-100" type="number" data-value="' + k + '"/> </div>' +
-                            '<div class="col-lg-1"> - </div>' +
-                            '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>';
-                    /*
-                    var facet = '<div class="mt-2">' +
-                            '<label class="mt-2 font-weight-bold" >' + v.label + '</label><br/>' +
+                            '<div class="container-fluid">' +
+                            '<div class="row">' +
+                            '<div class="col-12 mt-2">' +
                             '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
                             '<input type="checkbox" class="range mt-2" value="1" data-value="' + k + '"/> show range' +
                             '<div id="' + k + 'Values" class="dateValues"></div>' +
@@ -323,9 +310,24 @@ jQuery(function ($) {
                             '<div class="col-lg-5"> <input class="facet-min w-100" type="number" data-value="' + k + '"/> </div>' +
                             '<div class="col-lg-1"> - </div>' +
                             '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
-                            '</div>'
-                    '</div>'
-                    '<hr/>';*/
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    /*
+                     var facet = '<div class="mt-2">' +
+                     '<label class="mt-2 font-weight-bold" >' + v.label + '</label><br/>' +
+                     '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
+                     '<input type="checkbox" class="range mt-2" value="1" data-value="' + k + '"/> show range' +
+                     '<div id="' + k + 'Values" class="dateValues"></div>' +
+                     '<div class="row mt-2">' +
+                     '<div class="col-lg-5"> <input class="facet-min w-100" type="number" data-value="' + k + '"/> </div>' +
+                     '<div class="col-lg-1"> - </div>' +
+                     '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
+                     '</div>'
+                     '</div>'
+                     '<hr/>';*/
                     $('#dateFacets').append(facet);
                 });
             }
@@ -355,7 +357,6 @@ jQuery(function ($) {
         return object;
     }
 
-
     function getGuiSearchParams(prop) {
         if (guiObj.hasOwnProperty(prop)) {
             return guiObj[prop];
@@ -366,24 +367,153 @@ jQuery(function ($) {
         prefLang = prefLang || 'en';
         return data[prefLang] || Object.values(data)[0];
     }
-    var token = 1;
+
+
+    function showJustSearchFacets() {
+        console.log("showJustSearchFacets");
+         token++;
+        var localToken = token;
+        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
+        var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
+        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+        
+        var param = {
+            url: '/browser/api/smartsearch',
+            method: 'get',
+            data: {
+                q: "",
+                preferredLang: drupalSettings.arche_core_gui.gui_lang,
+                includeBinaries: 0,
+                linkNamedEntities:  0,
+                page: actualPage,
+                pageSize: $('#smartPageSize').val(),
+                facets: {},
+                searchIn: [],
+                initialFacets: true
+            }
+        };
+        
+        $('input.facet:checked').each(function (n, facet) {
+            var prop = $(facet).attr('data-value');
+            var val = $(facet).val();
+            if (!(prop in param.data.facets)) {
+                param.data.facets[prop] = [];
+            }
+            param.data.facets[prop].push(val);
+        });
+
+        $('input.facet-min').each(function (n, facet) {
+            var prop = $(facet).attr('data-value');
+            var val = $(facet).val();
+            if (val !== "") {
+                if (!(prop in param.data.facets)) {
+                    param.data.facets[prop] = {};
+                }
+                param.data.facets[prop].min = val;
+            }
+        });
+
+        $('input.facet-max').each(function (n, facet) {
+            var prop = $(facet).attr('data-value');
+            var val = $(facet).val();
+            if (val !== "") {
+                if (!(prop in param.data.facets)) {
+                    param.data.facets[prop] = {};
+                }
+                param.data.facets[prop].max = val;
+            }
+        });
+
+        $('input.range:checked').each(function (n, facet) {
+            var prop = $(facet).attr('data-value');
+            if (!(prop in param.data.facets)) {
+                param.data.facets[prop] = {};
+            }
+            param.data.facets[prop].distribution = 1;
+        });
+
+        $('input.distribution:checked').each(function (n, facet) {
+            var prop = $(facet).attr('data-value');
+            if (!(prop in param.data.facets)) {
+                param.data.facets[prop] = {};
+            }
+            param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
+        });
+
+        if ($('#searchInChb:checked').length === 1) {
+            $('#searchIn > div').each(function (n, el) {
+                param.data.searchIn.push($(el).attr('data-value'));
+            });
+        }
+
+        if (bbox !== '') {
+            param.data.facets['bbox'] = bbox;
+        }
+
+        if (coordinates) {
+            if (searchStr.length === 0) {
+                firstLoad = false;
+            }
+            param.data.facets['bbox'] = coordinates;
+        }
+        /*
+        if (firstLoad) {
+            param.data.linkNamedEntities = 0;
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
+            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
+        }*/
+
+        var t0 = new Date();
+        param.success = function (x) {
+            if (token === localToken) {
+                showResults(x, param.data, t0, true);
+                console.log("success: ");
+                console.log(param);
+                console.log(selectedSearchValues);
+                updateSearchGui(selectedSearchValues);
+            }
+        };
+        param.fail = function (xhr, textStatus, errorThrown) {
+            alert(xhr.responseText);
+        };
+
+        param.statusCode = function (response) {
+            console.log("statusCode");
+            console.log(response);
+        };
+
+        param.error = function (xhr, status, error) {
+            var err = eval(xhr.responseText);
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+            console.log(xhr.responseText);
+        };
+
+        console.log("SMART SEARCH JUTST FACETSPARAMS: ");
+        console.log(param);
+        $.ajax(param);
+        console.log($.ajax(param));
+        
+    }
 
     function search() {
         token++;
         var localToken = token;
-        if(firstLoad){
-            var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
-            var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
-            var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
-        } else  {
-            searchStr = $('#sm-hero-str').val();
-        }
+        if (firstLoad) {
+            return showJustSearchFacets();
+        } 
+        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
+        var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
+        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+        
+        searchStr = $('#sm-hero-str').val();
+        
         var page = $('a.paginate_button.current').text();
         if (page && page !== actualPage) {
             actualPage = page;
         }
 
-        //addPager();
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -397,6 +527,8 @@ jQuery(function ($) {
                 facets: {},
                 searchIn: []
             }
+            
+            
         };
 
         $('input.facet:checked').each(function (n, facet) {
@@ -462,11 +594,12 @@ jQuery(function ($) {
             }
             param.data.facets['bbox'] = coordinates;
         }
+        /*
         if (firstLoad) {
             param.data.linkNamedEntities = 0;
             param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
             param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
-        }
+        }*/
 
         var t0 = new Date();
         param.success = function (x) {
@@ -550,12 +683,11 @@ jQuery(function ($) {
         }
     }
 
-    function showResults(data, param, t0) {
+    function showResults(data, param, t0, initial = false) {
 
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
 
-        console.log("actualPage" + actualPage);
         var pageSize = data.pageSize;
         var totalPages = Math.floor(data.totalCount / pageSize);
 
@@ -566,14 +698,17 @@ jQuery(function ($) {
             currentPage = data.page;
         }
         createPager(totalPages, pageSize, currentPage);
-
+      
         $('div.dateValues').text('');
-        if (data.results.length > 0) {
+        if (initial || data.results.length > 0) {
+            console.log(" HERE 2");
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
+            console.log("FACETS:::");
+            console.log(data.facets);
             var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100 resetSmartSearch">Reset filters</button></div></div><br/>';
             $.each(data.facets, function (n, fd) {
-                var fdp = param.facets[fd.property] || {};
+                var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
                 if (fd.values.length > 0) {
                     var div = $(document.getElementById(fd.property + 'Values'));
                     var text = '';
@@ -585,16 +720,16 @@ jQuery(function ($) {
                     if (!fd.continues) {
                         //var select = '<select class="facet mt-2">';
                         $.each(fd.values, function (n, i) {
-                         var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
-                         text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
-                         });
-                         
+                            var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
+                            text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
+                        });
+
                         $.each(fd.values, function (n, i) {
                             //var checkbox = '<input type="checkbox" class="facet-checkbox" value="' + i.value + '">';
                             //select += '<option value="' + i.value + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<option value="' + i.value + '">' + checkbox + ' ' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
-                        
+
                         });
                         //select += '</select>';
                     }
@@ -647,13 +782,8 @@ jQuery(function ($) {
         var prefLang = $('#preferredLang').val();
         var results = '';
         results += '<div class="container">';
-
-        var countText = '<h5 class="font-weight-bold">No results found</h5>';
-        if (data.results.length > 0) {
-            countText = data.totalCount + ' ' + Drupal.t("Result(s)");
-        }
-        $('#smartSearchCount').html(countText);
-
+        
+        
         $.each(data.results, function (k, result) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
@@ -706,6 +836,16 @@ jQuery(function ($) {
             }
         });
         $('.main-content-row').html(results);
+        
+        if(!initial) {
+            var countText = '<h5 class="font-weight-bold">No results found</h5>';
+            if (data.results.length > 0) {
+                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
+            }
+            $('#smartSearchCount').html(countText);
+        } else {
+            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+        }
     }
 
     function searchInAdd(id, title) {

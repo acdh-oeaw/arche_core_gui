@@ -40,7 +40,7 @@ jQuery(function ($) {
             }).addTo(map)
 
         }, 500);
-
+        
         setTimeout(function () {
             fetch(archeBaseUrl + '/browser/api/search_coordinates/' + drupalSettings.arche_core_gui.gui_lang + '?_format=json')
                     .then((response) => response.json())
