@@ -698,14 +698,13 @@ jQuery(function ($) {
             currentPage = data.page;
         }
         createPager(totalPages, pageSize, currentPage);
-      
+        var multipleSelects = [];
         $('div.dateValues').text('');
         if (initial || data.results.length > 0) {
             console.log(" HERE 2");
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
-            console.log("FACETS:::");
-            console.log(data.facets);
+            
             var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100 resetSmartSearch">Reset filters</button></div></div><br/>';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
@@ -718,24 +717,28 @@ jQuery(function ($) {
                         });
                     }
                     if (!fd.continues) {
-                        //var select = '<select class="facet mt-2">';
+                        
+                        var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
+                        var select = '<select class="facet mt-2" id="'+title_id+'" name="'+title_id+'" multiple>';
+                        /*
                         $.each(fd.values, function (n, i) {
                             var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
                             text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
                         });
-
+                        */
                         $.each(fd.values, function (n, i) {
+                            console.log(i);
                             //var checkbox = '<input type="checkbox" class="facet-checkbox" value="' + i.value + '">';
-                            //select += '<option value="' + i.value + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            select += '<option value="' + i.label + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<option value="' + i.value + '">' + checkbox + ' ' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
 
                         });
-                        //select += '</select>';
+                        select += '</select>';
                     }
                     if (div.length === 0) {
                         if (fd.continues && fdp.distribution >= 2) {
-                            text += '<input class="facet-min w-25" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-25" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/>';
+                            select += '<input class="facet-min w-25" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-25" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/>';
                         }
 
                         var idStr = fd.label.replace(/[^\w\s]/gi, '');
@@ -758,16 +761,17 @@ jQuery(function ($) {
                                 ' <div class="card-body meta-sidebar flex-column">' +
                                 '<div class="container-fluid">' +
                                 '<div class="row">' +
-                                '<div class="col-12 mt-2">' + text + '</div>' +
+                                '<div class="col-12 mt-2">' + select + '</div>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>';
-
+                                multipleSelects.push(title_id);
+                                
                         //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
                     } else {
-                        div.html(text + '<br/>');
+                        div.html(select + '<br/>');
                     }
                 }
                 if (fdp.distribution === 1 || fdp.distribution === 3) {
@@ -775,9 +779,16 @@ jQuery(function ($) {
                     $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
                 }
             });
+            
+        
             $('#facets').html(facets);
         }
-
+        
+        $.each(multipleSelects, function (k,v) {
+            console.log(v);
+            $("#" + v).multiSelect();
+        });
+        
 
         var prefLang = $('#preferredLang').val();
         var results = '';

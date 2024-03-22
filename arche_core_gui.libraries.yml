@@ -15,11 +15,14 @@ basic:
         
 smart-search:
     version: 1.0
+    header: true
     css:
         base:
             css/slimselect.css: {}
+            css/smart-multi.css: {}
     js:
         js/slimselect.js: {}
+        js/jquery.multi-select.min.js: {}
         js/smartsearch.js: {}
         js/smartsearch-map.js: {}
     dependencies:
