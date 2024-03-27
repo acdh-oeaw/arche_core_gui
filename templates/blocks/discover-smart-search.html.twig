@@ -1,31 +1,15 @@
 
 <input type="hidden" id="arche_url" value="{{ archeUrl }}"/>
 
-<div class="card metadata">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-8"><h6>{{ "Search"|trans }}</h6></div>
-            <div class="col-2 tooltop-icon-div"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
-            <div class="col-2 text-end">
-                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#searchBody">
-                    <i class="fa fa-solid fa-chevron-up"></i>
-                </a>
-            </div>
+
+<div class="col-12 mt-2">
+
+    <form class="d-flex" id="hero-smart-search-form">
+        <div class="input-group">
+            <input type="search" id="sm-hero-str" class="form-control hero-search-field" placeholder="{{ "Find resources"|trans }}..." aria-label="Search">
+            <button class="smartsearch-btn btn hero-search-button" type="submit"><img class="img-fluid" src="{{ arche_theme_img_url }}/common/search_icon.png" alt="Search"  /></button>
         </div>
-
-    </div>
-    <div id="searchBody" class="collapse show">
-        <div class="card-body meta-sidebar flex-column">
-            <form class="d-flex" id="hero-smart-search-form">
-                <div class="input-group">
-                    <input type="search" id="sm-hero-str" class="form-control hero-search-field" placeholder="{{ "Find resources"|trans }}..." aria-label="Search">
-                    <button class="smartsearch-btn btn hero-search-button" type="submit"><img class="img-fluid" src="{{ arche_theme_img_url }}/common/search_icon.png" alt="Search"  /></button>
-                </div>
-            </form>
-
-
-        </div>
-    </div>
+    </form>
 </div>
 
 
@@ -73,20 +57,20 @@
 
                                 </div>
                             </div>
-                             <div class="col-lg-12">
+                            <div class="col-lg-12">
                                 <div class="form-outline">
                                     <input class="form-check-input ml-2" type="checkbox"  id="searchInChb">&nbsp;
                                     <label class="form-check-label ml-2" for="searchInChb">{{ "Search only in"|trans }}</label>
 
                                 </div>
                             </div>       
-                               
+
                         </form>
                     </div>
 
                     <div class="col-12 mt-2">
                         <div class="arche_search_toggle_div" id="extendedSearch">
-                            
+
                             <!--<div>
                                 <h4 class="mt-3">{{ "Spatial area"|trans }}</h4>
                                 <div>
@@ -101,7 +85,7 @@
                                     </select>
                                 </div>    
                             </div>-->
-                           
+
                         </div>
                     </div>
                 </div>
@@ -109,10 +93,10 @@
         </div>
     </div>
 </div>
-                                    
-                                    <div id="facets"></div>
 
- <div id="dateFacets"></div>
+<div id="facets"></div>
+
+<div id="dateFacets"></div>
 
 <div class="col-12 mt-2">
     <form class="form-inline">

@@ -202,6 +202,19 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    $(document).delegate(".smart-search-multi-select", "change", function (e) {
+        var dataValue = $(this).data('value');
+        var value = $(this).val();
+        console.log($(this));
+        console.log("CHANGED::::");
+        console.log(dataValue);
+        console.log(value);
+
+        e.preventDefault();
+    });
+
+
+
 
     /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE - CHECK IT */
     $(document).on("click", function (event) {
@@ -232,7 +245,7 @@ jQuery(function ($) {
         var segments = path.split('/');
         var lastSegment = segments[segments.length - 1];
         var secondLastSegment = segments[segments.length - 2];
-        return {"last" : lastSegment, "second" : secondLastSegment};
+        return {"last": lastSegment, "second": secondLastSegment};
     }
 
     function getSmartUrl() {
@@ -371,12 +384,12 @@ jQuery(function ($) {
 
     function showJustSearchFacets() {
         console.log("showJustSearchFacets");
-         token++;
+        token++;
         var localToken = token;
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
-        
+
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -384,7 +397,7 @@ jQuery(function ($) {
                 q: "",
                 preferredLang: drupalSettings.arche_core_gui.gui_lang,
                 includeBinaries: 0,
-                linkNamedEntities:  0,
+                linkNamedEntities: 0,
                 page: actualPage,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
@@ -393,83 +406,10 @@ jQuery(function ($) {
             }
         };
         
-        $('input.facet:checked').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            var val = $(facet).val();
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = [];
-            }
-            param.data.facets[prop].push(val);
-        });
-
-        $('input.facet-min').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            var val = $(facet).val();
-            if (val !== "") {
-                if (!(prop in param.data.facets)) {
-                    param.data.facets[prop] = {};
-                }
-                param.data.facets[prop].min = val;
-            }
-        });
-
-        $('input.facet-max').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            var val = $(facet).val();
-            if (val !== "") {
-                if (!(prop in param.data.facets)) {
-                    param.data.facets[prop] = {};
-                }
-                param.data.facets[prop].max = val;
-            }
-        });
-
-        $('input.range:checked').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = {};
-            }
-            param.data.facets[prop].distribution = 1;
-        });
-
-        $('input.distribution:checked').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = {};
-            }
-            param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
-        });
-
-        if ($('#searchInChb:checked').length === 1) {
-            $('#searchIn > div').each(function (n, el) {
-                param.data.searchIn.push($(el).attr('data-value'));
-            });
-        }
-
-        if (bbox !== '') {
-            param.data.facets['bbox'] = bbox;
-        }
-
-        if (coordinates) {
-            if (searchStr.length === 0) {
-                firstLoad = false;
-            }
-            param.data.facets['bbox'] = coordinates;
-        }
-        /*
-        if (firstLoad) {
-            param.data.linkNamedEntities = 0;
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
-        }*/
-
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
                 showResults(x, param.data, t0, true);
-                console.log("success: ");
-                console.log(param);
-                console.log(selectedSearchValues);
                 updateSearchGui(selectedSearchValues);
             }
         };
@@ -489,12 +429,7 @@ jQuery(function ($) {
             console.log(error);
             console.log(xhr.responseText);
         };
-
-        console.log("SMART SEARCH JUTST FACETSPARAMS: ");
-        console.log(param);
         $.ajax(param);
-        console.log($.ajax(param));
-        
     }
 
     function search() {
@@ -502,13 +437,13 @@ jQuery(function ($) {
         var localToken = token;
         if (firstLoad) {
             return showJustSearchFacets();
-        } 
+        }
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
-        
+
         searchStr = $('#sm-hero-str').val();
-        
+
         var page = $('a.paginate_button.current').text();
         if (page && page !== actualPage) {
             actualPage = page;
@@ -527,9 +462,16 @@ jQuery(function ($) {
                 facets: {},
                 searchIn: []
             }
-            
-            
         };
+        
+        $(".smart-search-multi-select").each(function () {
+            var prop = $(this).attr('data-property');
+            var val = $(this).val();
+            if (!(prop in param.data.facets)) {
+                param.data.facets[prop] = [];
+            }
+            param.data.facets[prop].push(val);
+        });
 
         $('input.facet:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
@@ -595,11 +537,11 @@ jQuery(function ($) {
             param.data.facets['bbox'] = coordinates;
         }
         /*
-        if (firstLoad) {
-            param.data.linkNamedEntities = 0;
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
-            param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
-        }*/
+         if (firstLoad) {
+         param.data.linkNamedEntities = 0;
+         param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
+         param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
+         }*/
 
         var t0 = new Date();
         param.success = function (x) {
@@ -704,32 +646,35 @@ jQuery(function ($) {
             console.log(" HERE 2");
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
-            
+
             var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100 resetSmartSearch">Reset filters</button></div></div><br/>';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
                 if (fd.values.length > 0) {
                     var div = $(document.getElementById(fd.property + 'Values'));
                     var text = '';
+                    
+                   
                     if (fd.continues && fdp.distribution >= 2) {
                         $.each(fd.values, function (n, i) {
                             text += i.label + ': ' + i.count + '<br/>';
+                            
                         });
                     }
                     if (!fd.continues) {
-                        
+
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
-                        var select = '<select class="facet mt-2" id="'+title_id+'" name="'+title_id+'" multiple>';
+                        var select = '<select class="facet mt-2 smart-search-multi-select" data-property="'+fd.property+'" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
                         /*
+                         $.each(fd.values, function (n, i) {
+                         var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
+                         text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
+                         });
+                         */
                         $.each(fd.values, function (n, i) {
-                            var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
-                            text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
-                        });
-                        */
-                        $.each(fd.values, function (n, i) {
-                            console.log(i);
+                           
                             //var checkbox = '<input type="checkbox" class="facet-checkbox" value="' + i.value + '">';
-                            select += '<option value="' + i.label + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            select += '<option value="' + i.label + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<option value="' + i.value + '">' + checkbox + ' ' + shorten(i.label) + ' (' + i.count + ')</option>';
                             //select += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
 
@@ -767,8 +712,8 @@ jQuery(function ($) {
                                 '</div>' +
                                 '</div>' +
                                 '</div>';
-                                multipleSelects.push(title_id);
-                                
+                        multipleSelects.push(title_id);
+
                         //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
                     } else {
                         div.html(select + '<br/>');
@@ -779,22 +724,24 @@ jQuery(function ($) {
                     $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
                 }
             });
-            
-        
+
+
             $('#facets').html(facets);
         }
-        
-        $.each(multipleSelects, function (k,v) {
+
+        $.each(multipleSelects, function (k, v) {
             console.log(v);
-            $("#" + v).multiSelect();
+            $("#smart-multi-" + v).select2({
+                placeholder: Drupal.t('Select an option')
+            });
         });
-        
+
 
         var prefLang = $('#preferredLang').val();
         var results = '';
         results += '<div class="container">';
-        
-        
+
+
         $.each(data.results, function (k, result) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
@@ -847,8 +794,8 @@ jQuery(function ($) {
             }
         });
         $('.main-content-row').html(results);
-        
-        if(!initial) {
+
+        if (!initial) {
             var countText = '<h5 class="font-weight-bold">No results found</h5>';
             if (data.results.length > 0) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
@@ -856,7 +803,7 @@ jQuery(function ($) {
             $('#smartSearchCount').html(countText);
         } else {
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
-        }
+    }
     }
 
     function searchInAdd(id, title) {
