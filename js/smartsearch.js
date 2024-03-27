@@ -4,7 +4,7 @@ jQuery(function ($) {
 
     var selectedSearchValues = [];
     var dropdownSearchValues = {};
-
+    var countNullText = '<h5 class="font-weight-bold">' + Drupal.t('No results found') + '</h5>';
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
@@ -458,13 +458,7 @@ jQuery(function ($) {
             }
             param.data.facets['bbox'] = coordinates;
         }
-        /*
-         if (firstLoad) {
-         param.data.linkNamedEntities = 0;
-         param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = {};
-         param.data.facets['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = ['https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'];
-         }*/
-
+       
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
@@ -503,8 +497,10 @@ jQuery(function ($) {
         $('input.facet-min').val('');
         $('input.facet-max').val('');
         $('#preferredLang').val('');
+        $('.select2-selection__rendered').html('');
+        $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
         actualPage = 1;
-        spatialSelect.setData([{text: 'No filter', value: ''}]);
+        //spatialSelect.setData([{text: 'No filter', value: ''}]);
         search("", "", 1);
     }
 
@@ -535,13 +531,6 @@ jQuery(function ($) {
 
         $('#smartsearch-pager').append('</span>');
 
-        // Add "..." if there are more pages
-        /*
-         if (endPage > 6) {
-         $('#smartsearch-pager').append('<span>...</span>');
-         $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
-         }*/
-
         // Add "Next" button
         if (actualPage < totalPages) {
             $('#smartsearch-pager').append('<a href="#"  class="paginate_button next" data-page="' + (actualPage + 1) + '">></a>');
@@ -566,17 +555,15 @@ jQuery(function ($) {
         var multipleSelects = [];
         $('div.dateValues').text('');
         if (initial || data.results.length > 0) {
-            console.log(" HERE 2");
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
 
-            var facets = '<div class="row"><div class="col-lg-12"><button type="button" class="btn btn-info w-100 resetSmartSearch">Reset filters</button></div></div><br/>';
+            var facets = '';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
                 if (fd.values.length > 0) {
                     var div = $(document.getElementById(fd.property + 'Values'));
                     var text = '';
-
 
                     if (fd.continues && fdp.distribution >= 2) {
                         $.each(fd.values, function (n, i) {
@@ -585,22 +572,11 @@ jQuery(function ($) {
                         });
                     }
                     if (!fd.continues) {
-
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
                         var select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
-                        /*
-                         $.each(fd.values, function (n, i) {
-                         var checked = '';//fdp.indexOf(i.value) >= 0 ? 'checked="checked"' : ''
-                         text += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
-                         });
-                         */
+                        
                         $.each(fd.values, function (n, i) {
-
-                            //var checkbox = '<input type="checkbox" class="facet-checkbox" value="' + i.value + '">';
                             select += '<option value="' + i.label + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
-                            //select += '<option value="' + i.value + '">' + checkbox + ' ' + shorten(i.label) + ' (' + i.count + ')</option>';
-                            //select += '<input class="facet mt-2" type="checkbox" value="' + i.value + '" data-value="' + fd.property + '" ' + checked + '/> ' + shorten(i.label) + ' (' + i.count + ')<br/>';
-
                         });
                         select += '</select>';
                     }
@@ -647,8 +623,6 @@ jQuery(function ($) {
                     $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
                 }
             });
-
-
             $('#facets').html(facets);
         }
 
@@ -665,7 +639,6 @@ jQuery(function ($) {
         $.each(data.results, function (k, result) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
-
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
                 //title
                 results += '<div class="res-property">';
@@ -691,7 +664,6 @@ jQuery(function ($) {
                 }
                 var parents = getParents(result.parent || false, true, prefLang);
                 results += parents;
-
                 results += '</div>';
                 results += '<div class="res-property discover-content-toolbar">';
                 results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
@@ -710,20 +682,21 @@ jQuery(function ($) {
                                     </div>';
                 results += '</div>';
                 results += '</div>';
-
             }
         });
         $('.main-content-row').html(results);
-
-        if (!initial) {
+        
+        //var countText = countNullText;
+         if (!initial) {
             var countText = '<h5 class="font-weight-bold">No results found</h5>';
             if (data.results.length > 0) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
             }
             $('#smartSearchCount').html(countText);
         } else {
+            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
-    }
+        }
     }
 
     function searchInAdd(id, title) {
