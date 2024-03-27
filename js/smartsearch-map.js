@@ -57,7 +57,7 @@ jQuery(function ($) {
                                 var marker = L.marker([lat, lon], {
                                     title: cityName, // Set the title property
                                 })
-                                        .bindPopup('<h5>' + cityName + '</h5><br><a href="#" id="SMMapBtn" class="btn btn-info w-100 text-light" data-coordinates="' + wkt + '">Add to Search</a>')
+                                        .bindPopup('<h5>' + cityName + '</h5><br><a href="#" id="SMMapBtn" class="btn btn-arche-blue w-100 text-light" data-coordinates="' + wkt + '">Add to Search</a>')
                                         .addTo(map);
                                 heatArr.push([lat, lon]);
                                 // Add the marker to the array

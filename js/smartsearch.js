@@ -8,6 +8,7 @@ jQuery(function ($) {
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
+    var mapSmall;
 
     /********************** EVENTS *************************************/
 
@@ -27,15 +28,11 @@ jQuery(function ($) {
                 guiObj = {'searchStr': lastParams.last};
             }
         }
-
         executeTheSearch();
         fetchSearchDateFacet();
-
     });
 
-
     //// events ////
-
     // not working now
     $("#block-smartsearchblock").on("change", "input", function (event) {
         executeTheSearch();
@@ -100,7 +97,7 @@ jQuery(function ($) {
 
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
-        var coordinates = $(this).attr("data-coordinates");
+        var coordinates = $(this).data("coordinates");
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -108,7 +105,12 @@ jQuery(function ($) {
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
-        search("", coordinates);
+        console.log("SMMAP COORDINATES:::");
+        console.log(coordinates);
+        guiObj = {'coordinates': coordinates};
+        console.log(guiObj);
+        firstLoad = false;
+        search();
         var mapContainer = $('#mapContainer');
         mapContainer.hide();
     });
@@ -123,7 +125,6 @@ jQuery(function ($) {
         $('#block-smartsearchblock select').val('');
         // do a topcollection search
         resetSearch();
-
     });
 
     //main search block
@@ -138,16 +139,6 @@ jQuery(function ($) {
         executeTheSearch(actualPage)
         e.preventDefault();
     });
-
- /*
-    $(document).delegate(".smart-search-multi-select", "change", function (e) {
-        var dataValue = $(this).data('value');
-        var value = $(this).val();
-        e.preventDefault();
-    });
-*/
-
-
 
     /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE - NOT WORKING */
     $(document).on("click", function (event) {
@@ -359,7 +350,8 @@ jQuery(function ($) {
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
-
+        console.log("coordinates in search:::: ");
+        console.log(coordinates);
         searchStr = $('#sm-hero-str').val();
 
         var page = $('a.paginate_button.current').text();
@@ -458,14 +450,18 @@ jQuery(function ($) {
             }
             param.data.facets['bbox'] = coordinates;
         }
-       
+
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
                 showResults(x, param.data, t0);
                 console.log("success: ");
                 console.log(param);
-                
+                if(param.data.facets.bbox) {
+                    displaySmallMap(param.data.facets.bbox);
+                    console.log("BBBOXXX:::: ");
+                    console.log(param.data.facets.bbox);
+                }
                 updateSearchGui(selectedSearchValues);
                 updateMultiSelectGui(dropdownSearchValues);
             }
@@ -490,6 +486,18 @@ jQuery(function ($) {
         console.log("SMART SEARCH PARAMS: ");
         console.log(param);
         $.ajax(param);
+    }
+
+    function displaySmallMap(coordinates){
+        //$("#bboxMap").css('display', 'block');
+        mapSmall = L.map('bboxMap', {
+            zoomControl: false, // Add zoom control separately below
+            center: [48.2, 16.3], // Initial map center
+            zoom: 10, // Initial zoom level
+            attributionControl: false, // Instead of default attribution, we add custom at the bottom of script
+            scrollWheelZoom: false
+        })
+
     }
 
     function resetSearch() {
@@ -574,7 +582,7 @@ jQuery(function ($) {
                     if (!fd.continues) {
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
                         var select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
-                        
+
                         $.each(fd.values, function (n, i) {
                             select += '<option value="' + i.label + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
                         });
@@ -685,9 +693,9 @@ jQuery(function ($) {
             }
         });
         $('.main-content-row').html(results);
-        
+
         //var countText = countNullText;
-         if (!initial) {
+        if (!initial) {
             var countText = '<h5 class="font-weight-bold">No results found</h5>';
             if (data.results.length > 0) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
@@ -696,7 +704,7 @@ jQuery(function ($) {
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
-        }
+    }
     }
 
     function searchInAdd(id, title) {
@@ -738,7 +746,7 @@ jQuery(function ($) {
 
     function updateMultiSelectGui(data) {
         $.each(data, function (index, value) {
-            var elementWithDataProperty = $('[data-property="'+index+'"]');
+            var elementWithDataProperty = $('[data-property="' + index + '"]');
             elementWithDataProperty.html(value);
         });
     }
@@ -776,9 +784,7 @@ jQuery(function ($) {
                             $(this).prop("checked", true);
                         });
             }
-
         });
-
     }
 
     function formatDate(originalDate) {
