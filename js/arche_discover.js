@@ -60,7 +60,7 @@ jQuery(function ($) {
                         text += '<p>' + row.description + '</p>';
                         text += '</div>';
                         text += '<div class="res-property discover-content-toolbar">';
-                        text += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">acdh:TopCollection</p>';
+                        text += '<p class="btn btn-toolbar-gray btn-toolbar-text no-btn">acdh:TopCollection</p>';
                         text += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(row.avDate) + '</p>';
                         if (row.version) {
                             text += '<p class="btn btn-toolbar-green btn-toolbar-text no-btn">' + row.version + '</p>';

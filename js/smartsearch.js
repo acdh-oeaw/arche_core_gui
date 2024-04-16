@@ -674,7 +674,7 @@ jQuery(function ($) {
                 results += parents;
                 results += '</div>';
                 results += '<div class="res-property discover-content-toolbar">';
-                results += '<p class="btn btn-toolbar-grey btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+                results += '<p class="btn btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
                 results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
                 results += '</div>';
                 results += '</div>';

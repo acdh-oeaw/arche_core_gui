@@ -328,7 +328,7 @@ jQuery(function ($) {
                         text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
                         //type
                         text += '<div class="res-property">';
-                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-grey">' + shortcut + '</a>';
+                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
                         text += '</div>';
 
                         //avdate
@@ -395,7 +395,7 @@ jQuery(function ($) {
                         text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
                         //type
                         text += '<div class="res-property">';
-                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-grey">' + shortcut + '</a>';
+                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
                         text += '</div>';
 
                         //avdate
