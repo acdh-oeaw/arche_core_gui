@@ -454,16 +454,17 @@ jQuery(function ($) {
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
+                console.log("success - param.data: ");
+                console.log(param.data);
                 showResults(x, param.data, t0);
-                console.log("success: ");
-                console.log(param);
+                
                 if(param.data.facets.bbox) {
                     displaySmallMap(param.data.facets.bbox);
                     console.log("BBBOXXX:::: ");
                     console.log(param.data.facets.bbox);
                 }
-                updateSearchGui(selectedSearchValues);
-                updateMultiSelectGui(dropdownSearchValues);
+                //updateSearchGui(selectedSearchValues);
+                //updateMultiSelectGui(dropdownSearchValues);
             }
         };
         param.fail = function (xhr, textStatus, errorThrown) {
@@ -549,7 +550,8 @@ jQuery(function ($) {
 
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
-
+        console.log("SHOW RESULTS:")
+        console.log(data);
         var pageSize = data.pageSize;
         var totalPages = Math.floor(data.totalCount / pageSize);
 
@@ -566,11 +568,14 @@ jQuery(function ($) {
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
 
+
             var facets = '';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
+                console.log("FD:: ");
+                console.log(fd);
                 if (fd.values.length > 0) {
-                    var div = $(document.getElementById(fd.property + 'Values'));
+                    var div = $(document.getElementById(fd.property + 'values'));
                     var text = '';
 
                     if (fd.continues && fdp.distribution >= 2) {
@@ -584,7 +589,7 @@ jQuery(function ($) {
                         var select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
 
                         $.each(fd.values, function (n, i) {
-                            select += '<option value="' + i.label + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            select += '<option value="' + i.value + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
                         });
                         select += '</select>';
                     }
@@ -752,6 +757,8 @@ jQuery(function ($) {
     }
 
     function updateSearchGui(data) {
+        console.log("update:::::");
+        console.log(data);
         $.each(data, function (k, v) {
             var elementId = "";
             var dataValue = "";
