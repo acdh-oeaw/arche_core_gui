@@ -568,7 +568,6 @@ jQuery(function ($) {
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
 
-
             var facets = '';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
