@@ -12,16 +12,37 @@
 </div>
 
 
-<div class="col-12">
-    <form class="form-inline">
-        <button type="button" class="btn btn-arche-blue w-100" id="mapToggleBtn">{{ "Map"|trans }}</button>
-        <div class="arche-sms-popup"  id="mapContainer" style="display: none;">
-            {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}
+<div class="card metadata smsMapCard">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-8"><h6>{{ "Map"|trans }}</h6></div>
+            <div class="col-2 tooltop-icon-div"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
+            <div class="col-2 text-end ">
+                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#smsMapBody">
+                    <i class="fa fa-solid fa-chevron-up"></i>
+                </a>
+            </div>
         </div>
-        <div id="bboxMap"></div>
-    </form>
-</div>
+    </div>
+    <div id="smsMapBody" class="collapse show">
+        <div class="card-body meta-sidebar flex-column">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 mt-2">
+                        <button type="button" class="btn btn-arche-blue w-100" id="mapToggleBtn">{{ "Map"|trans }}</button>
+                        <div class="arche-sms-popup"  id="mapContainer" style="display: none;">
+                            {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}
+                        </div>
+                        <div id="bboxMap"></div>
+                    </div>
 
+
+                </div>
+            </div>    
+        </div>
+    </div>        
+
+</div>
 
 
 <div id="facets"></div>
@@ -37,7 +58,6 @@
                 </a>
             </div>
         </div>
-
     </div>
     <div id="extendedSearchBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
@@ -97,7 +117,7 @@
     </div>
 </div>
 
-                                    
+
 <div id="dateFacets"></div>
 
 <div class="col-12 mt-2">

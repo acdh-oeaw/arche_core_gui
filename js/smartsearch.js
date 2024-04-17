@@ -34,19 +34,27 @@ jQuery(function ($) {
 
     //// events ////
     // not working now
-    $("#block-smartsearchblock").on("change", "input", function (event) {
-        executeTheSearch();
-        console.log("Input changed:::::");
-        selectedSearchValues.push(createSelectedValuesForForm($(this)));
-        event.preventDefault();
+
+
+
+    $(".smart-search-multi-select").on("change", function (event) {
+        console.log('itt');
+        var selectId = $(this).attr('id');
+        var selectedValue = $(this).val();
+
+        // Output the ID and value for demonstration
+        console.log('Select2 ID: ' + selectId + ', Selected Value: ' + selectedValue);
     });
-    // not working now
-    $("#block-smartsearchblock").on("change", "select", function (event) {
-        executeTheSearch();
-        console.log("change changed:::::");
-        selectedSearchValues.push(createSelectedValuesForForm($(this)));
-        event.preventDefault();
+
+    $(".smart-search-multi-select").on("select", function (event) {
+        console.log('itt 1');
+        var selectId = $(this).attr('id');
+        var selectedValue = $(this).val();
+
+        // Output the ID and value for demonstration
+        console.log('Select2 ID: ' + selectId + ', Selected Value: ' + selectedValue);
     });
+
 
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
@@ -129,9 +137,10 @@ jQuery(function ($) {
 
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
-        firstLoad = false;
-        executeTheSearch()
         e.preventDefault();
+        firstLoad = false;
+        executeTheSearch();
+        
     });
 
     $(document).delegate(".paginate_button", "click", function (e) {
@@ -183,8 +192,6 @@ jQuery(function ($) {
             smartUrl = "https://arche-smartsearch.acdh-dev.oeaw.ac.at";
         }
         return smartUrl;
-
-
     }
 
     function getInstanceUrl() {
@@ -456,15 +463,17 @@ jQuery(function ($) {
             if (token === localToken) {
                 console.log("success - param.data: ");
                 console.log(param.data);
+                console.log("update multi gui");
+                updateMultiSelectGui(param.data.facets);
                 showResults(x, param.data, t0);
-                
-                if(param.data.facets.bbox) {
+
+                if (param.data.facets.bbox) {
                     displaySmallMap(param.data.facets.bbox);
                     console.log("BBBOXXX:::: ");
                     console.log(param.data.facets.bbox);
                 }
-                //updateSearchGui(selectedSearchValues);
-                //updateMultiSelectGui(dropdownSearchValues);
+
+
             }
         };
         param.fail = function (xhr, textStatus, errorThrown) {
@@ -489,7 +498,7 @@ jQuery(function ($) {
         $.ajax(param);
     }
 
-    function displaySmallMap(coordinates){
+    function displaySmallMap(coordinates) {
         //$("#bboxMap").css('display', 'block');
         mapSmall = L.map('bboxMap', {
             zoomControl: false, // Add zoom control separately below
@@ -571,8 +580,7 @@ jQuery(function ($) {
             var facets = '';
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.continuous ? {} : []);
-                console.log("FD:: ");
-                console.log(fd);
+
                 if (fd.values.length > 0) {
                     var div = $(document.getElementById(fd.property + 'values'));
                     var text = '';
@@ -588,7 +596,16 @@ jQuery(function ($) {
                         var select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
 
                         $.each(fd.values, function (n, i) {
-                            select += '<option value="' + i.value + '" data-value="' + fd.property + '">' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            
+                            //iterate the param.facets to set the selected ones!!!!!!
+                            
+                            if(i.value === "https://vocabs.acdh.oeaw.ac.at/schema#TopCollection") {
+                                console.log(param);
+                                console.log(i.value);
+                                //select += '<option value="' + i.value + '" data-value="' + fd.property + '" selected>' + shorten(i.label) + ' (' + i.count + ')</option>';
+                            }
+                            select += '<option value="' + i.value + '" data-value="' + fd.property + '" >' + shorten(i.label) + ' (' + i.count + ')</option>';
+                        
                         });
                         select += '</select>';
                     }
@@ -749,10 +766,41 @@ jQuery(function ($) {
     }
 
     function updateMultiSelectGui(data) {
+        console.log("updateMultiSelectGui:::::::");
+        console.log(data);
         $.each(data, function (index, value) {
-            var elementWithDataProperty = $('[data-property="' + index + '"]');
-            elementWithDataProperty.html(value);
+
+            if (value.length > 0) {
+                if (value[0].length > 0) {
+                    var selected = [];
+                    $.each(value, function (i, v) {
+                        console.log("index: ");
+                        console.log(index);
+                        console.log("value: ");
+                        console.log(v);
+                        selected.push(v);
+                    });
+                    var selectId = $('.smart-search-multi-select[data-property="' + index + '"]').attr('id');
+                    $.each(selected, function (ind, val) {
+                        var $option = $('#' + selectId + ' option[value="' + val + '"]');
+                        console.log("option :  "+ $option);
+                        // Check if the option exists and is not already selected
+                        if ($option.length && !$option.prop('selected')) {
+                            // Select the option
+                            $option.prop('selected', true);
+                        }
+                    });
+                    console.log("change trigger:::");
+                    $('#' + selectId).trigger('change');
+
+                  
+                }
+            }
+            //var elementWithDataProperty = $('[data-property="' + index + '"]');
+            //elementWithDataProperty.html(value);
         });
+        console.log("updateMultiSelectGui ------ END :::::::");
+
     }
 
     function updateSearchGui(data) {
