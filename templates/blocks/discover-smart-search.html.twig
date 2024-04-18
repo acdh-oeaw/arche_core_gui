@@ -29,6 +29,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-2">
+                        <div id="mapSelectedPlace"></div>
                         <button type="button" class="btn btn-arche-blue w-100" id="mapToggleBtn">{{ "Map"|trans }}</button>
                         <div class="arche-sms-popup"  id="mapContainer" style="display: none;">
                             {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}

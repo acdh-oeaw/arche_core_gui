@@ -36,24 +36,6 @@ jQuery(function ($) {
 
     //// events ////
 
-    $(".smart-search-multi-select").on("change", function (event) {
-        console.log('itt');
-        var selectId = $(this).attr('id');
-        var selectedValue = $(this).val();
-
-        // Output the ID and value for demonstration
-        console.log('Select2 ID: ' + selectId + ', Selected Value: ' + selectedValue);
-    });
-
-    $(".smart-search-multi-select").on("select", function (event) {
-        console.log('itt 1');
-        var selectId = $(this).attr('id');
-        var selectedValue = $(this).val();
-
-        // Output the ID and value for demonstration
-        console.log('Select2 ID: ' + selectId + ', Selected Value: ' + selectedValue);
-    });
-
 
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
@@ -65,6 +47,7 @@ jQuery(function ($) {
         } else {
             searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
             $('#searchIn').show();
+            $('.discover-content-main').hide();
             var count = $('#searchIn').length;
             if (count > 0) {
                 $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', true);
@@ -105,6 +88,7 @@ jQuery(function ($) {
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
+        var title = $(this).data("location-title");
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -114,10 +98,10 @@ jQuery(function ($) {
                 '</div>');
         console.log("SMMAP COORDINATES:::");
         console.log(coordinates);
-        guiObj = {'coordinates': coordinates};
+        guiObj = {'coordinates': coordinates, 'locationTitle': title};
         console.log(guiObj);
         firstLoad = false;
-        search();
+        //search();
         var mapContainer = $('#mapContainer');
         mapContainer.hide();
     });
@@ -137,6 +121,10 @@ jQuery(function ($) {
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
         e.preventDefault();
+        if ($('.discover-content-main').is(':hidden')) {
+            $('.discover-content-main').show();
+        }
+
         guiObj = {'actualPage': 1};
         firstLoad = false;
         executeTheSearch();
@@ -149,6 +137,18 @@ jQuery(function ($) {
         executeTheSearch()
         e.preventDefault();
     });
+
+    $(document).delegate("#removeMapSelectedPlace", "click", function (e) {
+        e.preventDefault();
+        $('#mapSelectedPlace').html('');
+        console.log(guiObj);
+        delete guiObj.coordinates;
+        delete guiObj.locationTitle;
+        console.log("after");
+        console.log(guiObj);
+        search();
+    });
+
 
     $(document).delegate("#smartPageSize", "change", function (e) {
         guiObj = {'actualPage': 1};
@@ -287,7 +287,7 @@ jQuery(function ($) {
 
         console.log("coordinates in search:::: ");
         console.log(coordinates);
-        //searchStr = $('#sm-hero-str').val();
+        searchStr = $('#sm-hero-str').val();
 
         var param = {
             url: '/browser/api/smartsearch',
@@ -386,7 +386,6 @@ jQuery(function ($) {
             if (token === localToken) {
                 console.log("success - param.data: ");
                 console.log(param.data);
-                console.log("update multi gui");
                 showResults(x, param.data, t0);
                 /*
                  if (param.data.facets.bbox) {
@@ -395,9 +394,9 @@ jQuery(function ($) {
                  console.log(param.data.facets.bbox);
                  }
                  */
-
             }
         };
+
         param.fail = function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
         };
@@ -428,8 +427,7 @@ jQuery(function ($) {
             zoom: 10, // Initial zoom level
             attributionControl: false, // Instead of default attribution, we add custom at the bottom of script
             scrollWheelZoom: false
-        })
-
+        });
     }
 
     function resetSearch() {
@@ -438,6 +436,7 @@ jQuery(function ($) {
         $('input.facet-max').val('');
         $('.select2-selection__rendered').html('');
         $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
+        guiObj = new stdClass();
         guiObj = {'actualPage': 1};
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
         search("", "", 1);
@@ -491,9 +490,7 @@ jQuery(function ($) {
         } else {
             currentPage = data.page;
         }
-        console.log("PAGES:::");
-        console.log(currentPage);
-        console.log(totalPages);
+
         createPager(totalPages);
         var multipleSelects = [];
         $('div.dateValues').text('');
@@ -540,32 +537,7 @@ jQuery(function ($) {
                             select += '<div class="text-center"><input class="facet-min w-40" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
                         }
 
-                        var idStr = fd.label.replace(/[^\w\s]/gi, '');
-                        idStr = idStr.replace(/\s+/g, '_');
-                        facets += '<div class="card metadata facets">' +
-                                '<div class="card-header">' +
-                                '<div class="row">' +
-                                '<div class="col-8"><h6>' + fd.label + '</h6></div>' +
-                                '<div class="col-2 tooltop-icon-div">' +
-                                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
-                                '</div>' +
-                                '<div class="col-2 text-end">' +
-                                '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
-                                '<i class="fa fa-solid fa-chevron-up"></i>' +
-                                '</a>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '<div id="' + idStr + '" class="collapse show">' +
-                                ' <div class="card-body meta-sidebar flex-column">' +
-                                '<div class="container-fluid">' +
-                                '<div class="row">' +
-                                '<div class="col-12 mt-2">' + select + '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>';
+                        facets += createFacetSelectCard(fd, select);
                         multipleSelects.push(title_id);
 
                         //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
@@ -587,11 +559,64 @@ jQuery(function ($) {
             });
         });
 
-        
         var results = '';
+        results += displaySearchResult(data.results);
+
+        $('.main-content-row').html(results);
+
+        //var countText = countNullText;
+        if (!initial) {
+            var countText = '<h5 class="font-weight-bold">No results found</h5>';
+            if (data.results.length > 0) {
+                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
+            }
+            $('#smartSearchCount').html(countText);
+        } else {
+            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
+            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+        }
+
+        //if the user selected a value from the map then we have to display it.
+        displayMapSelectedValue();
+
+    }
+
+    function createFacetSelectCard(fd, select) {
+        var text = "";
+        var idStr = fd.label.replace(/[^\w\s]/gi, '');
+        idStr = idStr.replace(/\s+/g, '_');
+        text += '<div class="card metadata facets">' +
+                '<div class="card-header">' +
+                '<div class="row">' +
+                '<div class="col-8"><h6>' + fd.label + '</h6></div>' +
+                '<div class="col-2 tooltop-icon-div">' +
+                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
+                '</div>' +
+                '<div class="col-2 text-end">' +
+                '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
+                '<i class="fa fa-solid fa-chevron-up"></i>' +
+                '</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="' + idStr + '" class="collapse show">' +
+                ' <div class="card-body meta-sidebar flex-column">' +
+                '<div class="container-fluid">' +
+                '<div class="row">' +
+                '<div class="col-12 mt-2">' + select + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        return text;
+    }
+
+    function displaySearchResult(data) {
+        var results = "";
         results += '<div class="container">';
 
-        $.each(data.results, function (k, result) {
+        $.each(data, function (k, result) {
             if (result.title && result.id) {
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
@@ -622,33 +647,21 @@ jQuery(function ($) {
                 results += parents;
                 results += '</div>';
                 results += '<div class="res-property discover-content-toolbar">';
-                results += '<p class="btn btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-                
+                results += '<p class="btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+
 
                 if (result.accessRestriction) {
-                    results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">';
-                    console.log("accessres: ");
-                    console.log(result.accessRestriction);
-                     results += '</p>';
-                }
-
-                if (result.accessRestrictionSummary) {
-                    results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">';
-                    results +=  result.accessRestrictionSummary[preferredLang] ;
+                    results += setAccessRestrictionLabel(result.accessRestriction[0].title['en']);
+                    results += result.accessRestriction[0].title[preferredLang].replace(/\n/g, ' / ');
                     results += '</p>';
                 }
 
+                if (result.accessRestrictionSummary) {
+                    results += setAccessRestrictionLabel(result.accessRestrictionSummary['en']);
+                    results += result.accessRestrictionSummary[preferredLang].replace(/\n/g, ' / ');
+                    results += '</p>';
+                }
 
-                /*
-                 if (result.hasOwnProperty('accessRestriction') && result.accessRestriction !== undefined) {
-                 
-                 results +=  result.accessRestriction ;
-                 }
-                 if(typeof result.accessRestrictionSummary[preferredLang] !== "undefined") {
-                 results +=  result.accessRestrictionSummary.replace(/\d+/g, '') ;
-                 }
-                 */
-                
                 results += '</div>';
                 results += '</div>';
 
@@ -665,19 +678,55 @@ jQuery(function ($) {
                 results += '</div>';
             }
         });
-        $('.main-content-row').html(results);
 
-        //var countText = countNullText;
-        if (!initial) {
-            var countText = '<h5 class="font-weight-bold">No results found</h5>';
-            if (data.results.length > 0) {
-                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
-            }
-            $('#smartSearchCount').html(countText);
-        } else {
-            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
-            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+        return results;
     }
+
+    function displayMapSelectedValue() {
+        console.log("displayMapSelectedValue");
+        console.log(guiObj);
+        if (guiObj.coordinates && guiObj.locationTitle) {
+            $('#mapSelectedPlace').html('<h5 class="h5-blue-title"><button id="removeMapSelectedPlace" class="btn btn-sm-add"> - </button>' + guiObj.locationTitle + '</h5>');
+        }
+
+    }
+
+    /* set the colors of the restriction labels*/
+    function setAccessRestrictionLabel(accessText) {
+
+        var wordRegex = /\b(public|restricted|academic)\b/g;
+        var matches = [];
+        var match;
+        while ((match = wordRegex.exec(accessText)) !== null) {
+            matches.push(match[0]);
+        }
+
+        var matchesCount = matches.length;
+        if (matchesCount === 1) {
+            return '<p class="btn-toolbar btn-toolbar-' + matches[0] + ' no-btn">';
+        } else if (matchesCount === 2) {
+            var restrictedText = false;
+            var publicText = false;
+            var academicText = false;
+            $.each(matches, function (k, v) {
+                if (v === 'public') {
+                    publicText = true;
+                } else if (v === 'restricted') {
+                    restrictedText = true;
+                } else if (v === 'academic') {
+                    academicText = true;
+                }
+            });
+
+            if (publicText && restrictedText) {
+                return '<p class="btn-toolbar btn-toolbar-public-restricted no-btn">';
+            } else if (publicText && academicText) {
+                return '<p class="btn-toolbar btn-toolbar-public-academic no-btn">';
+            } else if (restrictedText && academicText) {
+                return '<p class="btn-toolbar btn-toolbar-academic-restricted no-btn">';
+            }
+        }
+        return '<p class="btn-toolbar btn-toolbar-public no-btn">';
     }
 
     function searchInAdd(id, title) {
@@ -718,8 +767,7 @@ jQuery(function ($) {
     }
 
     function updateSearchGui(data) {
-        console.log("update:::::");
-        console.log(data);
+
         $.each(data, function (k, v) {
             var elementId = "";
             var dataValue = "";
