@@ -9,14 +9,15 @@ jQuery(function ($) {
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
     var mapSmall;
+    var preferredLang = drupalSettings.arche_core_gui.gui_lang;
 
     /********************** EVENTS *************************************/
 
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     var guiObj = {};
-    $(document).ready(function () {
 
+    $(document).ready(function () {
         var currentUrl = window.location.href;
 
         // Check if the URL contains the desired substring
@@ -27,15 +28,13 @@ jQuery(function ($) {
                 $('#sm-hero-str').val(lastParams.last);
                 guiObj = {'searchStr': lastParams.last};
             }
+            guiObj = {'actualPage': 1};
         }
         executeTheSearch();
-        fetchSearchDateFacet();
+
     });
 
     //// events ////
-    // not working now
-
-
 
     $(".smart-search-multi-select").on("change", function (event) {
         console.log('itt');
@@ -138,6 +137,7 @@ jQuery(function ($) {
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
         e.preventDefault();
+        guiObj = {'actualPage': 1};
         firstLoad = false;
         executeTheSearch();
 
@@ -145,18 +145,15 @@ jQuery(function ($) {
 
     $(document).delegate(".paginate_button", "click", function (e) {
         actualPage = parseInt($(this).text());
-        executeTheSearch(actualPage)
+        guiObj = {'actualPage': actualPage};
+        executeTheSearch()
         e.preventDefault();
     });
 
-    /* HIDE THE EXTENDED SEARCH IF THE USER CLICKED OUTSIDE - NOT WORKING */
-    $(document).on("click", function (event) {
-        var popupExtSearch = $(".extendedSearchCard");
-        var extSearchButton = $(".extendedSearcBtn");
-        // Check if the clicked element is not the popup or the toggle button
-        //if (!popupExtSearch.is(event.target) && !extSearchButton.is(event.target) && popupExtSearch.has(event.target).length === 0) {
-        //    popupExtSearch.hide();
-        //}
+    $(document).delegate("#smartPageSize", "change", function (e) {
+        guiObj = {'actualPage': 1};
+        executeTheSearch()
+        e.preventDefault();
     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
@@ -216,77 +213,7 @@ jQuery(function ($) {
         return v;
     }
     //var geonamesAccount = 'zozlak';
-    var spatialSelect;
     var bbox = '';
-
-
-    function fetchSearchDateFacet() {
-        $.ajax({
-            url: '/browser/api/smartSearchDateFacet',
-            success: function (data) {
-                data = jQuery.parseJSON(data);
-                $.each(data, function (k, v) {
-
-                    var idStr = v.label.replace(/[^\w\s]/gi, '');
-                    idStr = idStr.replace(/\s+/g, '_');
-                    var facet = '<div class="card metadata facets">' +
-                            '<div class="card-header">' +
-                            '<div class="row">' +
-                            '<div class="col-8"><h6>' + v.label + '</h6></div>' +
-                            '<div class="col-2 tooltop-icon-div">' +
-                            '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
-                            '</div>' +
-                            '<div class="col-2 text-end">' +
-                            '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
-                            '<i class="fa fa-solid fa-chevron-up"></i></a>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '<div id="' + idStr + '" class="collapse show">' +
-                            '<div class="card-body meta-sidebar flex-column">' +
-                            '<div class="container-fluid">' +
-                            '<div class="row">' +
-                            '<div class="col-12 mt-2">' +
-                            '<input type="checkbox" class="distribution mt-2" value="1" data-value="' + k + '"/> show distribution<br/>' +
-                            '<input type="checkbox" class="range mt-2" value="1" data-value="' + k + '"/> show range' +
-                            '<div id="' + k + 'Values" class="dateValues"></div>' +
-                            '<div class="row mt-2">' +
-                            '<div class="col-lg-5"> <input class="facet-min w-100" type="number" data-value="' + k + '"/> </div>' +
-                            '<div class="col-lg-1"> - </div>' +
-                            '<div class="col-lg-5"><input class="facet-max w-100" type="number" data-value="' + k + '"/> </div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
-                    $('#dateFacets').append(facet);
-                });
-            }
-        });
-    }
-
-    function createSelectedValuesForForm(obj) {
-        // Fetch the id attribute
-        var idValue = obj.attr("id");
-        var classValue = obj.attr("class");
-        var dataValue = obj.attr("data-value");
-        var value = obj.val();
-        var object = new Object();
-
-        if (idValue) {
-            object.id = idValue;
-        }
-        if (classValue) {
-            object.class = classValue;
-        }
-        if (dataValue) {
-            object.data = dataValue;
-        }
-        if (value) {
-            object.value = value;
-        }
-        return object;
-    }
 
     function getGuiSearchParams(prop) {
         if (guiObj.hasOwnProperty(prop)) {
@@ -304,7 +231,7 @@ jQuery(function ($) {
         console.log("showJustSearchFacets");
         token++;
         var localToken = token;
-        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+        var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
 
         var param = {
             url: '/browser/api/smartsearch',
@@ -314,7 +241,7 @@ jQuery(function ($) {
                 preferredLang: drupalSettings.arche_core_gui.gui_lang,
                 includeBinaries: 0,
                 linkNamedEntities: 0,
-                page: actualPage,
+                page: pagerPage,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
@@ -356,15 +283,11 @@ jQuery(function ($) {
         }
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
-        var actualPage = (getGuiSearchParams('actualPage')) ? getGuiSearchParams('actualPage') : 0;
+        var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
+
         console.log("coordinates in search:::: ");
         console.log(coordinates);
-        searchStr = $('#sm-hero-str').val();
-
-        var page = $('a.paginate_button.current').text();
-        if (page && page !== actualPage) {
-            actualPage = page;
-        }
+        //searchStr = $('#sm-hero-str').val();
 
         var param = {
             url: '/browser/api/smartsearch',
@@ -374,7 +297,7 @@ jQuery(function ($) {
                 preferredLang: drupalSettings.arche_core_gui.gui_lang,
                 includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
                 linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
-                page: actualPage,
+                page: pagerPage,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: []
@@ -464,15 +387,14 @@ jQuery(function ($) {
                 console.log("success - param.data: ");
                 console.log(param.data);
                 console.log("update multi gui");
-                //updateMultiSelectGui(param.data.facets);
                 showResults(x, param.data, t0);
-
-                if (param.data.facets.bbox) {
-                    displaySmallMap(param.data.facets.bbox);
-                    console.log("BBBOXXX:::: ");
-                    console.log(param.data.facets.bbox);
-                }
-
+                /*
+                 if (param.data.facets.bbox) {
+                 displaySmallMap(param.data.facets.bbox);
+                 console.log("BBBOXXX:::: ");
+                 console.log(param.data.facets.bbox);
+                 }
+                 */
 
             }
         };
@@ -514,16 +436,15 @@ jQuery(function ($) {
         $('input.facet:checked').prop('checked', false);
         $('input.facet-min').val('');
         $('input.facet-max').val('');
-        $('#preferredLang').val('');
         $('.select2-selection__rendered').html('');
         $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
-        actualPage = 1;
+        guiObj = {'actualPage': 1};
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
         search("", "", 1);
     }
 
-    function createPager(totalPages, resultsPerPage) {
-
+    function createPager(totalPages) {
+        var actualPage = (getGuiSearchParams('actualPage') ?? 1);
         $('#smartsearch-pager').empty();
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 3, totalPages);
@@ -562,7 +483,7 @@ jQuery(function ($) {
         console.log("SHOW RESULTS:")
         console.log(data);
         var pageSize = data.pageSize;
-        var totalPages = Math.floor(data.totalCount / pageSize);
+        var totalPages = Math.ceil(data.totalCount / pageSize);
 
         var currentPage = $('a.paginate_button.current').text();
         if (!currentPage && data.page === 0) {
@@ -570,7 +491,10 @@ jQuery(function ($) {
         } else {
             currentPage = data.page;
         }
-        createPager(totalPages, pageSize, currentPage);
+        console.log("PAGES:::");
+        console.log(currentPage);
+        console.log(totalPages);
+        createPager(totalPages);
         var multipleSelects = [];
         $('div.dateValues').text('');
         if (initial || data.results.length > 0) {
@@ -590,8 +514,8 @@ jQuery(function ($) {
                             text += i.label + ': ' + i.count + '<br/>';
                         });
                     }
-                    
-                    if(fd.type !== 'continuous') {
+
+                    if (fd.type !== 'continuous') {
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
                         select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
 
@@ -610,7 +534,7 @@ jQuery(function ($) {
                         });
                         select += '</select>';
                     }
-                    
+
                     if (div.length === 0) {
                         if (fd.type === 'continuous') {
                             select += '<div class="text-center"><input class="facet-min w-40" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
@@ -663,7 +587,7 @@ jQuery(function ($) {
             });
         });
 
-        var prefLang = $('#preferredLang').val();
+        
         var results = '';
         results += '<div class="container">';
 
@@ -673,13 +597,13 @@ jQuery(function ($) {
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
                 //title
                 results += '<div class="res-property">';
-                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, prefLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, prefLang) + '</a></h5>';
+                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '</div>';
                 //description
                 results += '<div class="res-property sm-description">';
                 if (result.matchHighlight) {
-                    //results += getLangValue(result.description, prefLang);
-                    results += result.matchHighlight;
+                    //results += getLangValue(result.description, preferredLang);
+                    results += 'Highlight: ' + result.matchHighlight;
                 }
 
                 //results += 'Match score: ' + result.matchWeight + '<br/>';
@@ -694,12 +618,37 @@ jQuery(function ($) {
                     }
                     results += '</div>';
                 }
-                var parents = getParents(result.parent || false, true, prefLang);
+                var parents = getParents(result.parent || false, true, preferredLang);
                 results += parents;
                 results += '</div>';
                 results += '<div class="res-property discover-content-toolbar">';
                 results += '<p class="btn btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-                results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">' + formatDate(result.availableDate) + '</p>';
+                
+
+                if (result.accessRestriction) {
+                    results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">';
+                    console.log("accessres: ");
+                    console.log(result.accessRestriction);
+                     results += '</p>';
+                }
+
+                if (result.accessRestrictionSummary) {
+                    results += '<p class="btn btn-toolbar-blue btn-toolbar-text no-btn">';
+                    results +=  result.accessRestrictionSummary[preferredLang] ;
+                    results += '</p>';
+                }
+
+
+                /*
+                 if (result.hasOwnProperty('accessRestriction') && result.accessRestriction !== undefined) {
+                 
+                 results +=  result.accessRestriction ;
+                 }
+                 if(typeof result.accessRestrictionSummary[preferredLang] !== "undefined") {
+                 results +=  result.accessRestrictionSummary.replace(/\d+/g, '') ;
+                 }
+                 */
+                
                 results += '</div>';
                 results += '</div>';
 
@@ -744,12 +693,12 @@ jQuery(function ($) {
         $('#searchIn').append(element);
     }
 
-    function getParents(parent, top, prefLang) {
+    function getParents(parent, top, preferredLang) {
         if (parent === false) {
             return '';
         }
         parent = parent[0];
-        var ret = getParents(parent.parent || false, false, prefLang);
+        var ret = getParents(parent.parent || false, false, preferredLang);
         ret += (ret !== '' ? ' &gt; ' : '') + '<a href="' + archeBaseUrl + '/browser/metadata/' + parent.id + '">' + getLangValue(parent.title) + '</a>';
         if (top) {
             ret = 'In: ' + ret + '<br/>';
