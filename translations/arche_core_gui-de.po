@@ -424,3 +424,32 @@ msgstr "Dieses Dashboard liefert grundlegende Statistiken über Metadaten, die z
 
 msgid "The following tables are available:"
 msgstr "Folgende Tabellen sind verfügbar:"
+
+msgid "Extended Search"
+msgstr "Erweiterte Suche"
+
+msgid "Reset filters"
+msgstr "Filter zurücksetzen"
+
+msgid "Search in binary content"
+msgstr "Suche in binären Inhalten"
+
+msgid "Follow named entities"
+msgstr "Folgen Sie benannten Entitäten"
+
+msgid "Find resources"
+msgstr "Folgen Sie benannten Entitäten"
+
+msgid "Please start to search"
+msgstr "Bitte beginnen Sie mit der Suche"
+
+msgid "Select an Option"
+msgstr "Wähle eine Option"
+
+msgid "From"
+msgstr "Von"
+
+msgid "To"
+msgstr "Bis"
+
+

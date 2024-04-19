@@ -29,7 +29,6 @@
                     {'data': data.getData('acdh:hasCoverageEndDate'), 'label':  'Coverage End Date' } ) }}
             </li>
         {% endif %}
-       
         
         
         {% if data.getData('acdh:hasCreatedStartDateOriginal') %}
@@ -55,8 +54,9 @@
         {% endif %}
        
     </ul>
+        
      {% if data.getData('acdh:hasDescription') %}
-        <p>{{ data.getData('acdh:hasDescription')[0].value }}</p>
+        {{ data.getData('acdh:hasDescription')[0].value|nl2br }}
     {% endif %}
     
 </div>

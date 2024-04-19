@@ -61,6 +61,9 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
         'dissemination-audio-viewer' => [
             'variables' => ['data' => NULL, 'basic' => NULL],
         ],
+        'helper-lng-switcher' => [
+            'variables' => ['language' => NULL]
+        ],
         
     ];
 }

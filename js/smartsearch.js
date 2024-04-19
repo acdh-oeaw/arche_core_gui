@@ -25,7 +25,7 @@ jQuery(function ($) {
             var lastParams = getLastUrlSegment();
             if (lastParams.last) {
                 firstLoad = false;
-                $('#sm-hero-str').val(lastParams.last);
+                $('#sm-hero-str').val(decodeURIComponent(lastParams.last));
                 guiObj = {'searchStr': lastParams.last};
             }
             guiObj = {'actualPage': 1};
@@ -84,26 +84,28 @@ jQuery(function ($) {
     });
 
     ////// SEARCH IN Function END /////
-    
+
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
         var title = $(this).data("location-title");
         $('.arche-smartsearch-page-div').show();
-        $('.main-content-row').html('<div class="container">' +
-                '<div class="row">' +
-                '<div class="col-12 mt-5">' +
-                '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
-                ' </div>' +
-                '</div>');
+        /*
+         $('.main-content-row').html('<div class="container">' +
+         '<div class="row">' +
+         '<div class="col-12 mt-5">' +
+         '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
+         ' </div>' +
+         '</div>');*/
         console.log("SMMAP COORDINATES:::");
         console.log(coordinates);
         guiObj = {'coordinates': coordinates, 'locationTitle': title};
         console.log(guiObj);
         firstLoad = false;
-        //search();
+
         var mapContainer = $('#mapContainer');
         mapContainer.hide();
+        displayMapSelectedValue();
     });
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
@@ -141,32 +143,28 @@ jQuery(function ($) {
     $(document).delegate("#removeMapSelectedPlace", "click", function (e) {
         e.preventDefault();
         $('#mapSelectedPlace').html('');
-        console.log(guiObj);
         delete guiObj.coordinates;
         delete guiObj.locationTitle;
-        console.log("after");
-        console.log(guiObj);
         search();
     });
 
 
     $(document).delegate("#smartPageSize", "change", function (e) {
         guiObj = {'actualPage': 1};
-        executeTheSearch()
+        executeTheSearch();
         e.preventDefault();
     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
-    var form = document.getElementById("hero-smart-search-form");
-    if (form) {
-        form.addEventListener("keydown", function (event) {
-            // Check if the pressed key is "Enter" (key code 13)
-            if (event.key === "Enter") {
-                executeTheSearch();
-                event.preventDefault();
-            }
-        });
-    }
+    $('#hero-smart-search-form').on('keydown', 'input', function (event) {
+        if (event.which === 13) { // Check if Enter key was pressed (key code 13)
+            console.log("ENTER PRESSED");
+            firstLoad = false;
+            event.preventDefault(); 
+            executeTheSearch();
+        }
+    });
+    
 
     ////// FUNCTIONS //////
 
@@ -228,7 +226,6 @@ jQuery(function ($) {
 
 
     function showJustSearchFacets() {
-        console.log("showJustSearchFacets");
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -270,25 +267,32 @@ jQuery(function ($) {
             console.log(xhr);
             console.log(status);
             console.log(error);
+            if(error === 'timeout') {
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
+            } else {
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+            }
             console.log(xhr.responseText);
+            
         };
+        param.timeout = 60000;
         $.ajax(param);
     }
 
     function search() {
+        console.log("search started");
         token++;
         var localToken = token;
         if (firstLoad) {
             return showJustSearchFacets();
         }
+        
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-
-        console.log("coordinates in search:::: ");
-        console.log(coordinates);
+       
         searchStr = $('#sm-hero-str').val();
-
+        
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -387,6 +391,7 @@ jQuery(function ($) {
                 console.log("success - param.data: ");
                 console.log(param.data);
                 showResults(x, param.data, t0);
+
                 /*
                  if (param.data.facets.bbox) {
                  displaySmallMap(param.data.facets.bbox);
@@ -394,6 +399,7 @@ jQuery(function ($) {
                  console.log(param.data.facets.bbox);
                  }
                  */
+
             }
         };
 
@@ -411,9 +417,15 @@ jQuery(function ($) {
             console.log(xhr);
             console.log(status);
             console.log(error);
+            if(error === 'timeout') {
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
+            } else {
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+            }
             console.log(xhr.responseText);
+            
         };
-
+        param.timeout = 60000;
         console.log("SMART SEARCH PARAMS: ");
         console.log(param);
         $.ajax(param);
@@ -534,7 +546,7 @@ jQuery(function ($) {
 
                     if (div.length === 0) {
                         if (fd.type === 'continuous') {
-                            select += '<div class="text-center"><input class="facet-min w-40" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
+                            select += '<div class="text-center"><input class="facet-min w-40" placeholder="' + Drupal.t("From") + '" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" placeholder="' + Drupal.t("To") + '" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
                         }
 
                         facets += createFacetSelectCard(fd, select);
@@ -625,9 +637,15 @@ jQuery(function ($) {
                 results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '</div>';
                 //description
-                results += '<div class="res-property sm-description">';
+
+                if (result.description) {
+                    results += '<div class="res-property sm-description">';
+                    results += getLangValue(result.description, preferredLang);
+                    results += '</div>';
+                }
+                results += '<div class="res-property sm-highlight">';
                 if (result.matchHighlight) {
-                    //results += getLangValue(result.description, preferredLang);
+
                     results += 'Highlight: ' + result.matchHighlight;
                 }
 
@@ -683,8 +701,7 @@ jQuery(function ($) {
     }
 
     function displayMapSelectedValue() {
-        console.log("displayMapSelectedValue");
-        console.log(guiObj);
+        bbox = guiObj.coordinates;
         if (guiObj.coordinates && guiObj.locationTitle) {
             $('#mapSelectedPlace').html('<h5 class="h5-blue-title"><button id="removeMapSelectedPlace" class="btn btn-sm-add"> - </button>' + guiObj.locationTitle + '</h5>');
         }

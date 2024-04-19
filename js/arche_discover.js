@@ -99,18 +99,7 @@ jQuery(function ($) {
         
         
         $('.dataTables_paginate').appendTo('.dataTables_wrapper .dataTables_filter');
-        /*
-         $("#sortBy").change(function () {
-         var colIdx = $('#sortBy :selected').val();
-         let id = colIdx.substring(0, 1);
-         let order = colIdx.substring(2, 3);
-         orderVal = 'asc';
-         if (order > 0) {
-         orderVal = 'desc';
-         }
-         
-         rootTable.order([id, orderVal]).draw();
-         });*/
+       
     }
 
     function formatDate(originalDate) {
