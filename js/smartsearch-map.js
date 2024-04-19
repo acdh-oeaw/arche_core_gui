@@ -82,8 +82,8 @@ jQuery(function ($) {
                         return;
                     });
         }, 2000);
-
     }
+
 
     // Function to destroy the map
     function destroyMap() {

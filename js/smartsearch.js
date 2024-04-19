@@ -84,7 +84,7 @@ jQuery(function ($) {
     });
 
     ////// SEARCH IN Function END /////
-
+    
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
