@@ -50,6 +50,13 @@ jQuery(function ($) {
         fetchRPR();
         fetchPublications();
     }
+    
+    $(document).delegate(".hasdescription-toggle-button", "click", function (e) {
+        $('.hasdescription-container').toggleClass('expanded');
+        var buttonText = $('.hasdescription-container').hasClass('expanded') ? Drupal.t('Show Less') : Drupal.t('Show More');
+        $('.hasdescription-toggle-button').text(buttonText);
+    });
+   
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content

@@ -452,4 +452,37 @@ msgstr "Von"
 msgid "To"
 msgstr "Bis"
 
+msgid "Browse the wide range of resources in ARCHE"
+msgstr "Durchsuchen Sie die vielfältigen Ressourcen in ARCHE"
+
+msgid "Find resources..."
+msgstr "Ressourcen finden..."
+
+msgid "OUR SERVICES"
+msgstr "UNSERE SERVICES"
+
+msgid "What is ARCHE?"
+msgstr "Was ist ARCHE?"
+
+msgid "ARCHE (A Resource Centre for the HumanitiEs) is a service that offers stable and persistent hosting as well as the dissemination of digital research data and resources for the Austrian humanities community."
+msgstr "ARCHE (A Resource Centre for the HumanitiEs) ist ein Service für die stabile Langzeitarchivierung und Dissemination von digitalen Forschungsdaten und -ressourcen für die österreichische geisteswissenschaftliche Forschungsgemeinschaft."
+
+msgid "If you have resources, would like to share them, and want to make sure that the data will be around in the future, contact us. We offer both archiving and online availability for your resources."
+msgstr "Wenden Sie sich an uns, wenn Sie über Datenressourcen verfügen, welche Sie teilen wollen und dabei sicherstellen möchten, dass die Daten auch in Zukunft verfügbar sein werden. Wir bieten sowohl die Archivierung als auch die Online-Verfügbarmachung Ihrer Ressourcen an."
+
+msgid "To get a quick introduction, you may watch one of our videos featuring Dante, a project leader, and Nora, a curator at ARCHE..."
+msgstr "Um eine kurze Einführung zu erhalten, können Sie sich eines unserer Videos mit Dante, einem Projektleiter, und Nora, einer Kuratorin bei ARCHE, ansehen..."
+
+msgid "Contact us before submitting the data to clarify any open questions, ensure that the data fulfils ARCHE's requirements and inform us of the planned deposition in good time. Please bear in mind that submission, including curation, can be a lengthy process and allow sufficient time."
+msgstr ""
+
+msgid "ACDH-CH runs a <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at'>helpdesk</a> offering advice for questions related to various digital humanities topics."
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
 

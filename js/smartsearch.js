@@ -117,6 +117,8 @@ jQuery(function ($) {
         $('#block-smartsearchblock textarea').val('');
         $('#block-smartsearchblock select').val('');
         $('#sm-hero-str').val('');
+        $('#mapSelectedPlace').html('');
+        
         // do a topcollection search
         resetSearch();
     });
@@ -452,7 +454,7 @@ jQuery(function ($) {
         guiObj = {};
         guiObj = {'actualPage': 1};
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
-        search("", "", 1);
+        search();
     }
 
     function createPager(totalPages) {
