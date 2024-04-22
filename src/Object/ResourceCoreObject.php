@@ -96,7 +96,7 @@ class ResourceCoreObject {
      * @return array
      */
     public function getIdentifiers(): array {
-        return (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) ? $this->properties["acdh:hasIdentifier"] : array();
+        return (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"][0])) ? $this->properties["acdh:hasIdentifier"][0] : array();
     }
 
     /**
@@ -106,8 +106,8 @@ class ResourceCoreObject {
      */
     public function getNonAcdhIdentifiers(): array {
         $result = array();
-        if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+        if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $k => $v) {
                 //filter out the baseurl related identifiers and which contains the id.acdh
                 if ((strpos($v['value'], $this->config->baseUrl) === false) &&
                         (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false)
@@ -126,8 +126,8 @@ class ResourceCoreObject {
      */
     public function getNonAcdhApiIdentifiers(): array {
         $result = array();
-        if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+        if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $k => $v) {
                 //filter out the baseurl related identifiers
                 if ((strpos($v['value'], $this->config->baseUrl) === false)) {
                     $result[] = $v;
@@ -157,8 +157,8 @@ class ResourceCoreObject {
      * @return string
      */
     public function getInsideUrl(): string {
-        if (isset($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
                 if (isset($v->acdhid) && !empty($v->acdhid)) {
                     return str_replace('https://', '', $v->acdhid);
                 }
@@ -189,8 +189,8 @@ class ResourceCoreObject {
      * @return string
      */
     public function getUUID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
                 if (isset($v->acdhid) && !empty($v->acdhid)) {
                     return $v->acdhid;
                 }
@@ -205,13 +205,24 @@ class ResourceCoreObject {
      * @return string
      */
     public function getAcdhID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
                 if (strpos($v['value'], '/id.acdh.oeaw.ac.at/') !== false &&
                         strpos($v['value'], '/id.acdh.oeaw.ac.at/cmdi/') === false) {
                     return $v['value'];
                 }
             }
+        }
+        return "";
+    }
+    
+    /**
+     * Get the first identifier for dissemination services (Not all the time we have acdh.id...)
+     * @return string
+     */
+    public function getOneID(): string {
+        if (isset($this->properties["acdh:hasIdentifier"][0])) {
+            return $this->properties["acdh:hasIdentifier"][0][0]['value'];
         }
         return "";
     }
@@ -252,8 +263,9 @@ class ResourceCoreObject {
      * @return string
      */
     public function getRepoID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"])) {
-            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
+       
+        if (isset($this->properties["acdh:hasIdentifier"][0])) {
+            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
                 if (isset($v['id']) && !empty($v['id'])) {
                     $this->repoid = $v['id'];
                     return $v['id'];
@@ -302,8 +314,8 @@ class ResourceCoreObject {
         $img = '';
         $width = str_replace('px', '', $width);
         //check the thumbnail service first
-        if ($this->getAcdhID()) {
-            $acdhid = str_replace('https://', '', str_replace('http://', '', $this->getAcdhID()));
+        if ($this->getOneID()) {
+            $acdhid = str_replace('https://', '', str_replace('http://', '', $this->getOneID()));
             if ($file = @fopen($this->thumbUrl . $acdhid, "r")) {
                 $type = fgets($file, 40);
                 if (!empty($type)) {
@@ -325,7 +337,7 @@ class ResourceCoreObject {
         $imgBinary = '';
         $width = str_replace('px', '', $width);
         //check the thumbnail service first
-        if ($acdhid = $this->getAcdhID()) {
+        if ($acdhid = $this->getOneID()) {
             $acdhid = str_replace('http://', '', $acdhid);
             $acdhid = str_replace('https://', '', $acdhid);
             if ($file = @fopen($this->thumbUrl . $acdhid, "r")) {

@@ -58,7 +58,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, "en");
         $content = $data->getContent();
-
+      
         $return = [
             '#theme' => 'arche-detail-empty'
         ];
@@ -87,15 +87,6 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     }
 
     public function discoverView($str = NULL) {
-error_log("_______________________________________________________Discover view: ");
-error_log("GEt: ");
-error_log(print_r($_GET, true));
-error_log("POST: ");
-error_log(print_r($_POST, true));
-error_log("STR: ");
-error_log(print_r($str, true));
-
-                
         $return = [
             '#theme' => 'arche-discover',
             '#cache' => ['max-age' => 0],
@@ -108,39 +99,4 @@ error_log(print_r($str, true));
         return $return;
     }
 
-    /**
-     * the detail view
-     *
-     * @param string $identifier
-     * @return type
-     */
-    public function view(string $identifier) {
-        \Drupal::service('page_cache_kill_switch')->trigger();
-
-        $data = [];
-        if ($this->helper->isCacheExists($identifier)) {
-            echo "cache";
-            $data = \Drupal::cache()->get($identifier);
-            $data = $data->data;
-        } else {
-            echo "api call: " . 'https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/core/expert/' . $identifier . '/en';
-            $data = $this->helper->fetchApiEndpoint('https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/core/expert/' . $identifier . '/en');
-
-            if (!empty($data)) {
-                \Drupal::cache()->set($identifier, $data, Cache::PERMANENT);
-            }
-        }
-        $data = json_decode($data, true);
-
-        $obj = new \Drupal\acdh_repo_gui\Object\ResourceCoreObject((array) $data['data'], $this->repoDb);
-
-        $return = [
-            '#theme' => 'arche-core-detail',
-            '#identifier' => $identifier,
-            '#data' => $obj,
-            '#cache' => ['max-age' => 0],
-        ];
-
-        return $return;
-    }
 }

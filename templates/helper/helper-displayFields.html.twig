@@ -44,28 +44,36 @@ Field extra type:
             {% if data is iterable %}
                 {% for value in data %}
                     <!-- The identifiers will open in the same window -->
-                    {% if (value.type == 'ID') %}
-                        {% if(type == 'shortCut') %}  
-                            {% if (value.shortCut)  %}
-                                <a href="{{ value.value }}" target="_blank">{{ value.shortCut|nl2br }}</a>
-                            {% elseif (value.value)  %}
-                                <a href="{{ value.value }}" target="_blank">{{ value.value|nl2br }}</a>
-                            {% elseif (value.title) %}   
-                                <a href="{{ value.title }}" target="_blank">{{ value.title|nl2br }}</a>
-                            {% elseif (value.relvalue)  %}
-                                <a href="{{ value.relvalue }}" target="_blank">{{ value.relvalue|nl2br }}</a>
+                    
+                    {% if value is iterable %}
+                        {% for v in value %}
+                            {% if (v.type == 'ID') %}
+                                
+                                {% if(type == 'shortCut') %}  
+                                    {% if (v.shortCut)  %}
+                                        <a href="{{ v.value }}" target="_blank">{{ v.shortCut|nl2br }}</a>
+                                    {% elseif (v.value)  %}
+                                        <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
+                                    {% elseif (v.title) %}   
+                                        <a href="{{ v.title }}" target="_blank">{{ v.title|nl2br }}</a>
+                                    {% elseif (v.relvalue)  %}
+                                        <a href="{{ v.relvalue }}" target="_blank">{{ v.relvalue|nl2br }}</a>
+                                    {% endif %}
+                                {% elseif (v.title and v.repoid )  %}
+                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
+                                {% elseif (v.value and v.repoid )  %}                            
+                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br }}</a>
+                                {% elseif (v.relvalue and v.repoid )  %}                            
+                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>    
+                                {% elseif (v.value) %}
+                                    <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
+                                    <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
+                                {% endif %}
                             {% endif %}
-                        {% elseif (value.title and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" target="_blank">{{ value.title|nl2br }}</a>
-                        {% elseif (value.value and value.repoid )  %}                            
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" target="_blank">{{ value.value|nl2br }}</a>
-                        {% elseif (value.relvalue and value.repoid )  %}                            
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" target="_blank">{{ value.relvalue|nl2br }}</a>    
-                        {% elseif (value.value) %}
-                            <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
-                            <a href="{{ value.value }}" target="_blank">{{ value.value|nl2br }}</a>
-                        {% endif %}
-                    {% elseif(value.type == 'REL') %}
+                        {% endfor %}    
+                    {% endif %}   
+                    
+                    {% if(value.type == 'REL') %}
                         <!-- The ARCHE RELATIONS will open in the same window -->
                         {% if (value.title and value.repoid )  %}
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
