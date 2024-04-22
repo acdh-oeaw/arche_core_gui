@@ -116,6 +116,7 @@ jQuery(function ($) {
         $('#block-smartsearchblock input[type="checkbox"]').prop('checked', false);
         $('#block-smartsearchblock textarea').val('');
         $('#block-smartsearchblock select').val('');
+        $('#sm-hero-str').val('');
         // do a topcollection search
         resetSearch();
     });
@@ -253,8 +254,12 @@ jQuery(function ($) {
                 updateSearchGui(selectedSearchValues);
             }
         };
-        param.fail = function (xhr, textStatus, errorThrown) {
+        param.fail = function (xhr, status, error) {
+            if (xhr.status === 404) {
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+            }
             alert(xhr.responseText);
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
         };
 
         param.statusCode = function (response) {
@@ -263,17 +268,14 @@ jQuery(function ($) {
         };
 
         param.error = function (xhr, status, error) {
-            var err = eval(xhr.responseText);
             console.log(xhr);
             console.log(status);
             console.log(error);
             if(error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  xhr.responseText) + '</div>');
             }
-            console.log(xhr.responseText);
-            
         };
         param.timeout = 60000;
         $.ajax(param);
@@ -405,6 +407,8 @@ jQuery(function ($) {
 
         param.fail = function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+           
         };
 
         param.statusCode = function (response) {
@@ -413,17 +417,14 @@ jQuery(function ($) {
         };
 
         param.error = function (xhr, status, error) {
-            var err = eval(xhr.responseText);
             console.log(xhr);
             console.log(status);
             console.log(error);
             if(error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  xhr.responseText) + '</div>');
             }
-            console.log(xhr.responseText);
-            
         };
         param.timeout = 60000;
         console.log("SMART SEARCH PARAMS: ");
@@ -448,7 +449,7 @@ jQuery(function ($) {
         $('input.facet-max').val('');
         $('.select2-selection__rendered').html('');
         $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
-        guiObj = new stdClass();
+        guiObj = {};
         guiObj = {'actualPage': 1};
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
         search("", "", 1);
@@ -634,7 +635,8 @@ jQuery(function ($) {
                 results += '<div class="col-block col-lg-10 discover-table-content-div">';
                 //title
                 results += '<div class="res-property">';
-                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
+                //results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
+                results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '</div>';
                 //description
 
