@@ -215,7 +215,9 @@
             {% endif %}
 
             {% if data  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
+                {% if data.isAudio() or  data.isPDF() or data.is3DObject() or data.isIIIF() %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
+                {% endif %}
             {% endif %}
 
             {% if data.hasVersion  %}
