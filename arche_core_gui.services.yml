@@ -14,4 +14,8 @@ services:
     arche_core_gui_site_language.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\SiteLanguageTwigExtension
         tags:
-            - { name: twig.extension }             
+            - { name: twig.extension }
+    acdh_core_gui_path_processor.path_processor:
+        class: 'Drupal\arche_core_gui\PathProcessor\ArcheGuiPathProcessor'
+        tags:
+            - { name: path_processor_inbound, priority: 350 }        

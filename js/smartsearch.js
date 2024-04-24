@@ -22,11 +22,11 @@ jQuery(function ($) {
 
         // Check if the URL contains the desired substring
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
-            var lastParams = getLastUrlSegment();
-            if (lastParams.last) {
-                firstLoad = false;
-                $('#sm-hero-str').val(decodeURIComponent(lastParams.last));
-                guiObj = {'searchStr': lastParams.last};
+            var searchStr = getSearchStringFromUrl();
+            if(searchStr){
+                console.log("searchStr ::::");
+                console.log(searchStr);
+                guiObj = {'searchStr': searchStr};
             }
             guiObj = {'actualPage': 1};
         }
@@ -84,7 +84,6 @@ jQuery(function ($) {
     });
 
     ////// SEARCH IN Function END /////
-
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
@@ -118,7 +117,7 @@ jQuery(function ($) {
         $('#block-smartsearchblock select').val('');
         $('#sm-hero-str').val('');
         $('#mapSelectedPlace').html('');
-        
+
         // do a topcollection search
         resetSearch();
     });
@@ -151,7 +150,6 @@ jQuery(function ($) {
         search();
     });
 
-
     $(document).delegate("#smartPageSize", "change", function (e) {
         guiObj = {'actualPage': 1};
         executeTheSearch();
@@ -163,13 +161,28 @@ jQuery(function ($) {
         if (event.which === 13) { // Check if Enter key was pressed (key code 13)
             console.log("ENTER PRESSED");
             firstLoad = false;
-            event.preventDefault(); 
+            event.preventDefault();
             executeTheSearch();
         }
     });
-    
+
 
     ////// FUNCTIONS //////
+
+    function getSearchStringFromUrl() {
+        console.log("getSearchStringFromUrl ::::: ");
+        var url = window.location.pathname;
+        var qIndex = url.indexOf('q=');
+        var searchText = "";
+        if (qIndex !== -1) {
+            var ampersandIndex = url.indexOf('&', qIndex);
+            if (ampersandIndex !== -1) {
+                // Extract the text between 'q=' and '&'
+                searchText = url.substring(qIndex + 2, ampersandIndex);
+            }
+        }
+        return searchText;
+    }
 
     function getLastUrlSegment() {
         var path = window.location.pathname;
@@ -258,10 +271,10 @@ jQuery(function ($) {
         };
         param.fail = function (xhr, status, error) {
             if (xhr.status === 404) {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
             }
             alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
         };
 
         param.statusCode = function (response) {
@@ -273,10 +286,10 @@ jQuery(function ($) {
             console.log(xhr);
             console.log(status);
             console.log(error);
-            if(error === 'timeout') {
+            if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  xhr.responseText) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
             }
         };
         param.timeout = 60000;
@@ -290,13 +303,13 @@ jQuery(function ($) {
         if (firstLoad) {
             return showJustSearchFacets();
         }
-        
+
         var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-       
+
         searchStr = $('#sm-hero-str').val();
-        
+
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -389,6 +402,9 @@ jQuery(function ($) {
             param.data.facets['bbox'] = coordinates;
         }
 
+        console.log("update the url: ");
+        updateUrl(param.data);
+
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
@@ -409,8 +425,8 @@ jQuery(function ($) {
 
         param.fail = function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  error) + '</div>');
-           
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
+
         };
 
         param.statusCode = function (response) {
@@ -422,16 +438,34 @@ jQuery(function ($) {
             console.log(xhr);
             console.log(status);
             console.log(error);
-            if(error === 'timeout') {
+            if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " +  xhr.responseText) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
             }
         };
         param.timeout = 60000;
         console.log("SMART SEARCH PARAMS: ");
         console.log(param);
         $.ajax(param);
+    }
+
+    /* update the current url after a search was triggered */
+    function updateUrl(params) {
+        resetsearchUrl();
+        var queryString = $.param(params);
+        var currentUrl = window.location.href;
+        history.pushState(null, "Discover", currentUrl + '/' + queryString);
+    }
+
+    /* reset the searchUrl and remove the params */
+    function resetsearchUrl() {
+        var currentUrl = window.location.href;
+        var discoverIndex = currentUrl.indexOf('/discover/');
+        if (discoverIndex !== -1) {
+            currentUrl = currentUrl.substring(0, discoverIndex + '/discover/'.length);
+        }
+        history.pushState(null, "Discover", currentUrl);
     }
 
     function displaySmallMap(coordinates) {
@@ -445,6 +479,7 @@ jQuery(function ($) {
         });
     }
 
+    /* reset search button clicked */
     function resetSearch() {
         $('input.facet:checked').prop('checked', false);
         $('input.facet-min').val('');
@@ -453,6 +488,7 @@ jQuery(function ($) {
         $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
         guiObj = {};
         guiObj = {'actualPage': 1};
+        resetsearchUrl();
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
         search();
     }

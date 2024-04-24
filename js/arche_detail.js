@@ -50,13 +50,25 @@ jQuery(function ($) {
         fetchRPR();
         fetchPublications();
     }
+
+
+    /// SHOW / HIDE the description more button ///
     
+    var descriptionInnerHeight = $('.hasdescription-container').innerHeight();
+    if ($('.hasdescription-container')[0].scrollHeight > descriptionInnerHeight) {
+        $('.hasdescription-toggle-button').show(); // Show the button if the text exceeds 10 lines
+    } else {
+        $('.hasdescription-toggle-button').hide();
+    }
+
+
+    /// hasDescription button ///
     $(document).delegate(".hasdescription-toggle-button", "click", function (e) {
         $('.hasdescription-container').toggleClass('expanded');
         var buttonText = $('.hasdescription-container').hasClass('expanded') ? Drupal.t('Show Less') : Drupal.t('Show More');
         $('.hasdescription-toggle-button').text(buttonText);
     });
-   
+
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
@@ -534,7 +546,7 @@ jQuery(function ($) {
     //update the UI elements
 
     function showUI() {
-        
+
         showAvailableDate();
         showType();
         //showRightSide();
