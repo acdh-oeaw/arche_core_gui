@@ -23,7 +23,9 @@ jQuery(function ($) {
         // Check if the URL contains the desired substring
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
             var searchStr = getSearchStringFromUrl();
-            if(searchStr){
+            console.log("searchSTr:  ");
+            console.log(searchStr);
+            if (searchStr) {
                 console.log("searchStr ::::");
                 console.log(searchStr);
                 guiObj = {'searchStr': searchStr};
@@ -172,6 +174,7 @@ jQuery(function ($) {
     function getSearchStringFromUrl() {
         console.log("getSearchStringFromUrl ::::: ");
         var url = window.location.pathname;
+        console.log("URL: " + url);
         var qIndex = url.indexOf('q=');
         var searchText = "";
         if (qIndex !== -1) {
@@ -240,8 +243,9 @@ jQuery(function ($) {
         return data[prefLang] || Object.values(data)[0];
     }
 
-
+    // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
+        console.log("showJustSearchFacets func");
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -485,12 +489,13 @@ jQuery(function ($) {
         $('input.facet-min').val('');
         $('input.facet-max').val('');
         $('.select2-selection__rendered').html('');
-        $('#smartSearchCount').html(Drupal.t('<h5 class="font-weight-bold">No results found</h5>'));
+        $('#smartSearchCount').html(Drupal.t('0 Result(s)'));
+        $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
         guiObj = {};
         guiObj = {'actualPage': 1};
         resetsearchUrl();
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
-        search();
+        showJustSearchFacets();
     }
 
     function createPager(totalPages) {
@@ -614,21 +619,26 @@ jQuery(function ($) {
         results += displaySearchResult(data.results);
 
         $('.main-content-row').html(results);
-
+        //if the user selected a value from the map then we have to display it.
+        displayMapSelectedValue();
+        
         //var countText = countNullText;
         if (!initial) {
-            var countText = '<h5 class="font-weight-bold">No results found</h5>';
+            var countText = Drupal.t('0 Result(s)');
             if (data.results.length > 0) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
+            } else {
+                $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
+                console.log("THERE IS NO RESULTS");
+                showJustSearchFacets();
+                
+                
             }
             $('#smartSearchCount').html(countText);
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
         }
-
-        //if the user selected a value from the map then we have to display it.
-        displayMapSelectedValue();
 
     }
 
