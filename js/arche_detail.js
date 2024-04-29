@@ -53,12 +53,13 @@ jQuery(function ($) {
 
 
     /// SHOW / HIDE the description more button ///
-    
-    var descriptionInnerHeight = $('.hasdescription-container').innerHeight();
-    if ($('.hasdescription-container')[0].scrollHeight > descriptionInnerHeight) {
-        $('.hasdescription-toggle-button').show(); // Show the button if the text exceeds 10 lines
-    } else {
-        $('.hasdescription-toggle-button').hide();
+    if($('.hasdescription-container')[0]) {
+        var descriptionInnerHeight = $('.hasdescription-container').innerHeight();
+        if ($('.hasdescription-container')[0].scrollHeight > descriptionInnerHeight) {
+            $('.hasdescription-toggle-button').show(); // Show the button if the text exceeds 10 lines
+        } else {
+            $('.hasdescription-toggle-button').hide();
+        }
     }
 
 
@@ -386,7 +387,6 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/child/" + resId + "/en",
-                //'url': "https://arche-dev.acdh-dev.oeaw.ac.at/browser/api/child/214536/en",
                 complete: function (response) {
                     if (response === undefined) {
                         console.log('response error');

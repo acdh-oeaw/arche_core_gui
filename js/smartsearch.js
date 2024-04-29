@@ -20,17 +20,10 @@ jQuery(function ($) {
     $(document).ready(function () {
         var currentUrl = window.location.href;
 
-        // Check if the URL contains the desired substring
+        // Check if the URL contains any params
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
-            var searchStr = getSearchStringFromUrl();
-            console.log("searchSTr:  ");
-            console.log(searchStr);
-            if (searchStr) {
-                console.log("searchStr ::::");
-                console.log(searchStr);
-                guiObj = {'searchStr': searchStr};
-            }
-            guiObj = {'actualPage': 1};
+            getSearchParamsFromUrl();
+            //guiObj = {'actualPage': 1};
         }
         executeTheSearch();
 
@@ -171,28 +164,78 @@ jQuery(function ($) {
 
     ////// FUNCTIONS //////
 
-    function getSearchStringFromUrl() {
-        console.log("getSearchStringFromUrl ::::: ");
+    function getSearchParamsFromUrl() {
         var url = window.location.pathname;
-        console.log("URL: " + url);
-        var qIndex = url.indexOf('q=');
-        var searchText = "";
-        if (qIndex !== -1) {
-            var ampersandIndex = url.indexOf('&', qIndex);
-            if (ampersandIndex !== -1) {
-                // Extract the text between 'q=' and '&'
-                searchText = url.substring(qIndex + 2, ampersandIndex);
-            }
-        }
-        return searchText;
+        var paramsString = url.replace('/browser/discover//', '');
+        paramsString = paramsString.replace('/browser/discover/', '');
+        paramsString = paramsString.replace('/q', 'q');
+        var params = {};
+        params = convertFacetsIntoObjects(paramsString);
+
+        console.log("PARAMS:::");
+        console.log(params);
+        guiObj = {'q': 'norbert'};
+        firstLoad = false;
+        //Update form based on the params
+        
+        // update tge guisearchparams obj
     }
 
-    function getLastUrlSegment() {
-        var path = window.location.pathname;
-        var segments = path.split('/');
-        var lastSegment = segments[segments.length - 1];
-        var secondLastSegment = segments[segments.length - 2];
-        return {"last": lastSegment, "second": secondLastSegment};
+
+    function convertFacetsIntoObjects(queryString) {
+       var pairs = queryString.split('&');
+        // Initialize an empty object to store the result
+        var result = {facets: {}};
+
+        // Iterate over the key-value pairs
+        pairs.forEach(function (pair) {
+            // Split each pair into key and value
+            var keyValue = pair.split('=');
+
+            // Decode the key and value
+            var key = decodeURIComponent(keyValue[0]);
+            var value = decodeURIComponent(keyValue[1]);
+
+            // Check if the key contains array notation
+            var matches = key.match(/\[([^[\]]+)\]/g);
+            if (matches) {
+                // Remove square brackets and split into parts
+                var parts = matches.map(function (match) {
+                    return match.slice(1, -1);
+                });
+
+                // Initialize the nested object/array structure
+                var temp = result.facets;
+                parts.forEach(function (part, index) {
+                    if (index < parts.length - 1) {
+                        if (!temp[part]) {
+                            // If the next part is a number, initialize an array
+                            if (/^\d+$/.test(parts[index + 1])) {
+                                temp[part] = [];
+                            } else {
+                                temp[part] = {};
+                            }
+                        }
+                        temp = temp[part];
+                    } else {
+                        if (Array.isArray(temp[part])) {
+                            // Push the value into the array
+                            temp[part].push(value);
+                        } else {
+                            // Set the value in the object
+                            if (!temp[part]) {
+                                temp[part] = [];
+                            }
+                            temp[part].push(value);
+                        }
+                    }
+                });
+            } else {
+                // If the key does not contain array notation, set the value directly
+                result[key] = value;
+            }
+        });
+        return result;
     }
 
     function getSmartUrl() {
@@ -307,8 +350,9 @@ jQuery(function ($) {
         if (firstLoad) {
             return showJustSearchFacets();
         }
-
-        var searchStr = (getGuiSearchParams('searchStr')) ? getGuiSearchParams('searchStr') : "";
+        console.log("SEARCH GUI OBJ; ");
+        console.log(guiObj);
+        var searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
 
@@ -621,7 +665,7 @@ jQuery(function ($) {
         $('.main-content-row').html(results);
         //if the user selected a value from the map then we have to display it.
         displayMapSelectedValue();
-        
+
         //var countText = countNullText;
         if (!initial) {
             var countText = Drupal.t('0 Result(s)');
@@ -631,14 +675,14 @@ jQuery(function ($) {
                 $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
                 console.log("THERE IS NO RESULTS");
                 showJustSearchFacets();
-                
-                
+
+
             }
             $('#smartSearchCount').html(countText);
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
-        }
+    }
 
     }
 
@@ -693,9 +737,9 @@ jQuery(function ($) {
                     results += getLangValue(result.description, preferredLang);
                     results += '</div>';
                 }
+
                 results += '<div class="res-property sm-highlight">';
                 if (result.matchHighlight) {
-
                     results += 'Highlight: ' + result.matchHighlight;
                 }
 
@@ -711,12 +755,13 @@ jQuery(function ($) {
                     }
                     results += '</div>';
                 }
-                var parents = getParents(result.parent || false, true, preferredLang);
-                results += parents;
+
+                results += getParents(result.parent || false, true, preferredLang);
+
                 results += '</div>';
                 results += '<div class="res-property discover-content-toolbar">';
-                results += '<p class="btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
 
+                results += '<p class="btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
 
                 if (result.accessRestriction) {
                     results += setAccessRestrictionLabel(result.accessRestriction[0].title['en']);
@@ -734,20 +779,34 @@ jQuery(function ($) {
                 results += '</div>';
 
                 var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
-                results += '<div class="col-lg-2">' +
+
+                results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                         '<div class="col-block discover-table-image-div">\n\
-                                        <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                            <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
-                                            </a></center>\n\
-                                        </div>\n\
-                                    </div>';
+                                    <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                                        <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
+                                        </a></center>\n\
+                                    </div>\n\
+                                </div>';
+
                 results += '</div>';
+                checkThumbnailImage(resourceUrl);
                 results += '</div>';
             }
         });
-
         return results;
+    }
+
+    ///  we have to check the thumbnail is existing or not, if not then hide it. ///
+    function checkThumbnailImage(resourceUrl) {
+        // Create a new Image object
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600';
+        var img = new Image();
+        img.src = imgSrc;
+        img.onerror = function () {
+            $('[data-thumbnailid="' + resourceUrl + '"]').hide();
+        };
+
     }
 
     function displayMapSelectedValue() {

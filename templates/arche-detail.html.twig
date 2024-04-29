@@ -185,9 +185,9 @@
                 <div class="loader"></div>
             </div>
             -->
-
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
-
+            {% if data.isTitleImage()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            {% endif %}    
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}

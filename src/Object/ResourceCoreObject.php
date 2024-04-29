@@ -215,7 +215,7 @@ class ResourceCoreObject {
         }
         return "";
     }
-    
+
     /**
      * Get the first identifier for dissemination services (Not all the time we have acdh.id...)
      * @return string
@@ -263,7 +263,7 @@ class ResourceCoreObject {
      * @return string
      */
     public function getRepoID(): string {
-       
+
         if (isset($this->properties["acdh:hasIdentifier"][0])) {
             foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
                 if (isset($v['id']) && !empty($v['id'])) {
@@ -310,7 +310,7 @@ class ResourceCoreObject {
      *
      * @return string
      */
-    public function getTitleImage(string $width = '200px'): string {
+    public function getTitleImage(string $width = '300px'): string {
         $img = '';
         $width = str_replace('px', '', $width);
         //check the thumbnail service first
@@ -332,7 +332,7 @@ class ResourceCoreObject {
      * @param string $width
      * @return string
      */
-    public function getTitleImageUrl(string $width = '200px'): string {
+    public function getTitleImageUrl(string $width = '300px'): string {
         $img = '';
         $imgBinary = '';
         $width = str_replace('px', '', $width);
@@ -355,8 +355,39 @@ class ResourceCoreObject {
      * @return bool
      */
     public function isTitleImage(): bool {
+        //get the first id
+        $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
+        
+        //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
-            return true;
+            $id = $this->getAcdhID();
+        }
+        
+        $id = str_replace('http://', '', $id);
+        $id = str_replace('https://', '', $id);
+
+        // Instantiate a new Guzzle client
+        $client = new \GuzzleHttp\Client();
+
+        // URL to make the request to
+        $url = $this->thumbUrl.$id;
+
+        try {
+            // Make the GET request
+            $response = $client->get($url);
+
+            // Get the response status code
+            $statusCode = $response->getStatusCode();
+
+            // Check if the status code is in the 2xx range (indicating success)
+            if ($statusCode >= 200 && $statusCode < 300) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            // Handle request exceptions (e.g., connection error, timeout)
+            return false;
         }
         return false;
     }
@@ -549,7 +580,7 @@ class ResourceCoreObject {
         if (!$this->isPublic()) {
             return false;
         }
-       
+
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
                 if (isset($category['value']) && strtolower($category['value']) === strtolower("3d data")) {
@@ -565,7 +596,7 @@ class ResourceCoreObject {
 
         return false;
     }
-    
+
     /**
      * Check if the resource supports IIIF viewer
      * @return bool
@@ -575,10 +606,10 @@ class ResourceCoreObject {
         if (!$this->isPublic()) {
             return false;
         }
-        
+
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (isset($category['value']) && 
+                if (isset($category['value']) &&
                         (strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image") ||
                         strtolower($category['value']) === strtolower("image")
                         )) {
@@ -586,7 +617,7 @@ class ResourceCoreObject {
                 }
             }
         }
-        
+
         if (isset($this->properties["acdh:hasFormat"]) && $cat !== false) {
             foreach ($this->properties["acdh:hasFormat"] as $category) {
                 if (in_array(strtolower($category['value']), (array) $this->iiifFormats)) {
@@ -659,7 +690,7 @@ class ResourceCoreObject {
     public function isPublic(): bool {
         $result = false;
         $access = $this->getAccessRestriction();
-       
+
         if (
                 count((array) $access) > 0 &&
                 isset($access['vocabsid']) &&
@@ -753,7 +784,7 @@ class ResourceCoreObject {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
                             $obj = [];
-                            if(isset($val['id'])) {
+                            if (isset($val['id'])) {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];
@@ -787,7 +818,7 @@ class ResourceCoreObject {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
                             $obj = [];
-                            if(isset($val['id'])) {
+                            if (isset($val['id'])) {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];
@@ -817,13 +848,12 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            
-                            if($k === 'acdh:hasBinarySize') {
+
+                            if ($k === 'acdh:hasBinarySize') {
                                 $result[$v][] = $this->formatBytes($val['value']);
                             } else {
                                 $result[$v][] = $val['value'];
                             }
-                            
                         }
                     }
                 }
@@ -842,7 +872,7 @@ class ResourceCoreObject {
         }
         return false;
     }
-    
+
     private function formatBytes($bytes, $precision = 2) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
@@ -854,6 +884,4 @@ class ResourceCoreObject {
 
         return round($bytes, $precision) . ' ' . $units[$pow];
     }
-
-
 }
