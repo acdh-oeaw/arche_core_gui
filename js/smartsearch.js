@@ -19,9 +19,9 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         var currentUrl = window.location.href;
-
+        
         // Check if the URL contains any params
-        if (currentUrl.indexOf("/browser/discover/") !== -1) {
+        if (currentUrl.indexOf("/browser/discover/") !== -1) {            
             getSearchParamsFromUrl();
             //guiObj = {'actualPage': 1};
         }
@@ -169,12 +169,14 @@ jQuery(function ($) {
         var paramsString = url.replace('/browser/discover//', '');
         paramsString = paramsString.replace('/browser/discover/', '');
         paramsString = paramsString.replace('/q', 'q');
-        var params = {};
-        params = convertFacetsIntoObjects(paramsString);
+        
+        guiObj = convertFacetsIntoObjects(paramsString);
 
         console.log("PARAMS:::");
-        console.log(params);
-        guiObj = {'q': 'norbert'};
+        //console.log(params);
+        console.log("URL : -> ");
+        console.log(url);
+        //guiObj = {'q': 'norbert'};
         firstLoad = false;
         //Update form based on the params
         
@@ -342,22 +344,32 @@ jQuery(function ($) {
         param.timeout = 60000;
         $.ajax(param);
     }
+    
+    function updateSearchStrInput(str) {
+        if($('#sm-hero-str').val() === ""){
+            $('#sm-hero-str').val(str);
+        }
+    }
 
     function search() {
         console.log("search started");
+        console.log("SEARCH GUI OBJ; ");
+        console.log(guiObj);
         token++;
         var localToken = token;
         if (firstLoad) {
             return showJustSearchFacets();
         }
-        console.log("SEARCH GUI OBJ; ");
-        console.log(guiObj);
+        
         var searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-
-        searchStr = $('#sm-hero-str').val();
-
+        if(searchStr === ""){
+            searchStr = $('#sm-hero-str').val();
+        }
+        
+        updateSearchStrInput(searchStr);
+        
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
