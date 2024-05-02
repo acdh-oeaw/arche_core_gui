@@ -345,6 +345,7 @@ jQuery(function ($) {
         $.ajax(param);
     }
     
+    /// if the search is executed by the hero section, we have to update the input field ///
     function updateSearchStrInput(str) {
         if($('#sm-hero-str').val() === ""){
             $('#sm-hero-str').val(str);
@@ -361,11 +362,11 @@ jQuery(function ($) {
             return showJustSearchFacets();
         }
         
-        var searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
+        var searchStr = $('#sm-hero-str').val();
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
         if(searchStr === ""){
-            searchStr = $('#sm-hero-str').val();
+            searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
         
         updateSearchStrInput(searchStr);
