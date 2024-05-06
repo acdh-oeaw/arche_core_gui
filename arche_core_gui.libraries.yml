@@ -20,10 +20,14 @@ smart-search:
         base:
             css/slimselect.css: {}
             https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css: { type: external, minified: true }
+            https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css: { type: external, minified: true }
+            https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css: { type: external, minified: true }
             css/smart-multi.css: {}
     js:
         js/slimselect.js: {}
         https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js: { type: external, minified: true }
+        https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js: { type: external, minified: true }
+        https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js: { type: external, minified: true }
         js/smartsearch.js: {}
         js/smartsearch-map.js: {}
     dependencies:

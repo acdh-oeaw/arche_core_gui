@@ -16,6 +16,7 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     var guiObj = {};
+    var smartSearchInputField = $('#sm-hero-str');
 
     $(document).ready(function () {
         var currentUrl = window.location.href;
@@ -32,6 +33,8 @@ jQuery(function ($) {
     $(document).delegate("input", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
+            console.log("INPUT ENTER!! ");
+            firstLoad = false;
             // Prevent the default form submission behavior
             e.preventDefault();
             // Trigger a click event on the submit button
@@ -41,6 +44,8 @@ jQuery(function ($) {
     $(document).delegate("select", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
+            console.log("SELECT ENTER!! ");
+            firstLoad = false;
             // Prevent the default form submission behavior
             e.preventDefault();
             // Trigger a click event on the submit button
@@ -50,9 +55,40 @@ jQuery(function ($) {
     //handle the select 2 press enter event and trigger a search
     $(document).on('keyup', '.select2-search__field', function (e) {
         if (e.which === 13) {
+            e.preventDefault();
+            console.log("select2 keyup ENTER!! ");
+            firstLoad = false;
             executeTheSearch();
         }
     });
+
+    // Attach keyup event listener to the input field
+    smartSearchInputField.on('keyup', function () {
+        // Get the current value of the input field
+        var inputValue = $(this).val();
+
+        // Check if the input value is at least 2 characters long
+        if (inputValue.length >= 2) {
+            // Make an AJAX request to your API
+            $.ajax({
+                url: '/browser/api/smsearch/autocomplete/'+inputValue,
+                method: 'GET',
+                success: function (data) {
+                    var responseObject = $.parseJSON(data);
+            
+                    // Initialize autocomplete with the retrieved results
+                    smartSearchInputField.autocomplete({
+                        source: responseObject,
+                        autoFocus: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching autocomplete data:', error);
+                }
+            });
+        }
+    });
+
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
         var buttonId = $(this).attr('id'); // Get the id attribute value of the clicked button
@@ -752,15 +788,6 @@ jQuery(function ($) {
         return text;
     }
 
-    /// HIDE the image div inside the list if there is no thumbnail ///
-    function hideImageDiv(id) {
-        console.log("HIDE IMAGE: " + id);
-
-        $('[data-thumbnailid="' + id + '"]').hide();
-        $('[data-contentid="' + id + '"]').removeClass('col-lg-10');
-        $('[data-contentid="' + id + '"]').addClass('col-lg-12');
-    }
-
     function displaySearchResult(data) {
         var results = "";
         results += '<div class="container">';
@@ -824,16 +851,11 @@ jQuery(function ($) {
                 results += '</div>';
                 results += '</div>';
 
-
-
-
-                var img = "";
-
                 results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                         <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300" onerror="' + hideImageDiv(resourceUrl) + '">\n\
+                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300" >\n\
                                         </a></center>\n\
                                     </div>\n\
                                 </div>';
@@ -854,6 +876,8 @@ jQuery(function ($) {
         img.src = imgSrc;
         img.onerror = function () {
             $('[data-thumbnailid="' + resourceUrl + '"]').hide();
+            $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
+            $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');
         };
 
     }
