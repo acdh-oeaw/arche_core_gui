@@ -19,19 +19,40 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         var currentUrl = window.location.href;
-        
+
         // Check if the URL contains any params
-        if (currentUrl.indexOf("/browser/discover/") !== -1) {            
+        if (currentUrl.indexOf("/browser/discover/") !== -1) {
             getSearchParamsFromUrl();
             //guiObj = {'actualPage': 1};
         }
         executeTheSearch();
-
     });
 
     //// events ////
-
-
+    $(document).delegate("input", "keypress", function (e) {
+        // Check if the Enter key (keyCode 13) is pressed
+        if (e.keyCode === 13) {
+            // Prevent the default form submission behavior
+            e.preventDefault();
+            // Trigger a click event on the submit button
+            executeTheSearch();
+        }
+    });
+    $(document).delegate("select", "keypress", function (e) {
+        // Check if the Enter key (keyCode 13) is pressed
+        if (e.keyCode === 13) {
+            // Prevent the default form submission behavior
+            e.preventDefault();
+            // Trigger a click event on the submit button
+            executeTheSearch();
+        }
+    });
+    //handle the select 2 press enter event and trigger a search
+    $(document).on('keyup', '.select2-search__field', function (e) {
+        if (e.which === 13) {
+            executeTheSearch();
+        }
+    });
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
         var buttonId = $(this).attr('id'); // Get the id attribute value of the clicked button
@@ -162,6 +183,7 @@ jQuery(function ($) {
     });
 
 
+
     ////// FUNCTIONS //////
 
     function getSearchParamsFromUrl() {
@@ -169,7 +191,7 @@ jQuery(function ($) {
         var paramsString = url.replace('/browser/discover//', '');
         paramsString = paramsString.replace('/browser/discover/', '');
         paramsString = paramsString.replace('/q', 'q');
-        
+
         guiObj = convertFacetsIntoObjects(paramsString);
 
         console.log("PARAMS:::");
@@ -179,13 +201,13 @@ jQuery(function ($) {
         //guiObj = {'q': 'norbert'};
         firstLoad = false;
         //Update form based on the params
-        
+
         // update tge guisearchparams obj
     }
 
 
     function convertFacetsIntoObjects(queryString) {
-       var pairs = queryString.split('&');
+        var pairs = queryString.split('&');
         // Initialize an empty object to store the result
         var result = {facets: {}};
 
@@ -344,10 +366,10 @@ jQuery(function ($) {
         param.timeout = 60000;
         $.ajax(param);
     }
-    
+
     /// if the search is executed by the hero section, we have to update the input field ///
     function updateSearchStrInput(str) {
-        if($('#sm-hero-str').val() === ""){
+        if ($('#sm-hero-str').val() === "") {
             $('#sm-hero-str').val(str);
         }
     }
@@ -361,16 +383,16 @@ jQuery(function ($) {
         if (firstLoad) {
             return showJustSearchFacets();
         }
-        
+
         var searchStr = $('#sm-hero-str').val();
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-        if(searchStr === ""){
+        if (searchStr === "") {
             searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
-        
+
         updateSearchStrInput(searchStr);
-        
+
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -730,21 +752,32 @@ jQuery(function ($) {
         return text;
     }
 
+    /// HIDE the image div inside the list if there is no thumbnail ///
+    function hideImageDiv(id) {
+        console.log("HIDE IMAGE: " + id);
+
+        $('[data-thumbnailid="' + id + '"]').hide();
+        $('[data-contentid="' + id + '"]').removeClass('col-lg-10');
+        $('[data-contentid="' + id + '"]').addClass('col-lg-12');
+    }
+
     function displaySearchResult(data) {
         var results = "";
         results += '<div class="container">';
 
         $.each(data, function (k, result) {
             if (result.title && result.id) {
+                var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
+
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
-                results += '<div class="col-block col-lg-10 discover-table-content-div">';
+                results += '<div class="col-block col-lg-10 discover-table-content-div" data-contentid="' + resourceUrl + '">';
                 //title
                 results += '<div class="res-property">';
                 //results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '<h5 class="h5-blue-title"><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '</div>';
-                //description
 
+                //description
                 if (result.description) {
                     results += '<div class="res-property sm-description">';
                     results += getLangValue(result.description, preferredLang);
@@ -791,13 +824,16 @@ jQuery(function ($) {
                 results += '</div>';
                 results += '</div>';
 
-                var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
+
+
+
+                var img = "";
 
                 results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                         <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300">\n\
+                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300" onerror="' + hideImageDiv(resourceUrl) + '">\n\
                                         </a></center>\n\
                                     </div>\n\
                                 </div>';

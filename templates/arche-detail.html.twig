@@ -4,9 +4,6 @@
 <div class="container pt-3">
     <div class="row">
         <div class="col-lg-9 metadata-breadcrumb" >
-
-
-
         </div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
@@ -156,7 +153,6 @@
                     </div>
                 </div>  
 
-
                 <div class="row basic-inside-content-div publications-elements-div">
                     <div class="col-lg-12 ">
                         <h5>{{ "Publications"|trans }}</h5>
@@ -172,12 +168,9 @@
                             </thead>
                         </table>
                     </div>
-                </div>  
-
+                </div>
             </div>
         </div>
-
-
 
         <div class="col-lg-3 metadata-right" >
             <!-- 
@@ -185,6 +178,7 @@
                 <div class="loader"></div>
             </div>
             -->
+         
             {% if data.isTitleImage()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
             {% endif %}    

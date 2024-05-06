@@ -336,18 +336,16 @@ class ResourceCoreObject {
         $img = '';
         $imgBinary = '';
         $width = str_replace('px', '', $width);
-        //check the thumbnail service first
-        if ($acdhid = $this->getOneID()) {
-            $acdhid = str_replace('http://', '', $acdhid);
-            $acdhid = str_replace('https://', '', $acdhid);
-            if ($file = @fopen($this->thumbUrl . $acdhid, "r")) {
-                $type = fgets($file, 40);
-                if (!empty($type)) {
-                    return $this->thumbUrl . $acdhid . '?width=' . $width;
-                }
-            }
+        $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
+       
+        //but if we have acdhid, then use that one
+        if (!empty($this->getAcdhID())) {
+            $id = $this->getAcdhID();
         }
-        return '';
+        
+        $id = str_replace('http://', '', $id);
+        $id = str_replace('https://', '', $id);
+        return $this->thumbUrl . $id . '?width=' . $width;
     }
 
     /**
@@ -357,7 +355,7 @@ class ResourceCoreObject {
     public function isTitleImage(): bool {
         //get the first id
         $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
-        
+       
         //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
             $id = $this->getAcdhID();
@@ -378,7 +376,7 @@ class ResourceCoreObject {
 
             // Get the response status code
             $statusCode = $response->getStatusCode();
-
+             
             // Check if the status code is in the 2xx range (indicating success)
             if ($statusCode >= 200 && $statusCode < 300) {
                 return true;
