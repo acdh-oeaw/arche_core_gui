@@ -11,10 +11,10 @@
         }
     ],
     "require": {
-        "acdh-oeaw/arche-lib": "6.4.3",
+        "acdh-oeaw/arche-lib": "6.4.4",
         "acdh-oeaw/arche-lib-disserv": "4.0.3",
         "acdh-oeaw/arche-lib-schema": "7.1.0",   
-	"acdh-oeaw/arche-assets": "^3.12.0", 
+	"acdh-oeaw/arche-assets": "^3.14.1", 
         "zozlak/logging": "*",
         "twig/extra-bundle": "*",
         "phpunit/phpunit": "require-dev",
