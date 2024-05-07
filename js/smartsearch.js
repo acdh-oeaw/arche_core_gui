@@ -64,40 +64,45 @@ jQuery(function ($) {
 
     smartSearchInputField.autocomplete({
         minLength: 2, // Minimum number of characters to trigger autocomplete
-        autoFocus: true, // Automatically focus the first item in the list
+        autoFocus: false,
         
     });
 
     // Attach keyup event listener to the input field
     smartSearchInputField.on('keyup', function () {
-        
-        // Get the current value of the input field
-        var inputValue = $(this).val();
-        
-        // Check if the input value is at least 2 characters long
-        if (inputValue.length >= 2) {
-            console.log("inputvalue: " + inputValue);
-            // Make an AJAX request to your API
-            $.ajax({
-                url: '/browser/api/smsearch/autocomplete/'+inputValue,
-                method: 'GET',
-                success: function (data) {
-                    console.log("success...");
-                    var responseObject = $.parseJSON(data);
-                    console.log(responseObject);
-                    // Initialize autocomplete with the retrieved results
-                    smartSearchInputField.autocomplete({source: []});
-                    smartSearchInputField.autocomplete({
-                        source: responseObject
-                    });
-                    // Open the autocomplete dropdown
-                    smartSearchInputField.autocomplete('search');
-                    console.log("success end");
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching autocomplete data:', error);
-                }
-            });
+        if (event.keyCode !== 37 && // Left arrow
+            event.keyCode !== 38 && // Up arrow
+            event.keyCode !== 39 && // Right arrow
+            event.keyCode !== 40    // Down arrow
+        ) {
+            // Get the current value of the input field
+            var inputValue = $(this).val();
+
+            // Check if the input value is at least 2 characters long
+            if (inputValue.length >= 2) {
+                console.log("inputvalue: " + inputValue);
+                // Make an AJAX request to your API
+                $.ajax({
+                    url: '/browser/api/smsearch/autocomplete/'+inputValue,
+                    method: 'GET',
+                    success: function (data) {
+                        console.log("success...");
+                        var responseObject = $.parseJSON(data);
+                        console.log(responseObject);
+                        // Initialize autocomplete with the retrieved results
+                        smartSearchInputField.autocomplete({source: []});
+                        smartSearchInputField.autocomplete({
+                            source: responseObject
+                        });
+                        // Open the autocomplete dropdown
+                        smartSearchInputField.autocomplete('search');
+                        console.log("success end");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching autocomplete data:', error);
+                    }
+                });
+            }
         }
     });
 
