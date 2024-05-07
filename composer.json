@@ -17,8 +17,6 @@
 	"acdh-oeaw/arche-assets": "^3.14.1", 
         "zozlak/logging": "*",
         "twig/extra-bundle": "*",
-        "phpunit/phpunit": "*",
-        "phpspec/prophecy-phpunit": "*",
         "drupal/layout_custom_section_classes": "^1.0"
     },
     "require-dev": {
