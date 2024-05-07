@@ -17,12 +17,10 @@
 	"acdh-oeaw/arche-assets": "^3.14.1", 
         "zozlak/logging": "*",
         "twig/extra-bundle": "*",
-        "phpunit/phpunit": "require-dev",
         "phpspec/prophecy-phpunit": "require-dev",
         "drupal/layout_custom_section_classes": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9",
         "drupal/core-dev": "*"
     },
     "autoload": {
