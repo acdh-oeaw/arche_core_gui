@@ -8,7 +8,11 @@ jQuery(function ($) {
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
-    var mapSmall;
+
+    var bbox = null;
+    var map = null;
+    var mapPins = null;
+
     var preferredLang = drupalSettings.arche_core_gui.gui_lang;
 
     /********************** EVENTS *************************************/
@@ -17,16 +21,19 @@ jQuery(function ($) {
     var actualPage = 1;
     var guiObj = {};
     var smartSearchInputField = $('#sm-hero-str');
-
+    
+    
     $(document).ready(function () {
         var currentUrl = window.location.href;
-
+        
         // Check if the URL contains any params
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
             getSearchParamsFromUrl();
             //guiObj = {'actualPage': 1};
         }
+        initMap();
         executeTheSearch();
+        
     });
 
     //// events ////
@@ -65,16 +72,16 @@ jQuery(function ($) {
     smartSearchInputField.autocomplete({
         minLength: 2, // Minimum number of characters to trigger autocomplete
         autoFocus: false,
-        
+
     });
 
     // Attach keyup event listener to the input field
     smartSearchInputField.on('keyup', function () {
         if (event.keyCode !== 37 && // Left arrow
-            event.keyCode !== 38 && // Up arrow
-            event.keyCode !== 39 && // Right arrow
-            event.keyCode !== 40    // Down arrow
-        ) {
+                event.keyCode !== 38 && // Up arrow
+                event.keyCode !== 39 && // Right arrow
+                event.keyCode !== 40    // Down arrow
+                ) {
             // Get the current value of the input field
             var inputValue = $(this).val();
 
@@ -83,7 +90,7 @@ jQuery(function ($) {
                 console.log("inputvalue: " + inputValue);
                 // Make an AJAX request to your API
                 $.ajax({
-                    url: '/browser/api/smsearch/autocomplete/'+inputValue,
+                    url: '/browser/api/smsearch/autocomplete/' + inputValue,
                     method: 'GET',
                     success: function (data) {
                         console.log("success...");
@@ -153,6 +160,9 @@ jQuery(function ($) {
     });
 
     ////// SEARCH IN Function END /////
+
+
+
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
@@ -238,6 +248,47 @@ jQuery(function ($) {
 
 
     ////// FUNCTIONS //////
+
+    function initMap() {
+        map = L.map('map', {zoom: 5, center: [48.0, 16.5]});
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        }).addTo(map);
+        bbox = new L.FeatureGroup();
+        map.addLayer(bbox);
+        map.addControl(new L.Control.Draw({
+            position: 'topleft',
+            draw: {
+                rectangle: {
+                    shapeOptions: {
+                        color: '#97009c'
+                    }
+                },
+                polygon: false,
+                polyline: false,
+                circle: false,
+                marker: false,
+                circlemarker: false
+            },
+            edit: {
+                featureGroup: bbox,
+                edit: false
+            }
+        }));
+        map.on('draw:drawstart', function (e) {
+            bbox.clearLayers();
+        });
+        map.on('draw:created', function (e) {
+            bbox.addLayer(e.layer);
+            bbox.setZIndex(1000);
+            setMapLabel();
+        });
+        map.on('draw:deleted', function (e) {
+            $('#mapLabel').html('');
+            $('#map').css('top', '-1000px');
+        });
+    }
 
     function getSearchParamsFromUrl() {
         var url = window.location.pathname;
@@ -349,8 +400,6 @@ jQuery(function ($) {
         }
         return v;
     }
-    //var geonamesAccount = 'zozlak';
-    var bbox = '';
 
     function getGuiSearchParams(prop) {
         if (guiObj.hasOwnProperty(prop)) {
@@ -367,6 +416,7 @@ jQuery(function ($) {
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
         token++;
+         $('#map').css('top', '-1000px');
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
 
@@ -432,6 +482,8 @@ jQuery(function ($) {
         console.log("SEARCH GUI OBJ; ");
         console.log(guiObj);
         token++;
+        $('#map').css('top', '-1000px');
+
         var localToken = token;
         if (firstLoad) {
             return showJustSearchFacets();
@@ -457,7 +509,8 @@ jQuery(function ($) {
                 page: pagerPage,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
-                searchIn: []
+                searchIn: [],
+                noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
 
@@ -526,18 +579,22 @@ jQuery(function ($) {
                 param.data.searchIn.push($(el).attr('data-value'));
             });
         }
-
-        if (bbox !== '') {
-            param.data.facets['bbox'] = bbox;
+        /*
+         if (bbox !== '') {
+         param.data.facets['bbox'] = bbox;
+         }
+         
+         if (coordinates) {
+         if (searchStr.length === 0) {
+         firstLoad = false;
+         }
+         param.data.facets['bbox'] = coordinates;
+         }
+         */
+        if (bbox.getLayers().length > 0) {
+            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+            param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
         }
-
-        if (coordinates) {
-            if (searchStr.length === 0) {
-                firstLoad = false;
-            }
-            param.data.facets['bbox'] = coordinates;
-        }
-
         console.log("update the url: ");
         updateUrl(param.data);
 
@@ -604,16 +661,6 @@ jQuery(function ($) {
         history.pushState(null, "Discover", currentUrl);
     }
 
-    function displaySmallMap(coordinates) {
-        //$("#bboxMap").css('display', 'block');
-        mapSmall = L.map('bboxMap', {
-            zoomControl: false, // Add zoom control separately below
-            center: [48.2, 16.3], // Initial map center
-            zoom: 10, // Initial zoom level
-            attributionControl: false, // Instead of default attribution, we add custom at the bottom of script
-            scrollWheelZoom: false
-        });
-    }
 
     /* reset search button clicked */
     function resetSearch() {
@@ -682,6 +729,7 @@ jQuery(function ($) {
         createPager(totalPages);
         var multipleSelects = [];
         $('div.dateValues').text('');
+
         if (initial || data.results.length > 0) {
             $('input.facet-min').attr('placeholder', '');
             $('input.facet-max').attr('placeholder', '');
@@ -690,7 +738,7 @@ jQuery(function ($) {
             $.each(data.facets, function (n, fd) {
                 var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
                 var select = "";
-                if (fd.values.length > 0 || fd.type === 'continuous') {
+                if (fd.values.length > 0 || fd.min || fd.type === 'map') {
                     var div = $(document.getElementById(fd.property + 'values'));
                     var text = '';
 
@@ -700,10 +748,11 @@ jQuery(function ($) {
                         });
                     }
 
-                    if (fd.type !== 'continuous') {
+                     if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
                         select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
-
+                        console.log("FD VALUES: ");
+                        console.log(fd.values);
                         $.each(fd.values, function (n, i) {
 
                             //iterate the param.facets to set the selected ones!!!!!!
@@ -731,6 +780,21 @@ jQuery(function ($) {
                         //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
                     } else {
                         div.html(select + '<br/>');
+                    }
+
+console.log("FD:: ");
+console.log(fd.type);
+                    if (fd.type === 'map') {
+                        if (mapPins) {
+                            map.removeLayer(mapPins);
+                        }
+                        if (fd.values !== '') {
+                            mapPins = L.geoJSON(JSON.parse(fd.values));
+                            mapPins.addTo(map);
+                        }
+                        facets += '<div id="mapLabel"></div>' +
+                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">'+Drupal.t('Map')+'</button>\n\
+                                ';
                     }
                 }
                 if (fdp.distribution === 1 || fdp.distribution === 3) {

@@ -1,3 +1,4 @@
+---
 rest:
   headers:
     metadataReadMode: X-METADATA-READ-MODE
@@ -9,13 +10,9 @@ rest:
     relativesProperties: X-RELATIVES-PROPERTIES
   handlers:
     methods:
-      get:
-      - type: function
-        function: \acdhOeaw\arche\openaire\Handlers::onGet
-      getMetadata:
-      - type: function
-        function: \acdhOeaw\arche\openaire\Handlers::onGetMetadata
-  urlBase: http://127.0.0.1
+      get: []
+      getMetadata: []
+  urlBase: https://arche-design.acdh-dev.oeaw.ac.at
   pathBase: /api/
 schema:
   id: https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier
@@ -124,7 +121,7 @@ schema:
 openaire:
   url: https://analytics.openaire.eu/piwik.php
   id: 602
-  authToken: ""
+  authToken: 32846584f571be9b57488bf4088f30ea
   trackIp: false
   trackUserAgent: true
   pidQuery: |
@@ -144,64 +141,103 @@ dbConn:
   guest: 'pgsql: host=127.0.0.1 port=5432 user=gui dbname=www-data'
 dbConnStr:
   guest: 'pgsql: host=127.0.0.1 port=5432 user=gui dbname=www-data'
-clarinVcrUrl: https://collections.clarin.eu/submit/extensional
+clarinVcrUrl: https://beta-collections.clarin.eu/submit/extensional
 smartSearch:
+  log: /home/www-data/log/smartsearch.log
+  facetsCache: /tmp/facetsCache.json
+  exactMatchWeight: 1.5
+  langMatchWeight: 1.1
+  matchesLimit: 10000
   prefLang: en
-  property:
-    label: Search match in
-    weights:
-      https://vocabs.acdh.oeaw.ac.at/schema#hasTitle: 100
-      https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier: 50
-      https://vocabs.acdh.oeaw.ac.at/schema#hasDescription: 10
+  fallbackOrderBy: https://vocabs.acdh.oeaw.ac.at/schema#hasTitle
+  cacheTimeout: 16 hours
+  autocomplete:
+    count: 10
+    maxLength: 50
   facets:
-  - label: Type
-    property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type
-    weights:
-      https://vocabs.acdh.oeaw.ac.at/schema#TopCollection: 500
-      https://vocabs.acdh.oeaw.ac.at/schema#Collection: 49
-  - label: License
+  - type: continuous
+    property: dateContent
+    label:
+      en: Temporal coverage
+      de: Zeitliche Abdeckung
+    bins: 5
+    start:
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasCoverageStartDate
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasCreatedStartDateOriginal
+    end:
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasCoverageEndDate
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasCreatedEndDateOriginal
+  - type: map
+    label:
+      en: Spatial coverage
+      de: Räumliche Abdeckung
+    tooltip:
+      en: foo
+      de: bar
+  - type: object
+    property: https://vocabs.acdh.oeaw.ac.at/schema#hasRelatedDiscipline
+    label:
+      en: Research Discipline
+      de: Forschungsdisziplin
+    weights: []
+  - type: object
+    property: https://vocabs.acdh.oeaw.ac.at/schema#hasCategory
+    label:
+      en: Category
+      de: Kategorie
+    weights: []
+  - type: object
     property: https://vocabs.acdh.oeaw.ac.at/schema#hasLicense
-    type: object
+    label:
+      en: License
+      de: Lizenz
     weights:
-      48908: 1.1
-      48916: 1.1
+      48908: 1
+      48916: 1
       48534: 1
       48907: 1
       48903: 1
       48904: 1
       48905: 1
+      48913: 1
       48910: 0.5
-  - label: Access restriction
+  - type: object
     property: https://vocabs.acdh.oeaw.ac.at/schema#hasAccessRestriction
-    type: object
+    label:
+      en: Access restriction
+      de: "Zugangsbeschr\xE4nkung"
     weights:
       48508: 1.1
       48513: 1
       48519: 0.5
-  - label: Related discipline
-    property: https://vocabs.acdh.oeaw.ac.at/schema#hasRelatedDiscipline
-    type: object
-    weights: []
-  - label: Category
-    property: https://vocabs.acdh.oeaw.ac.at/schema#hasCategory
-    type: object
-    weights: []
-  dateFacets:
-    content:
-      label: Temporal coverage
-      bins: 5
-      start:
-      - https://vocabs.acdh.oeaw.ac.at/schema#hasCoverageStartDate
-      - https://vocabs.acdh.oeaw.ac.at/schema#hasCreatedStartDateOriginal
-      end:
-      - https://vocabs.acdh.oeaw.ac.at/schema#hasCoverageEndDate
-      - https://vocabs.acdh.oeaw.ac.at/schema#hasCreatedEndDateOriginal
-    archive:
-      label: Available since
-      bins: 5
-      start: https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate
-      end: https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate
-  namedEntities:
+  - type: literal
+    property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+    label:
+      en: Type
+      de: Typ
+    important: true
+    defaultWeight: 0
+    weights:
+      https://vocabs.acdh.oeaw.ac.at/schema#TopCollection: 500
+      https://vocabs.acdh.oeaw.ac.at/schema#Collection: 49
+      https://vocabs.acdh.oeaw.ac.at/schema#Resource: 1
+      https://vocabs.acdh.oeaw.ac.at/schema#Person: 0.5
+      https://vocabs.acdh.oeaw.ac.at/schema#Place: 0.5
+      https://vocabs.acdh.oeaw.ac.at/schema#Organisation: 0.5
+      https://vocabs.acdh.oeaw.ac.at/schema#Publication: 0.5
+  - type: matchProperty
+    label:
+      en: Search match in
+      de: "Suche \xDCbereinstimmung in"
+    weights:
+      https://vocabs.acdh.oeaw.ac.at/schema#hasTitle: 100
+      https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier: 50
+      https://vocabs.acdh.oeaw.ac.at/schema#hasDescription: 10
+  - type: linkProperty
+    property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+    label:
+      en: Linking property
+      de: "Verkn\xFCpfende Eigenschaft"
     defaultWeight: 1
     weights:
       https://vocabs.acdh.oeaw.ac.at/schema#hasAuthor: 10
@@ -214,21 +250,91 @@ smartSearch:
     - https://vocabs.acdh.oeaw.ac.at/schema#Project
     - https://vocabs.acdh.oeaw.ac.at/schema#Publication
     - http://www.w3.org/2004/02/skos/core#Concept
+  warnings:
+  - message:
+      en: Category and/or access restriction are collected only for resources of type
+        acdh:Resource.
+      de: '[translate] Category and/or access restriction are collected only for resources
+        of type acdh:Resource.'
+    severity: warning
+    match:
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasCategory: ~
+      https://vocabs.acdh.oeaw.ac.at/schema#hasAccessRestriction: ~
+    - http://www.w3.org/1999/02/22-rdf-syntax-ns#type: '!https://vocabs.acdh.oeaw.ac.at/schema#Resource'
+  - message:
+      en: Depositors rarely provide information on the reaserch dyscipline and/or
+        license for resources of type other than acdh:Resource.
+      de: '[translate] Depositors rarely provide information on the reaserch dyscipline
+        and/or license for resources of type other than acdh:Resource.'
+    severity: warning
+    match:
+    - https://vocabs.acdh.oeaw.ac.at/schema#hasRelatedDiscipline: ~
+      https://vocabs.acdh.oeaw.ac.at/schema#hasLicense: ~
+    - http://www.w3.org/1999/02/22-rdf-syntax-ns#type: '!https://vocabs.acdh.oeaw.ac.at/schema#Resource'
+  - message:
+      en: Depositors often do not provide explicit information on the temporal and/or
+        spatial coverage of the data.
+      de: '[translate] Depositors often do not provide explicit information on the
+        temporal and/or spatial coverage of the data.'
+    severity: warning
+    match:
+    - dateContent: ~
+      map: ~
+  emptySearchMessage:
+    en: |
+      <p>You can discover resources in the ARCHE in multiple ways.</p>
+      <p>If you are just looking around, a good starting point may be to list Top Collections by selecting the <em>acdh:TopCollection</em> value from the <strong>Type</strong> search facet.</p>
+      <p>If you have any particular search phrase in mind, please type it in the search field and click the search button. That way you will get an initial results and the search facets will be updated accordingly allowing you to further narrow down your search.</p>
+      <p>If you are interested in particular time period or area, you can use the temporal and spatial filters but please remember that unfortunately many data depositors do not provide this data explicitly. The search may fetch better results if you provide the year, period or place name as a search phrase.</p>
+    de:
+    - provide the message in German
 metadataManagment:
   nonRelationProperties:
   - http://www.w3.org/1999/02/22-rdf-syntax-ns#type
 doorkeeper:
   epicPid:
     pswd: ~
+  checkRanges:
+    https://vocabs.acdh.oeaw.ac.at/schema#Agent:
+    - viaf
+    - orcid
+    - gnd
+    - wikidata
+    - arche-localhost
+    - arche-dev
+    - acdhi
+    - arche
+    - pmb
+    https://vocabs.acdh.oeaw.ac.at/schema#Place:
+    - wikidata
+    - arche-localhost
+    - arche-dev
+    - acdhi
+    - arche
+    - pmb
+    - geonames
+    https://vocabs.acdh.oeaw.ac.at/schema#AgentOrPlace:
+    - viaf
+    - orcid
+    - gnd
+    - wikidata
+    - arche-localhost
+    - arche-dev
+    - acdhi
+    - arche
+    - pmb
+    - geonames
 oai:
   info:
-    baseUrl: http://127.0.0.1/oaipmh/
+    baseUrl: https://arche-design.acdh-dev.oeaw.ac.at/oaipmh/
   search:
-    repoBaseUrl: http://127.0.0.1/api/
+    repoBaseUrl: https://arche-design.acdh-dev.oeaw.ac.at/api/
 resolver:
   repositories:
     self:
-      baseUrl: http://127.0.0.1/api/
+      baseUrl: https://arche-design.acdh-dev.oeaw.ac.at/api/
 openrefine:
-  baseUrl: http://127.0.0.1/openrefine/
-  viewUrl: http://127.0.0.1/browser/oeaw_detail/{{id}}
+  baseUrl: https://arche-design.acdh-dev.oeaw.ac.at/openrefine/
+refsources:
+  repositoryUrl: https://arche-design.acdh-dev.oeaw.ac.at/api
+...

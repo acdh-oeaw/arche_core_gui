@@ -7,42 +7,13 @@
         <div class="input-group ui-widget">
             <input type="search" id="sm-hero-str" class="form-control hero-search-field" placeholder="{{ "Find resources"|trans }}..." aria-label="Search">
             <button class="smartsearch-btn btn hero-search-button" type="submit"><img class="img-fluid" src="{{ arche_theme_img_url }}/common/search_icon.png" alt="Search"  /></button>
-        </div>
+        </div>        
     </form>
 </div>
-
-
-<div class="card metadata smsMapCard">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-8"><h6>{{ "Map"|trans }}</h6></div>
-            <div class="col-2 tooltop-icon-div"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
-            <div class="col-2 text-end ">
-                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#smsMapBody">
-                    <i class="fa fa-solid fa-chevron-up"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div id="smsMapBody" class="collapse show">
-        <div class="card-body meta-sidebar flex-column">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12 mt-2">
-                        <div id="mapSelectedPlace"></div>
-                        <button type="button" class="btn btn-arche-blue w-100" id="mapToggleBtn">{{ "Map"|trans }}</button>
-                        <div class="arche-sms-popup"  id="mapContainer" style="display: none;">
-                            {{ include(arche_core_gui_path ~ '/templates/smartsearch/map.html.twig' ) }}
-                        </div>
-                        <div id="bboxMap"></div>
-                    </div>
-                </div>
-            </div>    
-        </div>
-    </div>        
-</div>
-
-
+MAP:
+<div id="map" class="sms-map"></div>
+<div id="map-loader" class="map-loader"></div>
+FACETS:
 <div id="facets"></div>
 
 <div class="card metadata extendedSearchCard">
@@ -78,15 +49,24 @@
 
                                 </div>
                             </div>
-                                    <!--
                             <div class="col-lg-12">
                                 <div class="form-outline">
-                                    <input class="form-check-input ml-2" type="checkbox"  id="searchInChb">&nbsp;
-                                    <label class="form-check-label ml-2" for="searchInChb">{{ "Search only in"|trans }}</label>
+                                    <input class="form-check-input ml-2" type="checkbox" checked="checked" id="noCache">&nbsp;
+                                    <label class="form-check-label ml-2" for="noCache">{{ "No cache"|trans }}</label>
 
                                 </div>
-                            </div>       
--->
+                            </div>        
+                                    
+                                    
+                            <!--
+                    <div class="col-lg-12">
+                        <div class="form-outline">
+                            <input class="form-check-input ml-2" type="checkbox"  id="searchInChb">&nbsp;
+                            <label class="form-check-label ml-2" for="searchInChb">{{ "Search only in"|trans }}</label>
+
+                        </div>
+                    </div>       
+                            -->
                         </form>
                     </div>
 
