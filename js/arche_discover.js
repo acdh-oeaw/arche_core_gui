@@ -80,7 +80,7 @@ jQuery(function ($) {
                         var acdhid = row.identifier.replace(/^https?:\/\//i, '');
                         return '<div class="col-block discover-table-image-div"><div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                             <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=600" data-lightbox="detail-titleimage-' + row.acdhresId + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=300">\n\
+                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=200">\n\
                             </a></center>\n\
                             </div></div>';
                     }

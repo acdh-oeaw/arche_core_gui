@@ -956,7 +956,7 @@ jQuery(function ($) {
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                         <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=300" >\n\
+                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=200" >\n\
                                         </a></center>\n\
                                     </div>\n\
                                 </div>';
