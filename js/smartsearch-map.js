@@ -18,7 +18,7 @@ jQuery(function ($) {
             zoom: 10, // Initial zoom level
             attributionControl: false, // Instead of default attribution, we add custom at the bottom of script
             scrollWheelZoom: false
-        })
+        });
 
         // Add zoom in/out buttons to the top-right
         L.control.zoom({position: 'topright'}).addTo(map)

@@ -21,19 +21,20 @@ jQuery(function ($) {
     var actualPage = 1;
     var guiObj = {};
     var smartSearchInputField = $('#sm-hero-str');
-    
-    
+
+
     $(document).ready(function () {
         var currentUrl = window.location.href;
-        
+
         // Check if the URL contains any params
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
             getSearchParamsFromUrl();
             //guiObj = {'actualPage': 1};
         }
-        initMap();
+
         executeTheSearch();
-        
+        initMap();
+
     });
 
     //// events ////
@@ -235,6 +236,20 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    $(document).delegate("#mapToggleBtn", "click", function (e) {
+        var mapContainer = $('#mapContainer');
+
+        if (mapContainer.is(':visible')) {
+            mapContainer.hide();
+            destroyMap(); // Destroy the map when hiding
+        } else {
+            mapContainer.show();
+            if (!map) {
+                initializeMap(); // Initialize the map when showing
+            }
+        }
+    });
+
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
     $('#hero-smart-search-form').on('keydown', 'input', function (event) {
         if (event.which === 13) { // Check if Enter key was pressed (key code 13)
@@ -245,18 +260,20 @@ jQuery(function ($) {
         }
     });
 
-
-
     ////// FUNCTIONS //////
 
     function initMap() {
-        map = L.map('map', {zoom: 5, center: [48.0, 16.5]});
+
+        map = L.map('map', {zoom: 10, center: [48.2, 16.3]});
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
         }).addTo(map);
-        bbox = new L.FeatureGroup();
+
+
+        var bbox = new L.FeatureGroup();
         map.addLayer(bbox);
+
         map.addControl(new L.Control.Draw({
             position: 'topleft',
             draw: {
@@ -273,21 +290,28 @@ jQuery(function ($) {
             },
             edit: {
                 featureGroup: bbox,
-                edit: false
+                edit: false,
             }
         }));
+
         map.on('draw:drawstart', function (e) {
             bbox.clearLayers();
         });
         map.on('draw:created', function (e) {
             bbox.addLayer(e.layer);
             bbox.setZIndex(1000);
-            setMapLabel();
+            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+            setMapLabel(coord);
         });
         map.on('draw:deleted', function (e) {
             $('#mapLabel').html('');
-            $('#map').css('top', '-1000px');
+
         });
+    }
+
+    function setMapLabel(coord) {
+        $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
+
     }
 
     function getSearchParamsFromUrl() {
@@ -416,7 +440,6 @@ jQuery(function ($) {
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
         token++;
-         $('#map').css('top', '-1000px');
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
 
@@ -482,7 +505,6 @@ jQuery(function ($) {
         console.log("SEARCH GUI OBJ; ");
         console.log(guiObj);
         token++;
-        $('#map').css('top', '-1000px');
 
         var localToken = token;
         if (firstLoad) {
@@ -591,10 +613,13 @@ jQuery(function ($) {
          param.data.facets['bbox'] = coordinates;
          }
          */
-        if (bbox.getLayers().length > 0) {
-            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-            param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
+        if (bbox) {
+            if (bbox.getLayers().length > 0) {
+                var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+                param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
+            }
         }
+
         console.log("update the url: ");
         updateUrl(param.data);
 
@@ -748,13 +773,10 @@ jQuery(function ($) {
                         });
                     }
 
-                     if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
+                    if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
                         var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
                         select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
-                        console.log("FD VALUES: ");
-                        console.log(fd.values);
                         $.each(fd.values, function (n, i) {
-
                             //iterate the param.facets to set the selected ones!!!!!!
                             if (param.facets[fd.property] && param.facets[fd.property][0].length > 0) {
                                 $.each(param.facets[fd.property][0], function (sI, sv) {
@@ -774,28 +796,26 @@ jQuery(function ($) {
                             select += '<div class="text-center"><input class="facet-min w-40" placeholder="' + Drupal.t("From") + '" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" placeholder="' + Drupal.t("To") + '" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
                         }
 
+                        if (fd.type === 'map') {
+                            if (mapPins) {
+                                map.removeLayer(mapPins);
+                            }
+                            if (fd.values !== '') {
+                                mapPins = L.geoJSON(JSON.parse(fd.values));
+                                mapPins.addTo(map);
+                            }
+                            select = '<div id="mapLabel"></div>' +
+                                    '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>\n\
+                                ';
+                        }
+
                         facets += createFacetSelectCard(fd, select);
                         multipleSelects.push(title_id);
 
-                        //facets += '<label class="mt-2 font-weight-bold">' + fd.label + '</label><br/>' + text + '<br/>';
                     } else {
                         div.html(select + '<br/>');
                     }
 
-console.log("FD:: ");
-console.log(fd.type);
-                    if (fd.type === 'map') {
-                        if (mapPins) {
-                            map.removeLayer(mapPins);
-                        }
-                        if (fd.values !== '') {
-                            mapPins = L.geoJSON(JSON.parse(fd.values));
-                            mapPins.addTo(map);
-                        }
-                        facets += '<div id="mapLabel"></div>' +
-                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">'+Drupal.t('Map')+'</button>\n\
-                                ';
-                    }
                 }
                 if (fdp.distribution === 1 || fdp.distribution === 3) {
                     $('input.facet-min[data-value="' + fd.property + '"]').attr('placeholder', fd.min || '');
@@ -1083,16 +1103,4 @@ console.log(fd.type);
         });
     }
 
-    function formatDate(originalDate) {
-        // Create a new Date object from the original date string
-        var dateObject = new Date(originalDate);
-
-        // Get the day, month, and year components from the date object
-        var day = dateObject.getDate();
-        var month = dateObject.toLocaleString('default', {month: 'short'});
-        var year = dateObject.getFullYear();
-
-        // Concatenate the components to form the desired format
-        return day + ' ' + month + ' ' + year;
-    }
 });

@@ -19,24 +19,24 @@ smart-search:
     css:
         base:
             css/slimselect.css: {}
-            https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css: { type: external, minified: true }
-            https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css: { type: external, minified: true }
-            https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css: { type: external, minified: true }
             https://unpkg.com/leaflet@1.9.4/dist/leaflet.css: { type: external, minified: false }
             https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css: { type: external, minified: false }
+            https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css: { type: external, minified: true }
+            https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css: { type: external, minified: true }
+            https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css: { type: external, minified: true }            
             css/smart-multi.css: {}
     js:
         js/slimselect.js: {}
-        https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js: { type: external, minified: true }
-        https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js: { type: external, minified: true }
-        https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js: { type: external, minified: true }
+        https://code.jquery.com/jquery-3.6.4.min.js: {type: external, minified: true }
         https://unpkg.com/leaflet@1.9.4/dist/leaflet.js: { type: external, minified: false }
         https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js: { type: external, minified: false }
+        https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js: { type: external, minified: true }
+        https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js: { type: external, minified: true }
+        https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js: { type: external, minified: true }        
         js/smartsearch.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
-        - core/jquery   
         - core/drupalSettings
         
 detail-view:
