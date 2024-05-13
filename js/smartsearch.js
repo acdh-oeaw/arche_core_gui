@@ -25,23 +25,24 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         var currentUrl = window.location.href;
-
         // Check if the URL contains any params
+        console.log(currentUrl);
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
+            console.log("EXTRA PARAMS: ");
             getSearchParamsFromUrl();
             //guiObj = {'actualPage': 1};
+
+        } else {
+            executeTheSearch();
         }
-
-        executeTheSearch();
+        //executeTheSearch();
         initMap();
-
     });
 
     //// events ////
     $(document).delegate("input", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
-            console.log("INPUT ENTER!! ");
             firstLoad = false;
             // Prevent the default form submission behavior
             e.preventDefault();
@@ -52,7 +53,6 @@ jQuery(function ($) {
     $(document).delegate("select", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
-            console.log("SELECT ENTER!! ");
             firstLoad = false;
             // Prevent the default form submission behavior
             e.preventDefault();
@@ -64,7 +64,6 @@ jQuery(function ($) {
     $(document).on('keyup', '.select2-search__field', function (e) {
         if (e.which === 13) {
             e.preventDefault();
-            console.log("select2 keyup ENTER!! ");
             firstLoad = false;
             executeTheSearch();
         }
@@ -88,15 +87,12 @@ jQuery(function ($) {
 
             // Check if the input value is at least 2 characters long
             if (inputValue.length >= 2) {
-                console.log("inputvalue: " + inputValue);
                 // Make an AJAX request to your API
                 $.ajax({
                     url: '/browser/api/smsearch/autocomplete/' + inputValue,
                     method: 'GET',
                     success: function (data) {
-                        console.log("success...");
                         var responseObject = $.parseJSON(data);
-                        console.log(responseObject);
                         // Initialize autocomplete with the retrieved results
                         smartSearchInputField.autocomplete({source: []});
                         smartSearchInputField.autocomplete({
@@ -104,7 +100,6 @@ jQuery(function ($) {
                         });
                         // Open the autocomplete dropdown
                         smartSearchInputField.autocomplete('search');
-                        console.log("success end");
                     },
                     error: function (xhr, status, error) {
                         console.error('Error fetching autocomplete data:', error);
@@ -162,8 +157,6 @@ jQuery(function ($) {
 
     ////// SEARCH IN Function END /////
 
-
-
     $(document).delegate("#SMMapBtn", "click", function (e) {
         e.preventDefault();
         var coordinates = $(this).data("coordinates");
@@ -176,10 +169,8 @@ jQuery(function ($) {
          '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
          ' </div>' +
          '</div>');*/
-        console.log("SMMAP COORDINATES:::");
-        console.log(coordinates);
+
         guiObj = {'coordinates': coordinates, 'locationTitle': title};
-        console.log(guiObj);
         firstLoad = false;
 
         var mapContainer = $('#mapContainer');
@@ -253,7 +244,6 @@ jQuery(function ($) {
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
     $('#hero-smart-search-form').on('keydown', 'input', function (event) {
         if (event.which === 13) { // Check if Enter key was pressed (key code 13)
-            console.log("ENTER PRESSED");
             firstLoad = false;
             event.preventDefault();
             executeTheSearch();
@@ -322,7 +312,7 @@ jQuery(function ($) {
 
         guiObj = convertFacetsIntoObjects(paramsString);
 
-        console.log("PARAMS:::");
+        console.log("getSearchParamsFromUrl - PARAMS:::");
         //console.log(params);
         console.log("URL : -> ");
         console.log(url);
@@ -331,6 +321,7 @@ jQuery(function ($) {
         //Update form based on the params
 
         // update tge guisearchparams obj
+        executeTheSearch();
     }
 
 
@@ -455,7 +446,8 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                initialFacets: true
+                initialFacets: true,
+                noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
 
@@ -493,6 +485,9 @@ jQuery(function ($) {
         $.ajax(param);
     }
 
+
+    
+
     /// if the search is executed by the hero section, we have to update the input field ///
     function updateSearchStrInput(str) {
         if ($('#sm-hero-str').val() === "") {
@@ -501,7 +496,7 @@ jQuery(function ($) {
     }
 
     function search() {
-        console.log("search started");
+        console.log("search func  started");
         console.log("SEARCH GUI OBJ; ");
         console.log(guiObj);
         token++;
@@ -514,12 +509,13 @@ jQuery(function ($) {
         var searchStr = $('#sm-hero-str').val();
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
+        var guiFacets = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
         if (searchStr === "") {
             searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
 
         updateSearchStrInput(searchStr);
-
+        
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -535,7 +531,12 @@ jQuery(function ($) {
                 noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
-
+        //if we have already selected facets from the url then we have to update 
+        // the facets
+        if(guiFacets) {
+            param.data.facets = guiFacets;
+        }
+        
         $(".smart-search-multi-select").each(function () {
             var prop = $(this).attr('data-property');
             var val = $(this).val();
@@ -619,8 +620,8 @@ jQuery(function ($) {
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
             }
         }
-
-        console.log("update the url: ");
+        console.log("PARAM DATA before update url: ");
+        console.log(param.data);
         updateUrl(param.data);
 
         var t0 = new Date();
@@ -670,9 +671,14 @@ jQuery(function ($) {
 
     /* update the current url after a search was triggered */
     function updateUrl(params) {
+        console.log("updateUrl START");
         resetsearchUrl();
         var queryString = $.param(params);
         var currentUrl = window.location.href;
+        if (currentUrl.slice(-1) === "/") {
+            currentUrl = currentUrl.slice(0, -1);
+        }
+        console.log("new URL: " + currentUrl + '/' + queryString);
         history.pushState(null, "Discover", currentUrl + '/' + queryString);
     }
 
@@ -793,7 +799,14 @@ jQuery(function ($) {
 
                     if (div.length === 0) {
                         if (fd.type === 'continuous') {
-                            select += '<div class="text-center"><input class="facet-min w-40" placeholder="' + Drupal.t("From") + '" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '"/> - <input class="facet-max w-40" type="text" placeholder="' + Drupal.t("To") + '" value="' + (fdp.max || '') + '" data-value="' + fd.property + '"/></div>';
+                            select += '<div class="row">';
+                            select += '<div class="col">';
+                            select += '<input class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
+                            select += '</div>';
+                            select += '<div class="col">';
+                            select += '<input class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
+                            select += '</div>';
+                            select += '</div>';
                         }
 
                         if (fd.type === 'map') {
@@ -805,8 +818,7 @@ jQuery(function ($) {
                                 mapPins.addTo(map);
                             }
                             select = '<div id="mapLabel"></div>' +
-                                    '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>\n\
-                                ';
+                                    '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
                         }
 
                         facets += createFacetSelectCard(fd, select);
@@ -845,17 +857,13 @@ jQuery(function ($) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
             } else {
                 $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
-                console.log("THERE IS NO RESULTS");
                 showJustSearchFacets();
-
-
             }
             $('#smartSearchCount').html(countText);
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
     }
-
     }
 
     function createFacetSelectCard(fd, select) {
@@ -956,7 +964,7 @@ jQuery(function ($) {
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                         <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="sm-img-list bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=200" >\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=200" >\n\
                                         </a></center>\n\
                                     </div>\n\
                                 </div>';
@@ -1000,7 +1008,7 @@ jQuery(function ($) {
         while ((match = wordRegex.exec(accessText)) !== null) {
             matches.push(match[0]);
         }
-
+        console.log(accessText);
         var matchesCount = matches.length;
         if (matchesCount === 1) {
             return '<p class="btn-toolbar btn-toolbar-' + matches[0] + ' no-btn">';
@@ -1008,24 +1016,43 @@ jQuery(function ($) {
             var restrictedText = false;
             var publicText = false;
             var academicText = false;
+            var selected = "";
             $.each(matches, function (k, v) {
                 if (v === 'public') {
+                    if(k === 0) {
+                        selected = "public";
+                    }
                     publicText = true;
                 } else if (v === 'restricted') {
+                    if(k === 0) {
+                        selected = "restricted";
+                    }
                     restrictedText = true;
                 } else if (v === 'academic') {
+                    if(k === 0) {
+                        selected = "academic";
+                    }
                     academicText = true;
                 }
             });
-
             if (publicText && restrictedText) {
-                return '<p class="btn-toolbar btn-toolbar-public-restricted no-btn">';
+                if(selected === 'public') {
+                    return '<p class="btn-toolbar btn-toolbar-public-restricted no-btn">';
+                }
+                return '<p class="btn-toolbar btn-toolbar-restricted-public no-btn">';
             } else if (publicText && academicText) {
-                return '<p class="btn-toolbar btn-toolbar-public-academic no-btn">';
+                if(selected === 'public') {
+                    return '<p class="btn-toolbar btn-toolbar-public-academic no-btn">';
+                }
+                return '<p class="btn-toolbar btn-toolbar-academic-public no-btn">';
             } else if (restrictedText && academicText) {
-                return '<p class="btn-toolbar btn-toolbar-academic-restricted no-btn">';
+                if(selected === 'academic') {
+                    return '<p class="btn-toolbar btn-toolbar-academic-restricted no-btn">';
+                }
+                return '<p class="btn-toolbar btn-toolbar-restricted-academic no-btn">';
             }
         }
+        
         return '<p class="btn-toolbar btn-toolbar-public no-btn">';
     }
 
