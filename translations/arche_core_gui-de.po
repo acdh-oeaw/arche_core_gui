@@ -44,6 +44,9 @@ msgstr "Neueste Ergänzungen"
 msgid "See All Resources"
 msgstr "Siehe alle Ressourcen"
 
+msgid "See Also"
+msgstr "Siehe auch"
+
 msgid "Discover resources"
 msgstr "Ressourcen entdecken"
 
@@ -55,6 +58,9 @@ msgstr "Identifikator(en)"
 
 msgid "Author(s)" 
 msgstr "Autor(en)"
+
+msgid "Associated Collections and Resources"
+msgstr "Assoziierte Sammlungen und Ressourcen"
 
 msgid "Creator(s)" 
 msgstr "Urheber"
@@ -95,6 +101,15 @@ msgstr "Seite(n)"
 msgid "Note" 
 msgstr "Anmerkung"
 
+msgid "Citation" 
+msgstr "Zitat"
+
+msgid "Associated Publications"
+msgstr "Zugehörige Publicationen"
+
+msgid "Relation Type" 
+msgstr "Art der Relation"
+
 msgid "Part of" 
 msgstr "Teil von"
 
@@ -104,7 +119,13 @@ msgstr "Mitglied von"
 msgid "Related Discipline(s)" 
 msgstr "Fachdisziplin(en)"
 
+msgid "Related Discipline" 
+msgstr "Fachdisziplin"
+
 msgid "Subject(s)" 
+msgstr "Betreff"
+
+msgid "Subject" 
 msgstr "Betreff"
 
 msgid "Spatial Coverage" 
@@ -128,6 +149,15 @@ msgstr "Geografische Informationen"
 msgid "Temporal Coverage" 
 msgstr "Zeitliche Abdeckung"
 
+msgid "Related Project"
+msgstr "Verwandtes Projekt"
+
+msgid "Coverage Date" 
+msgstr "Zeitliche Abdeckung"
+
+msgid "Collection Content"
+msgstr "Sammlungsinhalt"
+
 msgid "Created Start Date" 
 msgstr "Erstellungsdatum Beginn"
 
@@ -136,6 +166,9 @@ msgstr "Erstellungsdatum Ende"
 
 msgid "Cite Resource" 
 msgstr "Ressource zitieren"
+
+msgid "Cite Collection" 
+msgstr "Sammlung zitieren"
 
 msgid "Result(s)" 
 msgstr "Ergebnis(se)"

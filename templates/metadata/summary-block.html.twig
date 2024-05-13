@@ -1,68 +1,84 @@
 <div class="col-lg-12 " id="av-summary">
     <ul>
-
-
         {% if data.getData('acdh:hasRelatedDiscipline') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Related Discipline(s)' } ) }}</li>
+                    {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Related Discipline' } ) }}</li>
             {% endif %}
-            {% if data.getData('acdh:hasSubject') %}
+
+        {% if data.getData('acdh:hasSubject') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasSubject'), 'label':  'Subject(s)' } ) }}</li>
+                    {'data': data.getData('acdh:hasSubject'), 'label':  'Subject' } ) }}</li>
             {% endif %}
-            {% if data.getData('acdh:hasSpatialCoverage') %}
+
+        {% if data.getData('acdh:hasSpatialCoverage') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSpatialCoverage'), 'label':  'Spatial Coverage' } ) }}</li>
             {% endif %}
 
-
-
-        {% if data.getData('acdh:hasCoverageStartDate') %}
-            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasCoverageStartDate'), 'label':  'Coverage Start Date' } ) }}
-            </li>
-        {% endif %}
-
-        {% if data.getData('acdh:hasCoverageEndDate') %}
+        {% if data.getData('acdh:hasCoverageStartDate') and data.getData('acdh:hasCoverageEndDate') %}
             <li>
-                {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasCoverageEndDate'), 'label':  'Coverage End Date' } ) }}
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCoverageStartDate')[0],  'dateformat': 'Y' } ) }} 
+                        - 
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
+                    </span>
+                </div>
+
             </li>
+        {% elseif data.getData('acdh:hasCoverageStartDate') %}
+            <div class="res-property">
+                <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
+                <span class="res-prop-value">
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCoverageStartDate')[0],  'dateformat': 'Y' } ) }}
+                </span>
+            </div>
+        {% elseif data.getData('acdh:hasCoverageEndDate') %}
+            <div class="res-property">
+                <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
+                <span class="res-prop-value">
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
+                </span>
+            </div>
         {% endif %}
 
 
         {% if data.getData('acdh:hasCreatedStartDateOriginal') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasCreatedStartDateOriginal'), 'label':  'Creation Date of Original' } ) }}</li>
+                    {'data': data.getData('acdh:hasCreatedStartDateOriginal'), 'label':  'Creation Date of Original', 'type': 'date','dateformat': 'Y' } ) }}</li>
             {% endif %}
 
         {% if data.getData('acdh:hasCreatedEndDateOriginal') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasCreatedEndDateOriginal'), 'label':  'Creation Date of Original' } ) }}</li>
-            {% endif %}
-
+                    {'data': data.getData('acdh:hasCreatedEndDateOriginal'), 'label':  'Creation Date of Original','type': 'date','dateformat': 'Y' } ) }}</li>
+        {% endif %}
 
         {% if data.getData('acdh:hasTemporalCoverage') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasTemporalCoverage'), 'label':  'Era' } ) }}</li>
             {% endif %}
-
-        {% if data.getData('acdh:hasNote') %}
-
-            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}</li>
-            {% endif %}
-
     </ul>
 
     {% if data.getData('acdh:hasDescription') %}
-        <div class="hasdescription-container">
-            {{ data.getData('acdh:hasDescription')[0].value|nl2br }}
-        </div>
-        <div class="d-flex justify-content-center"> <!-- Flex container -->
-            <button class="hasdescription-toggle-button btn btn-arche-blue mt-2">{{ "Show More"|trans }}</button>
-        </div>
+        <div class="hasdescription-container" >
+            <p class="descriptionTextShort">{{ data.getData('acdh:hasDescription')[0].value|nl2br }}</p>
+            <p class="descriptionTextLong" style="display: none;">{{ data.getData('acdh:hasDescription')[0].value|nl2br }} 
+                <a class="hasdescription-toggle-button" id="descriptionTextLongBtn">{{ "Show Less"|t }}</a></p>
 
+        </div>
+    {% endif %}
+
+    {% if data.getData('acdh:hasNote') %}
+        <ul>
+
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}</li>
+        </ul>
     {% endif %}
 
 </div>

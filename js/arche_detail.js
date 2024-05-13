@@ -12,6 +12,7 @@ jQuery(function ($) {
     var versionVisible = false;
 
     $(document).ready(function () {
+        addButtonToDescriptionText();
         $('#cite-loader').removeClass('hidden');
         if ($('#resourceHasVersion').val()) {
             versionVisible = true;
@@ -19,11 +20,15 @@ jQuery(function ($) {
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
         checkDetailCardEvents();
-
+        
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
-
+        
+        // hide the summary div if there is no data inside it
+        if ($('#av-summary').text().trim().length == 0) {
+            $('#ad-summary').hide();
+        } 
 
     });
 
@@ -51,25 +56,59 @@ jQuery(function ($) {
         fetchPublications();
     }
 
+    /**
+     * Truncate the text for the description field
+     * @param {type} text
+     * @param {type} maxLines
+     * @returns {String}
+     */
+    function truncateText(text, maxLines) {
+        var truncated = "";
+        var lines = text.split("\n");
+        var currentLine = 0;
 
-    /// SHOW / HIDE the description more button ///
-    if($('.hasdescription-container')[0]) {
-        var descriptionInnerHeight = $('.hasdescription-container').innerHeight();
-        if ($('.hasdescription-container')[0].scrollHeight > descriptionInnerHeight) {
-            $('.hasdescription-toggle-button').show(); // Show the button if the text exceeds 10 lines
-        } else {
-            $('.hasdescription-toggle-button').hide();
+        for (var i = 0; i < lines.length; i++) {
+            var words = lines[i].split(" ");
+            for (var j = 0; j < words.length; j++) {
+                if (currentLine >= maxLines) {
+                    break;
+                }
+                truncated += words[j] + " ";
+                if (truncated.length > 300) { // Approximately 5 lines assuming average line length
+                    truncated = truncated.trim();
+                    break;
+                }
+            }
+            if (currentLine >= maxLines) {
+                break;
+            }
+            truncated += "\n";
+            currentLine++;
         }
+
+        return truncated.trim();
+    }
+    
+    function addButtonToDescriptionText() {
+        var longText = $('.descriptionTextShort').html();
+        // Select the first 5 lines
+        if(longText === undefined) {
+            return;
+        }
+        var truncatedText = truncateText(longText, 5);
+        $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
+        
     }
 
-
     /// hasDescription button ///
-    $(document).delegate(".hasdescription-toggle-button", "click", function (e) {
-        $('.hasdescription-container').toggleClass('expanded');
-        var buttonText = $('.hasdescription-container').hasClass('expanded') ? Drupal.t('Show Less') : Drupal.t('Show More');
-        $('.hasdescription-toggle-button').text(buttonText);
+    $(document).delegate("#descriptionTextShortBtn", "click", function (e) {
+        $('.descriptionTextShort').hide();
+        $('.descriptionTextLong').show();
     });
-
+    $(document).delegate("#descriptionTextLongBtn", "click", function (e) {
+        $('.descriptionTextShort').show();
+        $('.descriptionTextLong').hide();
+    });
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content

@@ -30,20 +30,23 @@
                 <!-- Available Date and type -->
                 <div class="row">
                     <div class="col-lg-6">
-                        <p >{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
+                        <p class="mb-0">{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
                     </div>
-                    <div class="col-lg-6 flex-gap-col flex-reverse" >
+                    <div class="col-lg-6 flex-gap-col flex-reverse mb-0" >
                         {% if data.getAcdhType %}
                             <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> 
-                            <p class="btn-toolbar-gray no-btn" >{{ data.getAcdhType() }}</p> 
+                            <p class="btn-detail-type-gray no-btn" >{{ data.getAcdhType() }}</p> 
                         {% endif %}
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col">
+                        <hr style="color:#e1edf3;">
+                    </div>
+                </div>
                 <!-- Title -->
                 <div class="row">
                     <div class="col-lg-12 " id="ad-hasTitle">
-                        <hr style="color:#e1edf3;">
                         <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
                     </div>
                 </div>
@@ -54,7 +57,11 @@
                     <div class="row">
                         <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />
                         <div class="col-lg-12 ">
-                            <h5>{{ "Cite Resource"|trans  }}</h5>
+                            {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
+                                <h5>{{ "Cite Collection"|trans  }}</h5>
+                            {% elseif data.getAcdhType()|lower == 'resource' %}
+                                <h5>{{ "Cite Resource"|trans  }}</h5>
+                            {% endif %}
                             <div class="basic-inside-content-div">
                                 <div id="cite-loader">
                                     <center><div class="loader-cite"></div></center>
@@ -92,23 +99,44 @@
                             </div>
                         </div>
                     </div>
-                {% endif%} 
+                {% endif%}
+
                 <!-- SUMMARY -->
-
-                {% if data.getAcdhType()|lower != 'person'  %} 
-                    <div class="row" id="ad-summary">
-                        <div class="col-lg-12 ">
-                            <h5>{{ "Summary"|trans }}</h5>
-                        </div>
-                        {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
+                <div class="row" id="ad-summary">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Summary"|trans }}</h5>
                     </div>
+                    {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
+                </div>
+                <!-- SEE ALSO -->
+                {% if data.getData('acdh:hasUrl') or data.getData('acdh:hasRelatedProject') %}
+                    <div class="row" id="ad-see-also">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "See Also"|trans }}</h5>
+                        </div>
+                        <div class="col-lg-12 " id="av-summary">
+                            <ul>
+                                {% if data.getData('acdh:hasUrl') %}
+                                    <li>
+                                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
+                                    </li>
+                                {% endif %}
+                                {% if data.getData('acdh:hasRelatedProject') %}
+                                    <li>
+                                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                                     {'data': data.getData('acdh:hasRelatedProject'), 'label':  'Related Project' } ) }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>     
                 {% endif %}
-
 
                 <!-- Child elements -->
                 <div class="row basic-inside-content-div child-elements-div">
                     <div class="col-lg-12 ">
-                        <h5>{{ "Child Resources"|trans }}</h5>
+                        <h5>{{ "Collection Content"|trans }}</h5>
                     </div>
                     <div class="col-lg-12 child-tree-div">
                         <div id="child-tree" class="tree-view-container"></div>
@@ -138,14 +166,14 @@
 
                 <div class="row basic-inside-content-div rcr-elements-div">
                     <div class="col-lg-12 ">
-                        <h5>{{ "See also Related Collections and Resources"|trans }}</h5>
+                        <h5>{{ "Associated Collections and Resources"|trans }}</h5>
                     </div>
                     <div class="col-lg-12 rcr-table-div">
                         <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
                             <thead>
                                 <tr>
                                     <th>{{ "Title"|trans }}</th>
-                                    <th>{{ "Property"|trans }}</th>
+                                    <th>{{ "Relation type"|trans }}</th>
                                     <th>{{ "Type"|trans }}</th>
                                 </tr>
                             </thead>
@@ -155,15 +183,14 @@
 
                 <div class="row basic-inside-content-div publications-elements-div">
                     <div class="col-lg-12 ">
-                        <h5>{{ "Publications"|trans }}</h5>
+                        <h5>{{ "Associated Publications"|trans }}</h5>
                     </div>
                     <div class="col-lg-12 publications-table-div">
                         <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
                             <thead>
                                 <tr>
-                                    <th>{{ "Title"|trans }}</th>
-                                    <th>{{ "Property"|trans }}</th>
-                                    <th>{{ "Type"|trans }}</th>
+                                    <th>{{ "Citation"|trans }}</th>
+                                    <th>{{ "Relation Type"|trans }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -178,7 +205,7 @@
                 <div class="loader"></div>
             </div>
             -->
-         
+
             {% if data.isTitleImage()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
             {% endif %}    
