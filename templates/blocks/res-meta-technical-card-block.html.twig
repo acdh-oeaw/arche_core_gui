@@ -1,17 +1,17 @@
 <div class="card metadata">
     <div class="card-header">
         <div class="row">
-            <div class="col-8"><h6>{{ "Size"|trans }}</h6></div>
+            <div class="col-8"><h6>{{ "Technical Info"|trans }}</h6></div>
             <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon"></div>
             <div class="col-2 text-end">
-                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#sizeBody">
+                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#technicalResInfoBody">
                     <i class="fa fa-solid fa-chevron-up"></i>
                 </a>
             </div>
         </div>
 
     </div>
-    <div id="sizeBody" class="collapse show">
+    <div id="technicalResInfoBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
             {% for key, value in data %}
                 <div>

@@ -59,11 +59,17 @@ msgstr "Identifikator(en)"
 msgid "Author(s)" 
 msgstr "Autor(en)"
 
+msgid "Author" 
+msgstr "Autor:in"
+
 msgid "Associated Collections and Resources"
 msgstr "Assoziierte Sammlungen und Ressourcen"
 
 msgid "Creator(s)" 
 msgstr "Urheber"
+
+msgid "Creator" 
+msgstr "Urheber:in"
 
 msgid "Contributor(s)" 
 msgstr "Beitragende(r)"
@@ -71,11 +77,14 @@ msgstr "Beitragende(r)"
 msgid "Contact(s)" 
 msgstr "Kontakt(e)"
 
+msgid "Contact" 
+msgstr "Kontakt"
+
 msgid "Curator(s)" 
 msgstr "Datenkurator(en)"
 
 msgid "Licensor" 
-msgstr "Lizenzgeber"
+msgstr "Lizenzgeber:in"
 
 msgid "Funder" 
 msgstr "Fördergeber"
@@ -84,7 +93,7 @@ msgid "Principal Investigator(s)"
 msgstr "Primärforscher"
 
 msgid "Principal Investigator" 
-msgstr "Primärforscher"
+msgstr "Primärforscher:in"
 
 msgid "Number of Items" 
 msgstr "Anzahl der Elemente"
@@ -298,6 +307,15 @@ msgstr "Zurück zur Ressource"
 
 msgid "License"
 msgstr "Lizenz"
+
+msgid "Access Restriction"
+msgstr "Zugriffsbeschränkung"
+
+msgid "Licence"
+msgstr "Lizenz"
+
+msgid "Licence Summary"
+msgstr "Lizenzzusammenfassung"
 
 msgid "Number of files"
 msgstr "Anzahl der Dateien"
@@ -514,6 +532,42 @@ msgstr "Das ACDH-CH bietet über das <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at
 
 msgid "Contact us!"
 msgstr "Kontaktieren Sie uns!"
+
+msgid "Rights Information"
+msgstr "Rights Information"
+
+msgid "Owner"
+msgstr "Eigentümer:in"
+
+msgid "Editor"
+msgstr "Herausgeber:in"
+
+msgid "In collaboration with"
+msgstr "Unter Mitwirkung von"
+
+msgid "Digitised by"
+msgstr "Digitalisiert von"
+
+msgid "Extent"
+msgstr "Umfang"
+
+msgid "Technical Info"
+msgstr "Technische Info"
+
+msgid "File format"
+msgstr "Dateiformat"
+
+msgid "File Size"
+msgstr "Datei Größe"
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
 
 msgid ""
 msgstr ""

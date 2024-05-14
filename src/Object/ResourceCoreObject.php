@@ -151,6 +151,26 @@ class ResourceCoreObject {
                 ) ? $this->properties["acdh:hasPid"][0]['value'] : "";
     }
 
+    public function getPidOrAcdhIdentifier(): string {
+        
+        if (isset($this->properties["acdh:hasPid"][0]['value']) && !empty($this->properties["acdh:hasPid"][0]['value']) && (
+                (strpos($this->properties["acdh:hasPid"][0]['value'], 'http://') !== false) ||
+                (strpos($this->properties["acdh:hasPid"][0]['value'], 'https://') !== false)
+                )) {
+            return $this->properties["acdh:hasPid"][0]['value'];
+        }
+        
+        if(!empty($this->getAcdhID())) {
+            return $this->getAcdhID();
+        }
+        
+        if(!empty($this->getOneID())) {
+            return $this->getOneID();
+        }
+        return "";
+        
+    }
+
     /**
      * Get resource inside uri
      *
@@ -804,8 +824,8 @@ class ResourceCoreObject {
     public function getLicenseData(): array {
         $result = [];
         $props = [
-            'acdh:hasLicense' => 'License',
-            'acdh:hasLicenseSummary' => 'License Summary',
+            'acdh:hasLicense' => 'Licence',
+            'acdh:hasLicenseSummary' => 'Licence Summary',
             'acdh:hasAccessRestriction' => 'Access Restriction',
             'acdh:hasAccessRestrictionSummary' => 'Access Restriction Summary',
             'acdh:hasRightsInformation' => 'Rights Information',
@@ -844,7 +864,8 @@ class ResourceCoreObject {
             'acdh:hasEditor' => 'Editor',
             'acdh:hasAuthor' => 'Author',
             'acdh:hasCreator' => 'Creator',
-            'acdh:hasContributor' => 'With the Collaboration of'
+            'acdh:hasContributor' => 'In collaboration with',
+            'acdh:hasDigitisingAgent' => 'Digitised by',
         ];
 
         foreach ($props as $k => $v) {
@@ -896,6 +917,97 @@ class ResourceCoreObject {
         }
         return $result;
     }
+    
+    /**
+     * Return the metadata view right box getCollectionTechnicalData card content
+     * @return array
+     */
+    public function getCollectionTechnicalData(): array {
+        $result = [];
+        $props = [
+            'acdh:hasLifeCycleStatus' => 'Life Cycle Status',
+            'acdh:hasExtent ' => 'Extent',
+            'acdh:hasNumberOfItems' => 'Number Of Items',
+            'acdh:hasBinarySize' => 'Binary Size'
+        ];
+     
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+
+                            if ($k === 'acdh:hasBinarySize') {
+                                $result[$v][] = $this->formatBytes($val['value']);
+                            } else {
+                                $result[$v][] = $val['value'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
+             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-'. 
+                      date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+         } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
+             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
+         }elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
+              $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+         }
+        return $result;
+    }
+    
+        /**
+     * Return the metadata view right box getResMetaTechnicalData card content
+     * @return array
+     */
+    public function getResMetaTechnicalData(): array {
+        $result = [];
+        $props = [
+            'acdh:hasCategory' => 'Category',
+            'acdh:hasFormat' => 'File format',
+            'acdh:hasBinarySize' => 'File Size',
+            'acdh:hasExtent ' => 'Extent'
+        ];
+        
+        /*
+         *     hasCreatedStartDate (only display year; Created Date: start – end) [Entstehungszeit:/Created Date:] 
+
+    hasCreatedEndDate (see above) 
+         */
+
+
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+
+                            if ($k === 'acdh:hasBinarySize') {
+                                $result[$v][] = $this->formatBytes($val['value']);
+                            } else {
+                                $result[$v][] = $val['value'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+         if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
+             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-'. 
+                      date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+         } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
+             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
+         }elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
+              $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+         }
+       
+        return $result;
+    }
+    
 
     /**
      * Check if we have to display the version box
