@@ -27,11 +27,7 @@ class LangSwitcherBlock extends BlockBase
      */
     public function build()
     {
-        if (isset($_SESSION['language'])) {
-            $lang = strtolower($_SESSION['language']);
-        } else {
-            $lang = "en";
-        }
+        $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
         
         $return = array(
             '#theme' => 'helper-lng-switcher',

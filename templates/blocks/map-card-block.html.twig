@@ -1,4 +1,6 @@
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <div class="card metadata">
     <div class="card-header">
@@ -14,8 +16,35 @@
     </div>
     <div id="mapContent" class="collapse show">
         <div class="card-body">
-            <!-- Your hideable content goes here -->
-            <p>This is the hideable content.</p>
+            <div id="mapSmall" style="width: 100%; height: 250px;"></div>
         </div>
     </div>
 </div>
+
+<script>
+
+    var type = "{{ type|e('js') }}";
+    var data = "{{ data|e('js') }}";
+    var map = "";
+    if (type === 'coordinates') {
+        map = L.map('mapSmall').setView({{ data }}, 10);
+    } else {
+        var arrays = JSON.parse("[" + data + "]");
+        // Get the values of the first array
+        var firstArray = arrays[0];
+        map = L.map('mapSmall').setView(firstArray, 7);
+    }
+    
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    if (type === 'coordinates') {
+        const marker = L.marker({{ data }}).addTo(map);
+    } else {
+        const polygon = L.polygon([
+            {{data}}
+        ]).addTo(map);
+        
+        }
+</script>            

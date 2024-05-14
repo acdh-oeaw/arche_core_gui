@@ -54,6 +54,7 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchRPR();
         fetchPublications();
+        
     }
 
     /**
@@ -606,17 +607,7 @@ jQuery(function ($) {
 
     }
 
-    function showRightSide() {
-        //showTitleImage();
-        //showPid();
-        //showMap();
-        //showLicenses();
-        //showSource();
-        //showDownload();
-        //showViewAndShare();
-        //showVersions();
-
-    }
+   
 
     function showType() {
         if (resObj.getType()) {

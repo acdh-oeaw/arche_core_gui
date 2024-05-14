@@ -208,13 +208,17 @@
 
             {% if data.isTitleImage()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
-            {% endif %}    
+            {% endif %}  
+            
             {% if data.getMapType()|lower == 'polygon'  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygonFirstCoordinate() } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getMultiPolygonFirstCoordinate() } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'multipolygon' } ) }}
+            {% elseif data.getMapType()|lower == 'coordinates' %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getCoordinates(), 'type': 'coordinates' } ) }}
             {% endif %}    
 
+            
             {% if data.getPid()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPid() } ) }}
             {% endif %}    

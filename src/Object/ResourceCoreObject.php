@@ -337,12 +337,12 @@ class ResourceCoreObject {
         $imgBinary = '';
         $width = str_replace('px', '', $width);
         $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
-       
+
         //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
             $id = $this->getAcdhID();
         }
-        
+
         $id = str_replace('http://', '', $id);
         $id = str_replace('https://', '', $id);
         return $this->thumbUrl . $id . '?width=' . $width;
@@ -355,12 +355,12 @@ class ResourceCoreObject {
     public function isTitleImage(): bool {
         //get the first id
         $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
-       
+
         //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
             $id = $this->getAcdhID();
         }
-        
+
         $id = str_replace('http://', '', $id);
         $id = str_replace('https://', '', $id);
 
@@ -368,7 +368,7 @@ class ResourceCoreObject {
         $client = new \GuzzleHttp\Client();
 
         // URL to make the request to
-        $url = $this->thumbUrl.$id;
+        $url = $this->thumbUrl . $id;
 
         try {
             // Make the GET request
@@ -376,7 +376,7 @@ class ResourceCoreObject {
 
             // Get the response status code
             $statusCode = $response->getStatusCode();
-             
+
             // Check if the status code is in the 2xx range (indicating success)
             if ($statusCode >= 200 && $statusCode < 300) {
                 return true;
@@ -497,7 +497,7 @@ class ResourceCoreObject {
      */
     public function getMultiPolygonFirstCoordinate(): string {
         $str = "";
-        if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
             $data = array_filter(explode(" ", $this->checkMultiPolygonMapString()));
             $first_coordinate = array_slice($data, 0, 2);
             $str = "[" . $first_coordinate[1] . " " . $first_coordinate[0] . "]";
@@ -511,7 +511,7 @@ class ResourceCoreObject {
      */
     public function getPolygonFirstCoordinate(): string {
         $str = "";
-        if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
             $data = array_filter(explode(" ", $this->checkMultiPolygonMapString()));
             $coordinate1 = $data[1];
             $coordinate2 = $data[0];
@@ -531,12 +531,46 @@ class ResourceCoreObject {
      * @return string
      */
     private function checkMultiPolygonMapString(): string {
-        if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'multipolygon') !== false) {
-            return str_replace(')', '', str_replace('(', '', str_replace('MULTIPOLYGON', '', $this->properties["acdh:hasWKT"][0]['title'])));
-        } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'polygon') !== false) {
-            return str_replace(')', '', str_replace('(', '', str_replace('POLYGON', '', $this->properties["acdh:hasWKT"][0]['title'])));
+        if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
+            return str_replace(')', '', str_replace('(', '', str_replace('MULTIPOLYGON', '', $this->properties["acdh:hasWKT"][0]['value'])));
+        } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'polygon') !== false) {
+            return str_replace(')', '', str_replace('(', '', str_replace('POLYGON', '', $this->properties["acdh:hasWKT"][0]['value'])));
         }
         return "";
+    }
+
+    public function getCoordinates(): string {
+        $str = "";
+
+        if (isset($this->properties["acdh:hasLongitude"][0]['value']) && !empty($this->properties["acdh:hasLongitude"][0]['value']) &&
+                isset($this->properties["acdh:hasLatitude"][0]['value']) && !empty($this->properties["acdh:hasLatitude"][0]['value'])) {
+            $str = "[" . $this->properties["acdh:hasLongitude"][0]['value'] . ", " . $this->properties["acdh:hasLatitude"][0]['value'] . "]";
+        }
+        return $str;
+    }
+
+    public function getPolygon(): string {
+        $str = "";
+
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
+            $str = $this->checkMultiPolygonMapString();
+            $coordinatePairs = explode(",", $str);
+
+            // Initialize an empty array to store formatted coordinates
+            $formattedCoordinates = [];
+
+            // Iterate through each coordinate pair
+            foreach ($coordinatePairs as $pair) {
+                // Split each pair into longitude and latitude components
+                $components = explode(" ", $pair);
+                // Format the components as an array and add to the formatted coordinates array
+                $formattedCoordinates[] = "[" . $components[0] . ", " . $components[1] . "]";
+            }
+
+            // Join the formatted coordinates array into a string with commas
+            $str = implode(", ", $formattedCoordinates);
+        }
+        return $str;
     }
 
     /**
@@ -544,11 +578,14 @@ class ResourceCoreObject {
      * @return string
      */
     public function getMapType(): string {
-        if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
-            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'multipolygon') !== false) {
+
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
+            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
                 return 'multipolygon';
-            } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'polygon') !== false) {
+            } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'polygon') !== false) {
                 return 'polygon';
+            } elseif ($this->properties["acdh:hasLatitude"][0]['value']) {
+                return 'coordinates';
             }
         }
         return "";
@@ -559,10 +596,10 @@ class ResourceCoreObject {
      * @return string
      */
     public function getPolygonData(): string {
-        if (isset($this->properties["acdh:hasWKT"][0]['title']) && !empty($this->properties["acdh:hasWKT"][0]['title'])) {
-            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['title']), 'polygon') !== false) {
-                $data = str_replace('Polygon', 'MultiPolygon', $this->properties["acdh:hasWKT"][0]['title']);
-                $data = str_replace('POLYGON', 'MultiPolygon', $this->properties["acdh:hasWKT"][0]['title']);
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
+            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'polygon') !== false) {
+                $data = str_replace('Polygon', 'MultiPolygon', $this->properties["acdh:hasWKT"][0]['value']);
+                $data = str_replace('POLYGON', 'MultiPolygon', $this->properties["acdh:hasWKT"][0]['value']);
                 return $data;
             }
         }
