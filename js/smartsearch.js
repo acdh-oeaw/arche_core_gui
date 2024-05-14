@@ -8,7 +8,8 @@ jQuery(function ($) {
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
-
+    var previousUrls = [];
+    
     var bbox = null;
     var map = null;
     var mapPins = null;
@@ -37,6 +38,22 @@ jQuery(function ($) {
         }
         //executeTheSearch();
         initMap();
+
+        $(window).on('popstate', function (e) {
+            e.preventDefault();
+            console.log("POPSTATE: ");
+            console.log(previousUrls);
+            if (previousUrls.length > 0) {
+                var previousUrl = previousUrls.pop();
+                console.log(previousUrl);
+                // Navigate back to the previous URL
+                window.location.href = previousUrl;
+            } else {
+                // Handle initial page load or no previous URLs available
+                console.log('No previous URL available');
+            }
+        });
+
     });
 
     //// events ////
@@ -108,6 +125,8 @@ jQuery(function ($) {
             }
         }
     });
+
+
 
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
@@ -311,12 +330,6 @@ jQuery(function ($) {
         paramsString = paramsString.replace('/q', 'q');
 
         guiObj = convertFacetsIntoObjects(paramsString);
-
-        console.log("getSearchParamsFromUrl - PARAMS:::");
-        //console.log(params);
-        console.log("URL : -> ");
-        console.log(url);
-        //guiObj = {'q': 'norbert'};
         firstLoad = false;
         //Update form based on the params
 
@@ -486,7 +499,7 @@ jQuery(function ($) {
     }
 
 
-    
+
 
     /// if the search is executed by the hero section, we have to update the input field ///
     function updateSearchStrInput(str) {
@@ -515,7 +528,7 @@ jQuery(function ($) {
         }
 
         updateSearchStrInput(searchStr);
-        
+
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -533,10 +546,10 @@ jQuery(function ($) {
         };
         //if we have already selected facets from the url then we have to update 
         // the facets
-        if(guiFacets) {
+        if (guiFacets) {
             param.data.facets = guiFacets;
         }
-        
+
         $(".smart-search-multi-select").each(function () {
             var prop = $(this).attr('data-property');
             var val = $(this).val();
@@ -672,6 +685,9 @@ jQuery(function ($) {
     /* update the current url after a search was triggered */
     function updateUrl(params) {
         console.log("updateUrl START");
+        previousUrls.push(window.location.href);
+        console.log("new Prev urls: ");
+        console.log(previousUrls);
         resetsearchUrl();
         var queryString = $.param(params);
         var currentUrl = window.location.href;
@@ -1008,7 +1024,6 @@ jQuery(function ($) {
         while ((match = wordRegex.exec(accessText)) !== null) {
             matches.push(match[0]);
         }
-        console.log(accessText);
         var matchesCount = matches.length;
         if (matchesCount === 1) {
             return '<p class="btn-toolbar btn-toolbar-' + matches[0] + ' no-btn">';
@@ -1019,40 +1034,40 @@ jQuery(function ($) {
             var selected = "";
             $.each(matches, function (k, v) {
                 if (v === 'public') {
-                    if(k === 0) {
+                    if (k === 0) {
                         selected = "public";
                     }
                     publicText = true;
                 } else if (v === 'restricted') {
-                    if(k === 0) {
+                    if (k === 0) {
                         selected = "restricted";
                     }
                     restrictedText = true;
                 } else if (v === 'academic') {
-                    if(k === 0) {
+                    if (k === 0) {
                         selected = "academic";
                     }
                     academicText = true;
                 }
             });
             if (publicText && restrictedText) {
-                if(selected === 'public') {
+                if (selected === 'public') {
                     return '<p class="btn-toolbar btn-toolbar-public-restricted no-btn">';
                 }
                 return '<p class="btn-toolbar btn-toolbar-restricted-public no-btn">';
             } else if (publicText && academicText) {
-                if(selected === 'public') {
+                if (selected === 'public') {
                     return '<p class="btn-toolbar btn-toolbar-public-academic no-btn">';
                 }
                 return '<p class="btn-toolbar btn-toolbar-academic-public no-btn">';
             } else if (restrictedText && academicText) {
-                if(selected === 'academic') {
+                if (selected === 'academic') {
                     return '<p class="btn-toolbar btn-toolbar-academic-restricted no-btn">';
                 }
                 return '<p class="btn-toolbar btn-toolbar-restricted-academic no-btn">';
             }
         }
-        
+
         return '<p class="btn-toolbar btn-toolbar-public no-btn">';
     }
 
