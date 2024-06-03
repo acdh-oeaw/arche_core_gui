@@ -230,20 +230,6 @@
             {% if data.getCreditsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
             {% endif %}     
-
-            <!-- TOP COLLECTION / COLLECTION -->
-            {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
-                {% if data.getCollectionTechnicalData()|length > 0  %}
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/collection-technical-card-block.html.twig', {'data': data.getCollectionTechnicalData() } ) }}
-                {% endif %}   
-            {% endif %}   
-
-            <!-- RESOURCE / METADATA -->
-             {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
-                {% if data.getResMetaTechnicalData()|length > 0  %}
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.getResMetaTechnicalData() } ) }}
-                {% endif %}   
-            {% endif %}   
             
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
@@ -258,6 +244,20 @@
             {% if data.hasVersion  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
             {% endif %}
+            
+             <!-- TOP COLLECTION / COLLECTION -->
+            {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
+                {% if data.getCollectionTechnicalData()|length > 0  %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/collection-technical-card-block.html.twig', {'data': data.getCollectionTechnicalData() } ) }}
+                {% endif %}   
+            {% endif %}   
+
+            <!-- RESOURCE / METADATA -->
+             {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
+                {% if data.getResMetaTechnicalData()|length > 0  %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.getResMetaTechnicalData() } ) }}
+                {% endif %}   
+            {% endif %}   
         </div>
     </div>
 </div>

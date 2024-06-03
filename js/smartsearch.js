@@ -888,10 +888,10 @@ jQuery(function ($) {
         idStr = idStr.replace(/\s+/g, '_');
         text += '<div class="card metadata facets">' +
                 '<div class="card-header">' +
-                '<div class="row">' +
-                '<div class="col-8"><h6>' + fd.label + '</h6></div>' +
-                '<div class="col-2 tooltop-icon-div">' +
-                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon">' +
+                '<div class="row justify-content-center align-items-center">' +
+                '<div class="col-8"><h6 class="mb-0 pb-0">' + fd.label + '</h6></div>' +
+                '<div class="col-2">' +
+                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon-cards">' +
                 '</div>' +
                 '<div class="col-2 text-end">' +
                 '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +

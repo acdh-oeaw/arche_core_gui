@@ -747,9 +747,10 @@ jQuery(function ($) {
      */
     function showCiteBlock() {
         var url = $('#biblaTexUrl').val();
+        console.log("BIBLATEX: "+ url);
         if (url) {
-            url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
-            $.get(url).done(function (data) {
+            //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
+            $.get(url+'&lang='+drupalSettings.arche_core_gui.gui_lang).done(function (data) {
                 $('#cite-div').removeClass('hidden');
                 //$('#cite-content-div').addClass('show');
                 //$('#cite-content-div').removeClass('hidden');
