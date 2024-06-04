@@ -560,16 +560,16 @@ msgstr "Dateiformat"
 msgid "File Size"
 msgstr "Datei Größe"
 
-msgid ""
+msgid "Licensing & Access"
 msgstr ""
 
-msgid ""
+msgid "Credits"
 msgstr ""
 
-msgid ""
-msgstr ""
+msgid "Download Metadata"
+msgstr "Metadata herunterladen"
 
-msgid ""
+msgid "View and Share"
 msgstr ""
 
 

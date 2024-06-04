@@ -20,15 +20,16 @@ jQuery(function ($) {
         //$('#meta-content-container').hide();
         resId = $("#resId").val();
         checkDetailCardEvents();
-        
+
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
-        
+
         // hide the summary div if there is no data inside it
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
-        } 
+        }
+        
 
     });
 
@@ -54,7 +55,7 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchRPR();
         fetchPublications();
-        
+
     }
 
     /**
@@ -63,42 +64,46 @@ jQuery(function ($) {
      * @param {type} maxLines
      * @returns {String}
      */
-    function truncateText(text, maxLines) {
-        var truncated = "";
-        var lines = text.split("\n");
-        var currentLine = 0;
-
-        for (var i = 0; i < lines.length; i++) {
-            var words = lines[i].split(" ");
-            for (var j = 0; j < words.length; j++) {
-                if (currentLine >= maxLines) {
-                    break;
-                }
-                truncated += words[j] + " ";
-                if (truncated.length > 300) { // Approximately 5 lines assuming average line length
-                    truncated = truncated.trim();
-                    break;
-                }
-            }
-            if (currentLine >= maxLines) {
-                break;
-            }
-            truncated += "\n";
-            currentLine++;
-        }
-
-        return truncated.trim();
+    function truncateText(text, wordCount) {
+        return text.split(" ").splice(0, wordCount).join(" ");
     }
-    
+    function stripHtml(html) {
+        var temporaryDiv = document.createElement("div");
+        temporaryDiv.innerHTML = html;
+        return temporaryDiv.textContent || temporaryDiv.innerText || "";
+    }
     function addButtonToDescriptionText() {
         var longText = $('.descriptionTextShort').html();
         // Select the first 5 lines
-        if(longText === undefined) {
+        if (longText === undefined) {
             return;
         }
-        var truncatedText = truncateText(longText, 5);
-        $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
-        
+        var truncatedText = truncateText(longText, 150);
+        var strippedLongText = stripHtml(longText).trim();
+        var strippedTruncatedText = stripHtml(truncatedText).trim();
+
+        if (strippedLongText !== strippedTruncatedText) {
+            $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
+        }
+    }
+    
+    function redrawTabs() {
+        console.log("redraw tab");
+            // Check if there is an active tab
+            if ($('#arche-detail-tabs .nav-item .nav-link.active').length === 0) {
+                console.log("there is no active tab");
+                // Activate the first visible tab
+                var firstVisibleTab = $('#arche-detail-tabs .nav-item .nav-link:visible').first();
+                firstVisibleTab.addClass('active');
+                var firstVisibleTabId = firstVisibleTab.attr('href');
+                $(firstVisibleTabId).addClass('show active');
+            }
+        }
+
+    function hideEmptyTabs(tab) {
+        $(tab).hide();
+        $(tab+'-content').hide();
+        redrawTabs();
     }
 
     /// hasDescription button ///
@@ -278,11 +283,7 @@ jQuery(function ($) {
                     }
                 }
             });
-
         }
-
-
-
     }
 
 
@@ -310,6 +311,7 @@ jQuery(function ($) {
                         console.log('response error');
                         console.log(error);
                         //$('.child-elements-div').hide();
+                        hideEmptyTabs('#associated-publications-tab');
                         return;
                     }
                     console.log('response: ');
@@ -320,6 +322,7 @@ jQuery(function ($) {
                     console.log('error');
                     console.log(error);
                     $('.publications-elements-div').hide();
+                    hideEmptyTabs('#associated-publications-tab');
                 }
             },
             'columns': [
@@ -364,6 +367,7 @@ jQuery(function ($) {
                     if (response === undefined) {
                         console.log('response error');
                         console.log(error);
+                        hideEmptyTabs('#associated-coll-res-tab');
                         //$('.child-elements-div').hide();
                         return;
                     }
@@ -374,6 +378,7 @@ jQuery(function ($) {
                     //$(".loader-versions-div").hide();
                     console.log('error');
                     console.log(error);
+                    hideEmptyTabs('#associated-coll-res-tab');
                     $('.rcr-elements-div').hide();
                 }
             },
@@ -607,7 +612,7 @@ jQuery(function ($) {
 
     }
 
-   
+
 
     function showType() {
         if (resObj.getType()) {
@@ -747,10 +752,10 @@ jQuery(function ($) {
      */
     function showCiteBlock() {
         var url = $('#biblaTexUrl').val();
-        console.log("BIBLATEX: "+ url);
+        console.log("BIBLATEX: " + url);
         if (url) {
             //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
-            $.get(url+'&lang='+drupalSettings.arche_core_gui.gui_lang).done(function (data) {
+            $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang).done(function (data) {
                 $('#cite-div').removeClass('hidden');
                 //$('#cite-content-div').addClass('show');
                 //$('#cite-content-div').removeClass('hidden');

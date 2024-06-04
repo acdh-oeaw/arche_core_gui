@@ -839,7 +839,7 @@ class ResourceCoreObject {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
                             $obj = [];
-                            if (isset($val['id'])) {
+                            if (isset($val['id']) && (int)$this->repoid !== (int)$val['id']) {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];

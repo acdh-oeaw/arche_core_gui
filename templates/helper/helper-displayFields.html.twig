@@ -27,7 +27,7 @@ Field extra type:
 {% else %}
     {% set limiter = ',' %}
 {% endif%}
-<!--  -->
+
 
 {%  if data %}
     <div class="res-property">
@@ -62,9 +62,9 @@ Field extra type:
                                 {% elseif (v.title and v.repoid )  %}
                                     <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
                                 {% elseif (v.value and v.repoid )  %}                            
-                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br }}</a>
+                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
                                 {% elseif (v.relvalue and v.repoid )  %}                            
-                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>    
+                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
                                 {% elseif (v.value) %}
                                     <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                                     <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
@@ -77,10 +77,10 @@ Field extra type:
                         <!-- The ARCHE RELATIONS will open in the same window -->
                         {% if (value.title and value.repoid )  %}
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
-                        {% elseif (value.value and value.repoid )  %}                            
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value|nl2br }}</a>
-                        {% elseif (value.relvalue and value.repoid )  %}                            
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>    
+                        {% elseif (value.value and value.repoid )  %}
+                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value }}</a>
+                        {% elseif (value.relvalue and value.repoid )  %}
+                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>
                         {% elseif (value.value) %}
                             <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                             <a id='archeHref' href="/browser/metadata/{{ value.value }}" >{{ value.value|nl2br }}</a>
@@ -105,16 +105,14 @@ Field extra type:
                             {% set kiloBytes = (bytes / 1024)|round(2) %}
                             {% set megaBytes = (kiloBytes / 1024)|round(2) %}
                             {% set gigaBytes = (megaBytes / 1024)|round(2) %}
-
                             {% if (gigaBytes) > 0  %}
                                 {{ gigaBytes }} GB
                             {% elseif (megaBytes) > 0  %}
                                 {{ megaBytes }} MB
-                            {% elseif (kiloBytes) > 0  %}                            
+                            {% elseif (kiloBytes) > 0  %}
                                 {{ kiloBytes }} KB
                             {% endif%}    
                         {% endif%}
-
                     {% elseif(value.type == 'http://www.w3.org/2001/XMLSchema#string') %}
                         {% if(type == 'email') %}
                             {% if (value.title) %} 
@@ -124,13 +122,13 @@ Field extra type:
                             {% elseif (value.relvalue) %}     
                                 {{ value.relvalue|replace({'@': '(at)'}) }}
                             {% endif %}
-                        {% else %}       
+                        {% else %}
                             <!-- simple string -->
                             {% if (value.title) %} 
                                 {{ value.title|nl2br }}
                             {% elseif (value.value) %} 
                                 {{ value.value|nl2br }}
-                            {% elseif (value.relvalue) %}     
+                            {% elseif (value.relvalue) %}
                                 {{ value.relvalue|nl2br }}
                             {% endif %}
                         {% endif %}
@@ -142,14 +140,13 @@ Field extra type:
                         {% if (value.value) is not empty %} 
                             {{ value.value|nl2br }}
                         {% elseif (value.title) is not empty %} 
-                            {{ value.title|nl2br }}    
+                            {{ value.title|nl2br }}
                         {% elseif (value.relvalue) is not empty %} 
-                            {{ value.relvalue|nl2br }}    
+                            {{ value.relvalue|nl2br }}
                         {% endif %}
-                    {% endif %}   
-
+                    {% endif %}
                     <!-- if there are more than 1 value then we will display the delimiter -->
-                    {% if not loop.last %} {{ limiter|raw }} {% endif %}
+                    {% if not loop.last %}{{ limiter|raw }} {% endif %}
                 {% endfor %}
             {% else %}
                 <!-- if the data is not an array then we will just simply display the value -->

@@ -133,69 +133,89 @@
                     </div>     
                 {% endif %}
 
-                <!-- Child elements -->
-                <div class="row basic-inside-content-div child-elements-div">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Collection Content"|trans }}</h5>
-                    </div>
-                    <div class="col-lg-12 child-tree-div">
-                        <div id="child-tree" class="tree-view-container"></div>
-                    </div>
 
-                    <!--
-                    <div class="col-lg-12 ">
-                        <div class="basic-inside-content-div" id="childDtDiv">
-                            <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
-                                <div style="font-size: 14px; font-weight: bold;">
-                                    <label>{{ "Order the result by"|trans }}:</label>
-                                    <select name="sortBy" id="sortBy" class="form-control form-control-sm">
-                                        <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
-                                        <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
-                                    </select>
-                                </div>
-                                <br>
+                <ul class="nav nav-tabs" id="arche-detail-tabs">
+                    <li class="nav-item" id="associated-publications-tab">
+                        <a class="nav-link active"  data-bs-toggle="tab" href="#associated-publications-tab-content">{{ "Associated Publications"|trans }}</a>
+                    </li>                    
+                    <li class="nav-item" id="associated-coll-res-tab">
+                        <a class="nav-link"  data-bs-toggle="tab" href="#associated-coll-res-tab-content">{{ "Associated Collections and Resources"|trans }}</a>
+                    </li>
+                    <li class="nav-item" id="collection-content-tab">
+                        <a class="nav-link"  data-bs-toggle="tab" href="#collection-content-tab-content">{{ "Collection Content"|trans }}</a>
+                    </li>                    
+                </ul>
 
-                                <tbody>
-                                </tbody>
-                            </table>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane container active" id="associated-publications-tab-content">
+                        <div class="row basic-inside-content-div publications-elements-div">
 
-
+                            <div class="col-lg-12 publications-table-div">
+                                <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
+                                    <thead>
+                                        <tr>
+                                            <th>{{ "Citation"|trans }}</th>
+                                            <th>{{ "Relation Type"|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
-                    </div>-->
+                    </div>
+
+                    <div class="tab-pane container fade" id="associated-coll-res-tab-content">
+                        <div class="row basic-inside-content-div rcr-elements-div">
+                            <div class="col-lg-12 ">
+
+                            </div>
+                            <div class="col-lg-12 rcr-table-div">
+                                <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
+                                    <thead>
+                                        <tr>
+                                            <th>{{ "Title"|trans }}</th>
+                                            <th>{{ "Relation type"|trans }}</th>
+                                            <th>{{ "Type"|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>  
+                    </div>
+                                        
+                    <div class="tab-pane container fade" id="collection-content-tab-content">
+                        <!-- Collection Contents -->
+                        <div class="row basic-inside-content-div child-elements-div">
+                            <div class="col-lg-12 child-tree-div">
+                                <div id="child-tree" class="tree-view-container"></div>
+                            </div>
+
+                            <!--
+                            <div class="col-lg-12 ">
+                                <div class="basic-inside-content-div" id="childDtDiv">
+                                    <table class="child-table table row-border" cellspacing="0" width="100%" id='childDT'>
+                                        <div style="font-size: 14px; font-weight: bold;">
+                                            <label>{{ "Order the result by"|trans }}:</label>
+                                            <select name="sortBy" id="sortBy" class="form-control form-control-sm">
+                                                <option value="1-0">{{ "Title (ASC)"|trans }}</option>        
+                                                <option value="1-1">{{ "Title (DESC)"|trans }}</option>           
+                                            </select>
+                                        </div>
+                                        <br>
+        
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+        
+        
+                                </div>
+                            </div>-->
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="row basic-inside-content-div rcr-elements-div">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Associated Collections and Resources"|trans }}</h5>
-                    </div>
-                    <div class="col-lg-12 rcr-table-div">
-                        <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
-                            <thead>
-                                <tr>
-                                    <th>{{ "Title"|trans }}</th>
-                                    <th>{{ "Relation type"|trans }}</th>
-                                    <th>{{ "Type"|trans }}</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>  
-
-                <div class="row basic-inside-content-div publications-elements-div">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Associated Publications"|trans }}</h5>
-                    </div>
-                    <div class="col-lg-12 publications-table-div">
-                        <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
-                            <thead>
-                                <tr>
-                                    <th>{{ "Citation"|trans }}</th>
-                                    <th>{{ "Relation Type"|trans }}</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -209,7 +229,7 @@
             {% if data.isTitleImage()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
             {% endif %}  
-            
+
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}
@@ -218,7 +238,7 @@
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getCoordinates(), 'type': 'coordinates' } ) }}
             {% endif %}    
 
-            
+
             {% if data.getPidOrAcdhIdentifier()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPidOrAcdhIdentifier() } ) }}
             {% endif %}    
@@ -230,22 +250,22 @@
             {% if data.getCreditsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
             {% endif %}     
-            
+
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
             {% endif %}
 
             {% if data  %}
-                
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
-                
+
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
+
             {% endif %}
 
             {% if data.hasVersion  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
             {% endif %}
-            
-             <!-- TOP COLLECTION / COLLECTION -->
+
+            <!-- TOP COLLECTION / COLLECTION -->
             {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
                 {% if data.getCollectionTechnicalData()|length > 0  %}
                     {{ include(arche_core_gui_path ~ '/templates/blocks/collection-technical-card-block.html.twig', {'data': data.getCollectionTechnicalData() } ) }}
@@ -253,7 +273,7 @@
             {% endif %}   
 
             <!-- RESOURCE / METADATA -->
-             {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
+            {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
                 {% if data.getResMetaTechnicalData()|length > 0  %}
                     {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.getResMetaTechnicalData() } ) }}
                 {% endif %}   
