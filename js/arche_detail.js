@@ -29,7 +29,7 @@ jQuery(function ($) {
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
-        
+
 
     });
 
@@ -86,23 +86,23 @@ jQuery(function ($) {
             $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
         }
     }
-    
+
     function redrawTabs() {
         console.log("redraw tab");
-            // Check if there is an active tab
-            if ($('#arche-detail-tabs .nav-item .nav-link.active').length === 0) {
-                console.log("there is no active tab");
-                // Activate the first visible tab
-                var firstVisibleTab = $('#arche-detail-tabs .nav-item .nav-link:visible').first();
-                firstVisibleTab.addClass('active');
-                var firstVisibleTabId = firstVisibleTab.attr('href');
-                $(firstVisibleTabId).addClass('show active');
-            }
+        // Check if there is an active tab
+        if ($('#arche-detail-tabs .nav-item .nav-link.active').length === 0) {
+            console.log("there is no active tab");
+            // Activate the first visible tab
+            var firstVisibleTab = $('#arche-detail-tabs .nav-item .nav-link:visible').first();
+            firstVisibleTab.addClass('active');
+            var firstVisibleTabId = firstVisibleTab.attr('href');
+            $(firstVisibleTabId).addClass('show active');
         }
+    }
 
     function hideEmptyTabs(tab) {
         $(tab).hide();
-        $(tab+'-content').hide();
+        $(tab + '-content').hide();
         redrawTabs();
     }
 
@@ -286,6 +286,15 @@ jQuery(function ($) {
         }
     }
 
+    function removeBeforeHash(str) {
+        let hashIndex = str.indexOf('#');
+        if (hashIndex !== -1) {
+            return str.substring(hashIndex + 1);
+        } else {
+            return str; // Return the original string if no # found
+        }
+    }
+
 
     function fetchPublications() {
         var limit = 10;
@@ -311,7 +320,7 @@ jQuery(function ($) {
                         console.log('response error');
                         console.log(error);
                         //$('.child-elements-div').hide();
-                        hideEmptyTabs('#associated-publications-tab');
+                        //hideEmptyTabs('#associated-publications-tab');
                         return;
                     }
                     console.log('response: ');
@@ -322,7 +331,7 @@ jQuery(function ($) {
                     console.log('error');
                     console.log(error);
                     $('.publications-elements-div').hide();
-                    hideEmptyTabs('#associated-publications-tab');
+                    //hideEmptyTabs('#associated-publications-tab');
                 }
             },
             'columns': [
@@ -333,7 +342,13 @@ jQuery(function ($) {
                         return "";
                     }
                 },
-                {data: 'property', visible: true},
+                {data: 'property', render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                },
                 {data: 'title', visible: false},
                 {data: 'type', visible: false},
                 {data: 'acdhid', visible: false}
@@ -367,7 +382,7 @@ jQuery(function ($) {
                     if (response === undefined) {
                         console.log('response error');
                         console.log(error);
-                        hideEmptyTabs('#associated-coll-res-tab');
+                        //hideEmptyTabs('#associated-coll-res-tab');
                         //$('.child-elements-div').hide();
                         return;
                     }
@@ -378,7 +393,7 @@ jQuery(function ($) {
                     //$(".loader-versions-div").hide();
                     console.log('error');
                     console.log(error);
-                    hideEmptyTabs('#associated-coll-res-tab');
+                    //hideEmptyTabs('#associated-coll-res-tab');
                     $('.rcr-elements-div').hide();
                 }
             },
@@ -402,7 +417,13 @@ jQuery(function ($) {
                         return  text;
                     }
                 },
-                {data: 'property', visible: true},
+                {data: 'property', render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                },
                 {data: 'type', visible: true},
                 {data: 'acdhid', visible: false}
             ],
