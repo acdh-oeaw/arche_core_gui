@@ -248,6 +248,7 @@ jQuery(function ($) {
                     themes: {stripes: true},
                     error: function (jqXHR, textStatus, errorThrown) {
                         $('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
+                        hideEmptyTabs('#collection-content-tab');
                     },
                     search: {
                         "ajax": {
@@ -320,7 +321,7 @@ jQuery(function ($) {
                         console.log('response error');
                         console.log(error);
                         //$('.child-elements-div').hide();
-                        //hideEmptyTabs('#associated-publications-tab');
+                        hideEmptyTabs('#associated-publications-tab');
                         return;
                     }
                     console.log('response: ');
@@ -331,7 +332,7 @@ jQuery(function ($) {
                     console.log('error');
                     console.log(error);
                     $('.publications-elements-div').hide();
-                    //hideEmptyTabs('#associated-publications-tab');
+                    hideEmptyTabs('#associated-publications-tab');
                 }
             },
             'columns': [
@@ -382,7 +383,7 @@ jQuery(function ($) {
                     if (response === undefined) {
                         console.log('response error');
                         console.log(error);
-                        //hideEmptyTabs('#associated-coll-res-tab');
+                        hideEmptyTabs('#associated-coll-res-tab');
                         //$('.child-elements-div').hide();
                         return;
                     }
@@ -393,7 +394,7 @@ jQuery(function ($) {
                     //$(".loader-versions-div").hide();
                     console.log('error');
                     console.log(error);
-                    //hideEmptyTabs('#associated-coll-res-tab');
+                    hideEmptyTabs('#associated-coll-res-tab');
                     $('.rcr-elements-div').hide();
                 }
             },
@@ -402,10 +403,11 @@ jQuery(function ($) {
                         return '<a href="' + row.id + '">' + row.title + '</a>';
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
+                        var title =  removeBeforeHash(row.title);
                         var text = '<div class="col-block col-lg-12 child-table-content-div">';
                         //title
                         text += '<div class="res-property">';
-                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
+                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + title + '</a></h5></div>';
                         //type
                         text += '<div class="res-property">';
                         text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
@@ -424,7 +426,13 @@ jQuery(function ($) {
                         return "";
                     }
                 },
-                {data: 'type', visible: true},
+                {data: 'type', render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                },
                 {data: 'acdhid', visible: false}
             ],
             fnDrawCallback: function () {
