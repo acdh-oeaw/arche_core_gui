@@ -41,7 +41,12 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <hr style="color:#e1edf3;">
+                        <div class="alert alert-danger d-flex align-items-center hidden-alert" role="alert" id="metadata-versions-alert">
+                            <div>
+                                {{ "The resource has a newer version!"|trans }} <a href="#" id="metadata-versions-alert-url">{{ "Click here for the newer version"|trans  }}</a>
+                            </div>
+                        </div>
+                        <hr class="meatdata-view-top-hr">
                     </div>
                 </div>
                 <!-- Title -->
@@ -144,12 +149,12 @@
                     <li class="nav-item" id="associated-coll-res-tab">
                         <a class="nav-link"  data-bs-toggle="tab" href="#associated-coll-res-tab-content">{{ "Associated Collections and Resources"|trans }}</a>
                     </li>
-                                   
+
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                     <div class="tab-pane container active" id="collection-content-tab-content">
+                    <div class="tab-pane container active" id="collection-content-tab-content">
                         <!-- Collection Contents -->
                         <div class="row basic-inside-content-div child-elements-div">
                             <div class="col-lg-12 child-tree-div">

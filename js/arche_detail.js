@@ -180,6 +180,15 @@ jQuery(function ($) {
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
+                            console.log("versions success");
+                            
+                            if(parseInt(nodes[0].id) !== parseInt(acdhid)) {
+                                //show the newer version div
+                                console.log(nodes[0].id);
+                                console.log(acdhid);
+                                $('#metadata-versions-alert').removeClass('hidden-alert');
+                                $('#metadata-versions-alert-url').attr("href", '/browser/metadata/'+nodes[0].id);
+                            }
                         }
                     },
                     themes: {stripes: true},
