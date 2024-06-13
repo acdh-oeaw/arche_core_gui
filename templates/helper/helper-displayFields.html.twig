@@ -25,7 +25,7 @@ Field extra type:
 {%  if (delimiter) %}
     {% set limiter = delimiter|raw %}
 {% else %}
-    {% set limiter = ',' %}
+    {% set limiter = ', ' %}
 {% endif%}
 
 
@@ -38,120 +38,119 @@ Field extra type:
         {% if label %}
             <span class="res-prop-label">{{ label|trans }}:</span>
         {% endif%}
-
+        {% apply spaceless %}
         <span class="res-prop-value">
+                {% if data is iterable %}
+                    {% for value in data %}
+                        <!-- The identifiers will open in the same window -->
 
-            {% if data is iterable %}
-                {% for value in data %}
-                    <!-- The identifiers will open in the same window -->
-                    
-                    {% if value is iterable %}
-                        {% for v in value %}
-                            {% if (v.type == 'ID') %}
-                                
-                                {% if(type == 'shortCut') %}  
-                                    {% if (v.shortCut)  %}
-                                        <a href="{{ v.value }}" target="_blank">{{ v.shortCut|nl2br }}</a>
-                                    {% elseif (v.value)  %}
+                        {% if value is iterable %}
+                            {% for v in value %}
+                                {% if (v.type == 'ID') %}
+                                    {% if(type == 'shortCut') %}  
+                                        {% if (v.shortCut)  %}
+                                            <a href="{{ v.value }}" target="_blank">{{ v.shortCut|nl2br }}</a>
+                                        {% elseif (v.value)  %}
+                                            <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
+                                        {% elseif (v.title) %}   
+                                            <a href="{{ v.title }}" target="_blank">{{ v.title|nl2br }}</a>
+                                        {% elseif (v.relvalue)  %}
+                                            <a href="{{ v.relvalue }}" target="_blank">{{ v.relvalue|nl2br }}</a>
+                                        {% endif %}
+                                    {% elseif (v.title and v.repoid )  %}
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
+                                    {% elseif (v.value and v.repoid )  %}                            
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
+                                    {% elseif (v.relvalue and v.repoid )  %}                            
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
+                                    {% elseif (v.value) %}
+                                        <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                                         <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
-                                    {% elseif (v.title) %}   
-                                        <a href="{{ v.title }}" target="_blank">{{ v.title|nl2br }}</a>
-                                    {% elseif (v.relvalue)  %}
-                                        <a href="{{ v.relvalue }}" target="_blank">{{ v.relvalue|nl2br }}</a>
                                     {% endif %}
-                                {% elseif (v.title and v.repoid )  %}
-                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
-                                {% elseif (v.value and v.repoid )  %}                            
-                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
-                                {% elseif (v.relvalue and v.repoid )  %}                            
-                                    <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
-                                {% elseif (v.value) %}
-                                    <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
-                                    <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
+                                {% endif %}
+                            {% endfor %}    
+                        {% endif %}   
+
+                        {% if(value.type == 'REL') %}
+                            <!-- The ARCHE RELATIONS will open in the same window -->
+                            {% if (value.title and value.repoid )  %}
+                                <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
+                            {% elseif (value.value and value.repoid )  %}
+                                <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value|trim }}</a>
+                            {% elseif (value.relvalue and value.repoid )  %}
+                                <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>
+                            {% elseif (value.value) %}
+                                <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
+                                <a id='archeHref' href="/browser/metadata/{{ value.value }}" >{{ value.value|nl2br }}</a>
+                            {% elseif (value.repoid) %}
+                                <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.repoid|nl2br }}</a>
+                            {% endif %}
+                        {% elseif( (value.type == 'URI') or (value.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}
+                            <!-- The URI will open in a new window -->
+                            {% if (value.value)  %}
+                                <a href="{{ value.value }}" target="_blank">{{ value.value|nl2br }}</a>
+                            {% elseif (value.title) %}   
+                                <a href="{{ value.title }}" target="_blank">{{ value.title|nl2br }}</a>
+                            {% elseif (value.relvalue)  %}
+                                <a href="{{ value.relvalue }}" target="_blank">{{ value.relvalue|nl2br }}</a>
+                            {% endif %}
+                        {% elseif(type == 'binary') %}
+                            <!-- the binary -->
+                            {% if(value.value == 0) %}
+                                {{ value.value }} KB
+                            {% else %}
+                                {% set bytes =  value.value %}
+                                {% set kiloBytes = (bytes / 1024)|round(2) %}
+                                {% set megaBytes = (kiloBytes / 1024)|round(2) %}
+                                {% set gigaBytes = (megaBytes / 1024)|round(2) %}
+                                {% if (gigaBytes) > 0  %}
+                                    {{ gigaBytes }} GB
+                                {% elseif (megaBytes) > 0  %}
+                                    {{ megaBytes }} MB
+                                {% elseif (kiloBytes) > 0  %}
+                                    {{ kiloBytes }} KB
+                                {% endif%}    
+                            {% endif%}
+                        {% elseif(value.type == 'http://www.w3.org/2001/XMLSchema#string') %}
+                            {% if(type == 'email') %}
+                                {% if (value.title) %} 
+                                    {{ value.title|replace({'@': '(at)'}) }}
+                                {% elseif (value.value) %} 
+                                    {{ value.value|replace({'@': '(at)'}) }}
+                                {% elseif (value.relvalue) %}     
+                                    {{ value.relvalue|replace({'@': '(at)'}) }}
+                                {% endif %}
+                            {% else %}
+                                <!-- simple string -->
+                                {% if (value.title) %} 
+                                    {{ value.title|nl2br }}
+                                {% elseif (value.value) %} 
+                                    {{ value.value|nl2br }}
+                                {% elseif (value.relvalue) %}
+                                    {{ value.relvalue|nl2br }}
                                 {% endif %}
                             {% endif %}
-                        {% endfor %}    
-                    {% endif %}   
-                    
-                    {% if(value.type == 'REL') %}
-                        <!-- The ARCHE RELATIONS will open in the same window -->
-                        {% if (value.title and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
-                        {% elseif (value.value and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value }}</a>
-                        {% elseif (value.relvalue and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>
-                        {% elseif (value.value) %}
-                            <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
-                            <a id='archeHref' href="/browser/metadata/{{ value.value }}" >{{ value.value|nl2br }}</a>
-                        {% elseif (value.repoid) %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.repoid|nl2br }}</a>
-                        {% endif %}
-                    {% elseif( (value.type == 'URI') or (value.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}
-                        <!-- The URI will open in a new window -->
-                        {% if (value.value)  %}
-                            <a href="{{ value.value }}" target="_blank">{{ value.value|nl2br }}</a>
-                        {% elseif (value.title) %}   
-                            <a href="{{ value.title }}" target="_blank">{{ value.title|nl2br }}</a>
-                        {% elseif (value.relvalue)  %}
-                            <a href="{{ value.relvalue }}" target="_blank">{{ value.relvalue|nl2br }}</a>
-                        {% endif %}
-                    {% elseif(type == 'binary') %}
-                        <!-- the binary -->
-                        {% if(value.value == 0) %}
-                            {{ value.value }} KB
+                        {% elseif(type == 'date' and dateformat) %}
+                            {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': value,  'dateformat': dateformat } ) }}
                         {% else %}
-                            {% set bytes =  value.value %}
-                            {% set kiloBytes = (bytes / 1024)|round(2) %}
-                            {% set megaBytes = (kiloBytes / 1024)|round(2) %}
-                            {% set gigaBytes = (megaBytes / 1024)|round(2) %}
-                            {% if (gigaBytes) > 0  %}
-                                {{ gigaBytes }} GB
-                            {% elseif (megaBytes) > 0  %}
-                                {{ megaBytes }} MB
-                            {% elseif (kiloBytes) > 0  %}
-                                {{ kiloBytes }} KB
-                            {% endif%}    
-                        {% endif%}
-                    {% elseif(value.type == 'http://www.w3.org/2001/XMLSchema#string') %}
-                        {% if(type == 'email') %}
-                            {% if (value.title) %} 
-                                {{ value.title|replace({'@': '(at)'}) }}
-                            {% elseif (value.value) %} 
-                                {{ value.value|replace({'@': '(at)'}) }}
-                            {% elseif (value.relvalue) %}     
-                                {{ value.relvalue|replace({'@': '(at)'}) }}
-                            {% endif %}
-                        {% else %}
-                            <!-- simple string -->
-                            {% if (value.title) %} 
-                                {{ value.title|nl2br }}
-                            {% elseif (value.value) %} 
+                            <!-- if there is no type defined then simply display the title -->
+                            {% if (value.value) is not empty %}
                                 {{ value.value|nl2br }}
-                            {% elseif (value.relvalue) %}
+                            {% elseif (value.title) is not empty %}
+                                {{ value.title|nl2br }}
+                            {% elseif (value.relvalue) is not empty %}
                                 {{ value.relvalue|nl2br }}
                             {% endif %}
                         {% endif %}
-                    {% elseif(type == 'date' and dateformat) %}
-                       {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
-                                {'value': value,  'dateformat': dateformat } ) }}
-                    {% else %}
-                        <!-- if there is no type defined then simply display the title -->
-                        {% if (value.value) is not empty %} 
-                            {{ value.value|nl2br }}
-                        {% elseif (value.title) is not empty %} 
-                            {{ value.title|nl2br }}
-                        {% elseif (value.relvalue) is not empty %} 
-                            {{ value.relvalue|nl2br }}
-                        {% endif %}
-                    {% endif %}
-                    <!-- if there are more than 1 value then we will display the delimiter -->
-                    {% if not loop.last %}{{ limiter|raw }} {% endif %}
-                {% endfor %}
-            {% else %}
-                <!-- if the data is not an array then we will just simply display the value -->
-                {{ data }}
-            {% endif %}
+                        <!-- if there are more than 1 value then we will display the delimiter -->
+                        {% if not loop.last %}<span>{{ limiter }}</span>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <!-- if the data is not an array then we will just simply display the value -->
+                    {{ data }}
+                {% endif %}
         </span>
+        {% endapply %}
     </div>
 {% endif%}

@@ -181,13 +181,13 @@ jQuery(function ($) {
                         },
                         'success': function (nodes) {
                             console.log("versions success");
-                            
-                            if(parseInt(nodes[0].id) !== parseInt(acdhid)) {
+
+                            if (parseInt(nodes[0].id) !== parseInt(acdhid)) {
                                 //show the newer version div
                                 console.log(nodes[0].id);
                                 console.log(acdhid);
                                 $('#metadata-versions-alert').removeClass('hidden-alert');
-                                $('#metadata-versions-alert-url').attr("href", '/browser/metadata/'+nodes[0].id);
+                                $('#metadata-versions-alert-url').attr("href", '/browser/metadata/' + nodes[0].id);
                             }
                         }
                     },
@@ -412,7 +412,7 @@ jQuery(function ($) {
                         return '<a href="' + row.id + '">' + row.title + '</a>';
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
-                        var title =  removeBeforeHash(row.title);
+                        var title = removeBeforeHash(row.title);
                         var text = '<div class="col-block col-lg-12 child-table-content-div">';
                         //title
                         text += '<div class="res-property">';
@@ -790,7 +790,6 @@ jQuery(function ($) {
      */
     function showCiteBlock() {
         var url = $('#biblaTexUrl').val();
-        console.log("BIBLATEX: " + url);
         if (url) {
             //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
             $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang).done(function (data) {
@@ -798,7 +797,7 @@ jQuery(function ($) {
                 //$('#cite-content-div').addClass('show');
                 //$('#cite-content-div').removeClass('hidden');
                 $('#cite-loader').addClass('hidden');
-
+                console.log("get done cite");
                 try {
                     let cite = new Cite(data);
 
@@ -806,21 +805,22 @@ jQuery(function ($) {
 
                     let templateName = 'apa-6th';
                     var template = "";
-                    url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl").done(function (data) {
+                    url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
+                            .done(function (data) {
 
-                        template = data;
-                        Cite.CSL.register.addTemplate(templateName, template);
+                                template = data;
+                                Cite.CSL.register.addTemplate(templateName, template);
 
-                        var opt = {
-                            format: 'string'
-                        };
-                        opt.type = 'html';
-                        opt.style = 'citation-' + templateName;
-                        opt.lang = 'en-US';
-                        createCiteTab('apa 6th', 'apa-6th');
-                        createCiteContent(cite.get(opt), 'apa-6th', true);
-                        apa_loaded = false;
-                    }).then(function (d) {
+                                var opt = {
+                                    format: 'string'
+                                };
+                                opt.type = 'html';
+                                opt.style = 'citation-' + templateName;
+                                opt.lang = 'en-US';
+                                createCiteTab('apa 6th', 'apa-6th');
+                                createCiteContent(cite.get(opt), 'apa-6th', true);
+                                apa_loaded = false;
+                            }).then(function (d) {
 
                         //harvard
                         var opt = {
@@ -852,8 +852,11 @@ jQuery(function ($) {
                     return false;
                 }
 
-            }).fail(function (data) {
-                createCiteErrorResponse("The Resource does not have CITE data.");
+            }).fail(function (xhr) {
+                console.log("FAIL: ");
+                console.log(xhr);
+                createCiteErrorResponse(Drupal.t("CITE is not available!"));
+                return false;
             });
         }
     }
@@ -864,14 +867,10 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function createCiteErrorResponse(errorText) {
-        $('#cite-content-div').addClass('show');
-        $('#cite-content-div').removeClass('hidden');
+        $('#cite-div').removeClass('hidden');
         $('#cite-loader').addClass('hidden');
-        $('#cite-selector-div').hide();
-        $('#cite-content-figure').hide();
-        $('.bd-clipboard').hide();
         //stop spinner
-        $('#cite-content-div').append('<div class="messages messages--warning">' + Drupal.t(errorText) + '</>');
+        $('#cite-div').html('<div class="alert alert-danger" role="alert">' + Drupal.t(errorText) + '</>');
     }
 
     function url_csl_content(url) {

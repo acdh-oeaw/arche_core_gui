@@ -561,15 +561,16 @@ msgid "File Size"
 msgstr "Datei Größe"
 
 msgid "Licensing & Access"
-msgstr ""
+msgstr "Lizenzierung und Zugriff"
 
 msgid "Credits"
-msgstr ""
+msgstr "Credits"
 
 msgid "Download Metadata"
 msgstr "Metadata herunterladen"
 
 msgid "View and Share"
-msgstr ""
+msgstr "Anzeigen und Teilen"
 
-
+msgid "CITE is not available!"
+msgstr "CITE ist nicht verfügbar!"
