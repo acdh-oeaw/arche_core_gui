@@ -524,7 +524,7 @@ msgstr "Wenden Sie sich an uns, wenn Sie über Datenressourcen verfügen, welche
 msgid "To get a quick introduction, you may watch one of our videos featuring Dante, a project leader, and Nora, a curator at ARCHE..."
 msgstr "Um eine kurze Einführung zu erhalten, können Sie sich eines unserer Videos mit Dante, einem Projektleiter, und Nora, einer Kuratorin bei ARCHE, ansehen..."
 
-msgid "Contact us before submitting the data to clarify any open questions, ensure that the data fulfils ARCHE's requirements and inform us of the planned deposition in good time. Please bear in mind that submission, including curation, can be a lengthy process and allow sufficient time."
+msgid "Contact us before submitting the data to clarify any open questions, ensure that the data fulfils ARCHE’s requirements and inform us of the planned deposition in good time. Please bear in mind that submission, including curation, can be a lengthy process and allow sufficient time."
 msgstr "Nehmen Sie mit uns vor der Einreichung der Daten Kontakt auf, um offene Fragen zu klären, sicherzustellen, dass die Daten den Anforderungen von ARCHE genügen und uns zeitgerecht über die geplante Einreichung zu informieren. Berücksichtigen Sie dabei, dass die Einreichung inklusive der Kuratierung ein langwieriger Prozess sein kann und planen Sie ausreichend Zeit ein."
 
 msgid "ACDH-CH runs a <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at'>helpdesk</a> offering advice for questions related to various digital humanities topics."
@@ -574,3 +574,9 @@ msgstr "Anzeigen und Teilen"
 
 msgid "CITE is not available!"
 msgstr "CITE ist nicht verfügbar!"
+
+msgid "Browse Website"
+msgstr ""
+
+msgid "Download PDF"
+msgstr "PDF Herunterladen"

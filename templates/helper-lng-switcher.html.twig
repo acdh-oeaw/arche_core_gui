@@ -4,11 +4,12 @@
     {% set deActive = true %}
 {% endif %}    
 <div>
+    <p class="mobile-lng-switcher-title">{{ "Language"|trans }}</p>
     <ul class="nav navbar-nav nav-lang">
         <li class="lng-switcher">
             <a href="" class="language-switcher-language-session-arche" data-lang="en">
                 {% if language == 'en' %}
-                    <span class="navbar-icons-text" style='color:#88DBDF !important'>EN</span>
+                    <span class="navbar-icons-text active-lng-btn">EN</span>
                 {% else %}
                     <span class="navbar-icons-text">EN</span>
                 {% endif %}                   
@@ -18,7 +19,7 @@
         <li class="lng-switcher">
             <a href="" class="language-switcher-language-session-arche" data-lang="de">
                 {% if language == 'de' %}
-                    <span class="navbar-icons-text" style='color:#88DBDF !important'>DE</span>
+                    <span class="navbar-icons-text active-lng-btn">DE</span>
                 {% else %}
                     <span class="navbar-icons-text">DE</span>
                 {% endif %}                   
