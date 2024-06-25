@@ -18,21 +18,21 @@ smart-search:
     header: true
     css:
         base:
-            css/slimselect.css: {}
-            https://unpkg.com/leaflet@1.9.4/dist/leaflet.css: { type: external, minified: false }
-            https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css: { type: external, minified: false }
-            https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css: { type: external, minified: true }
-            https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css: { type: external, minified: true }
-            https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css: { type: external, minified: true }            
+            css/slimselect.css: { minified: false}
+            css/leaflet-1.9.4.css: { minified: false }
+            css/leaflet.draw-1.0.4.css: { minified: false }
+            css/select2-4.0.13.min.css: { minified: true }
+            css/jquery-ui.min-1.13.3.css: { minified: true }
+            css/jquery.auto-complete.min-1.0.7.css: { minified: true }            
             css/smart-multi.css: {}
     js:
         js/slimselect.js: {}
-        https://code.jquery.com/jquery-3.6.4.min.js: {type: external, minified: true }
-        https://unpkg.com/leaflet@1.9.4/dist/leaflet.js: { type: external, minified: false }
-        https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js: { type: external, minified: false }
-        https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js: { type: external, minified: true }
-        https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js: { type: external, minified: true }
-        https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js: { type: external, minified: true }        
+        js/jquery-3.6.4.min.js: { minified: true }
+        js/leaflet-1.9.4.js: { minified: false }
+        js/leaflet.draw-1.0.4.js: { minified: false }
+        js/select2.min-4.0.13.js: { minified: true }
+        js/jquery-ui.min-1.13.3.js: { minified: true }
+        js/jquery.auto-complete.min-1.0.7.js: { minified: true }        
         js/smartsearch.js: {}
     dependencies:
         - core/drupal
