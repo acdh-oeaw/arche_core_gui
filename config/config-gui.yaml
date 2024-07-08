@@ -138,9 +138,9 @@ openaire:
   - http://www.w3.org/1999/02/22-rdf-syntax-ns#type
   - https://vocabs.acdh.oeaw.ac.at/schema#TopCollection
 dbConn:
-  guest: 'pgsql: host=127.0.0.1 port=5432 user=gui dbname=www-data'
+  guest: 'pgsql: host=host.docker.internal port=5432 user=arche dbname=arche password=CT294DAhXo'
 dbConnStr:
-  guest: 'pgsql: host=127.0.0.1 port=5432 user=gui dbname=www-data'
+  guest: 'pgsql: host=host.docker.internal port=5432 user=arche dbname=arche password=CT294DAhXo'
 clarinVcrUrl: https://beta-collections.clarin.eu/submit/extensional
 smartSearch:
   log: /home/www-data/log/smartsearch.log

@@ -221,8 +221,3 @@ php_value max_execution_time       1800
 php_value memory_limit 		   1G
 php_value max_input_vars           30000
 
-# Increase the maximum request line length
-LimitRequestLine 20000
-
-# Increase the maximum request field size
-LimitRequestFieldSize 20000

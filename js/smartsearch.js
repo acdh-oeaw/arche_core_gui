@@ -3,13 +3,11 @@ jQuery(function ($) {
     "use strict";
 
     var selectedSearchValues = [];
-    var dropdownSearchValues = {};
     var countNullText = '<h5 class="font-weight-bold">' + Drupal.t('No results found') + '</h5>';
     var firstLoad = true;
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
-    var previousUrls = [];
-    
+    var previousUrls = JSON.parse(sessionStorage.getItem('urls')) || [];
     var bbox = null;
     var map = null;
     var mapPins = null;
@@ -27,33 +25,19 @@ jQuery(function ($) {
     $(document).ready(function () {
         var currentUrl = window.location.href;
         // Check if the URL contains any params
-        console.log(currentUrl);
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
-            console.log("EXTRA PARAMS: ");
-            getSearchParamsFromUrl();
-            //guiObj = {'actualPage': 1};
-
+            getSearchParamsFromUrl(currentUrl);
         } else {
             executeTheSearch();
         }
-        //executeTheSearch();
+
         initMap();
 
         $(window).on('popstate', function (e) {
             e.preventDefault();
             console.log("POPSTATE: ");
-            console.log(previousUrls);
-            if (previousUrls.length > 0) {
-                var previousUrl = previousUrls.pop();
-                console.log(previousUrl);
-                // Navigate back to the previous URL
-                window.location.href = previousUrl;
-            } else {
-                // Handle initial page load or no previous URLs available
-                console.log('No previous URL available');
-            }
+            loadPreviousUrl();
         });
-
     });
 
     //// events ////
@@ -323,12 +307,10 @@ jQuery(function ($) {
 
     }
 
-    function getSearchParamsFromUrl() {
-        var url = window.location.pathname;
-        var paramsString = url.replace('/browser/discover//', '');
-        paramsString = paramsString.replace('/browser/discover/', '');
-        paramsString = paramsString.replace('/q', 'q');
-
+    function getSearchParamsFromUrl(url) {
+        //var url = window.location.pathname;
+        var paramsString = url.split('/browser/discover/')[1];
+        paramsString = paramsString.replace('?q', 'q');
         guiObj = convertFacetsIntoObjects(paramsString);
         firstLoad = false;
         //Update form based on the params
@@ -342,7 +324,6 @@ jQuery(function ($) {
         var pairs = queryString.split('&');
         // Initialize an empty object to store the result
         var result = {facets: {}};
-
         // Iterate over the key-value pairs
         pairs.forEach(function (pair) {
             // Split each pair into key and value
@@ -382,6 +363,7 @@ jQuery(function ($) {
                             if (!temp[part]) {
                                 temp[part] = [];
                             }
+
                             temp[part].push(value);
                         }
                     }
@@ -443,6 +425,7 @@ jQuery(function ($) {
     // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
+        
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -556,22 +539,18 @@ jQuery(function ($) {
             if (!(prop in param.data.facets)) {
                 param.data.facets[prop] = [];
             }
-            param.data.facets[prop].push(val);
-            if (!(prop in dropdownSearchValues)) {
-                dropdownSearchValues[prop] = [];
-            }
-            dropdownSearchValues[prop].push($(this));
+            param.data.facets[prop] = val;
         });
-
-        $('input.facet:checked').each(function (n, facet) {
-            var prop = $(facet).attr('data-value');
-            var val = $(facet).val();
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = [];
-            }
-            param.data.facets[prop].push(val);
-        });
-
+        /*
+         $('input.facet:checked').each(function (n, facet) {
+         var prop = $(facet).attr('data-value');
+         var val = $(facet).val();
+         if (!(prop in param.data.facets)) {
+         param.data.facets[prop] = [];
+         }
+         param.data.facets[prop].push(val);
+         });
+         */
         $('input.facet-min').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
             var val = $(facet).val();
@@ -633,8 +612,6 @@ jQuery(function ($) {
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
             }
         }
-        console.log("PARAM DATA before update url: ");
-        console.log(param.data);
         updateUrl(param.data);
 
         var t0 = new Date();
@@ -677,25 +654,35 @@ jQuery(function ($) {
             }
         };
         param.timeout = 60000;
-        console.log("SMART SEARCH PARAMS: ");
+        console.log("!!!!!!!!!!!!SMART SEARCH PARAMS: ");
         console.log(param);
         $.ajax(param);
     }
 
     /* update the current url after a search was triggered */
     function updateUrl(params) {
-        console.log("updateUrl START");
         previousUrls.push(window.location.href);
-        console.log("new Prev urls: ");
-        console.log(previousUrls);
+        sessionStorage.setItem('urls', JSON.stringify(previousUrls));
         resetsearchUrl();
         var queryString = $.param(params);
         var currentUrl = window.location.href;
         if (currentUrl.slice(-1) === "/") {
             currentUrl = currentUrl.slice(0, -1);
         }
-        console.log("new URL: " + currentUrl + '/' + queryString);
-        history.pushState(null, "Discover", currentUrl + '/' + queryString);
+        history.pushState(null, "Discover", currentUrl + '/?' + queryString);
+    }
+    
+    function loadPreviousUrl() {
+        if (previousUrls.length > 1) {
+            // Remove the current URL
+            previousUrls.pop();
+            // Get the previous URL
+            var previousUrl = previousUrls[previousUrls.length - 1];
+            // Update sessionStorage
+            sessionStorage.setItem('urls', JSON.stringify(previousUrls));
+            // Navigate to the previous URL
+            window.location.href = previousUrl;
+        }
     }
 
     /* reset the searchUrl and remove the params */
@@ -800,8 +787,8 @@ jQuery(function ($) {
                         select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
                         $.each(fd.values, function (n, i) {
                             //iterate the param.facets to set the selected ones!!!!!!
-                            if (param.facets[fd.property] && param.facets[fd.property][0].length > 0) {
-                                $.each(param.facets[fd.property][0], function (sI, sv) {
+                            if (param.facets[fd.property] && param.facets[fd.property].length > 0) {
+                                $.each(param.facets[fd.property], function (sI, sv) {
                                     if (sv === i.value) {
                                         select += '<option value="' + i.value + '" data-value="' + fd.property + '" selected>' + shorten(i.label) + ' (' + i.count + ')</option>';
                                     }
