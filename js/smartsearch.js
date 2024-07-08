@@ -443,7 +443,8 @@ jQuery(function ($) {
                 facets: {},
                 searchIn: [],
                 initialFacets: true,
-                noCache: $('#noCache').is(':checked') ? 1 : 0
+                //noCache: $('#noCache').is(':checked') ? 1 : 0
+                noCache: 1
             }
         };
 
@@ -524,7 +525,8 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                noCache: $('#noCache').is(':checked') ? 1 : 0
+                noCache: 1
+                //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
         //if we have already selected facets from the url then we have to update 
