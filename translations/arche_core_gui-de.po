@@ -583,3 +583,6 @@ msgstr "Website durchsuchen"
 
 msgid "Download PDF"
 msgstr "PDF Herunterladen"
+
+msgid "Search in file content"
+msgstr "Suche in Datei Inhalten"

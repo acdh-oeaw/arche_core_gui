@@ -23,6 +23,7 @@ jQuery(function ($) {
 
 
     $(document).ready(function () {
+        $('.main-content-warnings').html("");
         var currentUrl = window.location.href;
         // Check if the URL contains any params
         if (currentUrl.indexOf("/browser/discover/") !== -1) {
@@ -424,11 +425,11 @@ jQuery(function ($) {
     // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
-
+        
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-
+        $('.main-content-warnings').html('');
         var param = {
             url: '/browser/api/smartsearch',
             method: 'get',
@@ -494,7 +495,7 @@ jQuery(function ($) {
     function search() {
         console.log("search func  started");
         token++;
-
+        $('.main-content-warnings').html('');
         var localToken = token;
         if (firstLoad) {
             return showJustSearchFacets();
@@ -700,6 +701,7 @@ jQuery(function ($) {
         $('input.facet:checked').prop('checked', false);
         $('input.facet-min').val('');
         $('input.facet-max').val('');
+        $('.main-content-warnings').html('');
         $('.select2-selection__rendered').html('');
         $('#smartSearchCount').html(Drupal.t('0 Result(s)'));
         $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
@@ -867,14 +869,16 @@ jQuery(function ($) {
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
         }
         
-        //display warnings (.main-content-warnings)
-        if(data.messages !== "") {
+        //display warnings 
+        if(data.messages !== "" ) {
             displaySearchWarningMessage(data.messages, data.class);
         }
     }
     
     function displaySearchWarningMessage(message, cssClass) {
-        $('.main-content-warnings').html('<div class="'+cssClass+' warning-message-div">'+message+'</div>');
+        if(typeof message !== 'undefined') {
+            $('.main-content-warnings').html('<div class="'+cssClass+' warning-message-div">'+message+'</div>');
+        }
     }
 
     function createFacetSelectCard(fd, select) {
