@@ -35,7 +35,6 @@ jQuery(function ($) {
 
         $(window).on('popstate', function (e) {
             e.preventDefault();
-            console.log("POPSTATE: ");
             loadPreviousUrl();
         });
     });
@@ -494,8 +493,6 @@ jQuery(function ($) {
 
     function search() {
         console.log("search func  started");
-        console.log("SEARCH GUI OBJ; ");
-        console.log(guiObj);
         token++;
 
         var localToken = token;
