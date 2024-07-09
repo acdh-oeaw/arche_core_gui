@@ -579,7 +579,7 @@ msgid "CITE is not available!"
 msgstr "CITE ist nicht verfügbar!"
 
 msgid "Browse Website"
-msgstr ""
+msgstr "Website durchsuchen"
 
 msgid "Download PDF"
 msgstr "PDF Herunterladen"

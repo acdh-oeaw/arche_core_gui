@@ -425,7 +425,7 @@ jQuery(function ($) {
     // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
-        
+
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -444,7 +444,7 @@ jQuery(function ($) {
                 searchIn: [],
                 initialFacets: true,
                 //noCache: $('#noCache').is(':checked') ? 1 : 0
-                noCache: 1
+                noCache: 0
             }
         };
 
@@ -525,8 +525,8 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                noCache: 1
-                //noCache: $('#noCache').is(':checked') ? 1 : 0
+                noCache: 0
+                        //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
         //if we have already selected facets from the url then we have to update 
@@ -673,7 +673,7 @@ jQuery(function ($) {
         }
         history.pushState(null, "Discover", currentUrl + '/?' + queryString);
     }
-    
+
     function loadPreviousUrl() {
         if (previousUrls.length > 1) {
             // Remove the current URL
@@ -868,7 +868,14 @@ jQuery(function ($) {
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+        }
+        
+        //display warnings (.main-content-warnings)
+        displaySearchWarningMessage(data.messages, data.class);
     }
+    
+    function displaySearchWarningMessage(message, cssClass) {
+        $('.main-content-warnings').html('<div class="'+cssClass+' warning-message-div">'+message+'</div>');
     }
 
     function createFacetSelectCard(fd, select) {
