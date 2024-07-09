@@ -443,7 +443,7 @@ jQuery(function ($) {
                 searchIn: [],
                 initialFacets: true,
                 //noCache: $('#noCache').is(':checked') ? 1 : 0
-                noCache: 0
+                noCache: 1
             }
         };
 
@@ -522,7 +522,7 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                noCache: 0
+                noCache: 1
                         //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
@@ -868,7 +868,9 @@ jQuery(function ($) {
         }
         
         //display warnings (.main-content-warnings)
-        displaySearchWarningMessage(data.messages, data.class);
+        if(data.messages !== "") {
+            displaySearchWarningMessage(data.messages, data.class);
+        }
     }
     
     function displaySearchWarningMessage(message, cssClass) {
