@@ -20,25 +20,40 @@ jQuery(function ($) {
     var actualPage = 1;
     var guiObj = {};
     var smartSearchInputField = $('#sm-hero-str');
-
+    var popstateActive = false;
 
     $(document).ready(function () {
+
         $('.main-content-warnings').html("");
-        var currentUrl = window.location.href;
-        // Check if the URL contains any params
-        if (currentUrl.indexOf("/browser/discover/") !== -1) {
-            getSearchParamsFromUrl(currentUrl);
-        } else {
-            executeTheSearch();
+        
+        $(window).on('popstate', function (e) {
+            
+            console.log("POPSTATE:::");
+            popstateActive = true;
+            // Call the function to handle the URL change
+            loadPreviousUrl();
+
+        });
+        function handleURLChange() {
+            var currentUrl = window.location.href;
+            // Check if the URL contains any params
+            if (currentUrl.indexOf("/browser/discover/") !== -1) {
+                getSearchParamsFromUrl(currentUrl);
+            } else {
+                executeTheSearch();
+            }
         }
 
         initMap();
 
-        $(window).on('popstate', function (e) {
-            e.preventDefault();
-            loadPreviousUrl();
-        });
+        if (!popstateActive) {
+            console.log("POPSTATE is no");
+            // Call function specific to no popstate event
+            handleURLChange();
+        }
     });
+
+
 
     //// events ////
     $(document).delegate("input", "keypress", function (e) {
@@ -308,73 +323,55 @@ jQuery(function ($) {
     }
 
     function getSearchParamsFromUrl(url) {
-        //var url = window.location.pathname;
         var paramsString = url.split('/browser/discover/')[1];
         paramsString = paramsString.replace('?q', 'q');
-        guiObj = convertFacetsIntoObjects(paramsString);
+        guiObj = parseQueryString(paramsString);
         firstLoad = false;
-        //Update form based on the params
-
-        // update tge guisearchparams obj
         executeTheSearch();
     }
 
-
-    function convertFacetsIntoObjects(queryString) {
+    /**
+     * This function converts back the query string from the url into an object to the smartsearch api
+     * -- if we copy pasted the result url
+     * @param {type} queryString
+     * @returns {unresolved}
+     */
+    function parseQueryString(queryString) {
+        var obj = {};
         var pairs = queryString.split('&');
-        // Initialize an empty object to store the result
-        var result = {facets: {}};
-        // Iterate over the key-value pairs
+
         pairs.forEach(function (pair) {
-            // Split each pair into key and value
-            var keyValue = pair.split('=');
+            var parts = pair.split('=');
+            var key = decodeURIComponent(parts[0]);
+            var value = decodeURIComponent(parts[1]);
 
-            // Decode the key and value
-            var key = decodeURIComponent(keyValue[0]);
-            var value = decodeURIComponent(keyValue[1]);
+            // Handle array values within brackets
+            if (value.startsWith('[') && value.endsWith(']')) {
+                value = value.slice(1, -1).split(',');
+            }
 
-            // Check if the key contains array notation
-            var matches = key.match(/\[([^[\]]+)\]/g);
-            if (matches) {
-                // Remove square brackets and split into parts
-                var parts = matches.map(function (match) {
-                    return match.slice(1, -1);
-                });
+            // Handle nested keys
+            if (key.includes('[')) {
+                var keys = key.split(/[\[\]]+/).filter(Boolean);
+                var current = obj;
 
-                // Initialize the nested object/array structure
-                var temp = result.facets;
-                parts.forEach(function (part, index) {
-                    if (index < parts.length - 1) {
-                        if (!temp[part]) {
-                            // If the next part is a number, initialize an array
-                            if (/^\d+$/.test(parts[index + 1])) {
-                                temp[part] = [];
-                            } else {
-                                temp[part] = {};
-                            }
-                        }
-                        temp = temp[part];
+                for (var i = 0; i < keys.length; i++) {
+                    var nestedKey = keys[i];
+                    if (i === keys.length - 1) {
+                        current[nestedKey] = value;
                     } else {
-                        if (Array.isArray(temp[part])) {
-                            // Push the value into the array
-                            temp[part].push(value);
-                        } else {
-                            // Set the value in the object
-                            if (!temp[part]) {
-                                temp[part] = [];
-                            }
-
-                            temp[part].push(value);
-                        }
+                        current[nestedKey] = current[nestedKey] || {};
+                        current = current[nestedKey];
                     }
-                });
+                }
             } else {
-                // If the key does not contain array notation, set the value directly
-                result[key] = value;
+                obj[key] = value;
             }
         });
-        return result;
+
+        return obj;
     }
+
 
     function getSmartUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
@@ -425,7 +422,6 @@ jQuery(function ($) {
     // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
         console.log("showJustSearchFacets func");
-        
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -444,7 +440,7 @@ jQuery(function ($) {
                 searchIn: [],
                 initialFacets: true,
                 //noCache: $('#noCache').is(':checked') ? 1 : 0
-                noCache: 1
+                noCache: 0
             }
         };
 
@@ -482,9 +478,6 @@ jQuery(function ($) {
         $.ajax(param);
     }
 
-
-
-
     /// if the search is executed by the hero section, we have to update the input field ///
     function updateSearchStrInput(str) {
         if ($('#sm-hero-str').val() === "") {
@@ -494,6 +487,8 @@ jQuery(function ($) {
 
     function search() {
         console.log("search func  started");
+        console.log("PREVIOUS LINKS:");
+        console.log(previousUrls);
         token++;
         $('.main-content-warnings').html('');
         var localToken = token;
@@ -505,6 +500,7 @@ jQuery(function ($) {
         var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
         var guiFacets = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
+
         if (searchStr === "") {
             searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
@@ -523,7 +519,7 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                noCache: 1
+                noCache: 0
                         //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
@@ -612,12 +608,13 @@ jQuery(function ($) {
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
             }
         }
+
         updateUrl(param.data);
 
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
-                console.log("success - param.data: ");
+                console.log("search ajax success - param.data: ");
                 console.log(param.data);
                 showResults(x, param.data, t0);
 
@@ -654,33 +651,78 @@ jQuery(function ($) {
             }
         };
         param.timeout = 60000;
-        console.log("!!!!!!!!!!!!SMART SEARCH PARAMS: ");
-        console.log(param);
         $.ajax(param);
     }
 
     /* update the current url after a search was triggered */
     function updateUrl(params) {
-        previousUrls.push(window.location.href);
-        sessionStorage.setItem('urls', JSON.stringify(previousUrls));
+        //check if it is not a browser reload and skip to store the same url twice
+        if ($.inArray(window.location.href, previousUrls) === -1) {
+            previousUrls.push(window.location.href);
+            sessionStorage.setItem('urls', JSON.stringify(previousUrls));
+        }
+
         resetsearchUrl();
-        var queryString = $.param(params);
+        var queryString = customParam(params);
         var currentUrl = window.location.href;
         if (currentUrl.slice(-1) === "/") {
             currentUrl = currentUrl.slice(0, -1);
         }
         history.pushState(null, "Discover", currentUrl + '/?' + queryString);
+
     }
 
+    /**
+     * Creates the new url params based on the search facets
+     * @param {type} obj
+     * @param {type} prefix
+     * @returns {String}
+     */
+    function customParam(obj, prefix) {
+        var queryString = '';
+
+        $.each(obj, function (key, value) {
+            var fullKey = prefix ? prefix + '[' + key + ']' : key;
+
+            if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                // If the value is a nested object, recurse into it
+                var nestedQuery = customParam(value, fullKey);
+                if (nestedQuery) {
+                    queryString += nestedQuery + '&';
+                }
+            } else if (Array.isArray(value)) {
+                // If the value is an array, join its elements into a single string if not empty
+                if (value.length > 0) {
+                    queryString += encodeURIComponent(fullKey) + '=[' + encodeURIComponent(value.join(',')) + ']&';
+                }
+            } else if (value !== '' && value !== null) {
+                // If the value is a simple type and not empty, add it directly
+                queryString += encodeURIComponent(fullKey) + '=' + encodeURIComponent(value) + '&';
+            }
+        });
+
+        // Remove the trailing '&' and return the query string
+        return queryString.slice(0, -1);
+    }
+
+    /**
+     * Load the latest url after the user clicked the back button on the browser
+     * @returns {undefined}
+     */
     function loadPreviousUrl() {
-        if (previousUrls.length > 1) {
-            // Remove the current URL
-            previousUrls.pop();
+        if (previousUrls.length > 0) {
             // Get the previous URL
             var previousUrl = previousUrls[previousUrls.length - 1];
+            console.log("previousUrl :::::::: " + previousUrl);
+            console.log("previousUrl length:::::::: " + previousUrls.length);
             // Update sessionStorage
+            // Remove the current URL
+            previousUrls.pop();
             sessionStorage.setItem('urls', JSON.stringify(previousUrls));
             // Navigate to the previous URL
+            console.log("NEW pREV URLS:::::::");
+            console.log(previousUrls);
+            console.log(previousUrls.length);
             window.location.href = previousUrl;
         }
     }
@@ -745,12 +787,17 @@ jQuery(function ($) {
         }
     }
 
+    /**
+     * Display the smartsearch results
+     * @param {type} data
+     * @param {type} param
+     * @param {type} t0
+     * @param {type} initial
+     * @returns {undefined}
+     */
     function showResults(data, param, t0, initial = false) {
-
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
-        console.log("SHOW RESULTS:")
-        console.log(data);
         var pageSize = data.pageSize;
         var totalPages = Math.ceil(data.totalCount / pageSize);
 
@@ -868,16 +915,16 @@ jQuery(function ($) {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
             $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
         }
-        
+
         //display warnings 
-        if(data.messages !== "" ) {
+        if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-        }
     }
-    
+    }
+
     function displaySearchWarningMessage(message, cssClass) {
-        if(typeof message !== 'undefined') {
-            $('.main-content-warnings').html('<div class="'+cssClass+' warning-message-div">'+message+'</div>');
+        if (typeof message !== 'undefined') {
+            $('.main-content-warnings').html('<div class="' + cssClass + ' warning-message-div">' + message + '</div>');
         }
     }
 
