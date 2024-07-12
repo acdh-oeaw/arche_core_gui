@@ -349,12 +349,12 @@ jQuery(function ($) {
                         if (row.customCitation) {
                             return row.customCitation;
                         }
-                        return "";
+                        return Drupal.t("No Custom Citation");
                     }
                 },
                 {data: 'property', render: function (data, type, row, meta) {
                         if (row.property) {
-                            return removeBeforeHash(row.property);
+                            return '<a href="' + row.id + '">' + removeBeforeHash(row.property) + '</a>';
                         }
                         return "";
                     }
