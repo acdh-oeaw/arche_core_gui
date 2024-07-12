@@ -8,6 +8,7 @@ jQuery(function ($) {
     var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
     var previousUrls = JSON.parse(sessionStorage.getItem('urls')) || [];
+    var popstateActive = sessionStorage.getItem('popstate') || false;
     var bbox = null;
     var map = null;
     var mapPins = null;
@@ -20,24 +21,26 @@ jQuery(function ($) {
     var actualPage = 1;
     var guiObj = {};
     var smartSearchInputField = $('#sm-hero-str');
-    var popstateActive = false;
 
     $(document).ready(function () {
 
         $('.main-content-warnings').html("");
         
         $(window).on('popstate', function (e) {
-            
-            console.log("POPSTATE:::");
-            popstateActive = true;
             // Call the function to handle the URL change
             loadPreviousUrl();
-
         });
+        
         function handleURLChange() {
+            console.log("handleURLChange func");
             var currentUrl = window.location.href;
+            // Create a URL object to extract pathname
+            var url = new URL(currentUrl);
+            console.log(url.search);
+            // Get the pathname from the URL
+            var pathname = url.pathname;
             // Check if the URL contains any params
-            if (currentUrl.indexOf("/browser/discover/") !== -1) {
+            if (currentUrl.indexOf("/browser/discover/") !== -1 && (url.search !== "" || url.search.trim() !== "")) {
                 getSearchParamsFromUrl(currentUrl);
             } else {
                 executeTheSearch();
@@ -45,12 +48,10 @@ jQuery(function ($) {
         }
 
         initMap();
-
-        if (!popstateActive) {
-            console.log("POPSTATE is no");
-            // Call function specific to no popstate event
-            handleURLChange();
-        }
+       
+        // Call function specific to no popstate event
+        handleURLChange();
+        
     });
 
 
@@ -489,9 +490,17 @@ jQuery(function ($) {
         console.log("search func  started");
         console.log("PREVIOUS LINKS:");
         console.log(previousUrls);
+        console.log("POPSTATE:");
+        console.log(popstateActive);
+        console.log("firstload; " + firstLoad);    
         token++;
         $('.main-content-warnings').html('');
         var localToken = token;
+        
+        if(popstateActive === 'true') {
+            firstLoad = false;
+        }
+        
         if (firstLoad) {
             return showJustSearchFacets();
         }
@@ -650,17 +659,22 @@ jQuery(function ($) {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
             }
         };
+        sessionStorage.setItem('popstate', false);
         param.timeout = 60000;
         $.ajax(param);
     }
 
     /* update the current url after a search was triggered */
     function updateUrl(params) {
-        //check if it is not a browser reload and skip to store the same url twice
-        if ($.inArray(window.location.href, previousUrls) === -1) {
+        console.log("updateUrl func");
+        console.log(sessionStorage.getItem('popstate'));
+        popstateActive = sessionStorage.getItem('popstate');
+        if (popstateActive === 'false') {
+            console.log("ADD NEW URL");
+            console.log(popstateActive);
             previousUrls.push(window.location.href);
             sessionStorage.setItem('urls', JSON.stringify(previousUrls));
-        }
+        } 
 
         resetsearchUrl();
         var queryString = customParam(params);
@@ -710,6 +724,9 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function loadPreviousUrl() {
+        console.log("loadPreviousUrl func");
+        console.log(previousUrls);
+        sessionStorage.setItem('popstate', true);
         if (previousUrls.length > 0) {
             // Get the previous URL
             var previousUrl = previousUrls[previousUrls.length - 1];
@@ -896,6 +913,7 @@ jQuery(function ($) {
 
         var results = '';
         results += displaySearchResult(data.results);
+        $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
 
         $('.main-content-row').html(results);
         //if the user selected a value from the map then we have to display it.
@@ -1151,6 +1169,7 @@ jQuery(function ($) {
                 '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
                 ' </div>' +
                 '</div>');
+        $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", true);
         search();
     }
 
