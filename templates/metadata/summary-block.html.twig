@@ -2,7 +2,7 @@
     <ul>
         {% if data.getData('acdh:hasRelatedDiscipline') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Related Discipline' } ) }}</li>
+                    {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Research Discipline' } ) }}</li>
             {% endif %}
 
         {% if data.getData('acdh:hasSubject') %}

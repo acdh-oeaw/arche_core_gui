@@ -655,8 +655,10 @@ jQuery(function ($) {
             console.log(error);
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
+                $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
             } else {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
+                $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
             }
         };
         sessionStorage.setItem('popstate', false);
