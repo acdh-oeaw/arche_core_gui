@@ -926,7 +926,7 @@ jQuery(function ($) {
                 countText = data.totalCount + ' ' + Drupal.t("Result(s)");
             } else {
                 $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
-                showJustSearchFacets();
+                //showJustSearchFacets();
             }
             $('#smartSearchCount').html(countText);
         } else {
@@ -937,7 +937,7 @@ jQuery(function ($) {
         //display warnings 
         if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-    }
+        }
     }
 
     function displaySearchWarningMessage(message, cssClass) {
