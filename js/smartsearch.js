@@ -1,6 +1,6 @@
 jQuery(function ($) {
 
-    "use strict";
+
 
     var selectedSearchValues = [];
     var countNullText = '<h5 class="font-weight-bold">' + Drupal.t('No results found') + '</h5>';
@@ -20,17 +20,19 @@ jQuery(function ($) {
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
     var guiObj = {};
+    var bboxObj = {};
     var smartSearchInputField = $('#sm-hero-str');
 
     $(document).ready(function () {
-
+        initMaps();
+       
         $('.main-content-warnings').html("");
-        
+
         $(window).on('popstate', function (e) {
             // Call the function to handle the URL change
             loadPreviousUrl();
         });
-        
+
         function handleURLChange() {
             console.log("handleURLChange func");
             var currentUrl = window.location.href;
@@ -47,14 +49,10 @@ jQuery(function ($) {
             }
         }
 
-        initMap();
-       
         // Call function specific to no popstate event
         handleURLChange();
-        
+
     });
-
-
 
     //// events ////
     $(document).delegate("input", "keypress", function (e) {
@@ -126,8 +124,6 @@ jQuery(function ($) {
         }
     });
 
-
-
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
         var buttonId = $(this).attr('id'); // Get the id attribute value of the clicked button
@@ -175,27 +171,6 @@ jQuery(function ($) {
     });
 
     ////// SEARCH IN Function END /////
-
-    $(document).delegate("#SMMapBtn", "click", function (e) {
-        e.preventDefault();
-        var coordinates = $(this).data("coordinates");
-        var title = $(this).data("location-title");
-        $('.arche-smartsearch-page-div').show();
-        /*
-         $('.main-content-row').html('<div class="container">' +
-         '<div class="row">' +
-         '<div class="col-12 mt-5">' +
-         '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
-         ' </div>' +
-         '</div>');*/
-
-        guiObj = {'coordinates': coordinates, 'locationTitle': title};
-        firstLoad = false;
-
-        var mapContainer = $('#mapContainer');
-        mapContainer.hide();
-        displayMapSelectedValue();
-    });
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
         firstLoad = true;
@@ -247,17 +222,17 @@ jQuery(function ($) {
     });
 
     $(document).delegate("#mapToggleBtn", "click", function (e) {
+        console.log("mapToggleBtn vlicked");
+        e.preventDefault();
+        $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+
+        setTimeout(function () {
+            map.invalidateSize();  // 'map' is your Leaflet map variable
+        }, 100);
         var mapContainer = $('#mapContainer');
 
-        if (mapContainer.is(':visible')) {
-            mapContainer.hide();
-            destroyMap(); // Destroy the map when hiding
-        } else {
-            mapContainer.show();
-            if (!map) {
-                initializeMap(); // Initialize the map when showing
-            }
-        }
+
+        //initializeMap();
     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
@@ -271,20 +246,26 @@ jQuery(function ($) {
 
     ////// FUNCTIONS //////
 
-    function initMap() {
+    function initMaps() {
 
-        map = L.map('map', {zoom: 10, center: [48.2, 16.3]});
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        map = L.map('map').setView([48.2, 16.3], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // FeatureGroup is to store editable layers
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
 
-        var bbox = new L.FeatureGroup();
-        map.addLayer(bbox);
-
-        map.addControl(new L.Control.Draw({
-            position: 'topleft',
+        // Initialize the draw control and pass it the FeatureGroup of editable layers
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+                poly: {
+                    allowIntersection: false // Restricts shapes to simple polygons
+                }
+            },
             draw: {
                 rectangle: {
                     shapeOptions: {
@@ -297,30 +278,60 @@ jQuery(function ($) {
                 marker: false,
                 circlemarker: false
             },
-            edit: {
-                featureGroup: bbox,
-                edit: false,
+        });
+        map.addControl(drawControl);
+
+        map.on(L.Draw.Event.CREATED, function (event) {
+            bboxObj = {};
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+            var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+            setMapLabel(coord, drawnItems);
+            bboxObj = {drawnItems};
+            console.log("CREATED BBOX ::::");
+            console.log(bboxObj);
+        });
+        bbox = drawnItems;
+
+
+        var customControl = L.Control.extend({
+            options: {
+                position: 'topright' // Position the button in the top right corner
+            },
+            onAdd: function (map) {
+                var container = L.DomUtil.create('button', 'leaflet-bar');
+                container.innerHTML = 'Close'; // Text of the button
+                container.style.backgroundColor = 'white';
+                container.style.width = '60px';
+                container.style.height = '30px';
+                container.style.fontWeight = 'bold';
+                container.style.cursor = 'pointer';
+                container.style.border = 'none';
+                container.style.outline = 'none';
+
+                // Prevent the map from handling the click
+                L.DomEvent.disableClickPropagation(container);
+
+                // Setup the click event on the button
+                L.DomEvent.on(container, 'click', function () {
+                    $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+                });
+
+                return container;
             }
-        }));
+        });
 
-        map.on('draw:drawstart', function (e) {
-            bbox.clearLayers();
-        });
-        map.on('draw:created', function (e) {
-            bbox.addLayer(e.layer);
-            bbox.setZIndex(1000);
-            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-            setMapLabel(coord);
-        });
-        map.on('draw:deleted', function (e) {
-            $('#mapLabel').html('');
-
-        });
+        // Add the new control to the map
+        map.addControl(new customControl());
     }
 
-    function setMapLabel(coord) {
-        $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
-
+    function setMapLabel(coord, bbox) {
+        if (bbox.getLayers().length === 0) {
+            $('#mapLabel').html('');
+        } else {
+            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+            $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
+        }
     }
 
     function getSearchParamsFromUrl(url) {
@@ -488,19 +499,14 @@ jQuery(function ($) {
 
     function search() {
         console.log("search func  started");
-        console.log("PREVIOUS LINKS:");
-        console.log(previousUrls);
-        console.log("POPSTATE:");
-        console.log(popstateActive);
-        console.log("firstload; " + firstLoad);    
         token++;
         $('.main-content-warnings').html('');
         var localToken = token;
-        
-        if(popstateActive === 'true') {
+
+        if (popstateActive === 'true') {
             firstLoad = false;
         }
-        
+
         if (firstLoad) {
             return showJustSearchFacets();
         }
@@ -599,21 +605,11 @@ jQuery(function ($) {
                 param.data.searchIn.push($(el).attr('data-value'));
             });
         }
-        /*
-         if (bbox !== '') {
-         param.data.facets['bbox'] = bbox;
-         }
-         
-         if (coordinates) {
-         if (searchStr.length === 0) {
-         firstLoad = false;
-         }
-         param.data.facets['bbox'] = coordinates;
-         }
-         */
-        if (bbox) {
-            if (bbox.getLayers().length > 0) {
-                var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+
+
+        if (bboxObj.drawnItems) {
+            if (bboxObj.drawnItems.getLayers().length > 0) {
+                var coord = bboxObj.drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
             }
         }
@@ -626,15 +622,6 @@ jQuery(function ($) {
                 console.log("search ajax success - param.data: ");
                 console.log(param.data);
                 showResults(x, param.data, t0);
-
-                /*
-                 if (param.data.facets.bbox) {
-                 displaySmallMap(param.data.facets.bbox);
-                 console.log("BBBOXXX:::: ");
-                 console.log(param.data.facets.bbox);
-                 }
-                 */
-
             }
         };
 
@@ -668,15 +655,11 @@ jQuery(function ($) {
 
     /* update the current url after a search was triggered */
     function updateUrl(params) {
-        console.log("updateUrl func");
-        console.log(sessionStorage.getItem('popstate'));
         popstateActive = sessionStorage.getItem('popstate');
         if (popstateActive === 'false') {
-            console.log("ADD NEW URL");
-            console.log(popstateActive);
             previousUrls.push(window.location.href);
             sessionStorage.setItem('urls', JSON.stringify(previousUrls));
-        } 
+        }
 
         resetsearchUrl();
         var queryString = customParam(params);
@@ -726,22 +709,15 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function loadPreviousUrl() {
-        console.log("loadPreviousUrl func");
-        console.log(previousUrls);
         sessionStorage.setItem('popstate', true);
         if (previousUrls.length > 0) {
             // Get the previous URL
             var previousUrl = previousUrls[previousUrls.length - 1];
-            console.log("previousUrl :::::::: " + previousUrl);
-            console.log("previousUrl length:::::::: " + previousUrls.length);
             // Update sessionStorage
             // Remove the current URL
             previousUrls.pop();
             sessionStorage.setItem('urls', JSON.stringify(previousUrls));
             // Navigate to the previous URL
-            console.log("NEW pREV URLS:::::::");
-            console.log(previousUrls);
-            console.log(previousUrls.length);
             window.location.href = previousUrl;
         }
     }
@@ -879,6 +855,7 @@ jQuery(function ($) {
                             select += '</div>';
                         }
 
+
                         if (fd.type === 'map') {
                             if (mapPins) {
                                 map.removeLayer(mapPins);
@@ -939,7 +916,7 @@ jQuery(function ($) {
         //display warnings 
         if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-        }
+    }
     }
 
     function displaySearchWarningMessage(message, cssClass) {

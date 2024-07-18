@@ -19,20 +19,20 @@ smart-search:
     css:
         base:
             css/slimselect.css: { minified: false}
-            css/leaflet-1.9.4.css: { minified: false }
-            css/leaflet.draw-1.0.4.css: { minified: false }
+            css/leaflet-1.9.4.css: { minified: false }            
             css/select2-4.0.13.min.css: { minified: true }
             css/jquery-ui.min-1.13.3.css: { minified: true }
             css/jquery.auto-complete.min-1.0.7.css: { minified: true }            
             css/smart-multi.css: {}
+            https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css: { external: true, minified: false }
     js:
         js/slimselect.js: {}
-        js/jquery-3.6.4.min.js: { minified: true }
         js/leaflet-1.9.4.js: { minified: false }
-        js/leaflet.draw-1.0.4.js: { minified: false }
+        js/jquery-3.6.0.min.js: { minified: true }        
         js/select2.min-4.0.13.js: { minified: true }
         js/jquery-ui.min-1.13.3.js: { minified: true }
-        js/jquery.auto-complete.min-1.0.7.js: { minified: true }        
+        js/jquery.auto-complete.min-1.0.7.js: { minified: true }
+        js/leaflet.draw-1.0.4.js: { minified: false }
         js/smartsearch.js: {}
     dependencies:
         - core/drupal
@@ -44,10 +44,10 @@ detail-view:
     header: true
     css:
         base:
-            https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css: { type: external, minified: true }
+            css/jquery.dataTables-1.13.7.min.css: { minified: true }
             css/jqtree/themes/default/style.min.css: {}
     js:
-        https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js: { type: external, minified: true }
+        js/jquery.dataTables-1.13.7.min.js: { minified: true }
         js/citation/citation-js-0.5.0.min.js: {}
         js/tree/jstree.min.js: {}
         js/arche_detail.js: {}
@@ -63,9 +63,9 @@ discover-view:
     header: true
     css:
         base:
-            https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css: { type: external, minified: true }
+            css/jquery.dataTables-1.13.7.min.css: { minified: true }
     js:
-        https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js: { type: external, minified: true }
+        js/jquery.dataTables-1.13.7.min.js: { minified: true }
         js/arche_discover.js: {}
     dependencies:
         - core/drupal
@@ -92,8 +92,8 @@ dissemination-pdf:
             https://fonts.googleapis.com/icon?family=Material+Icons: { type: external }
             https://fonts.googleapis.com/icon?family=Material+Icons+Outlined: { type: external }
     js:
-        https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js: { type: external, minified: true }
-        https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js: { type: external, minified: true }
+        js/jquery-3.6.0.min.js: { minified: true }
+        js/pdf-2.11.338.min.js: { minified: true }
         js/pdf_viewer/pdfjs-viewer.min.js: {}
     dependencies:
         - core/drupal
