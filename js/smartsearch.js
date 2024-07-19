@@ -225,7 +225,8 @@ jQuery(function ($) {
         console.log("mapToggleBtn vlicked");
         e.preventDefault();
         $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
-        $('.sm-map').css('display', $('.sm-map').css('display') == 'inherit' ? 'block' : 'inherit');
+            
+        $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
 
         setTimeout(function () {
             map.invalidateSize();  // 'map' is your Leaflet map variable

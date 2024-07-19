@@ -12,8 +12,7 @@
         
     </div>
     <div id="licensesBody" class="collapse show">
-        <div class="card-body meta-sidebar flex-column">
-            {{ resId }}
+        <div class="card-body meta-sidebar flex-column">            
             {% for key, value in obj %}
                 <div>
                     <b>{{ key|trans }}:</b></br>
@@ -21,7 +20,7 @@
                         {% if val['id'] %} 
                             <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
                         {% else %}    
-                            {{ val['value'] }}<br>
+                            {{ val['value']|nl2br }}<br>
                         {% endif %}
                     {% endfor %}    
                 </div>
