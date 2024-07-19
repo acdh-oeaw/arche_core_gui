@@ -25,7 +25,7 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         initMaps();
-       
+
         $('.main-content-warnings').html("");
 
         $(window).on('popstate', function (e) {
@@ -225,6 +225,7 @@ jQuery(function ($) {
         console.log("mapToggleBtn vlicked");
         e.preventDefault();
         $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+        $('.sm-map').css('display', $('.sm-map').css('display') == 'inherit' ? 'block' : 'inherit');
 
         setTimeout(function () {
             map.invalidateSize();  // 'map' is your Leaflet map variable
@@ -260,12 +261,6 @@ jQuery(function ($) {
 
         // Initialize the draw control and pass it the FeatureGroup of editable layers
         var drawControl = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems,
-                poly: {
-                    allowIntersection: false // Restricts shapes to simple polygons
-                }
-            },
             draw: {
                 rectangle: {
                     shapeOptions: {
@@ -276,7 +271,8 @@ jQuery(function ($) {
                 polyline: false,
                 circle: false,
                 marker: false,
-                circlemarker: false
+                circlemarker: false,
+                edit: false
             },
         });
         map.addControl(drawControl);
@@ -291,6 +287,17 @@ jQuery(function ($) {
             console.log("CREATED BBOX ::::");
             console.log(bboxObj);
         });
+
+        map.on('draw:drawstart', function (event) {
+            drawnItems.clearLayers();
+        });
+
+        map.on('draw:deleted', function (event) {
+            $('#mapLabel').html('');
+            $('.sm-map').css('top', '-1000px');
+            $('.sm-map').css('display', 'block');
+        });
+
         bbox = drawnItems;
 
 
@@ -450,7 +457,7 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                initialFacets: true,
+                //initialFacets: true,
                 //noCache: $('#noCache').is(':checked') ? 1 : 0
                 noCache: 0
             }
@@ -497,6 +504,10 @@ jQuery(function ($) {
         }
     }
 
+    /**
+     * Perform the main search function
+     * @returns {undefined}
+     */
     function search() {
         console.log("search func  started");
         token++;
@@ -744,6 +755,7 @@ jQuery(function ($) {
         $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
         guiObj = {};
         guiObj = {'actualPage': 1};
+        bboxObj.drawnItems.clearLayers();
         resetsearchUrl();
         //spatialSelect.setData([{text: 'No filter', value: ''}]);
         showJustSearchFacets();
@@ -791,6 +803,8 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showResults(data, param, t0, initial = false) {
+        console.log("SHOW RESULTS: ");
+        console.log(data);
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
         var pageSize = data.pageSize;
@@ -804,85 +818,86 @@ jQuery(function ($) {
         }
 
         createPager(totalPages);
+
         var multipleSelects = [];
         $('div.dateValues').text('');
 
-        if (initial || data.results.length > 0) {
-            $('input.facet-min').attr('placeholder', '');
-            $('input.facet-max').attr('placeholder', '');
+        // if (initial || data.results.length > 0) {
+        $('input.facet-min').attr('placeholder', '');
+        $('input.facet-max').attr('placeholder', '');
 
-            var facets = '';
-            $.each(data.facets, function (n, fd) {
-                var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
-                var select = "";
-                if (fd.values.length > 0 || fd.min || fd.type === 'map') {
-                    var div = $(document.getElementById(fd.property + 'values'));
-                    var text = '';
+        var facets = '';
+        $.each(data.facets, function (n, fd) {
+            var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
+            var select = "";
+            if (fd.values.length > 0 || fd.min || fd.type === 'map') {
+                var div = $(document.getElementById(fd.property + 'values'));
+                var text = '';
 
-                    if (fd.type === 'continuous' && fdp.distribution >= 2) {
-                        $.each(fd.values, function (n, i) {
-                            text += i.label + ': ' + i.count + '<br/>';
-                        });
-                    }
-
-                    if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
-                        var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
-                        select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
-                        $.each(fd.values, function (n, i) {
-                            //iterate the param.facets to set the selected ones!!!!!!
-                            if (param.facets[fd.property] && param.facets[fd.property].length > 0) {
-                                $.each(param.facets[fd.property], function (sI, sv) {
-                                    if (sv === i.value) {
-                                        select += '<option value="' + i.value + '" data-value="' + fd.property + '" selected>' + shorten(i.label) + ' (' + i.count + ')</option>';
-                                    }
-                                });
-                            } else {
-                                select += '<option value="' + i.value + '" data-value="' + fd.property + '" >' + shorten(i.label) + ' (' + i.count + ')</option>';
-                            }
-                        });
-                        select += '</select>';
-                    }
-
-                    if (div.length === 0) {
-                        if (fd.type === 'continuous') {
-                            select += '<div class="row">';
-                            select += '<div class="col">';
-                            select += '<input class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
-                            select += '</div>';
-                            select += '<div class="col">';
-                            select += '<input class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
-                            select += '</div>';
-                            select += '</div>';
-                        }
-
-
-                        if (fd.type === 'map') {
-                            if (mapPins) {
-                                map.removeLayer(mapPins);
-                            }
-                            if (fd.values !== '') {
-                                mapPins = L.geoJSON(JSON.parse(fd.values));
-                                mapPins.addTo(map);
-                            }
-                            select = '<div id="mapLabel"></div>' +
-                                    '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
-                        }
-
-                        facets += createFacetSelectCard(fd, select);
-                        multipleSelects.push(title_id);
-
-                    } else {
-                        div.html(select + '<br/>');
-                    }
-
+                if (fd.type === 'continuous' && fdp.distribution >= 2) {
+                    $.each(fd.values, function (n, i) {
+                        text += i.label + ': ' + i.count + '<br/>';
+                    });
                 }
-                if (fdp.distribution === 1 || fdp.distribution === 3) {
-                    $('input.facet-min[data-value="' + fd.property + '"]').attr('placeholder', fd.min || '');
-                    $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
+
+                if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
+                    var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
+                    select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
+                    $.each(fd.values, function (n, i) {
+                        //iterate the param.facets to set the selected ones!!!!!!
+                        if (param.facets[fd.property] && param.facets[fd.property].length > 0) {
+                            $.each(param.facets[fd.property], function (sI, sv) {
+                                if (sv === i.value) {
+                                    select += '<option value="' + i.value + '" data-value="' + fd.property + '" selected>' + shorten(i.label) + ' (' + i.count + ')</option>';
+                                }
+                            });
+                        } else {
+                            select += '<option value="' + i.value + '" data-value="' + fd.property + '" >' + shorten(i.label) + ' (' + i.count + ')</option>';
+                        }
+                    });
+                    select += '</select>';
                 }
-            });
-            $('#facets').html(facets);
-        }
+
+                if (div.length === 0) {
+                    if (fd.type === 'continuous') {
+                        select += '<div class="row">';
+                        select += '<div class="col">';
+                        select += '<input class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
+                        select += '</div>';
+                        select += '<div class="col">';
+                        select += '<input class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
+                        select += '</div>';
+                        select += '</div>';
+                    }
+
+
+                    if (fd.type === 'map') {
+                        if (mapPins) {
+                            map.removeLayer(mapPins);
+                        }
+                        if (fd.values !== '') {
+                            mapPins = L.geoJSON(JSON.parse(fd.values));
+                            mapPins.addTo(map);
+                        }
+                        select = '<div id="mapLabel"></div>' +
+                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
+                    }
+
+                    facets += createFacetSelectCard(fd, select);
+                    multipleSelects.push(title_id);
+
+                } else {
+                    div.html(select + '<br/>');
+                }
+
+            }
+            if (fdp.distribution === 1 || fdp.distribution === 3) {
+                $('input.facet-min[data-value="' + fd.property + '"]').attr('placeholder', fd.min || '');
+                $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
+            }
+        });
+        $('#facets').html(facets);
+        //}
 
         $.each(multipleSelects, function (k, v) {
             $("#smart-multi-" + v).select2({
@@ -916,15 +931,27 @@ jQuery(function ($) {
         //display warnings 
         if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-    }
+        }
     }
 
+    /**
+     * Display warning text on the search page
+     * @param {type} message
+     * @param {type} cssClass
+     * @returns {undefined}
+     */
     function displaySearchWarningMessage(message, cssClass) {
         if (typeof message !== 'undefined') {
             $('.main-content-warnings').html('<div class="' + cssClass + ' warning-message-div">' + message + '</div>');
         }
     }
 
+    /**
+     * Show the facets boxes on the left menu
+     * @param {type} fd
+     * @param {type} select
+     * @returns {String}
+     */
     function createFacetSelectCard(fd, select) {
         var text = "";
         var idStr = fd.label.replace(/[^\w\s]/gi, '');
@@ -956,6 +983,11 @@ jQuery(function ($) {
         return text;
     }
 
+    /**
+     * Generate HTML code for the result view
+     * @param {type} data
+     * @returns {String}
+     */
     function displaySearchResult(data) {
         var results = "";
         results += '<div class="container">';
@@ -1036,7 +1068,12 @@ jQuery(function ($) {
         return results;
     }
 
-    ///  we have to check the thumbnail is existing or not, if not then hide it. ///
+    
+    /**
+     * Check the thumbnail, if not exists then hide it and change the divs
+     * @param {type} resourceUrl
+     * @returns {undefined}
+     */
     function checkThumbnailImage(resourceUrl) {
         // Create a new Image object
         var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600';
@@ -1049,16 +1086,23 @@ jQuery(function ($) {
         };
 
     }
-
+    
+    /**
+     * NOT IN USE!
+     * @returns {undefined}
+     */
     function displayMapSelectedValue() {
         bbox = guiObj.coordinates;
         if (guiObj.coordinates && guiObj.locationTitle) {
             $('#mapSelectedPlace').html('<h5 class="h5-blue-title"><button id="removeMapSelectedPlace" class="btn btn-sm-add"> - </button>' + guiObj.locationTitle + '</h5>');
         }
-
     }
 
-    /* set the colors of the restriction labels*/
+    /**
+     * set the colors of the restriction labels
+     * @param {type} accessText
+     * @returns {String}
+     */
     function setAccessRestrictionLabel(accessText) {
 
         var wordRegex = /\b(public|restricted|academic)\b/g;
