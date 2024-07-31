@@ -17,6 +17,7 @@ class ArcheBaseController extends ControllerBase {
     protected $helper;
     protected $model;
     protected $pdo;
+    protected $schema;
 
     public function __construct() {
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language']) : $this->siteLang = "en";
@@ -30,10 +31,10 @@ class ArcheBaseController extends ControllerBase {
           
             $this->pdo = new \PDO($this->config->dbConnStr->guest);
             $baseUrl = $this->config->rest->urlBase . $this->config->rest->pathBase;
-            $schema = new \acdhOeaw\arche\lib\Schema($this->config->schema);
+            $this->schema = new \acdhOeaw\arche\lib\Schema($this->config->schema);
             $headers = new \acdhOeaw\arche\lib\Schema($this->config->rest->headers);
             $nonRelProp = $this->config->metadataManagment->nonRelationProperties ?? [];
-            $this->repoDb = new \acdhOeaw\arche\lib\RepoDb($baseUrl, $schema, $headers, $this->pdo, $nonRelProp);
+            $this->repoDb = new \acdhOeaw\arche\lib\RepoDb($baseUrl, $this->schema, $headers, $this->pdo, $nonRelProp);
         } catch (\Exception $ex) {
             \Drupal::messenger()->addWarning($this->t('Error during the BaseController initialization!') . ' ' . $ex->getMessage());
             return array();

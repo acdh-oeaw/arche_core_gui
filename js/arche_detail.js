@@ -1,7 +1,6 @@
 jQuery(function ($) {
 
     "use strict";
-
     var resObj = {};
     var resId = "";
     /** CTRL PRess check for the tree view  #19924 **/
@@ -10,21 +9,18 @@ jQuery(function ($) {
     var expertTable;
     var childTable;
     var versionVisible = false;
-
     $(document).ready(function () {
         addButtonToDescriptionText();
         $('#cite-loader').removeClass('hidden');
         if ($('#resourceHasVersion').val()) {
             versionVisible = true;
         }
-        //$('#meta-content-container').hide();
+//$('#meta-content-container').hide();
         resId = $("#resId").val();
         checkDetailCardEvents();
-
         //call basic data
         //fetchMetadata();
         loadAdditionalData();
-
         // hide the summary div if there is no data inside it
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
@@ -32,12 +28,10 @@ jQuery(function ($) {
 
 
     });
-
     $(document).keydown(function (event) {
         if (event.which == "17")
             cntrlIsPressed = true;
     });
-
     $(document).keyup(function () {
         cntrlIsPressed = false;
     });
@@ -55,7 +49,6 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchRPR();
         fetchPublications();
-
     }
 
     /**
@@ -81,7 +74,6 @@ jQuery(function ($) {
         var truncatedText = truncateText(longText, 150);
         var strippedLongText = stripHtml(longText).trim();
         var strippedTruncatedText = stripHtml(truncatedText).trim();
-
         if (strippedLongText !== strippedTruncatedText) {
             $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
         }
@@ -115,7 +107,6 @@ jQuery(function ($) {
         $('.descriptionTextShort').show();
         $('.descriptionTextLong').hide();
     });
-
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
         var text = $('#pidValue').text();
@@ -130,8 +121,6 @@ jQuery(function ($) {
         alert('Link copied to clipboard!');
         e.preventDefault();
     });
-
-
     function fetchBreadcrumb() {
         var acdhid = $('#resId').val();
         $.ajax({
@@ -159,7 +148,7 @@ jQuery(function ($) {
             error: function (xhr, status, error) {
                 console.log("breadcrumb error" + error);
             }
-        });//
+        }); //
     }
 
     function fetchVersionsBlock() {
@@ -181,7 +170,6 @@ jQuery(function ($) {
                         },
                         'success': function (nodes) {
                             console.log("versions success");
-
                             if (parseInt(nodes[0].id) !== parseInt(acdhid)) {
                                 //show the newer version div
                                 console.log(nodes[0].id);
@@ -215,7 +203,6 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#versions-tree').jstree('search', searchString);
             });
-
             $('#versions-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
                     var node = $('#versions-tree').jstree(true).get_node(node.originalEvent.target.id);
@@ -241,7 +228,6 @@ jQuery(function ($) {
                     'data': {
                         'url': function (node) {
                             var acdhid = $('#resId').val();
-
                             if (node.id != "#") {
                                 acdhid = node.id;
                             }
@@ -279,7 +265,6 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#child-tree').jstree('search', searchString);
             });
-
             $('#child-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
                     var node = $('#child-tree').jstree(true).get_node(node.originalEvent.target.id);
@@ -346,15 +331,12 @@ jQuery(function ($) {
             },
             'columns': [
                 {data: 'customCitation', render: function (data, type, row, meta) {
-                        if (row.customCitation) {
-                            return row.customCitation;
-                        }
-                        return Drupal.t("No Custom Citation");
+                        return 'Loading...'; // Initial placeholder
                     }
                 },
                 {data: 'property', render: function (data, type, row, meta) {
                         if (row.property) {
-                            return '<a href="' + row.id + '">' + removeBeforeHash(row.property) + '</a>';
+                            return removeBeforeHash(row.property);
                         }
                         return "";
                     }
@@ -363,6 +345,41 @@ jQuery(function ($) {
                 {data: 'type', visible: false},
                 {data: 'acdhid', visible: false}
             ],
+            createdRow: function (row, data, dataIndex) {
+                // Perform the AJAX request for the URL CS Content field
+                var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
+                
+                try {
+                    let citeDT = new Cite("@dataset{" + data.id + ", " + data.customCitation + "}");
+                    let templateName = 'apa-6th';
+                    var template = "";
+                    url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
+                            .done(function (data) {
+
+                                template = data;
+                                Cite.CSL.register.addTemplate(templateName, template);
+                                var opt = {
+                                    format: 'string'
+                                };
+                                opt.type = 'html';
+                                opt.style = 'citation-' + templateName;
+                                opt.lang = 'en-US';
+                                return citeDT.get(opt);
+                            })
+                            .then(function (d) {
+                                var opt = {
+                                    format: 'string'
+                                };
+                                opt.type = 'html';
+                                opt.style = 'citation-' + templateName;
+                                opt.lang = 'en-US';
+                                cell.html(citeDT.get(opt));
+                            });
+                } catch (error) {
+                    console.log(error);
+                    cell.html(data.customCitation);
+                }
+            },
             fnDrawCallback: function () {
             }
         });
@@ -390,19 +407,13 @@ jQuery(function ($) {
                 'url': "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
                     if (response === undefined) {
-                        console.log('response error');
-                        console.log(error);
                         hideEmptyTabs('#associated-coll-res-tab');
                         //$('.child-elements-div').hide();
                         return;
                     }
-                    console.log('response: ');
-                    console.log(response.responseJSON);
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    console.log('error');
-                    console.log(error);
                     hideEmptyTabs('#associated-coll-res-tab');
                     $('.rcr-elements-div').hide();
                 }
@@ -421,7 +432,6 @@ jQuery(function ($) {
                         text += '<div class="res-property">';
                         text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
                         text += '</div>';
-
                         //avdate
 
                         text += '</div>';
@@ -499,7 +509,6 @@ jQuery(function ($) {
                         text += '<div class="res-property">';
                         text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
                         text += '</div>';
-
                         //avdate
 
                         text += '</div>';
@@ -545,7 +554,6 @@ jQuery(function ($) {
 
     function initExpertView() {
         console.log('INIT expert view');
-
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
@@ -571,7 +579,7 @@ jQuery(function ($) {
             error: function (xhr, status, error) {
                 $('#block-arche-theme-content').html(error);
             }
-        });//
+        }); //
     }
 
 
@@ -585,7 +593,6 @@ jQuery(function ($) {
             $(this).removeClass('basic');
             $(this).addClass('expert');
             $(this).text(Drupal.t('Basic-View'));
-
         } else {
             $('#expertdt-container').hide();
             $('#meta-content-container').fadeIn(200);
@@ -595,18 +602,14 @@ jQuery(function ($) {
         }
 
     });
-
     $(document).delegate("a#archeHref", "click", function (e) {
         $('#meta-content-container').hide();
         var url = $(this).attr('href');
         if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
             $('html, body').animate({scrollTop: '0px'}, 0);
-
-
             var id = url;
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
-
             expertTable.ajax.reload();
             fetchChildTree();
             resId = id;
@@ -621,7 +624,6 @@ jQuery(function ($) {
             $(".loader-div").hide();
         }
     });
-
     //hsndle the internal urls to reload the page
 
 
@@ -647,7 +649,6 @@ jQuery(function ($) {
         $('#meta-right-container').show();
         $('.metadata-main-loader').hide();
         $('.metadata-right-loader').hide();
-
     }
 
 
@@ -735,7 +736,6 @@ jQuery(function ($) {
                         html += '</div>';
                         html += '</div>';
                         html += '</div>';
-
                         if (i < 4) {
                             $('#home-carousel-first-page').append(html);
                         } else {
@@ -764,7 +764,6 @@ jQuery(function ($) {
      */
     function createCiteTab(type, typeid) {
         $('#cite-dropdown').append($('<option></option>').attr('value', typeid.toLowerCase()).text(type.toUpperCase()));
-
     }
 
     /**
@@ -797,12 +796,9 @@ jQuery(function ($) {
                 //$('#cite-content-div').addClass('show');
                 //$('#cite-content-div').removeClass('hidden');
                 $('#cite-loader').addClass('hidden');
-                console.log("get done cite");
                 try {
                     let cite = new Cite(data);
-
                     var apa_loaded = true;
-
                     let templateName = 'apa-6th';
                     var template = "";
                     url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
@@ -810,7 +806,6 @@ jQuery(function ($) {
 
                                 template = data;
                                 Cite.CSL.register.addTemplate(templateName, template);
-
                                 var opt = {
                                     format: 'string'
                                 };
@@ -829,10 +824,8 @@ jQuery(function ($) {
                         opt.type = 'html';
                         opt.style = 'citation-harvard1';
                         opt.lang = 'en-US';
-
                         createCiteTab('harvard', 'harvard');
                         createCiteContent(cite.get(opt), 'harvard', apa_loaded);
-
                         //Vancouver
                         var opt = {
                             format: 'string'
@@ -840,10 +833,8 @@ jQuery(function ($) {
                         opt.type = 'html';
                         opt.style = 'citation-vancouver';
                         opt.lang = 'en-US';
-
                         createCiteTab('vancouver', 'vancouver');
                         createCiteContent(cite.get(opt), 'vancouver', false);
-
                         createCiteTab('BiblaTex', 'biblatex');
                         createCiteContent(data, 'BiblaTex', false);
                     });
@@ -892,8 +883,6 @@ jQuery(function ($) {
         var selectedOption = $(this).val(); // Get the selected option value
         handleCiteSelectEvents(selectedOption);
     });
-
-
     $(document).delegate("a#copyCite", "click", function (e) {
         var $tempTextarea = $('<textarea>');
         // Set the textarea value to the content of the div
@@ -912,5 +901,4 @@ jQuery(function ($) {
         }, 5000);
         e.preventDefault();
     });
-
 });
