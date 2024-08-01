@@ -24,7 +24,6 @@ jQuery(function ($) {
     var smartSearchInputField = $('#sm-hero-str');
 
     $(document).ready(function () {
-        initMaps();
 
         $('.main-content-warnings').html("");
 
@@ -51,7 +50,7 @@ jQuery(function ($) {
 
         // Call function specific to no popstate event
         handleURLChange();
-
+        initMaps();
     });
 
     //// events ////
@@ -65,6 +64,7 @@ jQuery(function ($) {
             executeTheSearch();
         }
     });
+
     $(document).delegate("select", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
@@ -193,11 +193,9 @@ jQuery(function ($) {
         if ($('.discover-content-main').is(':hidden')) {
             $('.discover-content-main').show();
         }
-
         guiObj = {'actualPage': 1};
         firstLoad = false;
         executeTheSearch();
-
     });
 
     $(document).delegate(".paginate_button", "click", function (e) {
@@ -222,19 +220,13 @@ jQuery(function ($) {
     });
 
     $(document).delegate("#mapToggleBtn", "click", function (e) {
-        console.log("mapToggleBtn vlicked");
         e.preventDefault();
         $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
-            
         $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
 
         setTimeout(function () {
             map.invalidateSize();  // 'map' is your Leaflet map variable
         }, 100);
-        var mapContainer = $('#mapContainer');
-
-
-        //initializeMap();
     });
 
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
@@ -251,7 +243,9 @@ jQuery(function ($) {
     function initMaps() {
 
         map = L.map('map').setView([48.2, 16.3], 10);
-
+        var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
+        console.log("INIT MAP COORDINATES::");
+        console.log(coordinates);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -263,6 +257,7 @@ jQuery(function ($) {
         // Initialize the draw control and pass it the FeatureGroup of editable layers
         var drawControl = new L.Control.Draw({
             draw: {
+                position: 'topleft',
                 rectangle: {
                     shapeOptions: {
                         color: '#97009c'
@@ -272,28 +267,75 @@ jQuery(function ($) {
                 polyline: false,
                 circle: false,
                 marker: false,
-                circlemarker: false,
-                edit: false
+                circlemarker: false
             },
+            edit: {
+                edit: false,
+                featureGroup: drawnItems
+            }
         });
         map.addControl(drawControl);
 
+        if (coordinates) {
+            console.log("INSIDE COORDINATES");
+            var coordinatesString = coordinates.replace('POLYGON((', '').replace('))', '');
+            var coordinatesArray = coordinatesString.split(',');
+
+            // Reformat the coordinates to [latitude, longitude] for Leaflet
+            var polygonCoordinates = coordinatesArray.map(function (coord) {
+                var latLng = coord.trim().split(' ');
+                return [parseFloat(latLng[1]), parseFloat(latLng[0])];
+            });
+
+            var latitudes = polygonCoordinates.map(function (coord) {
+                return coord[0];
+            });
+            var longitudes = polygonCoordinates.map(function (coord) {
+                return coord[1];
+            });
+
+            var southWest = [Math.min.apply(null, latitudes), Math.min.apply(null, longitudes)];
+            var northEast = [Math.max.apply(null, latitudes), Math.max.apply(null, longitudes)];
+
+            var bounds = [southWest, northEast];
+
+            // Create a rectangle layer
+            var rectangle = L.rectangle(bounds, {
+                fillColor: '#97009c'
+            });
+
+            //map.addLayer(drawnItems);
+            drawnItems.addLayer(rectangle);
+            drawnItems.addTo(map);
+            var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+            setTimeout(function () {
+                setMapLabel(coord, drawnItems);
+            }, 1000);
+
+            map.fitBounds(rectangle.getBounds());
+        }
+
+
         map.on(L.Draw.Event.CREATED, function (event) {
+            drawnItems.clearLayers();
             bboxObj = {};
             var layer = event.layer;
+            map.removeLayer(layer);
             drawnItems.addLayer(layer);
             var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
             setMapLabel(coord, drawnItems);
             bboxObj = {drawnItems};
-            console.log("CREATED BBOX ::::");
-            console.log(bboxObj);
         });
 
         map.on('draw:drawstart', function (event) {
+            var layer = event.layer;
+            map.removeLayer(layer);
             drawnItems.clearLayers();
         });
 
         map.on('draw:deleted', function (event) {
+            var layer = event.layer;
+            map.removeLayer(layer);
             $('#mapLabel').html('');
             $('.sm-map').css('top', '-1000px');
             $('.sm-map').css('display', 'block');
@@ -334,6 +376,7 @@ jQuery(function ($) {
     }
 
     function setMapLabel(coord, bbox) {
+        console.log("setMapLabel");
         if (bbox.getLayers().length === 0) {
             $('#mapLabel').html('');
         } else {
@@ -388,7 +431,6 @@ jQuery(function ($) {
                 obj[key] = value;
             }
         });
-
         return obj;
     }
 
@@ -524,7 +566,8 @@ jQuery(function ($) {
         }
 
         var searchStr = $('#sm-hero-str').val();
-        var coordinates = (getGuiSearchParams('coordinates')) ? getGuiSearchParams('coordinates') : "";
+
+        // var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
         var guiFacets = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
 
@@ -564,16 +607,7 @@ jQuery(function ($) {
             }
             param.data.facets[prop] = val;
         });
-        /*
-         $('input.facet:checked').each(function (n, facet) {
-         var prop = $(facet).attr('data-value');
-         var val = $(facet).val();
-         if (!(prop in param.data.facets)) {
-         param.data.facets[prop] = [];
-         }
-         param.data.facets[prop].push(val);
-         });
-         */
+
         $('input.facet-min').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
             var val = $(facet).val();
@@ -618,11 +652,15 @@ jQuery(function ($) {
             });
         }
 
-
+        console.log("BBOX OBJ:::");
+        console.log(bboxObj);
         if (bboxObj.drawnItems) {
+            console.log("SEARCH _ BBOX");
             if (bboxObj.drawnItems.getLayers().length > 0) {
+                console.log("SEARCH _ BBOX 2");
                 var coord = bboxObj.drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
+                setMapLabel(coord, bboxObj.drawnItems);
             }
         }
 
@@ -873,6 +911,7 @@ jQuery(function ($) {
 
 
                     if (fd.type === 'map') {
+                        
                         if (mapPins) {
                             map.removeLayer(mapPins);
                         }
@@ -932,7 +971,7 @@ jQuery(function ($) {
         //display warnings 
         if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-        }
+    }
     }
 
     /**
@@ -1069,7 +1108,7 @@ jQuery(function ($) {
         return results;
     }
 
-    
+
     /**
      * Check the thumbnail, if not exists then hide it and change the divs
      * @param {type} resourceUrl
@@ -1087,7 +1126,7 @@ jQuery(function ($) {
         };
 
     }
-    
+
     /**
      * NOT IN USE!
      * @returns {undefined}
