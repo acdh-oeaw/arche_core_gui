@@ -37,7 +37,6 @@ jQuery(function ($) {
             var currentUrl = window.location.href;
             // Create a URL object to extract pathname
             var url = new URL(currentUrl);
-            console.log(url.search);
             // Get the pathname from the URL
             var pathname = url.pathname;
             // Check if the URL contains any params
@@ -244,8 +243,6 @@ jQuery(function ($) {
 
         map = L.map('map').setView([48.2, 16.3], 10);
         var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
-        console.log("INIT MAP COORDINATES::");
-        console.log(coordinates);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -277,7 +274,6 @@ jQuery(function ($) {
         map.addControl(drawControl);
 
         if (coordinates) {
-            console.log("INSIDE COORDINATES");
             var coordinatesString = coordinates.replace('POLYGON((', '').replace('))', '');
             var coordinatesArray = coordinatesString.split(',');
 
@@ -307,9 +303,9 @@ jQuery(function ($) {
             //map.addLayer(drawnItems);
             drawnItems.addLayer(rectangle);
             drawnItems.addTo(map);
-            var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+
             setTimeout(function () {
-                setMapLabel(coord, drawnItems);
+                setMapLabel(drawnItems);
             }, 1000);
 
             map.fitBounds(rectangle.getBounds());
@@ -323,8 +319,9 @@ jQuery(function ($) {
             map.removeLayer(layer);
             drawnItems.addLayer(layer);
             var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-            setMapLabel(coord, drawnItems);
+
             bboxObj = {drawnItems};
+            setMapLabel(drawnItems);
         });
 
         map.on('draw:drawstart', function (event) {
@@ -375,14 +372,9 @@ jQuery(function ($) {
         map.addControl(new customControl());
     }
 
-    function setMapLabel(coord, bbox) {
-        console.log("setMapLabel");
-        if (bbox.getLayers().length === 0) {
-            $('#mapLabel').html('');
-        } else {
-            var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-            $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
-        }
+    function setMapLabel(bbox) {
+        var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
+        $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
     }
 
     function getSearchParamsFromUrl(url) {
@@ -652,15 +644,10 @@ jQuery(function ($) {
             });
         }
 
-        console.log("BBOX OBJ:::");
-        console.log(bboxObj);
         if (bboxObj.drawnItems) {
-            console.log("SEARCH _ BBOX");
             if (bboxObj.drawnItems.getLayers().length > 0) {
-                console.log("SEARCH _ BBOX 2");
                 var coord = bboxObj.drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
-                setMapLabel(coord, bboxObj.drawnItems);
             }
         }
 
@@ -909,9 +896,7 @@ jQuery(function ($) {
                         select += '</div>';
                     }
 
-
                     if (fd.type === 'map') {
-                        
                         if (mapPins) {
                             map.removeLayer(mapPins);
                         }
@@ -922,7 +907,6 @@ jQuery(function ($) {
                         select = '<div id="mapLabel"></div>' +
                                 '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
                     }
-
                     facets += createFacetSelectCard(fd, select);
                     multipleSelects.push(title_id);
 
@@ -971,7 +955,15 @@ jQuery(function ($) {
         //display warnings 
         if (data.messages !== "") {
             displaySearchWarningMessage(data.messages, data.class);
-    }
+        }
+        if (bboxObj !== undefined) {
+            if (bboxObj.drawnItems) {
+                setMapLabel(bboxObj.drawnItems);
+            }
+        }
+        if (bbox !== undefined) {
+            setMapLabel(bbox);
+        }
     }
 
     /**
