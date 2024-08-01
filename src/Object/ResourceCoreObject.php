@@ -843,6 +843,7 @@ class ResourceCoreObject {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];
+                            $obj['property'] = $k;
                             $result[$v][] = $obj;
                         }
                     }

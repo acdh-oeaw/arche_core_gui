@@ -1,6 +1,6 @@
 <div class="card metadata">
     <div class="card-header">
-         <div class="row justify-content-center align-items-center"">
+        <div class="row justify-content-center align-items-center"">
             <div class="col-8"><h6 class="mb-0 pb-0">{{ "Licensing & Access"|trans }}</h6></div>
             <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div>
             <div class="col-2 text-end">
@@ -9,7 +9,7 @@
                 </a>
             </div>
         </div>
-        
+
     </div>
     <div id="licensesBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">            
@@ -17,10 +17,11 @@
                 <div>
                     <b>{{ key|trans }}:</b></br>
                     {% for val in value %}
+                        {% set values = val['value'] %}                        
                         {% if val['id'] %} 
-                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ values }}</a><br>
                         {% else %}    
-                            {{ val['value']|nl2br }}<br>
+                            {{ values|nl2br }}<br>
                         {% endif %}
                     {% endfor %}    
                 </div>

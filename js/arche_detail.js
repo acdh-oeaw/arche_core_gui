@@ -373,11 +373,11 @@ jQuery(function ($) {
                                 opt.type = 'html';
                                 opt.style = 'citation-' + templateName;
                                 opt.lang = 'en-US';
-                                cell.html(citeDT.get(opt));
+                                cell.html('<a href="/browser/metadata/'+data.id+'">'+citeDT.get(opt)+'</a>');
                             });
                 } catch (error) {
-                    console.log(error);
-                    cell.html(data.customCitation);
+                    //console.log(error);
+                    cell.html('<a href="/browser/metadata/'+data.id+'">'+data.customCitation+'</a>');
                 }
             },
             fnDrawCallback: function () {
