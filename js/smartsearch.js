@@ -181,9 +181,33 @@ jQuery(function ($) {
         $('#block-smartsearchblock select').val('');
         $('#sm-hero-str').val('');
         $('#mapSelectedPlace').html('');
-
+        $('#mapLabel').html('');
         // do a topcollection search
         resetSearch();
+    });
+
+    $(document).delegate("#mapRemoveFiltersBtn", "click", function (e) {
+
+        e.preventDefault();
+        $('#mapLabel').html('');
+        var url = window.location.href;
+        var paramsString = url.split('/browser/discover/')[1];
+        paramsString = paramsString.replace('?q', 'q');
+        guiObj = parseQueryString(paramsString);
+        console.log(guiObj);
+        map.remove(); // Remove the map instance
+        map = null;
+        initMaps(true);
+        if(guiObj.facets.map !== undefined) {
+            delete guiObj.facets.map;
+        }
+        search();
+        /*map.remove(); // Remove the map instance
+        map = null;
+        initMaps(true);
+        //remove map from th eurl
+*/
+
     });
 
     //main search block
@@ -202,14 +226,6 @@ jQuery(function ($) {
         guiObj = {'actualPage': actualPage};
         executeTheSearch()
         e.preventDefault();
-    });
-
-    $(document).delegate("#removeMapSelectedPlace", "click", function (e) {
-        e.preventDefault();
-        $('#mapSelectedPlace').html('');
-        delete guiObj.coordinates;
-        delete guiObj.locationTitle;
-        search();
     });
 
     $(document).delegate("#smartPageSize", "change", function (e) {
@@ -239,10 +255,10 @@ jQuery(function ($) {
 
     ////// FUNCTIONS //////
 
-    function initMaps() {
+    function initMaps(reinit = false) {
 
         map = L.map('map').setView([48.2, 16.3], 10);
-        var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -271,46 +287,50 @@ jQuery(function ($) {
                 featureGroup: drawnItems
             }
         });
-        map.addControl(drawControl);
+        
 
-        if (coordinates) {
-            var coordinatesString = coordinates.replace('POLYGON((', '').replace('))', '');
-            var coordinatesArray = coordinatesString.split(',');
+        if (!reinit) {
+            var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
+            if (coordinates) {
+                var coordinatesString = coordinates.replace('POLYGON((', '').replace('))', '');
+                var coordinatesArray = coordinatesString.split(',');
 
-            // Reformat the coordinates to [latitude, longitude] for Leaflet
-            var polygonCoordinates = coordinatesArray.map(function (coord) {
-                var latLng = coord.trim().split(' ');
-                return [parseFloat(latLng[1]), parseFloat(latLng[0])];
-            });
+                // Reformat the coordinates to [latitude, longitude] for Leaflet
+                var polygonCoordinates = coordinatesArray.map(function (coord) {
+                    var latLng = coord.trim().split(' ');
+                    return [parseFloat(latLng[1]), parseFloat(latLng[0])];
+                });
 
-            var latitudes = polygonCoordinates.map(function (coord) {
-                return coord[0];
-            });
-            var longitudes = polygonCoordinates.map(function (coord) {
-                return coord[1];
-            });
+                var latitudes = polygonCoordinates.map(function (coord) {
+                    return coord[0];
+                });
+                var longitudes = polygonCoordinates.map(function (coord) {
+                    return coord[1];
+                });
 
-            var southWest = [Math.min.apply(null, latitudes), Math.min.apply(null, longitudes)];
-            var northEast = [Math.max.apply(null, latitudes), Math.max.apply(null, longitudes)];
+                var southWest = [Math.min.apply(null, latitudes), Math.min.apply(null, longitudes)];
+                var northEast = [Math.max.apply(null, latitudes), Math.max.apply(null, longitudes)];
 
-            var bounds = [southWest, northEast];
+                var bounds = [southWest, northEast];
 
-            // Create a rectangle layer
-            var rectangle = L.rectangle(bounds, {
-                fillColor: '#97009c'
-            });
+                // Create a rectangle layer
+                var rectangle = L.rectangle(bounds, {
+                    fillColor: '#97009c'
+                });
 
-            //map.addLayer(drawnItems);
-            drawnItems.addLayer(rectangle);
-            drawnItems.addTo(map);
+                //map.addLayer(drawnItems);
+                drawnItems.addLayer(rectangle);
+                drawnItems.addTo(map);
 
-            setTimeout(function () {
-                setMapLabel(drawnItems);
-            }, 1000);
+                setTimeout(function () {
+                    setMapLabel(drawnItems);
+                }, 1000);
 
-            map.fitBounds(rectangle.getBounds());
+                map.fitBounds(rectangle.getBounds());
+            }
         }
-
+        
+        map.addControl(drawControl);
 
         map.on(L.Draw.Event.CREATED, function (event) {
             drawnItems.clearLayers();
@@ -318,8 +338,7 @@ jQuery(function ($) {
             var layer = event.layer;
             map.removeLayer(layer);
             drawnItems.addLayer(layer);
-            var coord = drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-
+            
             bboxObj = {drawnItems};
             setMapLabel(drawnItems);
         });
@@ -339,7 +358,6 @@ jQuery(function ($) {
         });
 
         bbox = drawnItems;
-
 
         var customControl = L.Control.extend({
             options: {
@@ -905,7 +923,8 @@ jQuery(function ($) {
                             mapPins.addTo(map);
                         }
                         select = '<div id="mapLabel"></div>' +
-                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
+                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>' +
+                                '<button type="button" id="mapRemoveFiltersBtn" class="btn btn-arche-blue w-100 mt-2">' + Drupal.t('Remove Map Filters') + '</button>';
                     }
                     facets += createFacetSelectCard(fd, select);
                     multipleSelects.push(title_id);
@@ -963,7 +982,7 @@ jQuery(function ($) {
         }
         if (bbox !== undefined) {
             setMapLabel(bbox);
-        }
+    }
     }
 
     /**

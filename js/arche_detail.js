@@ -235,15 +235,21 @@ jQuery(function ($) {
                             return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
                         },
                         'data': function (node) {
+                            console.log("data child");
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
+                            console.log("success child");
                         }
                     },
                     themes: {stripes: true},
                     error: function (jqXHR, textStatus, errorThrown) {
-                        $('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
-                        hideEmptyTabs('#collection-content-tab');
+                        console.log("error");
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                        //$('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
+                        //hideEmptyTabs('#collection-content-tab');
                     },
                     search: {
                         "ajax": {
@@ -350,7 +356,12 @@ jQuery(function ($) {
                 var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
                 
                 try {
-                    let citeDT = new Cite("@dataset{" + data.id + ", " + data.customCitation + "}");
+                    var citationText = data.customCitation;
+                    if(!data.customCitation.startsWith('@')) {
+                        citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
+                    }
+                                        
+                    let citeDT = new Cite(citationText);
                     let templateName = 'apa-6th';
                     var template = "";
                     url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
