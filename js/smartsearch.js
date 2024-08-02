@@ -194,14 +194,53 @@ jQuery(function ($) {
         var paramsString = url.split('/browser/discover/')[1];
         paramsString = paramsString.replace('?q', 'q');
         guiObj = parseQueryString(paramsString);
+        console.log("Delete first obj: ");
         console.log(guiObj);
         map.remove(); // Remove the map instance
         map = null;
-        initMaps(true);
+        
         if(guiObj.facets.map !== undefined) {
-            delete guiObj.facets.map;
+            console.log("TORLESBE");
+            
+            var facetsArr = {};
+            
+            var skipProp = 'map';
+
+           
+
+            // Iterate over the original object
+            $.each(guiObj.facets, function(key, value) {
+                console.log("key: " + key);
+                console.log("skip prop: " + skipProp);
+                console.log(value);
+                if (String(key) !== String(skipProp)) {
+                    console.log("adding value ::::: " + key);
+                    facetsArr[key] = value;
+                }
+            });
+
+            // Log the new object
+            console.log('Original Object:',  guiObj.facets );
+            console.log('New Object:', facetsArr);
+            
+            guiObj.facets = {};
+            
+            
+            console.log("guiObj FACETS: ");
+            console.log(guiObj.facets);
+            
+            guiObj.facets = facetsArr;
+            console.log(guiObj);
+            $('#mapLabel').html("");
         }
-        search();
+        console.log("AFTER DELETE: ");
+        console.log(guiObj);
+        initMaps(true);
+        
+        setTimeout(function () {
+                executeTheSearch();
+        }, 500);
+       
         /*map.remove(); // Remove the map instance
         map = null;
         initMaps(true);
@@ -287,7 +326,10 @@ jQuery(function ($) {
                 featureGroup: drawnItems
             }
         });
+        map.addControl(drawControl);
         
+        console.log("MAPINIT");
+        console.log(guiObj);
 
         if (!reinit) {
             var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
@@ -330,7 +372,7 @@ jQuery(function ($) {
             }
         }
         
-        map.addControl(drawControl);
+        
 
         map.on(L.Draw.Event.CREATED, function (event) {
             drawnItems.clearLayers();
@@ -358,7 +400,7 @@ jQuery(function ($) {
         });
 
         bbox = drawnItems;
-
+        /*
         var customControl = L.Control.extend({
             options: {
                 position: 'topright' // Position the button in the top right corner
@@ -385,9 +427,9 @@ jQuery(function ($) {
                 return container;
             }
         });
-
+*/
         // Add the new control to the map
-        map.addControl(new customControl());
+      //  map.addControl(new customControl());
     }
 
     function setMapLabel(bbox) {
@@ -398,7 +440,10 @@ jQuery(function ($) {
     function getSearchParamsFromUrl(url) {
         var paramsString = url.split('/browser/discover/')[1];
         paramsString = paramsString.replace('?q', 'q');
+        
         guiObj = parseQueryString(paramsString);
+        console.log("getSearchParamsFromUrl obj: ");
+        console.log(guiObj);
         firstLoad = false;
         executeTheSearch();
     }
@@ -577,10 +622,11 @@ jQuery(function ($) {
 
         var searchStr = $('#sm-hero-str').val();
 
-        // var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
+        
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
         var guiFacets = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
-
+        console.log("SEARCH --- GUI FACETS::: ");
+        console.log(guiFacets);
         if (searchStr === "") {
             searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
@@ -750,7 +796,7 @@ jQuery(function ($) {
                     queryString += encodeURIComponent(fullKey) + '=[' + encodeURIComponent(value.join(',')) + ']&';
                 }
             } else if (value !== '' && value !== null) {
-                // If the value is a simple type and not empty, add it directly
+                // If the value is a simple type and not empty, add it directly                
                 queryString += encodeURIComponent(fullKey) + '=' + encodeURIComponent(value) + '&';
             }
         });
@@ -1139,7 +1185,7 @@ jQuery(function ($) {
     }
 
     /**
-     * NOT IN USE!
+     * 
      * @returns {undefined}
      */
     function displayMapSelectedValue() {
