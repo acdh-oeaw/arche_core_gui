@@ -22,6 +22,8 @@ jQuery(function ($) {
     var guiObj = {};
     var bboxObj = {};
     var smartSearchInputField = $('#sm-hero-str');
+    var autocompleteTimeout = null;
+    var autocompleteToken = 1;
 
     $(document).ready(function () {
 
@@ -101,24 +103,34 @@ jQuery(function ($) {
 
             // Check if the input value is at least 2 characters long
             if (inputValue.length >= 2) {
-                // Make an AJAX request to your API
-                $.ajax({
-                    url: '/browser/api/smsearch/autocomplete/' + inputValue,
-                    method: 'GET',
-                    success: function (data) {
-                        var responseObject = $.parseJSON(data);
-                        // Initialize autocomplete with the retrieved results
-                        smartSearchInputField.autocomplete({source: []});
-                        smartSearchInputField.autocomplete({
-                            source: responseObject
-                        });
-                        // Open the autocomplete dropdown
-                        smartSearchInputField.autocomplete('search');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching autocomplete data:', error);
-                    }
-                });
+                if (autocompleteTimeout) {
+                    clearTimeout(autocompleteTimeout);
+                }
+                // make the AJAX query only if no further keyup events in next 0.3s
+                autocompleteTimeout = setTimeout(() => {
+                    autocompleteToken++;
+                    var localToken = autocompleteToken;
+                    // Make an AJAX request to your API
+                    $.ajax({
+                        url: '/browser/api/smsearch/autocomplete/' + inputValue,
+                        method: 'GET',
+                        success: function (data) {
+                            if (localToken === autocompleteToken) {
+                                var responseObject = $.parseJSON(data);
+                                // Initialize autocomplete with the retrieved results
+                                smartSearchInputField.autocomplete({source: []});
+                                smartSearchInputField.autocomplete({
+                                    source: responseObject
+                                });
+                                // Open the autocomplete dropdown
+                                smartSearchInputField.autocomplete('search');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching autocomplete data:', error);
+                        }
+                    });
+                }, 300);
             }
         }
     });
