@@ -12,16 +12,17 @@ jQuery(function ($) {
     var bbox = null;
     var map = null;
     var mapPins = null;
-
     var preferredLang = drupalSettings.arche_core_gui.gui_lang;
-
-    /********************** EVENTS *************************************/
-
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
-    var guiObj = {};
+    var guiObj = null;
     var bboxObj = {};
     var smartSearchInputField = $('#sm-hero-str');
+    var autocompleteTimeout = null;
+    var autocompleteCounter = 1;
+
+
+    /********************** EVENTS *************************************/
 
     $(document).ready(function () {
 
@@ -33,26 +34,27 @@ jQuery(function ($) {
         });
 
         function handleURLChange() {
-            console.log("handleURLChange func");
+
             var currentUrl = window.location.href;
             // Create a URL object to extract pathname
             var url = new URL(currentUrl);
-            // Get the pathname from the URL
-            var pathname = url.pathname;
             // Check if the URL contains any params
-            if (currentUrl.indexOf("/browser/discover/") !== -1 && (url.search !== "" || url.search.trim() !== "")) {
+            if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 getSearchParamsFromUrl(currentUrl);
+                executeTheSearch();
             } else {
                 executeTheSearch();
             }
         }
-
         // Call function specific to no popstate event
         handleURLChange();
         initMaps();
     });
 
     //// events ////
+    /**
+     * Check enter is pressed
+     */
     $(document).delegate("input", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
@@ -74,7 +76,10 @@ jQuery(function ($) {
             executeTheSearch();
         }
     });
-    //handle the select 2 press enter event and trigger a search
+
+    /**
+     * handle the select 2 press enter event and trigger a search
+     */
     $(document).on('keyup', '.select2-search__field', function (e) {
         if (e.which === 13) {
             e.preventDefault();
@@ -86,7 +91,10 @@ jQuery(function ($) {
     smartSearchInputField.autocomplete({
         minLength: 2, // Minimum number of characters to trigger autocomplete
         autoFocus: false,
-
+        delay: 300,
+        open: function () {
+            $("ul.ui-menu").width($(this).innerWidth());
+        }
     });
 
     // Attach keyup event listener to the input field
@@ -101,24 +109,36 @@ jQuery(function ($) {
 
             // Check if the input value is at least 2 characters long
             if (inputValue.length >= 2) {
-                // Make an AJAX request to your API
-                $.ajax({
-                    url: '/browser/api/smsearch/autocomplete/' + inputValue,
-                    method: 'GET',
-                    success: function (data) {
-                        var responseObject = $.parseJSON(data);
-                        // Initialize autocomplete with the retrieved results
-                        smartSearchInputField.autocomplete({source: []});
-                        smartSearchInputField.autocomplete({
-                            source: responseObject
-                        });
-                        // Open the autocomplete dropdown
-                        smartSearchInputField.autocomplete('search');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching autocomplete data:', error);
-                    }
-                });
+                if (autocompleteTimeout) {
+                    // invalidate the previous autocomplete search
+                    clearTimeout(autocompleteTimeout);
+                }
+                // make the AJAX query only if no further keyup events in next 0.3s
+                autocompleteTimeout = setTimeout(() => {
+                    autocompleteCounter++;
+                    var localCounter = autocompleteCounter;
+                    // Make an AJAX request to your API
+                    $.ajax({
+                        url: '/browser/api/smsearch/autocomplete/' + inputValue,
+                        method: 'GET',
+                        success: function (data) {
+                            // show this results only if no further searches were made in the meantime
+                            if (localCounter === autocompleteCounter) {
+                                var responseObject = $.parseJSON(data);
+                                // Initialize autocomplete with the retrieved results
+                                smartSearchInputField.autocomplete({source: []});
+                                smartSearchInputField.autocomplete({
+                                    source: responseObject
+                                });
+                                // Open the autocomplete dropdown
+                                smartSearchInputField.autocomplete('search');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching autocomplete data:', error);
+                        }
+                    });
+                }, 300);
             }
         }
     });
@@ -187,66 +207,22 @@ jQuery(function ($) {
     });
 
     $(document).delegate("#mapRemoveFiltersBtn", "click", function (e) {
-
         e.preventDefault();
-        $('#mapLabel').html('');
         var url = window.location.href;
         var paramsString = url.split('/browser/discover/')[1];
-        paramsString = paramsString.replace('?q', 'q');
-        guiObj = parseQueryString(paramsString);
-        console.log("Delete first obj: ");
-        console.log(guiObj);
-        map.remove(); // Remove the map instance
-        map = null;
+        var pattern = /&facets%5Bmap%5D=POLYGON\(\([^)]*\)\)&/;
+
+        // Replace the specific part with a single &
+        var newUrl = paramsString.replace(pattern, '&');
         
-        if(guiObj.facets.map !== undefined) {
-            console.log("TORLESBE");
-            
-            var facetsArr = {};
-            
-            var skipProp = 'map';
-
-           
-
-            // Iterate over the original object
-            $.each(guiObj.facets, function(key, value) {
-                console.log("key: " + key);
-                console.log("skip prop: " + skipProp);
-                console.log(value);
-                if (String(key) !== String(skipProp)) {
-                    console.log("adding value ::::: " + key);
-                    facetsArr[key] = value;
-                }
-            });
-
-            // Log the new object
-            console.log('Original Object:',  guiObj.facets );
-            console.log('New Object:', facetsArr);
-            
-            guiObj.facets = {};
-            
-            
-            console.log("guiObj FACETS: ");
-            console.log(guiObj.facets);
-            
-            guiObj.facets = facetsArr;
-            console.log(guiObj);
-            $('#mapLabel').html("");
-        }
-        console.log("AFTER DELETE: ");
-        console.log(guiObj);
-        initMaps(true);
+        guiObj = {};
+        // Fix any potential issues with dangling & or multiple & in a row
+        newUrl = newUrl.replace(/&&/, '&').replace(/\?&/, '?').replace(/&$/, '');
         
-        setTimeout(function () {
-                executeTheSearch();
-        }, 500);
-       
-        /*map.remove(); // Remove the map instance
-        map = null;
-        initMaps(true);
-        //remove map from th eurl
-*/
-
+        // Update the URL without reloading the page
+        var newFullUrl = window.location.pathname + newUrl;
+        console.log("delete full url: "+ newFullUrl);
+        window.location.href = newFullUrl;
     });
 
     //main search block
@@ -292,6 +268,10 @@ jQuery(function ($) {
         }
     });
 
+
+    /////////////////// EVENTS END /////////////////////
+
+
     ////// FUNCTIONS //////
 
     function initMaps(reinit = false) {
@@ -327,9 +307,6 @@ jQuery(function ($) {
             }
         });
         map.addControl(drawControl);
-        
-        console.log("MAPINIT");
-        console.log(guiObj);
 
         if (!reinit) {
             var coordinates = (guiObj.facets !== undefined && guiObj.facets.map !== undefined) ? guiObj.facets.map : "";
@@ -371,8 +348,6 @@ jQuery(function ($) {
                 map.fitBounds(rectangle.getBounds());
             }
         }
-        
-        
 
         map.on(L.Draw.Event.CREATED, function (event) {
             drawnItems.clearLayers();
@@ -380,7 +355,7 @@ jQuery(function ($) {
             var layer = event.layer;
             map.removeLayer(layer);
             drawnItems.addLayer(layer);
-            
+
             bboxObj = {drawnItems};
             setMapLabel(drawnItems);
         });
@@ -400,7 +375,7 @@ jQuery(function ($) {
         });
 
         bbox = drawnItems;
-        /*
+
         var customControl = L.Control.extend({
             options: {
                 position: 'topright' // Position the button in the top right corner
@@ -422,14 +397,19 @@ jQuery(function ($) {
                 // Setup the click event on the button
                 L.DomEvent.on(container, 'click', function () {
                     $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+                    $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
+
+                    setTimeout(function () {
+                        map.invalidateSize();  // 'map' is your Leaflet map variable
+                    }, 100);
                 });
 
                 return container;
             }
         });
-*/
+
         // Add the new control to the map
-      //  map.addControl(new customControl());
+        map.addControl(new customControl());
     }
 
     function setMapLabel(bbox) {
@@ -438,14 +418,20 @@ jQuery(function ($) {
     }
 
     function getSearchParamsFromUrl(url) {
-        var paramsString = url.split('/browser/discover/')[1];
+        var paramString = "";
+        if (url.split('/browser/discover?')[1]) {
+            paramsString = url.split('/browser/discover?')[1];
+        } else {
+            paramsString = url.split('/browser/discover/')[1];
+        }
+        
         paramsString = paramsString.replace('?q', 'q');
         
+        guiObj = null;
         guiObj = parseQueryString(paramsString);
-        console.log("getSearchParamsFromUrl obj: ");
-        console.log(guiObj);
+        
         firstLoad = false;
-        executeTheSearch();
+
     }
 
     /**
@@ -455,14 +441,14 @@ jQuery(function ($) {
      * @returns {unresolved}
      */
     function parseQueryString(queryString) {
-        var obj = {};
+       var myArray = [];
+        myArray = [];
         var pairs = queryString.split('&');
-
         pairs.forEach(function (pair) {
             var parts = pair.split('=');
             var key = decodeURIComponent(parts[0]);
             var value = decodeURIComponent(parts[1]);
-
+            
             // Handle array values within brackets
             if (value.startsWith('[') && value.endsWith(']')) {
                 value = value.slice(1, -1).split(',');
@@ -471,7 +457,7 @@ jQuery(function ($) {
             // Handle nested keys
             if (key.includes('[')) {
                 var keys = key.split(/[\[\]]+/).filter(Boolean);
-                var current = obj;
+                var current = myArray;
 
                 for (var i = 0; i < keys.length; i++) {
                     var nestedKey = keys[i];
@@ -483,10 +469,10 @@ jQuery(function ($) {
                     }
                 }
             } else {
-                obj[key] = value;
+                myArray[key] = value;
             }
         });
-        return obj;
+        return myArray;
     }
 
 
@@ -526,7 +512,9 @@ jQuery(function ($) {
     }
 
     function getGuiSearchParams(prop) {
-        if (guiObj.hasOwnProperty(prop)) {
+        //console.log("getGuiSearchParams:::: " + prop);
+        //console.log(guiObj);
+        if (guiObj.hasOwnProperty(prop)) {           
             return guiObj[prop];
         }
     }
@@ -538,7 +526,6 @@ jQuery(function ($) {
 
     // init search to display just the facets on the first load if we have 0 results
     function showJustSearchFacets() {
-        console.log("showJustSearchFacets func");
         token++;
         var localToken = token;
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
@@ -607,7 +594,6 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function search() {
-        console.log("search func  started");
         token++;
         $('.main-content-warnings').html('');
         var localToken = token;
@@ -621,12 +607,9 @@ jQuery(function ($) {
         }
 
         var searchStr = $('#sm-hero-str').val();
-
-        
         var pagerPage = (getGuiSearchParams('actualPage') ?? 1) - 1;
-        var guiFacets = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
-        console.log("SEARCH --- GUI FACETS::: ");
-        console.log(guiFacets);
+        //var guiFacets_ = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
+
         if (searchStr === "") {
             searchStr = (getGuiSearchParams('q')) ? getGuiSearchParams('q') : "";
         }
@@ -651,8 +634,8 @@ jQuery(function ($) {
         };
         //if we have already selected facets from the url then we have to update 
         // the facets
-        if (guiFacets) {
-            param.data.facets = guiFacets;
+        if (getGuiSearchParams('facets')) {
+            param.data.facets = getGuiSearchParams('facets');
         }
 
         $(".smart-search-multi-select").each(function () {
@@ -715,7 +698,7 @@ jQuery(function ($) {
             }
         }
 
-        updateUrl(param.data);
+        //updateUrl(param.data);
 
         var t0 = new Date();
         param.success = function (x) {
@@ -836,19 +819,25 @@ jQuery(function ($) {
 
     /* reset search button clicked */
     function resetSearch() {
-        $('input.facet:checked').prop('checked', false);
-        $('input.facet-min').val('');
-        $('input.facet-max').val('');
-        $('.main-content-warnings').html('');
-        $('.select2-selection__rendered').html('');
-        $('#smartSearchCount').html(Drupal.t('0 Result(s)'));
-        $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
         guiObj = {};
         guiObj = {'actualPage': 1};
-        bboxObj.drawnItems.clearLayers();
         resetsearchUrl();
-        //spatialSelect.setData([{text: 'No filter', value: ''}]);
-        showJustSearchFacets();
+        var url = window.location.href;
+
+        // Find the position of the first '?'
+        var indexOfQuestionMark = url.indexOf('?');
+
+        // If there are query parameters, remove them
+        if (indexOfQuestionMark !== -1) {
+            // Get the URL without query parameters
+            var newUrl = url.substring(0, indexOfQuestionMark);
+
+            // Reload the page with the new URL
+            window.location.href = newUrl;
+        } else {
+            // If no query parameters, simply reload the page
+            window.location.reload();
+        }
     }
 
     function createPager(totalPages) {
@@ -894,7 +883,8 @@ jQuery(function ($) {
      */
     function showResults(data, param, t0, initial = false) {
         console.log("SHOW RESULTS: ");
-        console.log(data);
+        console.log(guiObj);
+        //console.log(data);
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
         var pageSize = data.pageSize;
@@ -1026,9 +1016,12 @@ jQuery(function ($) {
                 setMapLabel(bboxObj.drawnItems);
             }
         }
+
         if (bbox !== undefined) {
             setMapLabel(bbox);
-    }
+        }
+
+        updateUrl(param);
     }
 
     /**
@@ -1294,7 +1287,6 @@ jQuery(function ($) {
     }
 
     function updateSearchGui(data) {
-
         $.each(data, function (k, v) {
             var elementId = "";
             var dataValue = "";
