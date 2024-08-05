@@ -1,7 +1,5 @@
 jQuery(function ($) {
 
-
-
     var selectedSearchValues = [];
     var countNullText = '<h5 class="font-weight-bold">' + Drupal.t('No results found') + '</h5>';
     var firstLoad = true;
@@ -9,7 +7,6 @@ jQuery(function ($) {
     var token = 1;
     var previousUrls = JSON.parse(sessionStorage.getItem('urls')) || [];
     var popstateActive = sessionStorage.getItem('popstate') || false;
-    var bbox = null;
     var map = null;
     var mapPins = null;
 
@@ -339,6 +336,7 @@ jQuery(function ($) {
             }
         });
         map.addControl(drawControl);
+        $('.leaflet-draw-edit-remove').remove(); // remove the delete polygon icon from the map
         
         console.log("MAPINIT");
         console.log(guiObj);
@@ -403,16 +401,6 @@ jQuery(function ($) {
             drawnItems.clearLayers();
         });
 
-        map.on('draw:deleted', function (event) {
-            var layer = event.layer;
-            map.removeLayer(layer);
-            $('#mapLabel').html('');
-            $('.sm-map').css('top', '-1000px');
-            $('.sm-map').css('display', 'block');
-        });
-
-        bbox = drawnItems;
-        /*
         var customControl = L.Control.extend({
             options: {
                 position: 'topright' // Position the button in the top right corner
@@ -433,15 +421,14 @@ jQuery(function ($) {
 
                 // Setup the click event on the button
                 L.DomEvent.on(container, 'click', function () {
-                    $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+                    $('#mapToggleBtn').click();
                 });
 
                 return container;
             }
         });
-*/
         // Add the new control to the map
-      //  map.addControl(new customControl());
+        map.addControl(new customControl());
     }
 
     function setMapLabel(bbox) {
