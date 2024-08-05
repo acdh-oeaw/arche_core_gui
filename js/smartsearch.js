@@ -209,7 +209,12 @@ jQuery(function ($) {
     $(document).delegate("#mapRemoveFiltersBtn", "click", function (e) {
         e.preventDefault();
         var url = window.location.href;
-        var paramsString = url.split('/browser/discover/')[1];
+        var paramsString = "";
+        if (url.split('/browser/discover?')[1]) {
+            paramsString = url.split('/browser/discover?')[1];
+        } else {
+            paramsString = url.split('/browser/discover/')[1];
+        }
         var pattern = /&facets%5Bmap%5D=POLYGON\(\([^)]*\)\)&/;
 
         // Replace the specific part with a single &
