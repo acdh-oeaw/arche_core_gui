@@ -414,7 +414,7 @@ jQuery(function ($) {
 
     function setMapLabel(bbox) {
         var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-        $('#mapLabel').html(coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3));
+        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn">X</a> '+ coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3)+ '</div>');
     }
 
     function getSearchParamsFromUrl(url) {
@@ -959,8 +959,7 @@ jQuery(function ($) {
                             mapPins.addTo(map);
                         }
                         select = '<div id="mapLabel"></div>' +
-                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>' +
-                                '<button type="button" id="mapRemoveFiltersBtn" class="btn btn-arche-blue w-100 mt-2">' + Drupal.t('Remove Map Filters') + '</button>';
+                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
                     }
                     facets += createFacetSelectCard(fd, select);
                     multipleSelects.push(title_id);
