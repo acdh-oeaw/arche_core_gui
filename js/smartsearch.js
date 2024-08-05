@@ -15,7 +15,7 @@ jQuery(function ($) {
     var preferredLang = drupalSettings.arche_core_gui.gui_lang;
     var archeBaseUrl = getInstanceUrl();
     var actualPage = 1;
-    var guiObj = null;
+    var guiObj = {};
     var bboxObj = {};
     var smartSearchInputField = $('#sm-hero-str');
     var autocompleteTimeout = null;
@@ -427,7 +427,7 @@ jQuery(function ($) {
         
         paramsString = paramsString.replace('?q', 'q');
         
-        guiObj = null;
+        guiObj = {};
         guiObj = parseQueryString(paramsString);
         
         firstLoad = false;
