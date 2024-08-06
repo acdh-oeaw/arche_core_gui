@@ -682,6 +682,22 @@ class ResourceCoreObject {
         }
         return false;
     }
+    
+    /**
+     * check if the Resource is an uploaded binary
+     * @return bool
+     */
+    public function isBinary(): bool {
+        $cat = false;
+        //check the resource categories
+        if($this->getAcdhType() === "Resource" && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
+                $cat) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Check the resource has an audio, to display the audio player

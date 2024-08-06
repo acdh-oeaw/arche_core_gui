@@ -3,9 +3,7 @@ jQuery(function ($) {
 
 
     var selectedSearchValues = [];
-    var countNullText = '<h5 class="font-weight-bold">' + Drupal.t('No results found') + '</h5>';
     var firstLoad = true;
-    var archeSmartSearchUrl = getSmartUrl();
     var token = 1;
     var previousUrls = JSON.parse(sessionStorage.getItem('urls')) || [];
     var popstateActive = sessionStorage.getItem('popstate') || false;
@@ -219,14 +217,13 @@ jQuery(function ($) {
 
         // Replace the specific part with a single &
         var newUrl = paramsString.replace(pattern, '&');
-        
+
         guiObj = {};
         // Fix any potential issues with dangling & or multiple & in a row
         newUrl = newUrl.replace(/&&/, '&').replace(/\?&/, '?').replace(/&$/, '');
-        
+
         // Update the URL without reloading the page
         var newFullUrl = window.location.pathname + newUrl;
-        console.log("delete full url: "+ newFullUrl);
         window.location.href = newFullUrl;
     });
 
@@ -419,7 +416,7 @@ jQuery(function ($) {
 
     function setMapLabel(bbox) {
         var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn">X</a> '+ coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3)+ '</div>');
+        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn">X</a> ' + coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3) + '</div>');
     }
 
     function getSearchParamsFromUrl(url) {
@@ -429,12 +426,12 @@ jQuery(function ($) {
         } else {
             paramsString = url.split('/browser/discover/')[1];
         }
-        
+
         paramsString = paramsString.replace('?q', 'q');
-        
+
         guiObj = {};
         guiObj = parseQueryString(paramsString);
-        
+
         firstLoad = false;
 
     }
@@ -446,14 +443,14 @@ jQuery(function ($) {
      * @returns {unresolved}
      */
     function parseQueryString(queryString) {
-       var myArray = [];
+        var myArray = [];
         myArray = [];
         var pairs = queryString.split('&');
         pairs.forEach(function (pair) {
             var parts = pair.split('=');
             var key = decodeURIComponent(parts[0]);
             var value = decodeURIComponent(parts[1]);
-            
+
             // Handle array values within brackets
             if (value.startsWith('[') && value.endsWith(']')) {
                 value = value.slice(1, -1).split(',');
@@ -480,20 +477,6 @@ jQuery(function ($) {
         return myArray;
     }
 
-
-    function getSmartUrl() {
-        var baseUrl = window.location.origin + window.location.pathname;
-        let instanceUrl = baseUrl.split("/browser")[0];
-        var smartUrl = "https://arche-smartsearch.acdh.oeaw.ac.at";
-
-        if (instanceUrl.indexOf('arche-dev.acdh-dev.oeaw.ac.at') !== -1) {
-            smartUrl = "https://arche-smartsearch.acdh-dev.oeaw.ac.at";
-        } else if (instanceUrl.indexOf('arche-curation.acdh-dev.oeaw.ac.at' !== -1)) {
-            smartUrl = "https://arche-smartsearch.acdh-dev.oeaw.ac.at";
-        }
-        return smartUrl;
-    }
-
     function getInstanceUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
         return baseUrl.split("/browser")[0];
@@ -516,20 +499,31 @@ jQuery(function ($) {
         return v;
     }
 
+    /**
+     * Get the search param values from the guiObj
+     * @param {type} prop
+     * @returns {smartsearchL#1.guiObj|Array}
+     */
     function getGuiSearchParams(prop) {
-        //console.log("getGuiSearchParams:::: " + prop);
-        //console.log(guiObj);
-        if (guiObj.hasOwnProperty(prop)) {           
+        if (guiObj.hasOwnProperty(prop)) {
             return guiObj[prop];
         }
     }
-
+    /**
+     * Get the language
+     * @param {type} data
+     * @param {type} prefLang
+     * @returns {smartsearchL#1.getLangValue.data}
+     */
     function getLangValue(data, prefLang) {
         prefLang = prefLang || 'en';
         return data[prefLang] || Object.values(data)[0];
     }
 
-    // init search to display just the facets on the first load if we have 0 results
+    /**
+     * The basic jsut facet display search function
+     * @returns {undefined}
+     */
     function showJustSearchFacets() {
         token++;
         var localToken = token;
@@ -547,8 +541,6 @@ jQuery(function ($) {
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
-                //initialFacets: true,
-                //noCache: $('#noCache').is(':checked') ? 1 : 0
                 noCache: 0
             }
         };
@@ -567,12 +559,12 @@ jQuery(function ($) {
             alert(xhr.responseText);
             $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
         };
-
-        param.statusCode = function (response) {
-            console.log("statusCode");
-            console.log(response);
-        };
-
+        /*
+         param.statusCode = function (response) {
+         console.log("statusCode");
+         console.log(response);
+         };
+         */
         param.error = function (xhr, status, error) {
             console.log(xhr);
             console.log(status);
@@ -587,7 +579,11 @@ jQuery(function ($) {
         $.ajax(param);
     }
 
-    /// if the search is executed by the hero section, we have to update the input field ///
+    /**
+     * if the search is executed by the hero section, we have to update the input field
+     * @param {type} str
+     * @returns {undefined}
+     */
     function updateSearchStrInput(str) {
         if ($('#sm-hero-str').val() === "") {
             $('#sm-hero-str').val(str);
@@ -704,7 +700,6 @@ jQuery(function ($) {
         }
 
         //updateUrl(param.data);
-
         var t0 = new Date();
         param.success = function (x) {
             if (token === localToken) {
@@ -718,11 +713,6 @@ jQuery(function ($) {
             alert(xhr.responseText);
             $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
 
-        };
-
-        param.statusCode = function (response) {
-            console.log("statusCode");
-            console.log(response);
         };
 
         param.error = function (xhr, status, error) {
@@ -906,11 +896,19 @@ jQuery(function ($) {
 
         var multipleSelects = [];
         $('div.dateValues').text('');
-
-        // if (initial || data.results.length > 0) {
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');
-
+        //let commonFacets = findCommonKeys(data.facets, param.facets);
+        //createFacetContent(data.facets, param.facets);
+        //we have 0 results but already selected facets
+        /*
+        if (data.totalCount === 0 && Object.keys(commonFacets).length > 0) {
+            console.log("zero element but we have selected facets");
+            createFacetContent(commonFacets, param.facets);
+        } else {
+            console.log("zother way");
+            createFacetContent(data.facets, param.facets);
+        }*/
         var facets = '';
         $.each(data.facets, function (n, fd) {
             var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
@@ -959,6 +957,8 @@ jQuery(function ($) {
                         if (mapPins) {
                             map.removeLayer(mapPins);
                         }
+                        //console.log("MAP::::");
+                        //console.log(fd.values);
                         if (fd.values !== '') {
                             mapPins = L.geoJSON(JSON.parse(fd.values));
                             mapPins.addTo(map);
@@ -966,6 +966,7 @@ jQuery(function ($) {
                         select = '<div id="mapLabel"></div>' +
                                 '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
                     }
+
                     facets += createFacetSelectCard(fd, select);
                     multipleSelects.push(title_id);
 
@@ -979,8 +980,9 @@ jQuery(function ($) {
                 $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
             }
         });
+
         $('#facets').html(facets);
-        //}
+
 
         $.each(multipleSelects, function (k, v) {
             $("#smart-multi-" + v).select2({
@@ -1004,7 +1006,7 @@ jQuery(function ($) {
             } else {
                 $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
                 //showJustSearchFacets();
-            }
+    }
             $('#smartSearchCount').html(countText);
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
@@ -1028,6 +1030,130 @@ jQuery(function ($) {
         updateUrl(param);
     }
 
+
+    /**
+     * get the selected facets for the 0 result page
+     * @param {type} obj1
+     * @param {type} obj2
+     * @returns {unresolved}
+     */
+    function findCommonKeys(obj1, obj2) {
+        // Create sets of keys from both objects
+        const keys1 = new Set(Object.keys(obj1));
+        const keys2 = new Set(Object.keys(obj2));
+
+        // Find the intersection of the two sets
+        const commonKeys = [...keys1].filter(key => keys2.has(key));
+
+        // Create a new object to hold the common keys and their values
+        const commonObject = {};
+
+        // Add the common keys and their values from both objects to the new object
+        commonKeys.forEach(key => {
+            commonObject[key] = obj1[key];
+        });
+        
+        Object.keys(commonObject).forEach(function(key) {
+            commonObject[key].values = obj2[key]
+         });
+        
+        return commonObject;
+    }
+
+
+    /**
+     * Create the search facet box content
+     * @param {type} data
+     * @param {type} paramFacets
+     * @returns {undefined}
+     */
+    function createFacetContent(data, paramFacets) {
+        var facets = "";
+        var multipleSelects = [];
+        $.each(data, function (n, fd) {
+            var fdp = paramFacets[fd.property] || (fd.type === 'continuous' ? {} : []);
+            var select = "";
+            if (fd.values.length > 0 || fd.min || fd.type === 'map') {
+                var div = $(document.getElementById(fd.property + 'values'));
+                var text = '';
+
+                if (fd.type === 'continuous' && fdp.distribution >= 2) {
+                    $.each(fd.values, function (n, i) {
+                        text += i.label + ': ' + i.count + '<br/>';
+                    });
+                }
+
+                if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
+                    var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
+                    select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
+                    $.each(fd.values, function (n, i) {
+                        //iterate the param.facets to set the selected ones!!!!!!
+                        if (paramFacets[fd.property] && paramFacets[fd.property].length > 0) {
+                            console.log("SELECTED:::");
+                            console.log(paramFacets[fd.property]);
+                            $.each(paramFacets[fd.property], function (sI, sv) {
+                                console.log(i);
+                                if (sv === i.value) {
+                                    select += '<option value="' + i.value + '" data-value="' + fd.property + '" selected>' + shorten(i.label) + ' (' + i.count + ')</option>';
+                                }
+                            });
+                        } else {
+                            select += '<option value="' + i.value + '" data-value="' + fd.property + '" >' + shorten(i.label) + ' (' + i.count + ')</option>';
+                        }
+                    });
+                    select += '</select>';
+                }
+
+                if (div.length === 0) {
+                    if (fd.type === 'continuous') {
+                        select += '<div class="row">';
+                        select += '<div class="col">';
+                        select += '<input class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
+                        select += '</div>';
+                        select += '<div class="col">';
+                        select += '<input class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
+                        select += '</div>';
+                        select += '</div>';
+                    }
+
+                    if (fd.type === 'map') {
+                        if (mapPins) {
+                            map.removeLayer(mapPins);
+                        }
+                        //console.log("MAP::::");
+                        //console.log(fd.values);
+                        if (fd.values !== '') {
+                            mapPins = L.geoJSON(JSON.parse(fd.values));
+                            mapPins.addTo(map);
+                        }
+                        select = '<div id="mapLabel"></div>' +
+                                '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
+                    }
+
+                    facets += createFacetSelectCard(fd, select);
+                    multipleSelects.push(title_id);
+
+                } else {
+                    div.html(select + '<br/>');
+                }
+
+            }
+            if (fdp.distribution === 1 || fdp.distribution === 3) {
+                $('input.facet-min[data-value="' + fd.property + '"]').attr('placeholder', fd.min || '');
+                $('input.facet-max[data-value="' + fd.property + '"]').attr('placeholder', fd.max || '');
+            }
+        });
+
+        $('#facets').html(facets);
+
+
+        $.each(multipleSelects, function (k, v) {
+            $("#smart-multi-" + v).select2({
+                placeholder: Drupal.t('Select an option')
+            });
+        });
+
+    }
     /**
      * Display warning text on the search page
      * @param {type} message
@@ -1178,7 +1304,6 @@ jQuery(function ($) {
             $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
             $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');
         };
-
     }
 
     /**
