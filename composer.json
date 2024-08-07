@@ -17,7 +17,8 @@
 	"acdh-oeaw/arche-assets": "^3.14.1", 
         "zozlak/logging": "*",
         "twig/extra-bundle": "*",
-        "drupal/layout_custom_section_classes": "^1.0"
+        "drupal/layout_custom_section_classes": "^1.0",
+        "drupal/entity_clone": "^2.0@beta"
     },
     "require-dev": {
         "drupal/core-dev": "*"
