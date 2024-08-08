@@ -43,30 +43,20 @@ Field extra type:
                 {% if data is iterable %}
                     {% for value in data %}
                         <!-- The identifiers will open in the same window -->
-
                         {% if value is iterable %}
                             {% for v in value %}
                                 {% if (v.type == 'ID') %}
-                                    {% if(type == 'shortCut') %}  
-                                        {% if (v.shortCut)  %}
-                                            <a href="{{ v.value }}" target="_blank">{{ v.shortCut|nl2br }}</a>
-                                        {% elseif (v.value)  %}
-                                            <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
-                                        {% elseif (v.title) %}   
-                                            <a href="{{ v.title }}" target="_blank">{{ v.title|nl2br }}</a>
-                                        {% elseif (v.relvalue)  %}
-                                            <a href="{{ v.relvalue }}" target="_blank">{{ v.relvalue|nl2br }}</a>
-                                        {% endif %}
-                                    {% elseif (v.title and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
+                                    {% if (v.title and v.repoid )  %}
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>1
                                     {% elseif (v.value and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>2
                                     {% elseif (v.relvalue and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>3
                                     {% elseif (v.value) %}
                                         <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                                         <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
                                     {% endif %}
+                                    {% if not loop.last %}<span>{{ limiter }}</span>{% endif %}
                                 {% endif %}
                             {% endfor %}    
                         {% endif %}   

@@ -37,7 +37,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
         }
-       
+
         $return = [
             '#theme' => 'arche-detail',
             '#identifier' => $identifier,
@@ -54,23 +54,27 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     }
 
     public function detailView(string $identifier) {
-        
+
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, "en");
         $content = $data->getContent();
-      
+
         $return = [
             '#theme' => 'arche-detail-empty'
         ];
-          
-       
+
         if (!empty($content) && $content !== '["There is no resource"]') {
             $content = json_decode($content, true);
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
-           
+
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj);
-            
+            if ($obj->getAcdhID() === '') {
+                return [
+                    '#theme' => 'arche-detail-empty'
+                ];
+            }
+           
             $return = [
                 '#theme' => 'arche-detail',
                 '#identifier' => $identifier,
@@ -82,7 +86,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                     ]
                 ]
             ];
-        } 
+        }
         return $return;
     }
 
@@ -98,5 +102,4 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         ];
         return $return;
     }
-
 }

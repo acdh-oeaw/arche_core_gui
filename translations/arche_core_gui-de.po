@@ -589,3 +589,7 @@ msgstr "PDF Herunterladen"
 
 msgid "Search in file content"
 msgstr "Suche in Datei Inhalten"
+
+msgid "Learn more about data submission"
+msgstr "Erfahren Sie mehr über die Dateneinreichung"
+
