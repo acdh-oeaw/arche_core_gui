@@ -593,3 +593,20 @@ msgstr "Suche in Datei Inhalten"
 msgid "Learn more about data submission"
 msgstr "Erfahren Sie mehr über die Dateneinreichung"
 
+msgid "There is no resource"
+msgstr "Es gibt keine Ressource"
+
+msgid "There is no content"
+msgstr "Es gibt keinen Inhalt"
+
+msgid "Please provide an id"
+msgstr "Bitte geben Sie eine ID an"
+
+msgid "Error in search"
+msgstr "Fehler bei der Suche"
+
+msgid "Error during the BaseController initialization!"
+msgstr "Fehler bei der Initialisierung des BaseController!"
+
+msgid "Available since"
+msgstr "Verfügbar seit"
