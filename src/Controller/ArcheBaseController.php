@@ -28,7 +28,7 @@ class ArcheBaseController extends ControllerBase {
         }
 
         try {
-          
+
             $this->pdo = new \PDO($this->config->dbConnStr->guest);
             $baseUrl = $this->config->rest->urlBase . $this->config->rest->pathBase;
             $this->schema = new \acdhOeaw\arche\lib\Schema($this->config->schema);
@@ -39,5 +39,29 @@ class ArcheBaseController extends ControllerBase {
             \Drupal::messenger()->addWarning($this->t('Error during the BaseController initialization!') . ' ' . $ex->getMessage());
             return array();
         }
+    }
+
+    /**
+     * If the API needs a different response language then we have to change the
+     * session lang params to get the desired lang string translation
+     * @param string $lang
+     * @return void
+     */
+    protected function changeAPILanguage(string $lang): void {
+        if($this->getCurrentLanguage() !== $lang) {
+            $_SESSION['language'] = $lang;
+            $_SESSION['_sf2_attributes']['language'] = $lang;    
+        }        
+    }
+
+    /**
+     * Get the site actual language
+     * @return type
+     */
+    private function getCurrentLanguage() {
+        $current_language = \Drupal::languageManager()->getCurrentLanguage();
+        // Get the language code, for example 'en' for English.
+        $language_code = $current_language->getId();
+        return $language_code;
     }
 }

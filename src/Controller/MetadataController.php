@@ -58,7 +58,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, "en");
         $content = $data->getContent();
-
+        
         $return = [
             '#theme' => 'arche-detail-empty'
         ];
