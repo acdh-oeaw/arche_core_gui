@@ -10,7 +10,7 @@ class ArcheTwigDateExtension extends \Twig\Extension\AbstractExtension {
     public function getFilters() {
         return [new \Twig\TwigFilter('archeTranslateDateFilter', function ($value, $dateformat) {
                         (isset($_SESSION['language'])) ? $lang = strtolower($_SESSION['language']) : $lang = "en";
-
+                        
                         if (strpos($value, "Z") !== false) {
                             $value = str_replace("Z", "", $value);
                         }

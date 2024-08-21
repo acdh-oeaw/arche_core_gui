@@ -34,6 +34,7 @@ smart-search:
         js/jquery.auto-complete.min-1.0.7.js: { minified: true }
         js/leaflet.draw-1.0.4.js: { minified: false }
         js/smartsearch.js: {}
+        js/smartsearch-url-func.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
@@ -44,14 +45,17 @@ detail-view:
     header: true
     css:
         base:
+            css/jquery.auto-complete.min-1.0.7.css: { minified: true }
             css/jquery.dataTables-1.13.7.min.css: { minified: true }
             css/jqtree/themes/default/style.min.css: {}
+            css/jquery-ui.min-1.13.3.css: { minified: true }            
     js:
+        js/jquery-ui.min-1.13.3.js: { minified: true }
+        js/jquery.auto-complete.min-1.0.7.js: { minified: true }
         js/jquery.dataTables-1.13.7.min.js: { minified: true }
         js/citation/citation-js-0.5.0.min.js: {}
-        js/tree/jstree.min.js: {}
-        js/arche_detail.js: {}
-        
+        js/tree/jstree.min.js: {}        
+        js/arche_detail.js: {}        
     dependencies:
         - core/drupal
         - core/drupal.form

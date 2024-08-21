@@ -98,6 +98,9 @@ msgstr "Primärforscher:in"
 msgid "Number of Items" 
 msgstr "Anzahl der Elemente"
 
+msgid "Number Of Items" 
+msgstr "Anzahl der Elemente"
+
 msgid "Publisher" 
 msgstr "Verlag"
 

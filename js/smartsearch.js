@@ -23,7 +23,7 @@ jQuery(function ($) {
     /********************** EVENTS *************************************/
 
     $(document).ready(function () {
-
+        myFunction(); // This will work
         $('.main-content-warnings').html("");
 
         $(window).on('popstate', function (e) {
@@ -39,9 +39,9 @@ jQuery(function ($) {
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 getSearchParamsFromUrl(currentUrl);
-                executeTheSearch();
+                // executeTheSearch();
             } else {
-                executeTheSearch();
+                // executeTheSearch();
             }
         }
         // Call function specific to no popstate event
@@ -902,13 +902,13 @@ jQuery(function ($) {
         //createFacetContent(data.facets, param.facets);
         //we have 0 results but already selected facets
         /*
-        if (data.totalCount === 0 && Object.keys(commonFacets).length > 0) {
-            console.log("zero element but we have selected facets");
-            createFacetContent(commonFacets, param.facets);
-        } else {
-            console.log("zother way");
-            createFacetContent(data.facets, param.facets);
-        }*/
+         if (data.totalCount === 0 && Object.keys(commonFacets).length > 0) {
+         console.log("zero element but we have selected facets");
+         createFacetContent(commonFacets, param.facets);
+         } else {
+         console.log("zother way");
+         createFacetContent(data.facets, param.facets);
+         }*/
         var facets = '';
         $.each(data.facets, function (n, fd) {
             var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
@@ -1006,7 +1006,7 @@ jQuery(function ($) {
             } else {
                 $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
                 //showJustSearchFacets();
-    }
+            }
             $('#smartSearchCount').html(countText);
         } else {
             $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
@@ -1052,11 +1052,11 @@ jQuery(function ($) {
         commonKeys.forEach(key => {
             commonObject[key] = obj1[key];
         });
-        
-        Object.keys(commonObject).forEach(function(key) {
+
+        Object.keys(commonObject).forEach(function (key) {
             commonObject[key].values = obj2[key]
-         });
-        
+        });
+
         return commonObject;
     }
 

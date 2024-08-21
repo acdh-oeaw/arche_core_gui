@@ -848,9 +848,10 @@ class ResourceCoreObject {
             'acdh:hasLicensor' => 'Licensor',
             'acdh:hasOwner' => 'Owner'
         ];
-
+       
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
+        
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
@@ -866,6 +867,7 @@ class ResourceCoreObject {
                 }
             }
         }
+        
         return $result;
     }
 

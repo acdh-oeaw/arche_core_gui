@@ -9,29 +9,32 @@ jQuery(function ($) {
     var expertTable;
     var childTable;
     var versionVisible = false;
+    var smartSearchInputField = $('#sm-hero-str');
+    var autocompleteTimeout = null;
+    var autocompleteCounter = 1;
+
     $(document).ready(function () {
         addButtonToDescriptionText();
         $('#cite-loader').removeClass('hidden');
         if ($('#resourceHasVersion').val()) {
             versionVisible = true;
         }
-//$('#meta-content-container').hide();
+
         resId = $("#resId").val();
         checkDetailCardEvents();
-        //call basic data
-        //fetchMetadata();
+
         loadAdditionalData();
         // hide the summary div if there is no data inside it
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
-
-
     });
+
     $(document).keydown(function (event) {
         if (event.which == "17")
             cntrlIsPressed = true;
     });
+
     $(document).keyup(function () {
         cntrlIsPressed = false;
     });
@@ -354,13 +357,13 @@ jQuery(function ($) {
             createdRow: function (row, data, dataIndex) {
                 // Perform the AJAX request for the URL CS Content field
                 var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
-                
+
                 try {
                     var citationText = data.customCitation;
-                    if(!data.customCitation.startsWith('@')) {
+                    if (!data.customCitation.startsWith('@')) {
                         citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
                     }
-                                        
+
                     let citeDT = new Cite(citationText);
                     let templateName = 'apa-6th';
                     var template = "";
@@ -384,11 +387,11 @@ jQuery(function ($) {
                                 opt.type = 'html';
                                 opt.style = 'citation-' + templateName;
                                 opt.lang = 'en-US';
-                                cell.html('<a href="/browser/metadata/'+data.id+'">'+citeDT.get(opt)+'</a>');
+                                cell.html('<a href="/browser/metadata/' + data.id + '">' + citeDT.get(opt) + '</a>');
                             });
                 } catch (error) {
                     //console.log(error);
-                    cell.html('<a href="/browser/metadata/'+data.id+'">'+data.customCitation+'</a>');
+                    cell.html('<a href="/browser/metadata/' + data.id + '">' + data.customCitation + '</a>');
                 }
             },
             fnDrawCallback: function () {
@@ -911,5 +914,63 @@ jQuery(function ($) {
             $('#copy-cite-btn-confirmation').hide();
         }, 5000);
         e.preventDefault();
+    });
+
+
+
+    /***
+     * SMART SEARCH START
+     */
+
+    smartSearchInputField.autocomplete({
+        minLength: 2, // Minimum number of characters to trigger autocomplete
+        autoFocus: false,
+        delay: 300,
+        open: function () {
+            $("ul.ui-menu").width($(this).innerWidth());
+        }
+    });
+    
+    // Attach keyup event listener to the input field
+    smartSearchInputField.on('keyup', function () {
+        if (event.keyCode !== 37 && // Left arrow
+                event.keyCode !== 38 && // Up arrow
+                event.keyCode !== 39 && // Right arrow
+                event.keyCode !== 40    // Down arrow
+                ) {
+            // Get the current value of the input field
+            var inputValue = $(this).val();
+
+            // Check if the input value is at least 2 characters long
+            if (inputValue.length >= 2) {
+                if (autocompleteTimeout) {
+                    // invalidate the previous autocomplete search
+                    clearTimeout(autocompleteTimeout);
+                }
+                // make the AJAX query only if no further keyup events in next 0.3s
+                autocompleteTimeout = setTimeout(() => {
+                    autocompleteCounter++;
+                    var localCounter = autocompleteCounter;
+                    // Make an AJAX request to your API
+                    $.ajax({
+                        url: '/browser/api/smsearch/autocomplete/' + inputValue,
+                        method: 'GET',
+                        success: function (data) {
+                            var responseObject = $.parseJSON(data);
+                            // Initialize autocomplete with the retrieved results
+                            smartSearchInputField.autocomplete({source: []});
+                            smartSearchInputField.autocomplete({
+                                source: responseObject
+                            });
+                            // Open the autocomplete dropdown
+                            smartSearchInputField.autocomplete('search');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching autocomplete data:', error);
+                        }
+                    });
+                }, 300);
+            }
+        }
     });
 });
