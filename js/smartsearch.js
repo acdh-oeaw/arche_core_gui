@@ -23,7 +23,7 @@ jQuery(function ($) {
     /********************** EVENTS *************************************/
 
     $(document).ready(function () {
-        myFunction(); // This will work
+       
         $('.main-content-warnings').html("");
 
         $(window).on('popstate', function (e) {
