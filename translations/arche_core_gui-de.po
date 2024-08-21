@@ -95,9 +95,6 @@ msgstr "Primärforscher"
 msgid "Principal Investigator" 
 msgstr "Primärforscher:in"
 
-msgid "Number of Items" 
-msgstr "Anzahl der Elemente"
-
 msgid "Number Of Items" 
 msgstr "Anzahl der Elemente"
 
@@ -613,3 +610,9 @@ msgstr "Fehler bei der Initialisierung des BaseController!"
 
 msgid "Available since"
 msgstr "Verfügbar seit"
+
+msgid "Created Date"
+msgstr "Erstelldatum"
+
+msgid "Binary Size"
+msgstr "Binäre Größe"
