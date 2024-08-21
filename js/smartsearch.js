@@ -39,9 +39,9 @@ jQuery(function ($) {
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 getSearchParamsFromUrl(currentUrl);
-                // executeTheSearch();
+                executeTheSearch();
             } else {
-                // executeTheSearch();
+                executeTheSearch();
             }
         }
         // Call function specific to no popstate event
