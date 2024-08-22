@@ -56,7 +56,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     public function detailView(string $identifier) {
 
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
-        $data = $api->expertData($identifier, "en");
+        $data = $api->expertData($identifier, $this->siteLang);
         $content = $data->getContent();
         
         $return = [

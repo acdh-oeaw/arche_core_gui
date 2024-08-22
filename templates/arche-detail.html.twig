@@ -125,7 +125,7 @@
                                 {% if data.getData('acdh:hasUrl') %}
                                     <li>
                                         {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
+                                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL', 'delimiter': '<br>' } ) }}
                                     </li>
                                 {% endif %}
                                 {% if data.getData('acdh:hasRelatedProject') %}

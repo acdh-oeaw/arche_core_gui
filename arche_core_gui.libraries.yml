@@ -33,8 +33,12 @@ smart-search:
         js/jquery-ui.min-1.13.3.js: { minified: true }
         js/jquery.auto-complete.min-1.0.7.js: { minified: true }
         js/leaflet.draw-1.0.4.js: { minified: false }
-        js/smartsearch.js: {}
+        js/smartsearch-globals.js: {}
         js/smartsearch-url-func.js: {}
+        js/smartsearch.js: {}
+        js/smartsearch-map.js: {}
+        js/smartsearch-result.js: {}
+        js/smartsearch-autocomplete.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form

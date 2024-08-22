@@ -1,15 +1,11 @@
 jQuery(function ($) {
 
     "use strict";
-    var archeBaseUrl = getInstanceUrl();
+   
     var markersArr = [];
     var map;
-
-    function getInstanceUrl() {
-        var baseUrl = window.location.origin + window.location.pathname;
-        return baseUrl.split("/browser")[0];
-    }
-
+    console.log("MAP JS LOADED");
+   
     function initializeMap() {
         $(".map-loader").css('display', 'block');
         map = L.map('map', {
@@ -42,7 +38,7 @@ jQuery(function ($) {
         }, 500);
         
         setTimeout(function () {
-            fetch(archeBaseUrl + '/browser/api/search_coordinates/' + drupalSettings.arche_core_gui.gui_lang + '?_format=json')
+            fetch(window.archeBaseUrl + '/browser/api/search_coordinates/' + drupalSettings.arche_core_gui.gui_lang + '?_format=json')
                     .then((response) => response.json())
                     .then((data) => {
                         var heatArr = [];
@@ -109,6 +105,22 @@ jQuery(function ($) {
             }
         });
     }
+    
+    /**
+     * 
+     * @returns {undefined}
+     */
+    window.displayMapSelectedValue = function() {
+    //function displayMapSelectedValue() {
+        window.bbox = window.guiObj.coordinates;
+        if (window.guiObj.coordinates && window.guiObj.locationTitle) {
+            $('#mapSelectedPlace').html('<h5 class="h5-blue-title"><button id="removeMapSelectedPlace" class="btn btn-sm-add"> - </button>' + window.guiObj.locationTitle + '</h5>');
+        }
+    }
+
+
+
+    /**** EVENTS ***/
 
     $("#searchInput").on("input", function () {
         var query = $(this).val().toLowerCase();
