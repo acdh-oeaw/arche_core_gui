@@ -616,3 +616,6 @@ msgstr "Erstelldatum"
 
 msgid "Binary Size"
 msgstr "Binäre Größe"
+
+msgid "Access Restriction Summary"
+msgstr "Zusammenfassung der Zugriffsbeschränkungen"

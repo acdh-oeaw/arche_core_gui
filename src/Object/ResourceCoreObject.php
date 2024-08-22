@@ -22,15 +22,22 @@ class ResourceCoreObject {
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-
+        
         foreach ($data as $k => $v) {
             if (is_array($v)) {
+              
                 foreach ($v as $propval) {
-                    $this->setData($k, $propval);
+                    $firstArr = reset($propval);
+                    if (isset($propval[$this->language])) {
+                         $this->setData($k, $propval[$this->language]);
+                    } else {
+                        $this->setData($k, $firstArr);
+                    }
                 }
             }
         }
-
+      
+        
         //set acdhid /repoid / repourl
         $this->repoid = $this->getRepoID();
     }
@@ -50,7 +57,24 @@ class ResourceCoreObject {
      * @return array
      */
     public function getData(string $property): array {
-        return (isset($this->properties[$property]) && !empty($this->properties[$property])) ? $this->properties[$property] : array();
+        $first = [];
+        if (isset($this->properties[$property])) {
+            $first = reset($this->properties[$property]);
+        }
+        if (isset($this->properties[$property][$this->language])) {
+            
+            return $this->properties[$property][$this->language];
+        } elseif (isset($this->properties[$property]['und'])) {
+             return $this->properties[$property]['und'];
+        } elseif (isset($first) && isset($this->properties[$property])) {
+            foreach ($this->properties[$property] as $k => $v) {
+                if (is_int($k)) {
+                    return $this->properties[$property];
+                }
+                return (array) $first;
+            }
+        }
+        return array();
     }
 
     /**
@@ -64,11 +88,12 @@ class ResourceCoreObject {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
-            if (isset($this->properties[$prop]) && count($this->properties[$prop]) === 0) {
-                $this->properties[$prop] = $v;
-            } else {
-                $this->properties[$prop][] = $v;
+            if(isset($v['type']) && $v['type'] === 'REL') {
+                $this->properties[$prop][] = $v; 
+            }else {
+               $this->properties[$prop] = $v; 
             }
+            
         }
     }
 
@@ -78,6 +103,7 @@ class ResourceCoreObject {
      * @return string
      */
     public function getTitle(): string {
+
 
         if (isset($this->properties["acdh:hasTitle"][0]['title']) && !empty($this->properties["acdh:hasTitle"][0]['title'])) {
             return $this->properties["acdh:hasTitle"][0]['title'];
@@ -152,23 +178,22 @@ class ResourceCoreObject {
     }
 
     public function getPidOrAcdhIdentifier(): string {
-        
+
         if (isset($this->properties["acdh:hasPid"][0]['value']) && !empty($this->properties["acdh:hasPid"][0]['value']) && (
                 (strpos($this->properties["acdh:hasPid"][0]['value'], 'http://') !== false) ||
                 (strpos($this->properties["acdh:hasPid"][0]['value'], 'https://') !== false)
                 )) {
             return $this->properties["acdh:hasPid"][0]['value'];
         }
-        
-        if(!empty($this->getAcdhID())) {
+
+        if (!empty($this->getAcdhID())) {
             return $this->getAcdhID();
         }
-        
-        if(!empty($this->getOneID())) {
+
+        if (!empty($this->getOneID())) {
             return $this->getOneID();
         }
         return "";
-        
     }
 
     /**
@@ -209,8 +234,8 @@ class ResourceCoreObject {
      * @return string
      */
     public function getUUID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"][0])) {
-            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (isset($v->acdhid) && !empty($v->acdhid)) {
                     return $v->acdhid;
                 }
@@ -225,8 +250,8 @@ class ResourceCoreObject {
      * @return string
      */
     public function getAcdhID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"][0])) {
-            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (strpos($v['value'], '/id.acdh.oeaw.ac.at/') !== false &&
                         strpos($v['value'], '/id.acdh.oeaw.ac.at/cmdi/') === false) {
                     return $v['value'];
@@ -241,8 +266,8 @@ class ResourceCoreObject {
      * @return string
      */
     public function getOneID(): string {
-        if (isset($this->properties["acdh:hasIdentifier"][0])) {
-            return $this->properties["acdh:hasIdentifier"][0][0]['value'];
+        if (isset($this->properties["acdh:hasIdentifier"])) {
+            return $this->properties["acdh:hasIdentifier"][0]['value'];
         }
         return "";
     }
@@ -284,8 +309,8 @@ class ResourceCoreObject {
      */
     public function getRepoID(): string {
 
-        if (isset($this->properties["acdh:hasIdentifier"][0])) {
-            foreach ($this->properties["acdh:hasIdentifier"][0] as $v) {
+        if (isset($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $v) {
                 if (isset($v['id']) && !empty($v['id'])) {
                     $this->repoid = $v['id'];
                     return $v['id'];
@@ -356,7 +381,7 @@ class ResourceCoreObject {
         $img = '';
         $imgBinary = '';
         $width = str_replace('px', '', $width);
-        $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
+        $id = $this->properties["acdh:hasIdentifier"][0]['value'];
 
         //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
@@ -374,7 +399,7 @@ class ResourceCoreObject {
      */
     public function isTitleImage(): bool {
         //get the first id
-        $id = $this->properties["acdh:hasIdentifier"][0][0]['value'];
+        $id = $this->properties["acdh:hasIdentifier"][0]['value'];
 
         //but if we have acdhid, then use that one
         if (!empty($this->getAcdhID())) {
@@ -682,7 +707,7 @@ class ResourceCoreObject {
         }
         return false;
     }
-    
+
     /**
      * check if the Resource is an uploaded binary
      * @return bool
@@ -690,7 +715,7 @@ class ResourceCoreObject {
     public function isBinary(): bool {
         $cat = false;
         //check the resource categories
-        if($this->getAcdhType() === "Resource" && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+        if ($this->getAcdhType() === "Resource" && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
                 (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
                 $cat) {
             return true;
@@ -848,15 +873,15 @@ class ResourceCoreObject {
             'acdh:hasLicensor' => 'Licensor',
             'acdh:hasOwner' => 'Owner'
         ];
-       
+
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
-        
+
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
                             $obj = [];
-                            if (isset($val['id']) && (int)$this->repoid !== (int)$val['id']) {
+                            if (isset($val['id']) && (int) $this->repoid !== (int) $val['id']) {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];
@@ -867,7 +892,7 @@ class ResourceCoreObject {
                 }
             }
         }
-        
+
         return $result;
     }
 
@@ -936,7 +961,7 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     /**
      * Return the metadata view right box getCollectionTechnicalData card content
      * @return array
@@ -949,7 +974,7 @@ class ResourceCoreObject {
             'acdh:hasNumberOfItems' => 'Number Of Items',
             'acdh:hasBinarySize' => 'Binary Size'
         ];
-     
+
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
                 if (is_array($this->properties[$k])) {
@@ -966,19 +991,19 @@ class ResourceCoreObject {
                 }
             }
         }
-        
+
         if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
-             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-'. 
-                      date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-         } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
-             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
-         }elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
-              $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-         }
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-' .
+                    date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+        } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
+        } elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+        }
         return $result;
     }
-    
-        /**
+
+    /**
      * Return the metadata view right box getResMetaTechnicalData card content
      * @return array
      */
@@ -990,11 +1015,11 @@ class ResourceCoreObject {
             'acdh:hasBinarySize' => 'File Size',
             'acdh:hasExtent ' => 'Extent'
         ];
-        
+
         /*
          *     hasCreatedStartDate (only display year; Created Date: start – end) [Entstehungszeit:/Created Date:] 
 
-    hasCreatedEndDate (see above) 
+          hasCreatedEndDate (see above)
          */
 
 
@@ -1014,19 +1039,18 @@ class ResourceCoreObject {
                 }
             }
         }
-        
-         if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
-             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-'. 
-                      date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-         } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
-             $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
-         }elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
-              $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-         }
-       
+
+        if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-' .
+                    date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+        } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
+        } elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
+            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
+        }
+
         return $result;
     }
-    
 
     /**
      * Check if we have to display the version box

@@ -1,10 +1,10 @@
 <div class="col-lg-12 " id="av-summary">
     <ul>
+        
         {% if data.getData('acdh:hasRelatedDiscipline') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Research Discipline' } ) }}</li>
-            {% endif %}
-
+            {% endif %} 
         {% if data.getData('acdh:hasSubject') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSubject'), 'label':  'Subject' } ) }}</li>

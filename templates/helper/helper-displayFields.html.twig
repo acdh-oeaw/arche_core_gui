@@ -48,16 +48,16 @@ Field extra type:
                             {% if v.value %} 
                                 {% if (v.type == 'ID') %}
                                     {% if (v.title and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>1
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
                                     {% elseif (v.value and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>2
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
                                     {% elseif (v.relvalue and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>3
+                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
                                     {% elseif (v.value) %}
                                         <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                                         <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
                                     {% endif %}
-                                    {% if not loop.last %}<span>{{ limiter }}</span>{% endif %}
+                                    {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                 {% elseif(v.type == 'REL') %}
                                     <!-- The ARCHE RELATIONS will open in the same window -->
                                     {% if (v.title and v.repoid )  %}
@@ -133,7 +133,7 @@ Field extra type:
                                     {% elseif (v.relvalue) is not empty %}
                                         {{ v.relvalue|nl2br }}
                                     {% endif %}
-                                     {% if not loop.last %}<span>{{ limiter }}</span>{% endif %}
+                                    {% if not loop.last %}<span>{{ limiter }}</span>{% endif %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}    
