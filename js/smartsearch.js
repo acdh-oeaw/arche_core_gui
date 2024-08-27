@@ -290,8 +290,10 @@ jQuery(function ($) {
 
         map.on('draw:drawstart', function (event) {
             var layer = event.layer;
-            map.removeLayer(layer);
-            drawnItems.clearLayers();
+            if(layer) {
+                map.removeLayer(layer);
+                drawnItems.clearLayers();
+            }
         });
 
         map.on('draw:deleted', function (event) {

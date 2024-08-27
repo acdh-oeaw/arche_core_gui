@@ -540,7 +540,7 @@ msgid "Contact us!"
 msgstr "Kontaktieren Sie uns!"
 
 msgid "Rights Information"
-msgstr "Rights Information"
+msgstr "Rechteinformation"
 
 msgid "Owner"
 msgstr "Eigentümer:in"
