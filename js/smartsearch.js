@@ -69,9 +69,6 @@ jQuery(function ($) {
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
         var resourceId = $(this).data('resource-id');
-
-        console.log('CLIEKCED SEARCHIN::');
-        console.log(resourceId);
         $('#searchInValue').val(resourceId);
         var buttonId = $(this).attr('id');
         if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
@@ -395,8 +392,6 @@ jQuery(function ($) {
          }*/
 
         if ($('#searchInValue').val()) {
-            console.log("SEARCH SERCHIN VSAL::::");
-            console.log($('#searchInValue').val());
             param.data.searchIn.push($('#searchInValue').val());
         }
 
