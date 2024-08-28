@@ -12,15 +12,12 @@ jQuery(function ($) {
      */
     window.showResults = function (data, param, t0, initial = false) {
         //function showResults(data, param, t0, initial = false) {
-        console.log("SHOW RESULTS: ");
-        console.log(window.guiObj);
-        //console.log(data);
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);
         var pageSize = data.pageSize;
         var totalPages = Math.ceil(data.totalCount / pageSize);
-
         var currentPage = $('a.paginate_button.current').text();
+        
         if (!currentPage && data.page === 0) {
             currentPage = 1;
         } else {
@@ -39,13 +36,12 @@ jQuery(function ($) {
         }
 
         if(data.results) {
-            console.log("RES: " + data.results)
             results += displaySearchResult(data.results);
-        
             $('.main-content-row').html(results);
             //if the user selected a value from the map then we have to display it.
             window.displayMapSelectedValue();
         }
+        
         //var countText = countNullText;
         if (!initial) {
             var countText = Drupal.t('0 Result(s)');
@@ -65,6 +61,7 @@ jQuery(function ($) {
         if (data.messages !== "") {
             window.displaySearchWarningMessage(data.messages, data.class);
         }
+        
         if (window.bboxObj !== undefined) {
             if (window.bboxObj.drawnItems) {
                 setMapLabel(window.bboxObj.drawnItems);
@@ -137,14 +134,11 @@ jQuery(function ($) {
                         select = '<div id="mapLabel"></div>' +
                                 '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
                     }
-
                     facets += createFacetSelectCard(fd, select);
                     multipleSelects.push(title_id);
-
                 } else {
                     div.html(select + '<br/>');
                 }
-
             }
             if (fdp.distribution === 1 || fdp.distribution === 3) {
                 $('input.facet-min[data-value="' + fd.property + '"]').attr('placeholder', fd.min || '');
@@ -215,7 +209,7 @@ jQuery(function ($) {
                 results += '<div class="col-block col-lg-10 discover-table-content-div" data-contentid="' + resourceUrl + '">';
                 //title
                 results += '<div class="res-property">';
-                //results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
+                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
                 results += '<h5 class="h5-blue-title"><a href="' + window.archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + window.getLangValue(result.title, window.preferredLang) + '</a></h5>';
                 results += '</div>';
 

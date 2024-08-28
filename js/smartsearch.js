@@ -3,16 +3,15 @@ jQuery(function ($) {
     /********************** EVENTS *************************************/
 
     $(document).ready(function () {
-       
-        $('.main-content-warnings').html("");
 
+        $('.main-content-warnings').html("");
+        $('#searchInValue').val("");
         $(window).on('popstate', function (e) {
             // Call the function to handle the URL change
             loadPreviousUrl();
         });
 
         function handleURLChange() {
-
             var currentUrl = window.location.href;
             // Create a URL object to extract pathname
             var url = new URL(currentUrl);
@@ -66,53 +65,74 @@ jQuery(function ($) {
         }
     });
 
-    
+
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
-        var buttonId = $(this).attr('id'); // Get the id attribute value of the clicked button
+        var resourceId = $(this).data('resource-id');
+
+        console.log('CLIEKCED SEARCHIN::');
+        console.log(resourceId);
+        $('#searchInValue').val(resourceId);
+        var buttonId = $(this).attr('id');
         if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
-            $('#searchIn').empty();
-            $('#searchIn').hide();
-            $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
-        } else {
-            searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
+         $('#searchIn').empty();
+         $('#searchIn').hide();
+         $('#searchInValue').val("");
+         $('#searchIn').hide();
+         //$('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
+         } else {
+            searchInAdd(resourceId, $(this).data('resource-title'));
             $('#searchIn').show();
-            $('.discover-content-main').hide();
-            var count = $('#searchIn').length;
-            if (count > 0) {
-                $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', true);
-            }
         }
+        
+        window.executeTheSearch();
+        /*
+          // Get the id attribute value of the clicked button
+         if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
+         $('#searchIn').empty();
+         $('#searchIn').hide();
+         $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
+         } else {
+         searchInAdd($(this).data('resource-id'), $(this).data('resource-title'));
+         $('#searchIn').show();
+         $('.discover-content-main').hide();
+         var count = $('#searchIn').length;
+         if (count > 0) {
+         $('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', true);
+         }
+         }
+         */
     });
-
-    $(document).delegate(".remove_search_only_in", "click", function (e) {
-        e.preventDefault();
-        var id = $(this).attr("data-removeid");
-        // #in17722
-        $('#searchIn #in' + id).remove();
-        countSearchIn();
-    });
-
-    $(document).delegate(".smartSearchInAdd", "click", function (e) {
-        e.preventDefault();
-        var id = $(this).attr("data-resourceid");
-        if ($('#in' + id).length === 1) {
-            return;
-        }
-
-        var element = $('#res' + id).clone();
-        element.find('div:first-child').html('<a data-removeid="' + id + '" href="#" class="remove_search_only_in">Remove</a>');
-        //element.find('div:last-child').children('div').remove();
-        var btn = element.find('button');
-        btn.text('-');
-        btn.attr('id', 'removeSearchInElementBtn');
-        element.attr('id', 'in' + id);
-        element.attr('class', 'searchInElement');
-        element.addClass('row');
-        $('#searchIn').append(element);
-
-    });
-
+    /*
+     $(document).delegate(".remove_search_only_in", "click", function (e) {
+     e.preventDefault();
+     var id = $(this).attr("data-removeid");
+     // #in17722
+     $('#searchIn #in' + id).remove();
+     countSearchIn();
+     });
+     */
+    /*
+     $(document).delegate(".smartSearchInAdd", "click", function (e) {
+     e.preventDefault();
+     var id = $(this).attr("data-resourceid");
+     if ($('#in' + id).length === 1) {
+     return;
+     }
+     
+     var element = $('#res' + id).clone();
+     element.find('div:first-child').html('<a data-removeid="' + id + '" href="#" class="remove_search_only_in">Remove</a>');
+     //element.find('div:last-child').children('div').remove();
+     var btn = element.find('button');
+     btn.text('-');
+     btn.attr('id', 'removeSearchInElementBtn');
+     element.attr('id', 'in' + id);
+     element.attr('class', 'searchInElement');
+     element.addClass('row');
+     $('#searchIn').append(element);
+     
+     });
+     */
     ////// SEARCH IN Function END /////
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
@@ -124,6 +144,7 @@ jQuery(function ($) {
         $('#block-smartsearchblock textarea').val('');
         $('#block-smartsearchblock select').val('');
         $('#sm-hero-str').val('');
+        $('#searchInValue').val("");
         $('#mapSelectedPlace').html('');
         $('#mapLabel').html('');
         // do a topcollection search
@@ -143,7 +164,7 @@ jQuery(function ($) {
 
         // Replace the specific part with a single &
         var newUrl = paramsString.replace(pattern, '&');
-
+        
         window.guiObj = {};
         // Fix any potential issues with dangling & or multiple & in a row
         newUrl = newUrl.replace(/&&/, '&').replace(/\?&/, '?').replace(/&$/, '');
@@ -366,11 +387,17 @@ jQuery(function ($) {
             }
             param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
         });
+        /*
+         if ($('#searchInChb:checked').length === 1) {
+         $('#searchIn > div').each(function (n, el) {
+         param.data.searchIn.push($(el).attr('data-value'));
+         });
+         }*/
 
-        if ($('#searchInChb:checked').length === 1) {
-            $('#searchIn > div').each(function (n, el) {
-                param.data.searchIn.push($(el).attr('data-value'));
-            });
+        if ($('#searchInValue').val()) {
+            console.log("SEARCH SERCHIN VSAL::::");
+            console.log($('#searchInValue').val());
+            param.data.searchIn.push($('#searchInValue').val());
         }
 
         if (window.bboxObj.drawnItems) {
@@ -413,7 +440,7 @@ jQuery(function ($) {
         $.ajax(param);
     }
 
-    
+
 
     /**
      * Load the latest url after the user clicked the back button on the browser
@@ -433,7 +460,7 @@ jQuery(function ($) {
         }
     }
 
-    window.executeTheSearch = function() {
+    window.executeTheSearch = function () {
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -480,12 +507,7 @@ jQuery(function ($) {
             }
         });
     }
-    
-    
-    
-    
-    
-    
+
     function searchInAdd(id, title) {
 
         if ($('#in' + id).length === 1) {
