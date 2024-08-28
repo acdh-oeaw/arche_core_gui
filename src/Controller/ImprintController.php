@@ -23,7 +23,7 @@ class ImprintController extends \Drupal\arche_core_gui\Controller\ArcheBaseContr
     public function display() {
 
         // Example API endpoint URL.
-        $api_url = 'https://imprint.acdh.oeaw.ac.at/7404';
+        $api_url = 'https://imprint.acdh.oeaw.ac.at/7404/?locale='.$this->siteLang;
         $content = "";
         try {
             // Perform the API request.
