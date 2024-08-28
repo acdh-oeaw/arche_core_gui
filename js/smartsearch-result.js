@@ -32,18 +32,20 @@ jQuery(function ($) {
         $('div.dateValues').text('');
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');
-       
+        var results = '';
         //we have some results already or empty search
         if ((data.totalCount > 0) || data.totalCount === -1) {
-            createFacetCards(data, param);
-            var results = '';
+            createFacetCards(data, param);   
         }
 
-        results += displaySearchResult(data.results);
-        $('.main-content-row').html(results);
-        //if the user selected a value from the map then we have to display it.
-        window.displayMapSelectedValue();
-
+        if(data.results) {
+            console.log("RES: " + data.results)
+            results += displaySearchResult(data.results);
+        
+            $('.main-content-row').html(results);
+            //if the user selected a value from the map then we have to display it.
+            window.displayMapSelectedValue();
+        }
         //var countText = countNullText;
         if (!initial) {
             var countText = Drupal.t('0 Result(s)');
