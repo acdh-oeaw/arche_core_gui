@@ -65,3 +65,12 @@ arche_dissemination_audio:
     identifier: '^[^\?]*$'
     _permission: 'access content'
     _access: 'TRUE'          
+    
+arche_imprint:
+  path: '/imprint'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\ImprintController::display'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'   
