@@ -18,7 +18,7 @@ jQuery(function ($) {
             var url = new URL(currentUrl);
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
-                getSearchParamsFromUrl(currentUrl);
+                window.getSearchParamsFromUrl(currentUrl);
                 executeTheSearch();
             } else {
                 executeTheSearch();
@@ -26,7 +26,7 @@ jQuery(function ($) {
         }
         // Call function specific to no popstate event
         handleURLChange();
-        initMaps();
+        window.initializeMaps();
     });
 
     //// events ////
@@ -199,215 +199,7 @@ jQuery(function ($) {
 
     /////////////////// EVENTS END /////////////////////
 
-
-    ////// FUNCTIONS //////
-
-    function initMaps(reinit = false) {
-
-        map = L.map('map').setView([48.2, 16.3], 10);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // FeatureGroup is to store editable layers
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-
-        // Initialize the draw control and pass it the FeatureGroup of editable layers
-        var drawControl = new L.Control.Draw({
-            draw: {
-                position: 'topleft',
-                rectangle: {
-                    shapeOptions: {
-                        color: '#97009c'
-                    }
-                },
-                polygon: false,
-                polyline: false,
-                circle: false,
-                marker: false,
-                circlemarker: false
-            },
-            edit: {
-                edit: false,
-                featureGroup: drawnItems
-            }
-        });
-        map.addControl(drawControl);
-
-        if (!reinit) {
-            var coordinates = (window.guiObj.facets !== undefined && window.guiObj.facets.map !== undefined) ? window.guiObj.facets.map : "";
-            if (coordinates) {
-                var coordinatesString = coordinates.replace('POLYGON((', '').replace('))', '');
-                var coordinatesArray = coordinatesString.split(',');
-
-                // Reformat the coordinates to [latitude, longitude] for Leaflet
-                var polygonCoordinates = coordinatesArray.map(function (coord) {
-                    var latLng = coord.trim().split(' ');
-                    return [parseFloat(latLng[1]), parseFloat(latLng[0])];
-                });
-
-                var latitudes = polygonCoordinates.map(function (coord) {
-                    return coord[0];
-                });
-                var longitudes = polygonCoordinates.map(function (coord) {
-                    return coord[1];
-                });
-
-                var southWest = [Math.min.apply(null, latitudes), Math.min.apply(null, longitudes)];
-                var northEast = [Math.max.apply(null, latitudes), Math.max.apply(null, longitudes)];
-
-                var bounds = [southWest, northEast];
-
-                // Create a rectangle layer
-                var rectangle = L.rectangle(bounds, {
-                    fillColor: '#97009c'
-                });
-
-                //map.addLayer(drawnItems);
-                drawnItems.addLayer(rectangle);
-                drawnItems.addTo(map);
-
-                setTimeout(function () {
-                    setMapLabel(drawnItems);
-                }, 1000);
-
-                map.fitBounds(rectangle.getBounds());
-            }
-        }
-
-        map.on(L.Draw.Event.CREATED, function (event) {
-            drawnItems.clearLayers();
-            window.bboxObj = {};
-            var layer = event.layer;
-            map.removeLayer(layer);
-            drawnItems.addLayer(layer);
-
-            window.bboxObj = {drawnItems};
-            setMapLabel(drawnItems);
-        });
-
-        map.on('draw:drawstart', function (event) {
-            var layer = event.layer;
-            if(layer) {
-                map.removeLayer(layer);
-                drawnItems.clearLayers();
-            }
-        });
-
-        map.on('draw:deleted', function (event) {
-            var layer = event.layer;
-            map.removeLayer(layer);
-            $('#mapLabel').html('');
-            $('.sm-map').css('top', '-1000px');
-            $('.sm-map').css('display', 'block');
-        });
-
-        window.bbox = drawnItems;
-
-        var customControl = L.Control.extend({
-            options: {
-                position: 'topright' // Position the button in the top right corner
-            },
-            onAdd: function (map) {
-                var container = L.DomUtil.create('button', 'leaflet-bar');
-                container.innerHTML = 'Close'; // Text of the button
-                container.style.backgroundColor = 'white';
-                container.style.width = '60px';
-                container.style.height = '30px';
-                container.style.fontWeight = 'bold';
-                container.style.cursor = 'pointer';
-                container.style.border = 'none';
-                container.style.outline = 'none';
-
-                // Prevent the map from handling the click
-                L.DomEvent.disableClickPropagation(container);
-
-                // Setup the click event on the button
-                L.DomEvent.on(container, 'click', function () {
-                    $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
-                    $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
-
-                    setTimeout(function () {
-                        map.invalidateSize();  // 'map' is your Leaflet map variable
-                    }, 100);
-                });
-
-                return container;
-            }
-        });
-
-        // Add the new control to the map
-        map.addControl(new customControl());
-    }
-
-    function setMapLabel(bbox) {
-        var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn">X</a> ' + coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3) + '</div>');
-    }
-
-    function getSearchParamsFromUrl(url) {
-        var paramsString = "";
-        if (url.split('/browser/discover?')[1]) {
-            paramsString = url.split('/browser/discover?')[1];
-        } else {
-            paramsString = url.split('/browser/discover/')[1];
-        }
-
-        paramsString = paramsString.replace('?q', 'q');
-
-        window.guiObj = {};
-        window.guiObj = parseQueryString(paramsString);
-        window.firstLoad = false;
-    }
-
-    /**
-     * This function converts back the query string from the url into an object to the smartsearch api
-     * -- if we copy pasted the result url
-     * @param {type} queryString
-     * @returns {unresolved}
-     */
-    function parseQueryString(queryString) {
-        var myArray = [];
-        myArray = [];
-        var pairs = queryString.split('&');
-        pairs.forEach(function (pair) {
-            var parts = pair.split('=');
-            var key = decodeURIComponent(parts[0]);
-            var value = decodeURIComponent(parts[1]);
-
-            // Handle array values within brackets
-            if (value.startsWith('[') && value.endsWith(']')) {
-                value = value.slice(1, -1).split(',');
-            }
-
-            // Handle nested keys
-            if (key.includes('[')) {
-                var keys = key.split(/[\[\]]+/).filter(Boolean);
-                var current = myArray;
-
-                for (var i = 0; i < keys.length; i++) {
-                    var nestedKey = keys[i];
-                    if (i === keys.length - 1) {
-                        current[nestedKey] = value;
-                    } else {
-                        current[nestedKey] = current[nestedKey] || {};
-                        current = current[nestedKey];
-                    }
-                }
-            } else {
-                myArray[key] = value;
-            }
-        });
-        return myArray;
-    }
-
-
     //////////////// SMART SEARCH ///////////////////
-
-  
-    
 
     /**
      * The basic jsut facet display search function

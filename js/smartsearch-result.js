@@ -1,7 +1,7 @@
 jQuery(function ($) {
-   
+
     var mapPins = null;
-    
+
     /**
      * Display the smartsearch results
      * @param {type} data
@@ -10,8 +10,8 @@ jQuery(function ($) {
      * @param {type} initial
      * @returns {undefined}
      */
-    window.showResults = function(data, param, t0, initial = false) {
-    //function showResults(data, param, t0, initial = false) {
+    window.showResults = function (data, param, t0, initial = false) {
+        //function showResults(data, param, t0, initial = false) {
         console.log("SHOW RESULTS: ");
         console.log(window.guiObj);
         //console.log(data);
@@ -29,16 +29,61 @@ jQuery(function ($) {
 
         window.createPager(totalPages);
 
-        var multipleSelects = [];
         $('div.dateValues').text('');
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');
-        
+       
+        //we have some results already or empty search
+        if ((data.totalCount > 0) || data.totalCount === -1) {
+            createFacetCards(data, param);
+            var results = '';
+        }
+
+        results += displaySearchResult(data.results);
+        $('.main-content-row').html(results);
+        //if the user selected a value from the map then we have to display it.
+        window.displayMapSelectedValue();
+
+        //var countText = countNullText;
+        if (!initial) {
+            var countText = Drupal.t('0 Result(s)');
+            if (data.results.length > 0) {
+                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
+            } else {
+                $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
+                //showJustSearchFacets();
+            }
+            $('#smartSearchCount').html(countText);
+        } else {
+            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
+            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+        }
+
+        //display warnings 
+        if (data.messages !== "") {
+            window.displaySearchWarningMessage(data.messages, data.class);
+        }
+        if (window.bboxObj !== undefined) {
+            if (window.bboxObj.drawnItems) {
+                setMapLabel(window.bboxObj.drawnItems);
+            }
+        }
+
+        if (window.bbox !== undefined) {
+            setMapLabel(window.bbox);
+        }
+        $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
+        window.updateUrl(param);
+    }
+
+    function createFacetCards(data, param) {
+        var multipleSelects = [];
         var facets = '';
         $.each(data.facets, function (n, fd) {
             var fdp = param.facets[fd.property] || (fd.type === 'continuous' ? {} : []);
             var select = "";
             if (fd.values.length > 0 || fd.min || fd.type === 'map') {
+                
                 var div = $(document.getElementById(fd.property + 'values'));
                 var text = '';
 
@@ -82,8 +127,7 @@ jQuery(function ($) {
                         if (mapPins) {
                             map.removeLayer(mapPins);
                         }
-                        //console.log("MAP::::");
-                        //console.log(fd.values);
+                       
                         if (fd.values !== '') {
                             mapPins = L.geoJSON(JSON.parse(fd.values));
                             mapPins.addTo(map);
@@ -107,64 +151,21 @@ jQuery(function ($) {
         });
 
         $('#facets').html(facets);
-
-
         $.each(multipleSelects, function (k, v) {
             $("#smart-multi-" + v).select2({
                 placeholder: Drupal.t('Select an option')
             });
         });
-
-        var results = '';
-        results += displaySearchResult(data.results);
-        $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
-
-        $('.main-content-row').html(results);
-        //if the user selected a value from the map then we have to display it.
-        window.displayMapSelectedValue();
-
-        //var countText = countNullText;
-        if (!initial) {
-            var countText = Drupal.t('0 Result(s)');
-            if (data.results.length > 0) {
-                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
-            } else {
-                $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
-                //showJustSearchFacets();
-            }
-            $('#smartSearchCount').html(countText);
-        } else {
-            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
-            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
-        }
-
-        //display warnings 
-        if (data.messages !== "") {
-            window.displaySearchWarningMessage(data.messages, data.class);
-        }
-        if (window.bboxObj !== undefined) {
-            if (window.bboxObj.drawnItems) {
-                setMapLabel(window.bboxObj.drawnItems);
-            }
-        }
-
-        if (window.bbox !== undefined) {
-            setMapLabel(window.bbox);
-        }
-
-        window.updateUrl(param);
     }
-    
-    
-    
+
     /**
      * Show the facets boxes on the left menu
      * @param {type} fd
      * @param {type} select
      * @returns {String}
      */
-    window.createFacetSelectCard = function(fd, select) {
-    //function createFacetSelectCard(fd, select) {
+    window.createFacetSelectCard = function (fd, select) {
+        //function createFacetSelectCard(fd, select) {
         var text = "";
         var idStr = fd.label.replace(/[^\w\s]/gi, '');
         idStr = idStr.replace(/\s+/g, '_');
@@ -279,9 +280,7 @@ jQuery(function ($) {
         });
         return results;
     }
-    
-    
-    
+
     function getParents(parent, top, preferredLang) {
         if (parent === false) {
             return '';
