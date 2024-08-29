@@ -5,3 +5,5 @@ CREATE TABLE IF NOT EXISTS gui.search_cache (
     created timestamp without time zone NOT NULL,
     requested timestamp without time zone NOT NULL
 );
+
+grant select, insert, update, delete on gui.search_cache to gui;
