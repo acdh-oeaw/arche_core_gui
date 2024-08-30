@@ -5,13 +5,13 @@ basic:
         base:
             css/arche_core_gui.css: {}
     js:
-        js/jquery-1.12.3.min.js: {}
         js/citation-js-0.5.0.min.js: {}
         js/arche_core_gui_base.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
         - core/drupalSettings
+        - core/jquery    
         
 smart-search:
     version: 1.0
@@ -39,6 +39,7 @@ smart-search:
         js/smartsearch-map.js: {}
         js/smartsearch-result.js: {}
         js/smartsearch-autocomplete.js: {}
+        js/vcrSubmit.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form

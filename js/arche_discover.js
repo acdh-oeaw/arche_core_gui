@@ -6,10 +6,4 @@ jQuery(function ($) {
         //fetchRoot();
     });
     
-    $(document).delegate("#getClarinVCR", "click", function (e) {
-        e.preventDefault();
-        $('#vcr-div > form').submit();
-    });
-
-
 });
