@@ -14,7 +14,7 @@
         <div class="col-lg-3 discover-left" >
             {{ include(arche_core_gui_path ~ '/templates/blocks/discover-smart-search.html.twig', {'data': data } ) }}
             <br>
-            {{ include(arche_core_gui_path ~ '/templates/blocks/clarin-vcr-block.html.twig', {'data': data } ) }}            
+            {{ include(arche_core_gui_path ~ '/templates/blocks/clarin-vcr-block.html.twig', {'vcrUrl': vcrUrl } ) }}            
         </div>
 
         <div class="col-lg-9 discover-main " >

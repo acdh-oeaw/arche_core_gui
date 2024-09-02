@@ -91,9 +91,11 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
     }
 
     public function discoverView($str = NULL) {
+        
         $return = [
             '#theme' => 'arche-discover',
             '#cache' => ['max-age' => 0],
+            '#vcrUrl' => $this->config->clarinVcrUrl,
             '#attached' => [
                 'library' => [
                     'arche_core_gui/discover-view',

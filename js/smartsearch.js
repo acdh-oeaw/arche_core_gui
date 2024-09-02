@@ -72,19 +72,19 @@ jQuery(function ($) {
         $('#searchInValue').val(resourceId);
         var buttonId = $(this).attr('id');
         if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
-         $('#searchIn').empty();
-         $('#searchIn').hide();
-         $('#searchInValue').val("");
-         $('#searchIn').hide();
-         //$('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
-         } else {
+            $('#searchIn').empty();
+            $('#searchIn').hide();
+            $('#searchInValue').val("");
+            $('#searchIn').hide();
+            //$('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
+        } else {
             searchInAdd(resourceId, $(this).data('resource-title'));
             $('#searchIn').show();
         }
-        
+
         window.executeTheSearch();
         /*
-          // Get the id attribute value of the clicked button
+         // Get the id attribute value of the clicked button
          if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
          $('#searchIn').empty();
          $('#searchIn').hide();
@@ -161,7 +161,7 @@ jQuery(function ($) {
 
         // Replace the specific part with a single &
         var newUrl = paramsString.replace(pattern, '&');
-        
+
         window.guiObj = {};
         // Fix any potential issues with dangling & or multiple & in a row
         newUrl = newUrl.replace(/&&/, '&').replace(/\?&/, '?').replace(/&$/, '');
@@ -265,9 +265,6 @@ jQuery(function ($) {
          };
          */
         param.error = function (xhr, status, error) {
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
@@ -289,35 +286,9 @@ jQuery(function ($) {
         }
     }
 
-    /**
-     * Perform the main search function
-     * @returns {undefined}
-     */
-    function search() {
-        window.token++;
-        $('.main-content-warnings').html('');
-        var localToken = window.token;
-
-        if (window.popstateActive === 'true') {
-            window.firstLoad = false;
-        }
-
-        if (window.firstLoad) {
-            return showJustSearchFacets();
-        }
-
-        var searchStr = $('#sm-hero-str').val();
-        var pagerPage = (window.getGuiSearchParams('actualPage') ?? 1) - 1;
-        //var guiFacets_ = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
-
-        if (searchStr === "") {
-            searchStr = (window.getGuiSearchParams('q')) ? window.getGuiSearchParams('q') : "";
-        }
-
-        updateSearchStrInput(searchStr);
-
+    window.buildParams = function (searchStr, pagerPage, apiUrl = '/browser/api/smartsearch') {
         var param = {
-            url: '/browser/api/smartsearch',
+            url: apiUrl,
             method: 'get',
             data: {
                 q: searchStr,
@@ -332,6 +303,7 @@ jQuery(function ($) {
                         //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
+
         //if we have already selected facets from the url then we have to update 
         // the facets
         if (window.getGuiSearchParams('facets')) {
@@ -401,6 +373,37 @@ jQuery(function ($) {
                 param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
             }
         }
+        return param;
+    }
+
+    /**
+     * Perform the main search function
+     * @returns {undefined}
+     */
+    function search() {
+        window.token++;
+        $('.main-content-warnings').html('');
+        var localToken = window.token;
+
+        if (window.popstateActive === 'true') {
+            window.firstLoad = false;
+        }
+
+        if (window.firstLoad) {
+            return showJustSearchFacets();
+        }
+
+        var searchStr = $('#sm-hero-str').val();
+        var pagerPage = (window.getGuiSearchParams('actualPage') ?? 1) - 1;
+        //var guiFacets_ = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
+
+        if (searchStr === "") {
+            searchStr = (window.getGuiSearchParams('q')) ? window.getGuiSearchParams('q') : "";
+        }
+
+        updateSearchStrInput(searchStr);
+
+        var param = window.buildParams(searchStr, pagerPage);
 
         //updateUrl(param.data);
         var t0 = new Date();
@@ -415,13 +418,9 @@ jQuery(function ($) {
         param.fail = function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
             $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
-
         };
 
         param.error = function (xhr, status, error) {
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
                 $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
@@ -434,8 +433,6 @@ jQuery(function ($) {
         param.timeout = 60000;
         $.ajax(param);
     }
-
-
 
     /**
      * Load the latest url after the user clicked the back button on the browser

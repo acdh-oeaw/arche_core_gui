@@ -1,14 +1,18 @@
-<div class="res-act-button">
-    <a href="#" id="getClarinVCR" data-vcrdata="{{ data }}" >{{ "Add to CLARIN Virtual Collection"|trans }}</a>
-    <div id="vcr-data-loading" style="display:none">
-        <span class="">{{ "VCR Data Loading..."|trans }}</span>
-    </div>
+<div class="col-12 mt-2">
+    <input type="hidden" id="search-clarinurl" value="{{ vcrUrl }}">
+    <a href="#" class="btn btn-arche-blue w-100 smartsearch-btn" id="getClarinVCR">{{ "Add to CLARIN Virtual Collection"|trans }}</a>
+    <div id="vcr-search-form"></div>
+    <div id="vcr-search-result"><span class="res-title" id="vcr-search-result-text"></span></div>
+    <div id="vcr-data-loading" style="display:none"><span class="res-title">{{ "VCR Data Loading..."|trans }}</span></div>
+    
+
+    <!--
     <div id="vcr-div">
         <form action="{{ url }}" method="POST" target="_blank">
             <input type="hidden" name="name" value="ArcheCollection"/>
             <input type="hidden" name="resourceUri" value="{{ data }}"/>
         </form>
-    </div>
+    </div>-->
 </div>
 
 
