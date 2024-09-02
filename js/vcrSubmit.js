@@ -1,15 +1,15 @@
 jQuery(function ($) {
 
 
-    $("#submit-search-vcr").click(function (e) {
+    $("#getClarinVCR").click(function (e) {
 
         e.preventDefault();
-        $('#submit-search-vcr').hide();
+        //$('#submit-search-vcr').hide();
         $('#vcr-data-loading').show();
         setInterval(blink_text('vcr-data-loading'), 10000);
 
         let metavalue = vcrMeta();
-        let url = "/browser/api/search_vcr/" + metavalue;
+        let url = "/browser/api/vcr/" + metavalue;
         $.ajax({
             type: "GET",
             url: url,

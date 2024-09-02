@@ -749,6 +749,8 @@ $settings['file_scan_ignore_directories'] = [
   'bower_components',
 ];
 
+$settings['state_cache'] = true;
+
 /**
  * Load local development override configuration, if available.
  *
@@ -769,7 +771,6 @@ $settings['file_scan_ignore_directories'] = [
         $pgauth = explode(':', $i);
     }
 }
- 
 
 $databases['default']['default'] = array (
   'database' => '%GUI_DB_DBNAME%',
@@ -781,6 +782,7 @@ $databases['default']['default'] = array (
   'driver' => 'pgsql'
 );
 
+/*
 $pswd = "";
 if(file_exists("/home/www-data/.pgpass")) {
     foreach (explode("\n", file_get_contents("/home/www-data/.pgpass")) as $i) {
@@ -801,6 +803,7 @@ $databases['repo']['default'] = array (
   'driver' => 'pgsql',
     'port' => 5432,
 );
+*/
 
 if( substr(\Drupal::VERSION, 0, 1) == "8") {
     $settings['config_sync_directory']   = 'sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';

@@ -210,7 +210,7 @@ jQuery(function ($) {
                 //title
                 results += '<div class="res-property">';
                 results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
-                results += '<h5 class="h5-blue-title"><a href="' + window.archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + window.getLangValue(result.title, window.preferredLang) + '</a></h5>';
+                //results += '<h5 class="h5-blue-title"><a href="' + window.archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + window.getLangValue(result.title, window.preferredLang) + '</a></h5>';
                 results += '</div>';
 
                 //description
