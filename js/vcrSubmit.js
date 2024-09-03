@@ -40,9 +40,6 @@ jQuery(function ($) {
         };
         param.timeout = 60000;
         $.ajax(param);
-
-       
-
     });
 
     function blink_text(text_id) {
@@ -64,9 +61,6 @@ jQuery(function ($) {
         setTimeout(function () {
             $('#dynamicVcr').submit();
         }, 200);
-
     }
-
-
 });
 

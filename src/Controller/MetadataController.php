@@ -53,6 +53,11 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         return new \Symfony\Component\HttpFoundation\Response(\Drupal::service('renderer')->renderPlain($return));
     }
 
+    /**
+     * Resource Metadata view
+     * @param string $identifier
+     * @return string
+     */
     public function detailView(string $identifier) {
 
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
@@ -90,6 +95,11 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         return $return;
     }
 
+    /**
+     * The main discover/smartsearch view
+     * @param type $str
+     * @return string
+     */
     public function discoverView($str = NULL) {
         
         $return = [
