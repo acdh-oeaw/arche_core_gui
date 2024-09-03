@@ -27,7 +27,7 @@ class ArcheBaseController extends ControllerBase {
         $this->config = Config::fromYaml(\Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config.yaml');
         
         try {
-            $this->pdo = new \PDO($this->config->dbConnStr->guest);
+            $this->pdo = new \PDO($this->config->dbConnStr);
             $baseUrl = $this->config->rest->urlBase . $this->config->rest->pathBase;
             $this->schema = new \acdhOeaw\arche\lib\Schema($this->config->schema);
             $headers = new \acdhOeaw\arche\lib\Schema($this->config->rest->headers);
