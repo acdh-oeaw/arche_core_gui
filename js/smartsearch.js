@@ -182,7 +182,7 @@ jQuery(function ($) {
     function showJustSearchFacets() {
         window.token++;
         var localToken = window.token;
-        var pagerPage = (window.getGuiSearchParams('actualPage') ?? 1) - 1;
+        var pagerPage = (window.getGuiSearchParams('page') ?? 1) - 1;
         $('.main-content-warnings').html('');
         var param = {
             url: '/browser/api/smartsearch',
@@ -209,10 +209,10 @@ jQuery(function ($) {
         };
         param.fail = function (xhr, status, error) {
             if (xhr.status === 404) {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:11 " + error) + '</div>');
             }
             alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:22 " + error) + '</div>');
         };
         /*
          param.statusCode = function (response) {
@@ -224,7 +224,7 @@ jQuery(function ($) {
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:33 " + xhr.responseText) + '</div>');
             }
         };
         param.timeout = 60000;
@@ -352,6 +352,9 @@ jQuery(function ($) {
        
         var searchStr = $('#sm-hero-str').val();
         var pagerPage = (window.getGuiSearchParams('page') ?? 1) - 1;
+        if(pagerPage === -1) {
+            pagerPage = 0;
+        }
 
         //var guiFacets_ = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
 
@@ -362,8 +365,6 @@ jQuery(function ($) {
         updateSearchStrInput(searchStr);
 
         var param = window.buildParams(searchStr, pagerPage);
-
-        //updateUrl(param.data);
         var t0 = new Date();
         param.success = function (x) {
             if (window.token === localToken) {
@@ -375,7 +376,7 @@ jQuery(function ($) {
 
         param.fail = function (xhr, textStatus, errorThrown) {
             alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + error) + '</div>');
+            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: 44" + error) + '</div>');
         };
 
         param.error = function (xhr, status, error) {
@@ -383,7 +384,7 @@ jQuery(function ($) {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
                 $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
             } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: " + xhr.responseText) + '</div>');
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:55 " + xhr.responseText) + '</div>');
                 $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
             }
         };
