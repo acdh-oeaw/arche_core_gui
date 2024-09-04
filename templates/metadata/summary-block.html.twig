@@ -47,13 +47,25 @@
             </div>
         {% endif %}
 
+        {% if data.getData('acdh:hasCreatedStartDateOriginal') and data.getData('acdh:hasCreatedEndDateOriginal') %}
+        <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Creation Date of Original"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCreatedStartDateOriginal')[0],  'dateformat': 'Y' } ) }} 
+                        - 
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCreatedEndDateOriginal')[0],  'dateformat': 'Y' } ) }}
+                    </span>
+                </div>
 
-        {% if data.getData('acdh:hasCreatedStartDateOriginal') %}
+            </li>
+        {% elseif data.getData('acdh:hasCreatedStartDateOriginal') %}        
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasCreatedStartDateOriginal'), 'label':  'Creation Date of Original', 'type': 'date','dateformat': 'Y' } ) }}</li>
-            {% endif %}
-
-        {% if data.getData('acdh:hasCreatedEndDateOriginal') %}
+        
+        {% elseif data.getData('acdh:hasCreatedEndDateOriginal') %}   
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasCreatedEndDateOriginal'), 'label':  'Creation Date of Original','type': 'date','dateformat': 'Y' } ) }}</li>
         {% endif %}
