@@ -223,6 +223,7 @@ jQuery(function ($) {
     }
 
     function fetchChildTree() {
+        console.log("fetchChildTree----");
         //get the data
         var url = $('#resId').val();
         if (url) {
@@ -254,6 +255,7 @@ jQuery(function ($) {
                         //$('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
                         //hideEmptyTabs('#collection-content-tab');
                     },
+                    /*
                     search: {
                         "ajax": {
                             "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.arche_core_gui.gui_lang,
@@ -266,7 +268,7 @@ jQuery(function ($) {
                         },
                         case_sensitive: false
                     },
-                    plugins: ['search']
+                    plugins: ['search']*/
                 }
             });
             // not ready yet
