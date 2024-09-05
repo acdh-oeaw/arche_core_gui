@@ -33,7 +33,7 @@ class ArcheBaseController extends ControllerBase {
             $headers = new \acdhOeaw\arche\lib\Schema($this->config->rest->headers);
             $nonRelProp = $this->config->metadataManagment->nonRelationProperties ?? [];
             $this->repoDb = new RepoDb($baseUrl, $this->schema, $headers, $this->pdo, $nonRelProp);
-            $this->ontology = new Ontology($this->pdo, $this->schema, $this->config->ontologyCacheFile, $this->config->ontologyCacheTtl);
+            $this->ontology =  \acdhOeaw\arche\lib\schema\Ontology::factoryDb($this->pdo, $this->schema, $this->config->ontologyCacheFile ?? '', $this->config->ontologyCacheTtl ?? 600);
         } catch (\Exception $ex) {
             \Drupal::messenger()->addWarning($this->t('Error during the BaseController initialization!') . ' ' . $ex->getMessage());
             return array();
