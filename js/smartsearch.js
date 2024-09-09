@@ -13,13 +13,17 @@ jQuery(function ($) {
 
         function handleURLChange() {
             var currentUrl = window.location.href;
+            console.log("currentUrl : "+ currentUrl);
             // Create a URL object to extract pathname
             var url = new URL(currentUrl);
+            console.log("url : "+ url);
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 window.getSearchParamsFromUrl(currentUrl);
+                console.log("handleURLChange 1111:::");
                 executeTheSearch();
             } else {
+                console.log("handleURLChange 2222:::");
                 executeTheSearch();
             }
         }
@@ -227,7 +231,7 @@ jQuery(function ($) {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:33 " + xhr.responseText) + '</div>');
             }
         };
-        param.timeout = 60000;
+        param.timeout = drupalSettings.arche_core_gui.smartsearch_timeout;
         $.ajax(param);
     }
 
@@ -389,7 +393,7 @@ jQuery(function ($) {
             }
         };
         sessionStorage.setItem('popstate', false);
-        param.timeout = 60000;
+        param.timeout = drupalSettings.arche_core_gui.smartsearch_timeout;
         $.ajax(param);
     }
 

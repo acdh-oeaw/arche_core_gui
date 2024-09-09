@@ -5,6 +5,7 @@ function arche_core_gui_page_attachments(array &$page) {
     // Get the current language object
     $currentLanguage = $languageManager->getCurrentLanguage();
     $page['#attached']['drupalSettings']['arche_core_gui']['gui_lang'] = $currentLanguage->getId();
+    $page['#attached']['drupalSettings']['arche_core_gui']['smartsearch_timeout'] = getSmartSearchTimeout();
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
     $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
@@ -13,6 +14,14 @@ function arche_core_gui_page_attachments(array &$page) {
     if(count($roles) > 0){ $roles = implode(",", $roles); }
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['roles'] = $roles;
     $attachments['#attached']['library'][] = 'custom_jquery/metadata-class';
+}
+
+function getSmartSearchTimeout() {
+    $config = \acdhOeaw\arche\lib\Config::fromYaml(\Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config.yaml');
+    if(isset($config->smartSearch->searchTimeout)) {
+        return (int)$config->smartSearch->searchTimeout;
+    }
+    return 60000;
 }
 
 /*
