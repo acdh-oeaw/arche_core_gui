@@ -22,22 +22,18 @@ jQuery(function ($) {
         var baseUrl = window.location.origin + window.location.pathname;
         return baseUrl.split("/browser")[0];
     }
-
-
+    
     /* reset the searchUrl and remove the params */
     window.resetsearchUrl = function () {
-        console.log("RESET SERACH URl:::");
         //function resetsearchUrl() {
         var currentUrl = window.location.href;
         var discoverIndex = currentUrl.indexOf('/discover/');
          var discoverIndexQ = currentUrl.indexOf('/discover?');
         if (discoverIndex !== -1) {
             currentUrl = currentUrl.substring(0, discoverIndex + '/discover/'.length);
-            console.log("DISCOVER URL:: " + currentUrl);
         }
          if (discoverIndexQ !== -1) {
-            currentUrl = currentUrl.substring(0, discoverIndex + '/discover?'.length);
-            console.log("DISCOVER URL:: " + currentUrl);
+            currentUrl = currentUrl.substring(0, discoverIndexQ + '/discover?'.length);
         }
         history.pushState(null, "Discover", currentUrl);
     }
@@ -104,8 +100,6 @@ jQuery(function ($) {
 
     /* update the current url after a search was triggered */
     window.updateUrl = function (params) {
-        console.log("Update params::::");
-        console.log(params);
         //function updateUrl(params) {
         window.popstateActive = sessionStorage.getItem('popstate');
         if (window.popstateActive === 'false') {

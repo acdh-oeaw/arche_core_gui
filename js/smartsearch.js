@@ -13,17 +13,13 @@ jQuery(function ($) {
 
         function handleURLChange() {
             var currentUrl = window.location.href;
-            console.log("currentUrl : "+ currentUrl);
             // Create a URL object to extract pathname
             var url = new URL(currentUrl);
-            console.log("url : "+ url);
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 window.getSearchParamsFromUrl(currentUrl);
-                console.log("handleURLChange 1111:::");
                 executeTheSearch();
             } else {
-                console.log("handleURLChange 2222:::");
                 executeTheSearch();
             }
         }

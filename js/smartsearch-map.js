@@ -4,10 +4,8 @@ jQuery(function ($) {
 
     var markersArr = [];
     window.map;
-    console.log("MAP JS LOADED");
-
+    
     window.initializeMaps = function (reinit = false) {
-        console.log("initMaps");
         map = L.map('map').setView([48.2, 16.3], 10);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -149,7 +147,6 @@ jQuery(function ($) {
 
     window.initializeMap = function () {
         //function initializeMap() {
-        console.log("initializeMap");
         $(".map-loader").css('display', 'block');
         map = L.map('map', {
             zoomControl: false, // Add zoom control separately below

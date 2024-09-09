@@ -18,24 +18,15 @@ jQuery(function ($) {
     }
     
     window.getSearchParamsFromUrl = function (url) {
-        console.log("getSearchParamsFromUrl::::");
         var paramsString = "";
         if (url.split('/browser/discover?')[1]) {
-            console.log("itt1");
             paramsString = url.split('/browser/discover?')[1];
-            console.log(paramsString);
         } else {
-            console.log("itt2");
             paramsString = url.split('/browser/discover/')[1];
-            console.log(paramsString);
         }
         paramsString = paramsString.replace('?q', 'q');
-        console.log("iott3::: ");
-        console.log(paramsString);
         window.guiObj = {};
         window.guiObj = window.parseQueryString(paramsString);
-        console.log("iott4::: ");
-        console.log(window.parseQueryString(paramsString));
         window.firstLoad = false;
     }
 

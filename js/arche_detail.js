@@ -83,10 +83,8 @@ jQuery(function ($) {
     }
 
     function redrawTabs() {
-        console.log("redraw tab");
         // Check if there is an active tab
         if ($('#arche-detail-tabs .nav-item .nav-link.active').length === 0) {
-            console.log("there is no active tab");
             // Activate the first visible tab
             var firstVisibleTab = $('#arche-detail-tabs .nav-item .nav-link:visible').first();
             firstVisibleTab.addClass('active');
@@ -172,11 +170,8 @@ jQuery(function ($) {
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
-                            console.log("versions success");
                             if (parseInt(nodes[0].id) !== parseInt(acdhid)) {
                                 //show the newer version div
-                                console.log(nodes[0].id);
-                                console.log(acdhid);
                                 $('#metadata-versions-alert').removeClass('hidden-alert');
                                 $('#metadata-versions-alert-url').attr("href", '/browser/metadata/' + nodes[0].id);
                             }
@@ -223,7 +218,6 @@ jQuery(function ($) {
     }
 
     function fetchChildTree() {
-        console.log("fetchChildTree----");
         //get the data
         var url = $('#resId').val();
         if (url) {
@@ -239,11 +233,9 @@ jQuery(function ($) {
                             return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
                         },
                         'data': function (node) {
-                            console.log("data child");
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
-                            console.log("success child");
                         }
                     },
                     themes: {stripes: true},
@@ -323,19 +315,13 @@ jQuery(function ($) {
                 'url': "/browser/api/publicationsDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
                     if (response === undefined) {
-                        console.log('response error');
-                        console.log(error);
                         //$('.child-elements-div').hide();
                         hideEmptyTabs('#associated-publications-tab');
                         return;
                     }
-                    console.log('response: ');
-                    console.log(response.responseJSON);
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    console.log('error');
-                    console.log(error);
                     $('.publications-elements-div').hide();
                     hideEmptyTabs('#associated-publications-tab');
                 }
@@ -498,18 +484,12 @@ jQuery(function ($) {
                 'url': "/browser/api/child/" + resId + "/en",
                 complete: function (response) {
                     if (response === undefined) {
-                        console.log('response error');
-                        console.log(error);
                         $('.child-elements-div').hide();
                         return;
                     }
-                    console.log('response: ');
-                    console.log(response.responseJSON);
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    console.log('error');
-                    console.log(error);
                     $('.child-elements-div').hide();
                 }
             },
@@ -569,7 +549,6 @@ jQuery(function ($) {
     }
 
     function initExpertView() {
-        console.log('INIT expert view');
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',

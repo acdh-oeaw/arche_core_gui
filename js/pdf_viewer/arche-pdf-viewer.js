@@ -65,11 +65,8 @@ $(document).delegate("#pdfViewerBtn", "click", function (e) {
 
         /** zoom to fit when the document is loaded and create the object if wanted to be downloaded */
         onDocumentReady: function () {
-            console.log('ready');
             pdfViewer.setZoom('fit');
             pdfViewer.pdf.getData().then(function (data) {
-                console.log('pdfviewer kesz');
-                console.log(pdfViewer);
                 document.querySelector('#filedownload').href = URL.createObjectURL(new Blob([data], {type: 'application/pdf'}));
                 document.querySelector('#filedownload').target = '_blank';
             });
@@ -78,7 +75,6 @@ $(document).delegate("#pdfViewerBtn", "click", function (e) {
 
     /** Load the initial PDF file */
     pdfViewer.loadDocument(PDFFILE).then(function () {
-        console.log('LOAD THE FILE');
         document.querySelector('#filedownload').download = PDFFILE;
     });
 
