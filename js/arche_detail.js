@@ -236,6 +236,13 @@ jQuery(function ($) {
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
+                            console.log("Success:");
+                            console.log(nodes);
+                            
+                            if (nodes.length === 0) {
+                                $('#collection-content-tab').hide();  // Show message for no data
+                                $('#collection-content-tab-content').hide();  // Show message for no data
+                            } 
                         }
                     },
                     themes: {stripes: true},

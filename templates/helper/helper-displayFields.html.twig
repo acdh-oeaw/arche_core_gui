@@ -123,7 +123,7 @@ Field extra type:
                                     {% endif %}
                                 {% elseif(type == 'date' and dateformat) %}
                                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
-                                {'value': v,  'dateformat': dateformat } ) }}11
+                                {'value': v,  'dateformat': dateformat } ) }}
                                 {% else %}
                                     <!-- if there is no type defined then simply display the title -->
                                     {% if (v.value) is not empty %}
