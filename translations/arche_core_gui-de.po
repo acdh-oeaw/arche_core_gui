@@ -495,7 +495,7 @@ msgid "Follow named entities"
 msgstr "Folgen Sie benannten Entitäten"
 
 msgid "Find resources"
-msgstr "Folgen Sie benannten Entitäten"
+msgstr "Ressourcen finden"
 
 msgid "Please start to search"
 msgstr "Bitte beginnen Sie mit der Suche"
@@ -619,3 +619,9 @@ msgstr "Binäre Größe"
 
 msgid "Access Restriction Summary"
 msgstr "Zusammenfassung der Zugriffsbeschränkungen"
+
+msgid "Software Versions"
+msgstr "Softwareversionen"
+
+msgid "Browse the various resources on ARCHE"
+msgstr "Durchsuchen Sie die vielfältigen Ressourcen in ARCHE"

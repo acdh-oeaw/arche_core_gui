@@ -238,11 +238,11 @@ jQuery(function ($) {
                         'success': function (nodes) {
                             console.log("Success:");
                             console.log(nodes);
-                            
+
                             if (nodes.length === 0) {
                                 $('#collection-content-tab').hide();  // Show message for no data
                                 $('#collection-content-tab-content').hide();  // Show message for no data
-                            } 
+                            }
                         }
                     },
                     themes: {stripes: true},
@@ -255,19 +255,19 @@ jQuery(function ($) {
                         //hideEmptyTabs('#collection-content-tab');
                     },
                     /*
-                    search: {
-                        "ajax": {
-                            "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.arche_core_gui.gui_lang,
-                            "data": function (str) {
-                                return {
-                                    "operation": "search",
-                                    "q": str
-                                };
-                            }
-                        },
-                        case_sensitive: false
-                    },
-                    plugins: ['search']*/
+                     search: {
+                     "ajax": {
+                     "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.arche_core_gui.gui_lang,
+                     "data": function (str) {
+                     return {
+                     "operation": "search",
+                     "q": str
+                     };
+                     }
+                     },
+                     case_sensitive: false
+                     },
+                     plugins: ['search']*/
                 }
             });
             // not ready yet
@@ -275,6 +275,13 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#child-tree').jstree('search', searchString);
             });
+
+            $('#child-tree').on('ready.jstree', function () {
+                $('<div class="row text-align"><div class="col-12 d-flex justify-content-center align-items-center"><button id="show-more-child-tree" class="ms-auto d-flex btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
+                 $('#child-tree').css('max-height', '250px');  
+                 $('#child-tree').css('overflow', 'hidden');  
+            });
+
             $('#child-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
                     var node = $('#child-tree').jstree(true).get_node(node.originalEvent.target.id);
@@ -290,6 +297,24 @@ jQuery(function ($) {
             });
         }
     }
+
+    $(document).delegate("#show-more-child-tree", "click", function (e) {
+        var container = $('#child-tree');
+        
+        // Check if the container is collapsed or expanded
+        if (container.css('max-height') === '250px') {
+            // Expand the tree
+            container.css('max-height', 'none');
+            container.css('overflow', 'auto');
+            $(this).text('Show Less'); 
+        } else {
+            // Collapse the tree
+            container.css('max-height', '250px');
+            container.css('overflow', 'hidden');// Reset max-height to 150px (collapse)
+            $(this).text('Show More');  // Change button text to "Show More"
+        }
+    });
+
 
     function removeBeforeHash(str) {
         let hashIndex = str.indexOf('#');
@@ -918,7 +943,7 @@ jQuery(function ($) {
             $("ul.ui-menu").width($(this).innerWidth());
         }
     });
-    
+
     // Attach keyup event listener to the input field
     smartSearchInputField.on('keyup', function () {
         if (event.keyCode !== 37 && // Left arrow
