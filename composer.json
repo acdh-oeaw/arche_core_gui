@@ -11,10 +11,10 @@
         }
     ],
     "require": {
-        "acdh-oeaw/arche-lib": "6.6.0",
+        "acdh-oeaw/arche-lib": "6.6.1",
         "acdh-oeaw/arche-lib-disserv": "4.0.4",
         "acdh-oeaw/arche-lib-schema": "7.1.0",   
-	"acdh-oeaw/arche-assets": "^3.14.1", 
+        "acdh-oeaw/arche-assets": "^3.14.1", 
         "zozlak/logging": "*",
         "twig/extra-bundle": "*",
         "drupal/layout_custom_section_classes": "^1.0"
