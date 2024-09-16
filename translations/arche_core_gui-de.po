@@ -625,3 +625,9 @@ msgstr "Softwareversionen"
 
 msgid "Browse the various resources on ARCHE"
 msgstr "Durchsuchen Sie die vielfältigen Ressourcen in ARCHE"
+
+msgid "You are currently opted in. <a href="#" id="opt-in-out-matomo">Click here</a> to opt out."
+msgstr "Sie sind derzeit angemeldet. <a href="#" id="opt-in-out-matomo">Klicken Sie hier</a>, um sich abzumelden."
+
+msgid "You are currently opted out. <a href="#" id="opt-in-out-matomo">Click here</a> to opt in."
+msgstr "Sie sind derzeit abgemeldet. <a href="#" id="opt-in-out-matomo">Klicken Sie hier</a>, um sich anzumelden."

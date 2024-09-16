@@ -18,9 +18,9 @@ jQuery(function ($) {
             // Check if the URL contains any params
             if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
                 window.getSearchParamsFromUrl(currentUrl);
-                executeTheSearch();
+                window.executeTheSearch();
             } else {
-                executeTheSearch();
+                window.executeTheSearch();
             }
         }
         // Call function specific to no popstate event
@@ -139,16 +139,17 @@ jQuery(function ($) {
     });
 
     $(document).delegate(".paginate_button", "click", function (e) {
-        window.actualPage = parseInt($(this).text());
-        window.guiObj = {'actualPage': window.actualPage};
-        window.executeTheSearch()
         e.preventDefault();
+        window.actualPage = parseInt($(this).text());
+        console.log(window.actualPage);
+        window.guiObj = {'actualPage': window.actualPage};
+        window.executeTheSearch();
     });
 
     $(document).delegate("#smartPageSize", "change", function (e) {
-        window.guiObj = {'actualPage': 1};
-        executeTheSearch();
         e.preventDefault();
+        window.guiObj = {'actualPage': 1};
+        window.executeTheSearch();
     });
 
     $(document).delegate("#mapToggleBtn", "click", function (e) {
@@ -243,6 +244,11 @@ jQuery(function ($) {
     }
 
     window.buildParams = function (searchStr, pagerPage, apiUrl = '/browser/api/smartsearch') {
+        var page = 0;
+        if(window.actualPage !== 0) {
+            page = window.actualPage -1;
+        }
+        
         var param = {
             url: apiUrl,
             method: 'get',
@@ -251,7 +257,7 @@ jQuery(function ($) {
                 preferredLang: drupalSettings.arche_core_gui.gui_lang,
                 includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
                 linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
-                page: pagerPage,
+                page: page,
                 pageSize: $('#smartPageSize').val(),
                 facets: {},
                 searchIn: [],
