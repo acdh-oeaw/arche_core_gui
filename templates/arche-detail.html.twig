@@ -3,8 +3,7 @@
 
 <div class="container pt-3">
     <div class="row">
-        <div class="col-lg-9 metadata-breadcrumb" >
-        </div>
+        <div class="col-lg-9 metadata-breadcrumb"></div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
         </div>
@@ -113,6 +112,7 @@
                     </div>
                     {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
                 </div>
+                    
                 <!-- SEE ALSO -->
                 {% if data.getData('acdh:hasUrl') or data.getData('acdh:hasRelatedProject') %}
                     <div class="row" id="ad-see-also">

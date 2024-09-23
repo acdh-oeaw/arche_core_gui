@@ -84,12 +84,13 @@ jQuery(function ($) {
 
     function redrawTabs() {
         // Check if there is an active tab
-        if ($('#arche-detail-tabs .nav-item .nav-link.active').length === 0) {
+        if ($('#arche-detail-tabs li.active').length === 0) {
+            console.log("redraw tab");
             // Activate the first visible tab
-            var firstVisibleTab = $('#arche-detail-tabs .nav-item .nav-link:visible').first();
-            firstVisibleTab.addClass('active');
-            var firstVisibleTabId = firstVisibleTab.attr('href');
-            $(firstVisibleTabId).addClass('show active');
+            var firstVisibleTab = $('#arche-detail-tabs li:visible').first();
+            console.log(firstVisibleTab);
+            $('#'+firstVisibleTab.attr('id')+' .nav-link').addClass('active');
+            $('#'+firstVisibleTab.attr('id')+'-content').addClass('show active');
         }
     }
 
@@ -138,7 +139,7 @@ jQuery(function ($) {
                 if (data) {
                     var str = "";
                     $.each(data, function (index, value) {
-                        str += "<a href='" + currentUrl + value.id + "'>" + value.title + "</a>";
+                        str += "<a href='" + currentUrl + value.id + "' title='"+value.placeholder+"'>" + value.title + "</a>";
                         if (index !== data.length - 1) {
                             str += " \\ ";
                         }
@@ -240,8 +241,10 @@ jQuery(function ($) {
                             console.log(nodes);
 
                             if (nodes.length === 0) {
-                                $('#collection-content-tab').hide();  // Show message for no data
+                                //$('#collection-content-tab').hide();  // Show message for no data
                                 $('#collection-content-tab-content').hide();  // Show message for no data
+                                hideEmptyTabs('#collection-content-tab');
+                                redrawTabs();
                             }
                         }
                     },
@@ -275,13 +278,15 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#child-tree').jstree('search', searchString);
             });
-
+            
+            /*
             $('#child-tree').on('ready.jstree', function () {
-                $('<div class="row text-align"><div class="col-12 d-flex justify-content-center align-items-center"><button id="show-more-child-tree" class="ms-auto d-flex btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
-                 $('#child-tree').css('max-height', '250px');  
-                 $('#child-tree').css('overflow', 'hidden');  
+                $('<div class="row"><div class="col-12 text-center pt-1"><button id="show-more-child-tree" class="ms-auto btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
+                $('#child-tree').css('max-height', '250px');
+                $('#child-tree').css('overflow', 'hidden');
             });
-
+            */
+           
             $('#child-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
                     var node = $('#child-tree').jstree(true).get_node(node.originalEvent.target.id);
@@ -297,16 +302,16 @@ jQuery(function ($) {
             });
         }
     }
-
+    /*
     $(document).delegate("#show-more-child-tree", "click", function (e) {
         var container = $('#child-tree');
-        
+
         // Check if the container is collapsed or expanded
         if (container.css('max-height') === '250px') {
             // Expand the tree
             container.css('max-height', 'none');
             container.css('overflow', 'auto');
-            $(this).text('Show Less'); 
+            $(this).text('Show Less');
         } else {
             // Collapse the tree
             container.css('max-height', '250px');
@@ -314,7 +319,7 @@ jQuery(function ($) {
             $(this).text('Show More');  // Change button text to "Show More"
         }
     });
-
+    */
 
     function removeBeforeHash(str) {
         let hashIndex = str.indexOf('#');
