@@ -21,6 +21,8 @@ class ArcheBaseController extends ControllerBase {
     protected $model;
     protected \PDO $pdo;
     protected \acdhOeaw\arche\lib\Schema $schema;
+    protected array | null $userRoles = null;
+    protected string | null $userName = null;
 
     public function __construct() {
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language']) : $this->siteLang = "en";
@@ -34,10 +36,35 @@ class ArcheBaseController extends ControllerBase {
             $nonRelProp = $this->config->metadataManagment->nonRelationProperties ?? [];
             $this->repoDb = new RepoDb($baseUrl, $this->schema, $headers, $this->pdo, $nonRelProp);
             $this->ontology =  \acdhOeaw\arche\lib\schema\Ontology::factoryDb($this->pdo, $this->schema, $this->config->ontologyCacheFile ?? '', $this->config->ontologyCacheTtl ?? 600);
+            if (isset($this->config->authLoginCookie && !empty($_COOKIE[$this->config->authLoginCookie]))) {
+                $this->usergRoles = explode(',', $_COOKIE[$config->authLoginCookie]);
+                $this->userName = reset($this->userRoles);
+            }
         } catch (\Exception $ex) {
             \Drupal::messenger()->addWarning($this->t('Error during the BaseController initialization!') . ' ' . $ex->getMessage());
             return array();
         }
+    }
+
+    /**
+     * For a given page URL returns ARCHE-internal and SSO authorization redirection URLs
+     * @return array<string, string>
+     */
+    protected function getLoginUrls(string $currentPageUrl): array {
+        $archeUserUrl = $this->repoDb->getBaseUrl . 'user?redirect=' . rawurlencode($currentPageUrl);
+        return [
+            'arche' => $archeUserUrl,
+            'sso' => '/Shibboleth.sso/Login?target=' . rawurlencode($archeUserUrl),
+        ];
+    }
+
+    /**
+     * Checks if the user can read a resource with a given set of values of the $schema->aclRead property
+     * @param array<string> $aclReadValues array of $schema->aclRead property values
+     * @return bool
+     */
+    protected function checkAccessRights(array $aclReadValues): bool {
+        return count(array_intersect($aclReadValues, $this->userRoles ?? []) > 0);
     }
 
     /**
