@@ -89,15 +89,28 @@ jQuery(function ($) {
             // Activate the first visible tab
             var firstVisibleTab = $('#arche-detail-tabs li:visible').first();
             console.log(firstVisibleTab);
-            $('#'+firstVisibleTab.attr('id')+' .nav-link').addClass('active');
-            $('#'+firstVisibleTab.attr('id')+'-content').addClass('show active');
+            $('#' + firstVisibleTab.attr('id') + ' .nav-link').addClass('active');
+            $('#' + firstVisibleTab.attr('id') + '-content').addClass('show active');
+            $('#' + firstVisibleTab.attr('id') + ' .nav-link').attr('aria-selected', 'true');
         }
     }
 
     function hideEmptyTabs(tab) {
-        $(tab).hide();
-        $(tab + '-content').hide();
-        redrawTabs();
+        $(tab).addClass('hidden');
+        $(tab + '-content').addClass('hidden');
+        
+        var tabs = ['#collection-content-tab', '#associated-publications-tab', '#associated-coll-res-tab'];
+        var notHiddenTab = "";
+        tabs.forEach(function (tabId, index) {
+            if(!$(tabId).hasClass('hidden') && notHiddenTab === "") {
+                notHiddenTab = tabId;
+                return false;
+            }
+        });
+        
+        $(notHiddenTab + ' a.nav-link').tab('show');
+        $(notHiddenTab + '-content').show();
+        
     }
 
     /// hasDescription button ///
@@ -139,7 +152,7 @@ jQuery(function ($) {
                 if (data) {
                     var str = "";
                     $.each(data, function (index, value) {
-                        str += "<a href='" + currentUrl + value.id + "' title='"+value.placeholder+"'>" + value.title + "</a>";
+                        str += "<a href='" + currentUrl + value.id + "' title='" + value.placeholder + "'>" + value.title + "</a>";
                         if (index !== data.length - 1) {
                             str += " \\ ";
                         }
@@ -244,7 +257,7 @@ jQuery(function ($) {
                                 //$('#collection-content-tab').hide();  // Show message for no data
                                 $('#collection-content-tab-content').hide();  // Show message for no data
                                 hideEmptyTabs('#collection-content-tab');
-                                redrawTabs();
+                                //redrawTabs();
                             }
                         }
                     },
@@ -255,7 +268,7 @@ jQuery(function ($) {
                         console.log(textStatus);
                         console.log(errorThrown);
                         //$('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
-                        //hideEmptyTabs('#collection-content-tab');
+                        hideEmptyTabs('#collection-content-tab');
                     },
                     /*
                      search: {
@@ -278,15 +291,15 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#child-tree').jstree('search', searchString);
             });
-            
+
             /*
-            $('#child-tree').on('ready.jstree', function () {
-                $('<div class="row"><div class="col-12 text-center pt-1"><button id="show-more-child-tree" class="ms-auto btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
-                $('#child-tree').css('max-height', '250px');
-                $('#child-tree').css('overflow', 'hidden');
-            });
-            */
-           
+             $('#child-tree').on('ready.jstree', function () {
+             $('<div class="row"><div class="col-12 text-center pt-1"><button id="show-more-child-tree" class="ms-auto btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
+             $('#child-tree').css('max-height', '250px');
+             $('#child-tree').css('overflow', 'hidden');
+             });
+             */
+
             $('#child-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
                     var node = $('#child-tree').jstree(true).get_node(node.originalEvent.target.id);
@@ -303,23 +316,23 @@ jQuery(function ($) {
         }
     }
     /*
-    $(document).delegate("#show-more-child-tree", "click", function (e) {
-        var container = $('#child-tree');
-
-        // Check if the container is collapsed or expanded
-        if (container.css('max-height') === '250px') {
-            // Expand the tree
-            container.css('max-height', 'none');
-            container.css('overflow', 'auto');
-            $(this).text('Show Less');
-        } else {
-            // Collapse the tree
-            container.css('max-height', '250px');
-            container.css('overflow', 'hidden');// Reset max-height to 150px (collapse)
-            $(this).text('Show More');  // Change button text to "Show More"
-        }
-    });
-    */
+     $(document).delegate("#show-more-child-tree", "click", function (e) {
+     var container = $('#child-tree');
+     
+     // Check if the container is collapsed or expanded
+     if (container.css('max-height') === '250px') {
+     // Expand the tree
+     container.css('max-height', 'none');
+     container.css('overflow', 'auto');
+     $(this).text('Show Less');
+     } else {
+     // Collapse the tree
+     container.css('max-height', '250px');
+     container.css('overflow', 'hidden');// Reset max-height to 150px (collapse)
+     $(this).text('Show More');  // Change button text to "Show More"
+     }
+     });
+     */
 
     function removeBeforeHash(str) {
         let hashIndex = str.indexOf('#');
