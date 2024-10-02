@@ -69,8 +69,8 @@ jQuery(function ($) {
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
         var resourceId = $(this).data('resource-id');
-        $('#searchInValue').val(resourceId);
         var buttonId = $(this).attr('id');
+        $('#searchInValue').val(resourceId);
         if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
             $('#searchIn').empty();
             $('#searchIn').hide();
@@ -78,7 +78,7 @@ jQuery(function ($) {
             $('#searchIn').hide();
             //$('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
         } else {
-            searchInAdd(resourceId, $(this).data('resource-title'));
+            window.searchInAdd(resourceId, $(this).data('resource-title'));
             $('#searchIn').show();
         }
 
@@ -141,7 +141,6 @@ jQuery(function ($) {
     $(document).delegate(".paginate_button", "click", function (e) {
         e.preventDefault();
         window.actualPage = parseInt($(this).text());
-        console.log(window.actualPage);
         window.guiObj = {'actualPage': window.actualPage};
         window.executeTheSearch();
     });
@@ -215,12 +214,7 @@ jQuery(function ($) {
             alert(xhr.responseText);
             $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:22 " + error) + '</div>');
         };
-        /*
-         param.statusCode = function (response) {
-         console.log("statusCode");
-         console.log(response);
-         };
-         */
+       
         param.error = function (xhr, status, error) {
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
@@ -262,7 +256,7 @@ jQuery(function ($) {
                 facets: {},
                 searchIn: [],
                 noCache: 0
-                        //noCache: $('#noCache').is(':checked') ? 1 : 0
+                //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
 
@@ -318,6 +312,7 @@ jQuery(function ($) {
             }
             param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
         });
+        
         /*
          if ($('#searchInChb:checked').length === 1) {
          $('#searchIn > div').each(function (n, el) {
@@ -325,8 +320,8 @@ jQuery(function ($) {
          });
          }*/
 
-        if ($('#searchInValue').val()) {
-            param.data.searchIn.push($('#searchInValue').val());
+        if (window.getGuiSearchParams('searchIn')) {
+            param.data.searchIn.push(window.getGuiSearchParams('searchIn'));
         }
 
         if (window.bboxObj.drawnItems) {
@@ -367,15 +362,14 @@ jQuery(function ($) {
         if (searchStr === "") {
             searchStr = (window.getGuiSearchParams('q')) ? window.getGuiSearchParams('q') : "";
         }
-
         updateSearchStrInput(searchStr);
 
         var param = window.buildParams(searchStr, pagerPage);
         var t0 = new Date();
         param.success = function (x) {
             if (window.token === localToken) {
-                console.log("search ajax success - param.data: ");
-                console.log(param.data);
+                //console.log("search ajax success - param.data: ");
+                //console.log(param.data);
                 window.showResults(x, param.data, t0);
             }
         };
@@ -465,8 +459,7 @@ jQuery(function ($) {
         });
     }
 
-    function searchInAdd(id, title) {
-
+    window.searchInAdd = function (id, title) {
         if ($('#in' + id).length === 1) {
             return;
         }
@@ -476,6 +469,10 @@ jQuery(function ($) {
         btn.attr('id', 'removeSearchInElementBtn');
         element.attr('id', 'in' + id);
         $('#searchIn').append(element);
+        
+        // !!!! EXTEND! if the url is copied to a new browser, then we have to
+        // fetch the resource base data by id
+        
     }
 
 });

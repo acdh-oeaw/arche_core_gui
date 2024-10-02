@@ -45,12 +45,19 @@ jQuery(function ($) {
             var parts = pair.split('=');
             var key = decodeURIComponent(parts[0]);
             var value = decodeURIComponent(parts[1]);
-
+            
             // Handle array values within brackets
             if (value.startsWith('[') && value.endsWith(']')) {
                 value = value.slice(1, -1).split(',');
+                /*
+                 * The sarchin first version was an array with multiple elements
+                 * but now we allow  only one and it is still an array so we have to take
+                 * the first element
+                 */
+                if(key === 'searchIn') {
+                    value = value[0];
+                }
             }
-
             // Handle nested keys
             if (key.includes('[')) {
                 var keys = key.split(/[\[\]]+/).filter(Boolean);

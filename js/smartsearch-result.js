@@ -25,7 +25,6 @@ jQuery(function ($) {
         }
 
         window.createPager(totalPages);
-
         $('div.dateValues').text('');
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');
@@ -71,8 +70,19 @@ jQuery(function ($) {
         if (window.bbox !== undefined) {
             setMapLabel(window.bbox);
         }
+        
+        if(param.searchIn[0]) {
+            console.log("display searchin");
+            console.log(param.searchIn[0]);
+            window.searchInAdd(param.searchIn[0], $(this).data('resource-title'));
+            $('#searchIn').show();
+        }
+        
         $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
         window.updateUrl(param);
+        
+        fetchSearchToolTips();
+        
     }
 
     function createFacetCards(data, param) {
@@ -163,14 +173,24 @@ jQuery(function ($) {
     window.createFacetSelectCard = function (fd, select) {
         //function createFacetSelectCard(fd, select) {
         var text = "";
+        console.log(fd);
         var idStr = fd.label.replace(/[^\w\s]/gi, '');
+        var formattedProperty = fd.property.replace('https://vocabs.acdh.oeaw.ac.at/schema#', '');
+        
+        var tooltip = "";
+        if (typeof fd?.tooltip?.[drupalSettings.arche_core_gui.gui_lang] !== 'undefined') {
+            tooltip = fd.tooltip[drupalSettings.arche_core_gui.gui_lang];
+        }
+        
         idStr = idStr.replace(/\s+/g, '_');
         text += '<div class="card metadata facets">' +
                 '<div class="card-header">' +
                 '<div class="row justify-content-center align-items-center">' +
                 '<div class="col-8"><h6 class="mb-0 pb-0">' + fd.label + '</h6></div>' +
                 '<div class="col-2">' +
-                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon-cards">' +
+                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon-cards '+formattedProperty+' "\n\
+                    data-bs-toggle="tooltip" data-bs-placement="top" alt="'+tooltip+' alt" title="'+tooltip+' title"\n\
+                    data-bs-trigger="hover focus click" >' +
                 '</div>' +
                 '<div class="col-2 text-end">' +
                 '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
@@ -288,5 +308,10 @@ jQuery(function ($) {
             ret = 'In: ' + ret + '<br/>';
         }
         return ret;
+    }
+    
+    
+    function fetchSearchToolTips(){
+        console.log("fetchSearchToolTips");
     }
 });
