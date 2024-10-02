@@ -185,6 +185,9 @@ msgstr "Sammlung zitieren"
 msgid "Result(s)" 
 msgstr "Ergebnis(se)"
 
+msgid "0 Result(s)" 
+msgstr "0 Ergebnis(se)"
+
 msgid "Life Cycle Status" 
 msgstr "Lebenszyklusstatus"
 
@@ -621,7 +624,7 @@ msgid "Access Restriction Summary"
 msgstr "Zusammenfassung der Zugriffsbeschränkungen"
 
 msgid "Software Versions"
-msgstr "Softwareversionen"
+msgstr "Software-Versionen"
 
 msgid "Browse the various resources on ARCHE"
 msgstr "Durchsuchen Sie die vielfältigen Ressourcen in ARCHE"
@@ -634,3 +637,12 @@ msgstr "<span class="privacy-checkmark-out">X</span> Sie sind derzeit abgemeldet
 
 msgid "SEARCH NOW"
 msgstr "JETZT SUCHEN"
+
+msgid "Imprint"
+msgstr "Impressum"
+
+msgid "Map"
+msgstr "Karte"
+
+msgid "The website is under development!"
+msgstr "Die Website befindet sich in Entwicklung!"

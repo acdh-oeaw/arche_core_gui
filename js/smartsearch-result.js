@@ -173,7 +173,6 @@ jQuery(function ($) {
     window.createFacetSelectCard = function (fd, select) {
         //function createFacetSelectCard(fd, select) {
         var text = "";
-        console.log(fd);
         var idStr = fd.label.replace(/[^\w\s]/gi, '');
         var formattedProperty = fd.property.replace('https://vocabs.acdh.oeaw.ac.at/schema#', '');
         
