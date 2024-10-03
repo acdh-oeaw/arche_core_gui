@@ -1,5 +1,6 @@
 {% set moduleDir = "{{ arche_core_gui_path }}" %}
 <input type="hidden" value="{{ identifier }}" id="resId"/>
+<input type="hidden" value="{{ data.getRootID() }}" id="rootId"/>
 
 <div class="container pt-3">
     <div class="row">
@@ -48,6 +49,18 @@
                         <hr class="meatdata-view-top-hr">
                     </div>
                 </div>
+                   
+                <div class="row">
+                    <div class="col-lg-6 text-start" id="previous-child-url">
+                        
+                    </div>
+                    <div class="col-lg-6 text-end" id="next-child-url">
+                        
+                    </div>
+                    
+                </div>            
+                            
+                            
                 <!-- Title -->
                 <div class="row">
                     <div class="col-lg-12 " id="ad-hasTitle">

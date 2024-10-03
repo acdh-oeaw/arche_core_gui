@@ -76,7 +76,7 @@ class ResourceCoreObject {
         }
         return array();
     }
-
+    
     /**
      *
      * Change property data
@@ -320,6 +320,17 @@ class ResourceCoreObject {
                         return str_replace($this->config->baseUrl, '', $v['value']);
                     }
                 }
+            }
+        }
+        return "";
+    }
+    
+    public function getRootID(): string {
+        if (isset($this->properties["acdh:isPartOf"])) {
+            foreach ($this->properties["acdh:isPartOf"] as $v) {
+                if (isset($v['id']) && !empty($v['id'])) {
+                    return $v['id'];
+                } 
             }
         }
         return "";

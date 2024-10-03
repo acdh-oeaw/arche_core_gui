@@ -588,7 +588,7 @@ msgid "Browse Website"
 msgstr "Website durchsuchen"
 
 msgid "Download PDF"
-msgstr "PDF Herunterladen"
+msgstr "PDF herunterladen"
 
 msgid "Search in file content"
 msgstr "Suche in Datei Inhalten"
@@ -646,3 +646,6 @@ msgstr "Karte"
 
 msgid "The website is under development!"
 msgstr "Die Website befindet sich in Entwicklung!"
+
+msgid "This is the curation instance! The paratexts on the homepage as well as in Deposit, Policies, and About ARCHE are not up-to-date! Please consult the <a href='https://arche.acdh.oeaw.ac.at/browser/'>live site</a> to keep yourself informed."
+msgstr "Das ist die Kuratierungsinstanz! Die Paratexte auf der Startseite sowie in Einreichen, Richtlinien und Über ARCHE sind nicht up-to-date! Bitte konsultieren Sie die <a href='https://arche.acdh.oeaw.ac.at/browser/'>Live-Seite</a> um sich zu informieren."

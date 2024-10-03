@@ -52,6 +52,7 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchRPR();
         fetchPublications();
+        fetchNextPrevItem();
     }
 
     /**
@@ -63,11 +64,13 @@ jQuery(function ($) {
     function truncateText(text, wordCount) {
         return text.split(" ").splice(0, wordCount).join(" ");
     }
+
     function stripHtml(html) {
         var temporaryDiv = document.createElement("div");
         temporaryDiv.innerHTML = html;
         return temporaryDiv.textContent || temporaryDiv.innerText || "";
     }
+
     function addButtonToDescriptionText() {
         var longText = $('.descriptionTextShort').html();
         // Select the first 5 lines
@@ -98,19 +101,20 @@ jQuery(function ($) {
     function hideEmptyTabs(tab) {
         $(tab).addClass('hidden');
         $(tab + '-content').addClass('hidden');
-        
+
         var tabs = ['#collection-content-tab', '#associated-publications-tab', '#associated-coll-res-tab'];
         var notHiddenTab = "";
         tabs.forEach(function (tabId, index) {
-            if(!$(tabId).hasClass('hidden') && notHiddenTab === "") {
+            if (!$(tabId).hasClass('hidden') && notHiddenTab === "") {
                 notHiddenTab = tabId;
                 return false;
             }
         });
-        
-        $(notHiddenTab + ' a.nav-link').tab('show');
-        $(notHiddenTab + '-content').show();
-        
+
+        if (notHiddenTab) {
+            $(notHiddenTab + ' a.nav-link').tab('show');
+            $(notHiddenTab + '-content').show();
+        }
     }
 
     /// hasDescription button ///
@@ -118,10 +122,12 @@ jQuery(function ($) {
         $('.descriptionTextShort').hide();
         $('.descriptionTextLong').show();
     });
+
     $(document).delegate("#descriptionTextLongBtn", "click", function (e) {
         $('.descriptionTextShort').show();
         $('.descriptionTextLong').hide();
     });
+
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
         var text = $('#pidValue').text();
@@ -136,6 +142,35 @@ jQuery(function ($) {
         alert('Link copied to clipboard!');
         e.preventDefault();
     });
+
+    function fetchNextPrevItem() {
+        var acdhid = $('#resId').val();
+        var rootId = $('#rootId').val();
+
+        if (rootId) {
+            $.ajax({
+                url: '/browser/api/nextPrevItem/' + rootId + '/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
+                type: "GET",
+                success: function (data, status) {
+                    if (data) {
+                        if(data.next) {
+                            console.log(data.next);
+                            $('#next-child-url').html('<a href="/browser/metadata/'+data.next.id+'" id="archeHref" alt="'+data.next.title+'" title="'+data.next.title+'">'+ Drupal.t('Next')+' >>> </a>');
+                        }
+                        if(data.previous) {
+                            console.log(data.previous);
+                            $('#previous-child-url').html('<a href="/browser/metadata/'+data.previous.id+'" id="archeHref" alt="'+data.previous.title+'" title="'+data.previous.title+'"> <<< '+ Drupal.t('Previous')+' </a>');
+                        }
+                        
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("next prev item fetch error" + error);
+                }
+            });
+        }
+    }
+
     function fetchBreadcrumb() {
         var acdhid = $('#resId').val();
         $.ajax({
