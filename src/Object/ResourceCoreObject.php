@@ -143,6 +143,29 @@ class ResourceCoreObject {
         }
         return $result;
     }
+    
+    /**
+     * Use geonames ID, if no geonames then whatever is not ARCHE domain, else ARCHE domain
+     * @return array
+     */
+    public function getPlaceIds(): array {
+        $result = array();
+        if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+                //filter out the baseurl related identifiers and which contains the id.acdh
+                if ((strpos($v['value'], $this->config->baseUrl) === false) &&
+                        (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false)
+                ) {
+                    $result[] = $v;
+                }
+            }
+        }
+        
+        if(count($result) === 0) {
+            $result[] = $this->properties["acdh:hasIdentifier"][0];
+        }
+        return $result;
+    }
 
     /**
      * Get all identifiers which are not acdh api related

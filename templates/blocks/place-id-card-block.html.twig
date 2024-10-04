@@ -1,0 +1,24 @@
+
+<div class="card metadata">
+    <div class="card-header">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-10"><h6 class="mb-0 pb-0">{{ "Identifier"|trans }}</h6></div>
+            <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div> -->
+            <div class="col-2 text-end"><a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#pidBody">
+                    <i class="fa fa-solid fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="pidBody" class="collapse show">
+        <div class="card-body meta-sidebar flex-column">
+            {% for key, value in data %}
+                 <a href="{{ value['value'] }}" target="_blank" id="pidValue">{{ value['value'] }}</a>
+            {% endfor %}
+           
+            <!--
+            <br>
+            <a href="#" id="copyPid" class="btn btn-arche-blue">{{ "Copy"|trans }}</a>-->
+        </div>
+    </div>
+</div>
