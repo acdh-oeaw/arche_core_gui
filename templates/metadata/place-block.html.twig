@@ -1,186 +1,124 @@
-{% set properties = {
-    'acdh:hasAddressLine1': {
-        'icon': 'subtitles',
-        'label': 'Address'
-    },
-    'acdh:hasAddressLine2': {
-        'icon': 'subtitles',
-        'label': 'Address'
-    },
-    'acdh:Postcode': {
-        'icon': 'subtitles',
-        'label': 'Postcode'
-    },
-    'acdh:hasCity': {
-        'icon': 'subtitles',
-        'label': 'City'
-    },
-    'acdh:hasRegion': {
-        'icon': 'subtitles',
-        'label': 'Region'
-    },
-    'acdh:hasCountry': {
-	'icon': 'subtitles',
-        'label': 'Country'
-    },   
-    'acdh:hasPart': {
-        'icon': 'subtitles',
-        'label': 'Part'
-    },
-    'acdh:isPartOf': {
-        'icon': 'device_hub',
-        'label': 'Part of'
-    }
-}
-%}
 
-{% set extProperties = {
-    'acdh:hasLatitude': {
-	'icon': '',
-        'label': 'Latitude'
-    },
-    'acdh:hasLongitude': {
-        'icon': '',
-        'label': 'Longitude'
-    },
-    'acdh:hasWKT': {
-        'icon': '',
-        'label': 'WKT'
-    }
-}
-%}
+<div class="container pt-3">
+    <div class="row">
+        <div class="col-lg-12 metadata-expert text-end"  >
+            <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
+        </div>
+    </div>
+</div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    
-<div class="arche-detail-view" >
-    <div class="arche-detail-main" id="arche-dv-main">
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-9 metadata-main basic-content-div" >
+            <div class="loader-overlay metadata-main-loader">
+                <div class="loader"></div>
+            </div>
 
-        {% set titleimage = basic.getTitleImage() %}        
-        {% if titleimage %}
-            <div class='row'>
-                <div class="res-inside-wrap col-lg-8 ">
-                {% endif%}
-
-                {% if  basic.getTitle() %}
-                    <div class="res-property">
-                        <span class="res-title detail-title-span">
-                            {{  basic.getTitle() }}
-                        </span>
-                    </div>
-                {% endif%} 
-
-                {% if basic.getRdfTypes() %}
-                    <div class="res-property">
-                        <i class="material-icons">&#xE54E;</i>
-                        <span class="res-prop-label">{{ "Type"|trans }}:</span> 
-                        <span class="res-prop-value">
-                            {% for value in basic.getRdfTypes() %}
-                                <a href="/browser/search/type={{ value }}&payload=false/titleasc/10/1">{{ value }}</a>
-                            {% endfor %}
-                        </span>
-                    </div>
-                {% endif%}
-
-                {%  if basic.getNonAcdhApiIdentifiers() %}
-                    <div class="res-property">
-                        {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getNonAcdhApiIdentifiers(), 'icon': "label", 'label': "Identifier(s)" } ) }}
-                    </div>
-                {% endif%}
-
-                {% for key, value in properties %}
-                    {% if basic.getData(key) %}
-                        {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'type': value.type, 'dateformat': value.dateformat, 'delimiter': value.delimiter } ) }}
-                    {% endif%}
-                {% endfor %}
-
-                <h3 class="single-res-heading">{{ "Spatial Information"|trans }}</h3>
-
-                {% for key, value in extProperties %}
-                    {% if basic.getData(key) %}
-                        {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'type': value.type, 'dateformat': value.dateformat, 'delimiter': value.delimiter } ) }}
-                    {% endif%}
-                {% endfor %}
-
-                {% if basic.getData('acdh:hasLongitude').0.title and  basic.getData('acdh:hasLatitude').0.title %}
-                    <div class="res-property">
-                        <span class="res-prop-label">{{"Map"|trans }}: </span>
-                        <span class="res-prop-value">
-                            <div id="mapNormal" style="width: 425px; height: 350px;"></div>
-                            <script>
-                                var lon = {{ basic.getData('acdh:hasLongitude').0.title }};
-                                var lat = {{basic.getData('acdh:hasLatitude').0.title }};
-                                
-                                var mplmapn = L.map('mapNormal').setView([lat, lon], 14);
-                                L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-                                    maxZoom: 18,
-                                    center: [lat, lon],
-                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-                                            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                                    id: 'mapbox/streets-v11',
-                                    tileSize: 512,
-                                    zoomOffset: -1
-                                }).addTo(mplmapn);
-                                L.marker([lat, lon]).addTo(mplmapn);
-                        </script>
-                        </span>
-                    </div>
-                {% endif%}
-
-                {% if basic.getMapType() %}
-                    <div class="res-property">
-                        <span class="res-prop-label">{{"Map"|trans }}: </span>
-                        <span class="res-prop-value">
-                            <div id="mapMultiPolyLong" style="width: 425px; height: 350px;"></div>
-                            {% if basic.getMapType() == 'multipolygon' %}
-                                {% if basic.getMultiPolygonFirstCoordinate() %}
-                                    {% set firstCoordinates = basic.getMultiPolygonFirstCoordinate() %}
-                                {% endif%}
-                            {% endif%}
-
-                            {% if basic.getMapType() == 'polygon' %}
-                                {% if basic.getPolygonFirstCoordinate() %}
-                                    {% set firstCoordinates = basic.getPolygonFirstCoordinate() %}
-                                {% endif%}
-                            {% endif%}    
-                        </span>
-                    </div>
-                    {% if firstCoordinates %}
-                        <script>
-                            var mplmap = L.map('mapMultiPolyLong').setView({{ firstCoordinates }}, 10);
-                            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-                                maxZoom: 18,
-                                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-                                        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                                id: 'mapbox/streets-v11',
-                                tileSize: 512,
-                                zoomOffset: -1
-                            }).addTo(mplmap);
-
-                            var multi = '{{ basic.getData('acdh:hasWKT').0.title }}';
-                            var wkt_geom = multi;
-                            var wicket = new Wkt.Wkt();
-                            wicket.read(wkt_geom);
-                            var feature = wicket.toObject();
-                            L.layerGroup([feature]).addTo(mplmap);
-                            var group = new L.featureGroup([feature]);
-                            mplmap.fitBounds(group.getBounds());
-                        </script>
-                    {% endif%}    
-
-                {% endif%}
-
-                {% if titleimage %}</div>{% endif%}
-
-            {% if titleimage %}	
-                <div class="res-inside-wrap col-lg-4 ">	
-                    <div class="single-res-thumb">
-                        <a href="/browser/detail/{{ basic.getRepoId() }}">
-                            {{ titleimage|raw }}
-                        </a>
+            <div class="container-fluid" id="expertdt-container">
+                <div class="row expert-dt-div">
+                    <div class="col-lg-12">
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
                     </div>
                 </div>
             </div>
-        {% endif%}
+
+            <div class="container-fluid" id="meta-content-container">
+                <!-- Available Date and type -->
+                <div class="row">
+                    <div class="col-6">
+
+                    </div>
+                    <div class="col-6 flex-gap-col flex-reverse mb-0" >
+                        {% if data.getAcdhType %}
+                            <!-- <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> -->
+                            <p class="btn-detail-type-gray no-btn" >{{ data.getAcdhType() }}</p> 
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Has newer version -->
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-danger d-flex align-items-center hidden-alert" role="alert" id="metadata-versions-alert">
+                            <div>
+                                {{ "The resource has a newer version!"|trans }} <a href="#" id="metadata-versions-alert-url">{{ "Click here for the newer version"|trans  }}</a>
+                            </div>
+                        </div>
+                        <hr class="meatdata-view-top-hr">
+                    </div>
+                </div>
+                <!-- Title -->
+                <div class="row">
+                    <div class="col-lg-12 " id="ad-hasTitle">
+                        <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
+                    </div>
+                </div>
+
+                <!-- ADDRESS  -->  
+                {% if data.getPlaceAddress()  %}
+                    <div class="row">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "Address"|trans }}</h5>
+                        </div>
+                        {{ include(arche_core_gui_path ~ '/templates/content-blocks/place-address-block.html.twig', {'data': data.getPlaceAddress() } ) }}
+                    </div>
+                {% endif %}    
+
+
+                <!-- DESCRIPTION  -->  
+                {% set descriptionPropArr = ['acdh:hasDescription', 'acdh:hasPart', 'acdh:isPartOf'] %}
+                {% if data.getDataByPropertyList(descriptionPropArr)  %}
+                    <div class="row">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "Description"|trans }}</h5>
+                        </div>
+                        {{ include(arche_core_gui_path ~ '/templates/content-blocks/place-description-block.html.twig', {'data': data.getDataByPropertyList(descriptionPropArr) } ) }}
+                    </div>
+                {% endif %}  
+                
+                
+                <!-- MAP -->
+                {% if data.getMapType()|lower == 'polygon'  %}
+                    {{ include(arche_core_gui_path ~ '/templates/content-blocks/map-content-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon', 'objectData': data } ) }}
+                {% elseif data.getMapType()|lower == 'multipolygon' %}
+                    {{ include(arche_core_gui_path ~ '/templates/content-blocks/map-content-block.html.twig', {'data': data.getPolygon(), 'type': 'multipolygon', 'objectData': data } ) }}
+                {% elseif data.getMapType()|lower == 'coordinates' %}
+                    {{ include(arche_core_gui_path ~ '/templates/content-blocks/map-content-block.html.twig', {'data': data.getCoordinates(), 'type': 'coordinates', 'objectData': data } ) }}
+                {% endif %}    
+
+                <!-- Spatial coverage of [] -->
+                {{ include(arche_core_gui_path ~ '/templates/content-blocks/place-spatial-coverage-block.html.twig', {'data': data } ) }}
+
+
+
+            </div>
+        </div>
+
+        <div class="col-lg-3 metadata-right" >
+            <!-- 
+            <div class="loader-overlay metadata-right-loader">
+                <div class="loader"></div>
+            </div>
+            -->
+
+            {% if data.isTitleImage()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            {% endif %} 
+
+            <!-- Identifier [Bezeichner] 
+
+    Use geonames ID, if no geonames then whatever is not ARCHE domain, else ARCHE domain.  -->
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+            {% endif %}
+
+            {% if data  %}
+
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
+
+            {% endif %}
+
+        </div>
     </div>
-</div>    
+</div>

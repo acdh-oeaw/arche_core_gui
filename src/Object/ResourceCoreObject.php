@@ -22,22 +22,22 @@ class ResourceCoreObject {
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-        
+
         foreach ($data as $k => $v) {
             if (is_array($v)) {
-              
+
                 foreach ($v as $propval) {
                     $firstArr = reset($propval);
                     if (isset($propval[$this->language])) {
-                         $this->setData($k, $propval[$this->language]);
+                        $this->setData($k, $propval[$this->language]);
                     } else {
                         $this->setData($k, $firstArr);
                     }
                 }
             }
         }
-      
-        
+
+
         //set acdhid /repoid / repourl
         $this->repoid = $this->getRepoID();
     }
@@ -62,10 +62,10 @@ class ResourceCoreObject {
             $first = reset($this->properties[$property]);
         }
         if (isset($this->properties[$property][$this->language])) {
-            
+
             return $this->properties[$property][$this->language];
         } elseif (isset($this->properties[$property]['und'])) {
-             return $this->properties[$property]['und'];
+            return $this->properties[$property]['und'];
         } elseif (isset($first) && isset($this->properties[$property])) {
             foreach ($this->properties[$property] as $k => $v) {
                 if (is_int($k)) {
@@ -76,7 +76,7 @@ class ResourceCoreObject {
         }
         return array();
     }
-    
+
     /**
      *
      * Change property data
@@ -88,12 +88,11 @@ class ResourceCoreObject {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
-            if(isset($v['type']) && $v['type'] === 'REL') {
-                $this->properties[$prop][] = $v; 
-            }else {
-               $this->properties[$prop] = $v; 
+            if (isset($v['type']) && $v['type'] === 'REL') {
+                $this->properties[$prop][] = $v;
+            } else {
+                $this->properties[$prop] = $v;
             }
-            
         }
     }
 
@@ -324,13 +323,13 @@ class ResourceCoreObject {
         }
         return "";
     }
-    
+
     public function getRootID(): string {
         if (isset($this->properties["acdh:isPartOf"])) {
             foreach ($this->properties["acdh:isPartOf"] as $v) {
                 if (isset($v['id']) && !empty($v['id'])) {
                     return $v['id'];
-                } 
+                }
             }
         }
         return "";
@@ -600,11 +599,24 @@ class ResourceCoreObject {
 
         if (isset($this->properties["acdh:hasLongitude"][0]['value']) && !empty($this->properties["acdh:hasLongitude"][0]['value']) &&
                 isset($this->properties["acdh:hasLatitude"][0]['value']) && !empty($this->properties["acdh:hasLatitude"][0]['value'])) {
-            $str = "[" . $this->properties["acdh:hasLongitude"][0]['value'] . ", " . $this->properties["acdh:hasLatitude"][0]['value'] . "]";
+            $str = "[" . $this->properties["acdh:hasLatitude"][0]['value'] . ", " . $this->properties["acdh:hasLongitude"][0]['value'] . "]";
+        } elseif (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
+            $matches = "";
+            preg_match('/POINT\(([^,]+) \s*([^)]+)\)/', $this->properties["acdh:hasWKT"][0]['value'], $matches);
+            
+            if (!empty($matches)) {
+                // Swap the coordinates: $matches[1] is the first value, $matches[2] is the second value
+                $swappedCoordinates = "POINT({$matches[2]} {$matches[1]})";
+                $str = $swappedCoordinates;
+            }
         }
         return $str;
     }
 
+    /**
+     * Get Polygon data fpr map
+     * @return string
+     */
     public function getPolygon(): string {
         $str = "";
 
@@ -614,15 +626,18 @@ class ResourceCoreObject {
 
             // Initialize an empty array to store formatted coordinates
             $formattedCoordinates = [];
-
             // Iterate through each coordinate pair
             foreach ($coordinatePairs as $pair) {
+                if (substr($pair, 0, 1) === ' ' || substr($pair, -1) === ' ') {
+                    // Remove the first and last character (spaces) if condition is true
+                    $pair = substr($pair, 1, -1);
+                }
                 // Split each pair into longitude and latitude components
                 $components = explode(" ", $pair);
-                // Format the components as an array and add to the formatted coordinates array
-                $formattedCoordinates[] = "[" . $components[0] . ", " . $components[1] . "]";
-            }
 
+                // Format the components as an array and add to the formatted coordinates array
+                $formattedCoordinates[] = "[" . $components[1] . ", " . $components[0] . "]";
+            }
             // Join the formatted coordinates array into a string with commas
             $str = implode(", ", $formattedCoordinates);
         }
@@ -635,8 +650,7 @@ class ResourceCoreObject {
      */
     public function getMapType(): string {
 
-        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
-            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
                 return 'multipolygon';
             } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'polygon') !== false) {
                 return 'polygon';
@@ -907,6 +921,27 @@ class ResourceCoreObject {
         return $result;
     }
 
+    public function getDataByPropertyList(array $props): array {
+        $result = [];
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $obj = [];
+                            if (isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
     /**
      * Return the metadata view right box Credits card content
      * @return array
@@ -965,6 +1000,35 @@ class ResourceCoreObject {
                             } else {
                                 $result[$v][] = $val['value'];
                             }
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function getPlaceAddress(): array {
+        $result = [];
+        $props = [
+            'acdh:hasAddressLine1' => 'Address Line 1',
+            'acdh:hasAddressLine2 ' => 'Address Line 2',
+            'acdh:hasPostcode' => 'Postcode',
+            'acdh:hasCity' => 'City',
+            'acdh:hasRegion' => 'Region',
+            'acdh:hasCountry' => 'Country',
+        ];
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $obj = [];
+                            if (isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
                         }
                     }
                 }

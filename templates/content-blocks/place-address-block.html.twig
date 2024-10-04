@@ -1,0 +1,23 @@
+<div class="col-lg-12 " id="place-address-block">
+    <ul>
+        {% for key, value in data %}
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ key|trans }}:</span>
+
+                    <span class="res-prop-value">
+                        {% for val in value %}
+                            {% if val['id'] %} 
+                                <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                            {% else %}    
+                                {{ val['value'] }}<br>
+                            {% endif %}
+                        {% endfor %}    
+                    </span>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+

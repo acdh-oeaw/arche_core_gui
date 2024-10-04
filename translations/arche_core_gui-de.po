@@ -629,11 +629,11 @@ msgstr "Software-Versionen"
 msgid "Browse the various resources on ARCHE"
 msgstr "Durchsuchen Sie die vielfältigen Ressourcen in ARCHE"
 
-msgid "<span class="privacy-checkmark">✓</span> You are currently opted in. <a href="#" id="opt-in-out-matomo">Click here</a> to opt out."
-msgstr "<span class="privacy-checkmark">✓</span> Sie sind derzeit angemeldet. <a href="#" id="opt-in-out-matomo">Klicken Sie hier</a>, um sich abzumelden."
+msgid "<span class='privacy-checkmark'>✓</span> You are currently opted in. <a href='#' id='opt-in-out-matomo'>Click here</a> to opt out."
+msgstr "<span class='privacy-checkmark'>✓</span> Sie sind derzeit angemeldet. <a href='#' id='opt-in-out-matomo'>Klicken Sie hier</a>, um sich abzumelden."
 
-msgid "<span class="privacy-checkmark-out">X</span> You are currently opted out. <a href="#" id="opt-in-out-matomo">Click here</a> to opt in."
-msgstr "<span class="privacy-checkmark-out">X</span> Sie sind derzeit abgemeldet. <a href="#" id="opt-in-out-matomo">Klicken Sie hier</a>, um sich anzumelden."
+msgid "<span class='privacy-checkmark-out'>X</span> You are currently opted out. <a href='#' id='opt-in-out-matomo'>Click here</a> to opt in."
+msgstr "<span class='privacy-checkmark-out'>X</span> Sie sind derzeit abgemeldet. <a href='#' id='opt-in-out-matomo'>Klicken Sie hier</a>, um sich anzumelden."
 
 msgid "SEARCH NOW"
 msgstr "JETZT SUCHEN"
@@ -649,3 +649,11 @@ msgstr "Die Website befindet sich in Entwicklung!"
 
 msgid "This is the curation instance! The paratexts on the homepage as well as in Deposit, Policies, and About ARCHE are not up-to-date! Please consult the <a href='https://arche.acdh.oeaw.ac.at/browser/'>live site</a> to keep yourself informed."
 msgstr "Das ist die Kuratierungsinstanz! Die Paratexte auf der Startseite sowie in Einreichen, Richtlinien und Über ARCHE sind nicht up-to-date! Bitte konsultieren Sie die <a href='https://arche.acdh.oeaw.ac.at/browser/'>Live-Seite</a> um sich zu informieren."
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+

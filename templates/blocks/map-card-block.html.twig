@@ -4,7 +4,7 @@
 
 <div class="card metadata">
     <div class="card-header">
-         <div class="row justify-content-center align-items-center"">
+         <div class="row justify-content-center align-items-center">
             <div class="col-10"><h6 class="mb-0 pb-0">{{ "Map"|trans }}</h6></div>
             <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div> -->
             <div class="col-2 text-end">
@@ -29,7 +29,9 @@
     if (type === 'coordinates') {
         map = L.map('mapSmall').setView({{ data }}, 10);
     } else {
-        var arrays = JSON.parse("[" + data + "]");
+        var formattedString = "[" + data + "]";
+        formattedString = formattedString.replace(/]\s*,\s*\[/g, "],[");
+        var arrays = JSON.parse(formattedString);
         // Get the values of the first array
         var firstArray = arrays[0];
         map = L.map('mapSmall').setView(firstArray, 7);
