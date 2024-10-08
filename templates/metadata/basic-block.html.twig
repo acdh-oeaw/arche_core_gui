@@ -216,10 +216,9 @@
             </div>
             -->
 
-            {% if data.isTitleImage()  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
-            {% endif %}  
-
+          
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+          
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}

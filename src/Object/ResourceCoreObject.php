@@ -427,48 +427,6 @@ class ResourceCoreObject {
     }
 
     /**
-     * Check if we have a titleimage id or not
-     * @return bool
-     */
-    public function isTitleImage(): bool {
-        //get the first id
-        $id = $this->properties["acdh:hasIdentifier"][0]['value'];
-
-        //but if we have acdhid, then use that one
-        if (!empty($this->getAcdhID())) {
-            $id = $this->getAcdhID();
-        }
-
-        $id = str_replace('http://', '', $id);
-        $id = str_replace('https://', '', $id);
-
-        // Instantiate a new Guzzle client
-        $client = new \GuzzleHttp\Client();
-
-        // URL to make the request to
-        $url = $this->thumbUrl . $id;
-
-        try {
-            // Make the GET request
-            $response = $client->get($url);
-
-            // Get the response status code
-            $statusCode = $response->getStatusCode();
-
-            // Check if the status code is in the 2xx range (indicating success)
-            if ($statusCode >= 200 && $statusCode < 300) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (\Exception $e) {
-            // Handle request exceptions (e.g., connection error, timeout)
-            return false;
-        }
-        return false;
-    }
-
-    /**
      * Get the acdh type string
      *
      * @return string

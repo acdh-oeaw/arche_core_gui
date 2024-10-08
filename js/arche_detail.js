@@ -53,6 +53,32 @@ jQuery(function ($) {
         fetchRPR();
         fetchPublications();
         fetchNextPrevItem();
+        showTitleImage();
+    }
+    
+    /**
+     * Display the titleimage with ajax if we a response 
+     * @returns {undefined}
+     */
+    function showTitleImage() {
+        console.log(" showTitleImage");
+        var currentUrl = $(location).attr('href');
+        currentUrl = currentUrl.replace(/^(https?:\/\/)/, '');
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl  + '?width=600';
+        $.ajax({
+                url: imgSrc, 
+                type: 'GET',
+                success: function (data) {
+                    console.log("OK!");
+                    // Append the image to the container
+                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl + '?width=600" data-lightbox="detail-titleimage">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl + '?width=200" >\n\
+                                        </a></center>');
+                },
+                error: function () {
+                    //console.log('Failed to fetch image.');
+                }
+            });
     }
 
     /**
@@ -546,6 +572,8 @@ jQuery(function ($) {
         });
     }
 
+    // NOT IN USE
+    /*
     function fetchChild() {
         $('#child-div-content').show();
         var limit = 10;
@@ -619,25 +647,24 @@ jQuery(function ($) {
                 $(".child-table thead").remove();
             }
         });
-        /*
-         $("#sortBy").change(function () {
-         var colIdx = $('#sortBy :selected').val();
-         let id = colIdx.substring(0, 1);
-         let order = colIdx.substring(2, 3);
-         orderVal = 'asc';
-         if (order > 0) {
-         orderVal = 'desc';
-         }
+        
+         //$("#sortBy").change(function () {
+         //var colIdx = $('#sortBy :selected').val();
+         //let id = colIdx.substring(0, 1);
+         //let order = colIdx.substring(2, 3);
+         //orderVal = 'asc';
+         //if (order > 0) {
+         //orderVal = 'desc';
+        // }
          
-         childTable.order([id, orderVal]).draw();
-         });*/
+         //childTable.order([id, orderVal]).draw();
+         //});
     }
-
+*/
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
-
         });
     }
 
@@ -659,12 +686,10 @@ jQuery(function ($) {
             error: function (xhr, status, error) {
                 $('#block-arche-theme-content').html(error);
             }
-        }); //
+        }); 
     }
 
-
     //expertDtDiv
-
     $(document).delegate("#expertViewBtn", "click", function (e) {
         e.preventDefault();
         if ($(this).hasClass('basic')) {
@@ -680,8 +705,8 @@ jQuery(function ($) {
             $(this).addClass('basic');
             $(this).text(Drupal.t('Expert-View'));
         }
-
     });
+    
     $(document).delegate("a#archeHref", "click", function (e) {
         $('#meta-content-container').hide();
         var url = $(this).attr('href');
@@ -704,14 +729,9 @@ jQuery(function ($) {
             $(".loader-div").hide();
         }
     });
-    //hsndle the internal urls to reload the page
-
-
-
+  
     //update the UI elements
-
-    function showUI() {
-
+  function showUI() {
         showAvailableDate();
         showType();
         //showRightSide();
@@ -723,15 +743,11 @@ jQuery(function ($) {
         //showExpertView();
         //showInverseTable();
         //showBreadcrumb();
-
-
         $('#meta-content-container').show();
         $('#meta-right-container').show();
         $('.metadata-main-loader').hide();
         $('.metadata-right-loader').hide();
     }
-
-
 
     function showType() {
         if (resObj.getType()) {
@@ -758,34 +774,6 @@ jQuery(function ($) {
         }
     }
 
-    function fetchMetadata() {
-
-        $.ajax({
-            url: '/browser/api/expert/' + resId + '/en',
-            type: "GET",
-            success: function (data, status) {
-                try {
-                    resObj = new $.fn.MetadataClass(data);
-                    showUI();
-                } catch (error) {
-                    // Code to handle the exception
-                    console.error("An error occurred:", error.message);
-                    $('#meta-content-container').show().html('Error during the data fetch! Please report it!');
-                    $('#meta-right-container').hide();
-                    $('.metadata-main-loader').hide();
-                    $('.metadata-right-loader').hide();
-                }
-            },
-            error: function (xhr, status, error) {
-                $('#meta-content-container').show().html('Error during the data fetch! Please report it!');
-                $('#meta-right-container').hide();
-                $('.metadata-main-loader').hide();
-                $('.metadata-right-loader').hide();
-            }
-        });
-    }
-
-
     function checkDetailCardEvents() {
         $(".mdr-card-collapse-btn").click(function () {
             var dataValue = $(this).data('bs-target');
@@ -797,7 +785,7 @@ jQuery(function ($) {
             }
         });
     }
-
+    /*
     function fetchTopcollections() {
         $.ajax({
             url: '/browser/api/topcollections/8/en',
@@ -832,7 +820,7 @@ jQuery(function ($) {
                 $('#detail-overview-api-div').html(error);
             }
         });
-    }
+    }*/
 
     ///////////// CITE ////////////////////
     /**
@@ -924,8 +912,6 @@ jQuery(function ($) {
                 }
 
             }).fail(function (xhr) {
-                console.log("FAIL: ");
-                console.log(xhr);
                 createCiteErrorResponse(Drupal.t("CITE is not available!"));
                 return false;
             });
