@@ -131,12 +131,9 @@ class ResourceCoreObject {
      */
     public function getNonAcdhIdentifiers(): array {
         $result = array();
-        if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"][0])) {
-            foreach ($this->properties["acdh:hasIdentifier"][0] as $k => $v) {
-                //filter out the baseurl related identifiers and which contains the id.acdh
-                if ((strpos($v['value'], $this->config->baseUrl) === false) &&
-                        (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false)
-                ) {
+        if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+                if ((strpos((string)$v['value'], 'oeaw.ac.at') === false) && (strpos((string)$v['value'], $this->config->baseUrl) === false) ) {
                     $result[] = $v;
                 }
             }
@@ -902,10 +899,16 @@ class ResourceCoreObject {
         return $result;
     }
 
+    /**
+     * If we need an array of propertys data
+     * @param array $props
+     * @return array
+     */
     public function getDataByPropertyList(array $props): array {
         $result = [];
-        foreach ($props as $k => $v) {
+        foreach ($props as $k) {
             if (isset($this->properties[$k])) {
+              
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
@@ -913,8 +916,9 @@ class ResourceCoreObject {
                             if (isset($val['id'])) {
                                 $obj['id'] = $val['id'];
                             }
+                            $obj['type'] = $val['type'];
                             $obj['value'] = $val['value'];
-                            $result[$v][] = $obj;
+                            $result[$k][] = $obj;
                         }
                     }
                 }

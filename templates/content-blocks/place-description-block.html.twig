@@ -1,22 +1,22 @@
 <div class="col-lg-12 " id="place-description-block">
     
 
-    {% if data.getData('acdh:hasDescription') %}
+    {% if data['acdh:hasDescription'] %}
         <div class="hasdescription-container" >
-            <p class="descriptionTextShort">{{ data.getData('acdh:hasDescription')[0].value|nl2br }}</p>
-            <p class="descriptionTextLong" style="display: none;">{{ data.getData('acdh:hasDescription')[0].value|nl2br }} 
+            <p class="descriptionTextShort">{{ data['acdh:hasDescription'][0].value|nl2br }}</p>
+            <p class="descriptionTextLong" style="display: none;">{{ data['acdh:hasDescription'][0].value|nl2br }} 
                 <a class="hasdescription-toggle-button" id="descriptionTextLongBtn">{{ "Show Less"|t }}</a></p>
 
         </div>
     {% endif %}
     <ul>
-         {% if data.getData('acdh:hasPart') %}
+         {% if data['acdh:hasPart'] %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasPart'), 'label':  'Part(s)' } ) }}</li>
+                    {'data': data['acdh:hasPart'], 'label':  'Part(s)' } ) }}</li>
             {% endif %}
-         {% if data.getData('acdh:isPartOf') %}
+         {% if data[('acdh:isPartOf'] %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:isPartOf'), 'label':  'Is part of' } ) }}</li>
+                    {'data': data['acdh:isPartOf'], 'label':  'Is part of' } ) }}</li>
             {% endif %}
     </ul>
     

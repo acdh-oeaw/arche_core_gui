@@ -1,162 +1,115 @@
-PROJECT
 
-{% 
-set properties = {
-    'acdh:hasUrl': {
-	'icon': 'web',
-        'label': 'Url'
-    },
-    'acdh:hasContact': {
-        'icon': 'person_add',
-        'label': 'Contact(s)'
-    },
-    'acdh:hasFunder': {
-        'icon': 'attach_money',
-        'label': 'Funder'
-    },
-    'acdh:hasPrincipalInvestigator': {
-        'icon': 'perm_identity',
-        'label': 'Principal Investigator(s)'
-    },
-    'acdh:hasStartDate': {
-        'icon': 'today',
-        'label': 'Start Date',
-        'type': 'date',
-        'dateformat': 'd MMM y'
-    },
-    'acdh:hasEndDate': {
-        'icon': 'today',
-        'label': 'End Date',
-        'type': 'date',
-        'dateformat': 'd MMM y'
-    },
-    'acdh:hasLanguage': {
-        'icon': 'flag',
-        'label': 'Language'
-    },
-    'acdh:hasLifeCycleStatus': {
-        'icon': 'history',
-        'label': 'Life Cycle Status'
-    }
-}
-%}
+<div class="container pt-3">
+    <div class="row">
+        <div class="col-lg-12 metadata-expert text-end"  >
+            <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
+        </div>
+    </div>
+</div>
 
-{% 
-set furtherProperties = {
-    'acdh:hasRelatedDiscipline': {
-	'icon': 'info',
-        'label': 'Research Discipline(s)'
-    },
-    'acdh:hasSubject': {
-        'icon': 'info',
-        'label': 'Subject'
-    },
-    'acdh:hasActor': {
-        'icon': 'info',
-        'label': 'Actor'
-    },
-    'acdh:hasSpatialCoverage': {
-        'icon': 'info',
-        'label': 'Spatial Coverage'
-    },
-    'acdh:hasTemporalCoverage': {
-        'icon': 'info',
-        'label': 'Temporal Coverage'
-    },    
-    'acdh:hasCoverageStartDate': {
-        'icon': 'info',
-        'label': 'Coverage Start Date',
-        'dateformat': 'y'
-    },
-    'acdh:hasCoverageEndDate': {
-        'icon': 'info',
-        'label': 'Coverage End Date',
-        'dateformat': 'y'
-    },
-    'acdh:hasAppliedMethod': {
-        'icon': 'info',
-        'label': 'Applied Method'
-    },
-    'acdh:hasAppliedMethodDescription': {
-        'icon': 'info',
-        'label': 'Applied Method Description'
-    },
-    'acdh:hasTechnicalInfo': {
-        'icon': 'info',
-        'label': 'Technical Info'
-    },
-    'acdh:hasEditorialPractice': {
-        'icon': 'info',
-        'label': 'Editorial Practice'
-    },
-    'acdh:hasNote': {
-        'icon': 'info',
-        'label': 'Note'
-    }
-}
-%}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-9 metadata-main basic-content-div" >
+            <div class="loader-overlay metadata-main-loader">
+                <div class="loader"></div>
+            </div>
 
-<div class="arche-detail-view" >
-    <div class="arche-detail-main" id="arche-dv-main">
-        
-        {% set titleimage = basic.getTitleImage() %}        
-        {% if titleimage %}
-            <div class='row'>
-                <div class="res-inside-wrap col-lg-8 ">
-        {% endif%}
-
-            {% if  basic.getTitle() %}
-                <div class="res-property">
-                    <span class="res-title detail-title-span">
-                        {%  if basic.getAccessRestriction() %}
-                            {{ include('/modules/contrib/arche-gui/templates/helper-accesResFormat.html.twig', {'data': basic.getAccessRestriction() } ) }}
-                        {% endif%}
-                        {{  basic.getTitle() }}
-                    </span>
-                </div>
-            {% endif%} 
-
-            {% if basic.getRdfTypes() %}
-                <div class="res-property">
-                    <i class="material-icons">&#xE54E;</i>
-                    <span class="res-prop-label">{{ "Type"|trans }}:</span> 
-                    <span class="res-prop-value">
-                        {% for value in basic.getRdfTypes() %}
-                            <a href="/browser/search/type={{ value }}&payload=false/titleasc/10/1">{{ value }}</a>
-                        {% endfor %}
-                    </span>
-                </div>
-            {% endif%}
-
-            {%  if basic.getData('acdh:hasAlternativeTitle') %}
-                <div class="res-property">
-                    {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData('acdh:hasAlternativeTitle'), 'icon': "title", 'label': "Alternative Title" } ) }}
-                </div>
-            {% endif%}
-
-            {%  if basic.getNonAcdhApiIdentifiers() %}
-                <div class="res-property">
-                    {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getNonAcdhApiIdentifiers(), 'icon': "label", 'label': "Identifier(s)" } ) }}
-                </div>
-            {% endif%}
-
-            {% for key, value in properties %}
-                {% if basic.getData(key) %}
-                     {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'type': value.type, 'dateformat': value.dateformat, 'delimiter': value.delimiter } ) }}
-                {% endif%}
-            {% endfor %}
-
-        {% if titleimage %}</div>{% endif%}
-
-        {% if titleimage %}	
-                <div class="res-inside-wrap col-lg-4 ">	
-                    <div class="single-res-thumb">
-                        <a href="/browser/detail/{{ basic.getRepoId() }}">
-                            {{ titleimage|raw }}
-                        </a>
+            <div class="container-fluid" id="expertdt-container">
+                <div class="row expert-dt-div">
+                    <div class="col-lg-12">
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
                     </div>
                 </div>
             </div>
-        {% endif%}
+
+            <div class="container-fluid" id="meta-content-container">
+                <!-- Available Date and type -->
+                <div class="row">
+                    <div class="col-6">
+
+                    </div>
+                    <div class="col-6 flex-gap-col flex-reverse mb-0" >
+                        {% if data.getAcdhType %}
+                            <!-- <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> -->
+                            <p class="btn-detail-type-gray no-btn" >{{ data.getAcdhType() }}</p> 
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Has newer version -->
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-danger d-flex align-items-center hidden-alert" role="alert" id="metadata-versions-alert">
+                            <div>
+                                {{ "The resource has a newer version!"|trans }} <a href="#" id="metadata-versions-alert-url">{{ "Click here for the newer version"|trans  }}</a>
+                            </div>
+                        </div>
+                        <hr class="meatdata-view-top-hr">
+                    </div>
+                </div>
+                <!-- Title -->
+                <div class="row">
+                    <div class="col-lg-12 " id="ad-hasTitle">
+                        <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
+                    </div>
+                </div>
+
+                {% if data.getData('acdh:hasAlternativeTitle')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
+                {% endif %}    
+                
+                {% if data.getData('acdh:hasUrl')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
+                {% endif %}  
+                
+                {% if data.getData('acdh:hasContact')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasContact'), 'label':  'Contact' } ) }}
+                {% endif %}  
+                
+                {% if data.getData('acdh:hasFunder')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasFunder'), 'label':  'Funder' } ) }}
+                {% endif %}  
+                
+                {% if data.getData('acdh:hasPrincipalInvestigator')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPrincipalInvestigator'), 'label':  'Principal investigator' } ) }}
+                {% endif %}  
+                
+               
+                
+
+
+            </div>
+        </div>
+
+        <div class="col-lg-3 metadata-right" >
+            <!-- 
+            <div class="loader-overlay metadata-right-loader">
+                <div class="loader"></div>
+            </div>
+            -->
+
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            
+              {% if data.getNonAcdhIdentifiers()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
+            {% endif %} 
+
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+            {% endif %}
+
+            {% if data  %}
+
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
+
+            {% endif %}
+
+        </div>
     </div>
-</div>    
+</div>

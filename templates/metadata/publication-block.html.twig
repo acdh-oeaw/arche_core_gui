@@ -1,123 +1,159 @@
-PUBLICATION
-{% set properties = {
-    'acdh:hasNonLinkedIdentifier': {
-	'icon': 'label',
-        'label': 'NonLinked Identifier'
-    },
-    'acdh:hasAuthor': {
-        'icon': 'people',
-        'label': 'Author(s)'
-    },
-    'acdh:hasEditor': {
-        'icon': 'people',
-        'label': 'Editor(s)'
-    },
-    'acdh:hasSeriesInformation': {
-        'icon': 'info',
-        'label': 'Series Information'
-    },
-    'acdh:hasExtent': {
-        'icon': 'dehaze',
-        'label': 'Extent'
-    },
-    'acdh:hasPages': {
-        'icon': 'wallpaper',
-        'label': 'Pages'
-    },
-    'acdh:hasIssuedDate': {
-        'icon': 'today',
-        'label': 'Issued Date',
-        'type': 'date',
-        'dateformat': 'y'
-    },
-    'acdh:hasCity': {
-        'icon': 'subtitles',
-        'label': 'City'
-    },
-    'acdh:hasRegion': {
-        'icon': 'subtitles',
-        'label': 'Region'
-    },
-    'acdh:hasPublisher': {
-	'icon': 'person_add',
-        'label': 'Publisher(s)'
-    },
-    'acdh:hasUrl': {
-        'icon': 'web',
-        'label': 'Url'
-    },
-    'acdh:hasLanguage': {
-        'icon': 'flag',
-        'label': 'Language'
-    },
-    'acdh:hasEditorialPractice': {
-        'icon': 'person_add',
-        'label': 'Editorial Practice'
-    },
-    'acdh:hasNote': {
-        'icon': 'info_outline',
-        'label': 'Note'
-    }
-}
-%}
 
-<div class="arche-detail-view" >
-    <div class="arche-detail-main" id="arche-dv-main">
-        
-        {% set titleimage = basic.getTitleImage() %}        
-        {% if titleimage %}
-             <div class='row'>
-                 <div class="res-inside-wrap col-lg-8 ">
-         {% endif%}
+<div class="container pt-3">
+    <div class="row">
+        <div class="col-lg-12 metadata-expert text-end"  >
+            <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
+        </div>
+    </div>
+</div>
 
-            {% if  basic.getTitle() %}
-                <div class="res-property">
-                    <span class="res-title detail-title-span">
-                        {{  basic.getTitle() }}
-                    </span>
-                </div>
-            {% endif%} 
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-9 metadata-main basic-content-div" >
+            <div class="loader-overlay metadata-main-loader">
+                <div class="loader"></div>
+            </div>
 
-            {% if basic.getRdfTypes() %}
-                <div class="res-property">
-                    <i class="material-icons">&#xE54E;</i>
-                    <span class="res-prop-label">{{ "Type"|trans }}:</span> 
-                    <span class="res-prop-value">
-                        {% for value in basic.getRdfTypes() %}
-                            <a href="/browser/search/type={{ value }}&payload=false/titleasc/10/1">{{ value }}</a>
-                        {% endfor %}
-                    </span>
-                </div>
-            {% endif%}
-
-            {%  if basic.getData('acdh:hasAlternativeTitle') %}
-                {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData('acdh:hasAlternativeTitle'), 'icon': "title", 'label': "Alternative Title"} ) }}
-            {% endif%}
-
-            {%  if basic.getNonAcdhApiIdentifiers() %}
-                <div class="res-property">
-                    {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getNonAcdhApiIdentifiers(), 'icon': "label", 'label': "Identifier(s)" } ) }}
-                </div>
-            {% endif%}
-
-            {% for key, value in properties %}
-                {% if basic.getData(key) %}
-                     {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'type': value.type, 'dateformat': value.dateformat, 'delimiter': value.delimiter } ) }}
-                {% endif%}
-            {% endfor %}
-
-
-        {% if titleimage %}</div>{% endif%}
-
-        {% if titleimage %}	
-                <div class="res-inside-wrap col-lg-4 ">	
-                    <div class="single-res-thumb">
-                        <a href="/browser/detail/{{ basic.getRepoId() }}">
-                            {{ titleimage|raw }}
-                        </a>
+            <div class="container-fluid" id="expertdt-container">
+                <div class="row expert-dt-div">
+                    <div class="col-lg-12">
+                        {{ include(arche_core_gui_path ~ '/templates/metadata/expertview-dt.html.twig', {'result': data } ) }}
                     </div>
                 </div>
             </div>
-        {% endif%}
+
+            <div class="container-fluid" id="meta-content-container">
+                <!-- Available Date and type -->
+                <div class="row">
+                    <div class="col-6">
+
+                    </div>
+                    <div class="col-6 flex-gap-col flex-reverse mb-0" >
+                        {% if data.getAcdhType %}
+                            <!-- <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> -->
+                            <p class="btn-detail-type-gray no-btn" >{{ data.getAcdhType() }}</p> 
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Has newer version -->
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-danger d-flex align-items-center hidden-alert" role="alert" id="metadata-versions-alert">
+                            <div>
+                                {{ "The resource has a newer version!"|trans }} <a href="#" id="metadata-versions-alert-url">{{ "Click here for the newer version"|trans  }}</a>
+                            </div>
+                        </div>
+                        <hr class="meatdata-view-top-hr">
+                    </div>
+                </div>
+                <!-- Title -->
+                <div class="row">
+                    <div class="col-lg-12 " id="ad-hasTitle">
+                        <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
+                    </div>
+                </div>
+
+                {% if data.getData('acdh:hasAlternativeTitle')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
+                {% endif %}    
+                
+                {% if data.getData('acdh:hasAuthor')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAuthor'), 'label':  'Author' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasEditor')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasEditor'), 'label':  'Editor' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasSeriesInformation')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasSeriesInformation'), 'label':  'Series Information' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasExtent')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasExtent'), 'label':  'Extent' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasPages')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPages'), 'label':  'Pages' } ) }}
+                {% endif %} 
+                
+                
+                {% if data.getData('acdh:hasIssuedDate')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasIssuedDate'), 'label':  'Issued Date', 'dateformat': 'Y' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasCity')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCity'), 'label':  'City' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasRegion')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasRegion'), 'label':  'Region' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasPublisher')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPublisher'), 'label':  'Publisher' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasUrl')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
+                {% endif %} 
+
+                {% if data.getData('acdh:hasLanguage')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasLanguage'), 'label':  'Language' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasEditorialPractice')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasEditorialPractice'), 'label':  'Editorial Practice' } ) }}
+                {% endif %} 
+                
+                {% if data.getData('acdh:hasNote')  %}
+                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}
+                {% endif %} 
+                
+
+
+            </div>
+        </div>
+
+        <div class="col-lg-3 metadata-right" >
+            <!-- 
+            <div class="loader-overlay metadata-right-loader">
+                <div class="loader"></div>
+            </div>
+            -->
+
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            
+              {% if data.getNonAcdhIdentifiers()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
+            {% endif %} 
+
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+            {% endif %}
+
+            {% if data  %}
+
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
+
+            {% endif %}
+
+        </div>
     </div>
-</div>    
+</div>

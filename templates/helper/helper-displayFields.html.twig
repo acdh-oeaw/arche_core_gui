@@ -101,7 +101,7 @@ Field extra type:
                                         {% endif%}    
                                     {% endif%}
                                 {% elseif(v.type == 'http://www.w3.org/2001/XMLSchema#string') %}
-                                    {% if(type == 'email') %}
+                                    {% if(type == 'email' or v.value matches '/^[\w\.\-]+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/' or v.title matches '/^[\w\.\-]+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/' ) %}
                                         {% if (v.title) %} 
                                             {{ v.title|replace({'@': '(at)'}) }}
                                         {% elseif (v.value) %} 
@@ -189,6 +189,12 @@ Field extra type:
                                 {{ value.value|replace({'@': '(at)'}) }}
                             {% elseif (value.relvalue) %}     
                                 {{ value.relvalue|replace({'@': '(at)'}) }}
+                            {% endif %}
+                        {% elseif value.value matches '/@/' or value.title matches '/@/' %}
+                            {% if (value.title) %} 
+                                {{ value.title|replace({'@': '(at)'}) }}
+                            {% elseif (value.value) %} 
+                                {{ value.value|replace({'@': '(at)'}) }}
                             {% endif %}
                         {% else %}
                             <!-- simple string -->

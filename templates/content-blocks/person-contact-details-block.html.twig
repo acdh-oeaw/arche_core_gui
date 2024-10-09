@@ -1,0 +1,39 @@
+<div class="col-lg-12 " id="person-contact-details-block">
+    <ul>
+         {% if data['acdh:hasAddressLine1'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasAddressLine1'], 'label':  'Address' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasAddressLine2'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasAddressLine2'], 'label':  'Address' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasPostcode'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasPostcode'], 'label':  'Postcode' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasCity'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasCity'], 'label':  'City' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasRegion'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasRegion'], 'label':  'Region' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasCountry'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasCountry'], 'label':  'Country' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasEmail'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasEmail'], 'label':  'Email' } ) }}</li>
+            {% endif %}
+         {% if data['acdh:hasUrl'] %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data['acdh:hasUrl'], 'label':  'URL' } ) }}</li>
+            {% endif %}
+    </ul>
+    
+</div>
+
+
