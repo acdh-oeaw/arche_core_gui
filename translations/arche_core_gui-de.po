@@ -656,4 +656,9 @@ msgstr "Adresse"
 msgid "Description"
 msgstr "Beschreibung"
 
+msgid "Era"
+msgstr "Zeitraum"
+
+msgid "Continue reading"
+msgstr "Weiterlesen"
 

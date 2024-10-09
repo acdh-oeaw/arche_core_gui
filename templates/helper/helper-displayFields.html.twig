@@ -113,11 +113,11 @@ Field extra type:
                                     {% else %}
                                         <!-- simple string -->
                                         {% if (v.title) %} 
-                                            {{ v.title|nl2br }}
+                                            <span>{{ v.title|nl2br }}</span>
                                         {% elseif (v.value) %} 
-                                            {{ v.value|nl2br }}
+                                            <span>{{ v.value|nl2br }}</span>
                                         {% elseif (v.relvalue) %}
-                                            {{ v.relvalue|nl2br }}
+                                            <span>{{ v.relvalue|nl2br }}</span>
                                         {% endif %}
                                         {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                     {% endif %}
@@ -127,11 +127,11 @@ Field extra type:
                                 {% else %}
                                     <!-- if there is no type defined then simply display the title -->
                                     {% if (v.value) is not empty %}
-                                        {{ v.value|nl2br }}
+                                        <span>{{ v.value|nl2br }}</span>
                                     {% elseif (v.title) is not empty %}
-                                        {{ v.title|nl2br }}
+                                        <span>{{ v.title|nl2br }}</span>
                                     {% elseif (v.relvalue) is not empty %}
-                                        {{ v.relvalue|nl2br }}
+                                        <span>{{ v.relvalue|nl2br }}</span>
                                     {% endif %}
                                     {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                 {% endif %}
@@ -193,11 +193,11 @@ Field extra type:
                         {% else %}
                             <!-- simple string -->
                             {% if (value.title) %} 
-                                {{ value.title|nl2br }}
+                                <span>{{ value.title|nl2br }}</span>
                             {% elseif (value.value) %} 
-                                {{ value.value|nl2br }}
+                                <span>{{ value.value|nl2br }}</span>
                             {% elseif (value.relvalue) %}
-                                {{ value.relvalue|nl2br }}
+                                <span>{{ value.relvalue|nl2br }}</span>
                             {% endif %}
                         {% endif %}
                     {% elseif(type == 'date' and dateformat) %}
@@ -206,11 +206,11 @@ Field extra type:
                     {% else %}
                         <!-- if there is no type defined then simply display the title -->
                         {% if (value.value) is not empty %}
-                            {{ value.value|nl2br }}
+                            <span>{{ value.value|nl2br }}</span>
                         {% elseif (value.title) is not empty %}
-                            {{ value.title|nl2br }}
+                           <span>{{ value.title|nl2br }}</span>
                         {% elseif (value.relvalue) is not empty %}
-                            {{ value.relvalue|nl2br }}
+                            <span>{{ value.relvalue|nl2br }}</span>
                         {% endif %}
                     {% endif %}
                     <!-- if there are more than 1 value then we will display the delimiter -->
