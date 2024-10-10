@@ -109,10 +109,12 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         if(isset($diss['iiif'])) {
             $lorisUrl = $diss['iiif']['uri'];
         }
+        $basicData = $this->fetchBasicData($identifier);
         
         return $return = [
             '#theme' => 'dissemination-iiif-viewer',
             '#data' => $lorisUrl,
+            '#basic' => $basicData,
             '#cache' => ['max-age' => 0],
             '#attached' => [
                 'library' => [
@@ -123,10 +125,11 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
     }
     
     public function pdfView(string $identifier) {
-        
+        $basicData = $this->fetchBasicData($identifier);
         return $return = [
             '#theme' => 'dissemination-pdf-viewer',
             '#data' => $this->repoDb->getBaseUrl().$identifier,
+            '#basic' => $basicData,
             '#cache' => ['max-age' => 0],
             '#attached' => [
                 'library' => [
@@ -137,14 +140,40 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
     }
     
     public function audioView(string $identifier) {
-        
+        $basicData = $this->fetchBasicData($identifier);
         return $return = [
             '#theme' => 'dissemination-audio-viewer',
             '#data' => $this->repoDb->getBaseUrl().$identifier,
+            '#basic' => $basicData,
             '#cache' => ['max-age' => 0],
             
         ];
     }
+    
+    /**
+     * We have to fetch the basic data for the resource (title, description, etc..
+     * @param string $identifier
+     * @return object
+     */
+    private function fetchBasicData(string $identifier): object {
+        $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
+        $data = $api->expertData($identifier, $this->siteLang);
+        $content = $data->getContent();
+        $obj = "";
+        if (!empty($content) && $content !== '["There is no resource"]') {
+            $content = json_decode($content, true);
+            $confObj = new \stdClass();
+            $confObj->baseUrl = $this->repoDb->getBaseUrl();
+          
+            $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj, $this->siteLang);
+            if ($obj->getRepoID() === '') {
+                return new \stdClass();
+            }
+            
+        }
+            
+        return $obj;
+    } 
     
     
     /**

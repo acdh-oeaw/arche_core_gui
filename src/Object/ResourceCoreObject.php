@@ -311,7 +311,7 @@ class ResourceCoreObject {
         if (!isset($this->repoid) && empty($this->repoid)) {
             $this->getRepoID();
         }
-        return str_replace('/api/', '/browser/detail/', $this->config->baseUrl) . $this->repoid;
+        return str_replace('/api/', '/browser/metadata/', $this->config->baseUrl) . $this->repoid;
     }
 
     /**

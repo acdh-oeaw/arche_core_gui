@@ -59,7 +59,7 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
             'variables' => ['data' => NULL, 'vcrUrl' => NULL],
         ],
         'dissemination-3d-viewer' => [
-            'variables' => ['data' => NULL],
+            'variables' => ['data' => NULL, 'basic' => NULL],
         ],
         'dissemination-pdf-viewer' => [
             'variables' => ['data' => NULL, 'basic' => NULL],
