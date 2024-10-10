@@ -283,8 +283,8 @@ jQuery(function ($) {
                 results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                                        <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '?width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '?width=200" >\n\
+                                        <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=200" >\n\
                                         </a></center>\n\
                                     </div>\n\
                                 </div>';

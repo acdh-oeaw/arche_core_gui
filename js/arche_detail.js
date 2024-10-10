@@ -63,14 +63,14 @@ jQuery(function ($) {
     function showTitleImage() {
         var currentUrl = $(location).attr('href');
         currentUrl = currentUrl.replace('/browser/metadata/', '/api/');
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=600';
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=600';
         $.ajax({
                 url: imgSrc, 
                 type: 'GET',
                 success: function (data) {
                     $('.titleimage-loader').hide();
-                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=600" data-lightbox="detail-titleimage">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=200" >\n\
+                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=600" data-lightbox="detail-titleimage">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=200" >\n\
                                         </a></center>');
                 },
                 error: function () {
