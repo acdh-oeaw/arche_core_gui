@@ -125,7 +125,7 @@ jQuery(function ($) {
     window.checkThumbnailImage = function (resourceUrl) {
         //function checkThumbnailImage(resourceUrl) {
         // Create a new Image object
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at/' + resourceUrl + '?width=600';
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + resourceUrl.replace('/browser/metadata/', '/api/')+ '?width=600';
         var img = new Image();
         img.src = imgSrc;
         img.onerror = function () {

@@ -61,21 +61,21 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showTitleImage() {
-        console.log(" showTitleImage");
         var currentUrl = $(location).attr('href');
-        currentUrl = currentUrl.replace(/^(https?:\/\/)/, '');
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl  + '?width=600';
+        currentUrl = currentUrl.replace('/browser/metadata/', '/api/');
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=600';
         $.ajax({
                 url: imgSrc, 
                 type: 'GET',
                 success: function (data) {
-                    console.log("OK!");
-                    // Append the image to the container
-                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl + '?width=600" data-lightbox="detail-titleimage">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + currentUrl + '?width=200" >\n\
+                    $('.titleimage-loader').hide();
+                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=600" data-lightbox="detail-titleimage">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '?width=200" >\n\
                                         </a></center>');
                 },
                 error: function () {
+                    $('.titleimage-loader').hide();
+                    $('.card.metadata.titleimage').hide();
                     //console.log('Failed to fetch image.');
                 }
             });
@@ -572,95 +572,6 @@ jQuery(function ($) {
         });
     }
 
-    // NOT IN USE
-    /*
-    function fetchChild() {
-        $('#child-div-content').show();
-        var limit = 10;
-        var page = 0;
-        var order = 'titledesc';
-        var timeout = 10000; // in milliseconds
-
-        var childTable = $('.child-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "bInfo": false, // Hide table information
-            'language': {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/child/" + resId + "/en",
-                complete: function (response) {
-                    if (response === undefined) {
-                        $('.child-elements-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    //$(".loader-versions-div").hide();
-                    $('.child-elements-div').hide();
-                }
-            },
-            'columns': [
-                {data: 'title', render: function (data, type, row, meta) {
-                        var shortcut = row.type;
-                        shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
-                        var text = '<div class="col-block col-lg-12 child-table-content-div">';
-                        //title
-                        text += '<div class="res-property">';
-                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + row.title + '</a></h5></div>';
-                        //type
-                        text += '<div class="res-property">';
-                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
-                        text += '</div>';
-                        //avdate
-
-                        text += '</div>';
-                        return  text;
-                    }
-
-
-                },
-                {data: 'image', width: "20%", render: function (data, type, row, meta) {
-                        var acdhid = row.acdhid.replace('https://', '');
-                        acdhid = row.acdhid.replace('http://', '');
-                        return '<div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                            <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=600" data-lightbox="detail-titleimage-' + row.id + '">\n\
-                                <img class="img-fluid bg-white" src="https://arche-thumbnails.acdh.oeaw.ac.at/' + acdhid + '?width=75">\n\
-                            </a></center>\n\
-                            </div>';
-                    }
-                },
-                {data: 'property', visible: false},
-                {data: 'type', visible: false},
-                {data: 'avDate', visible: false},
-                {data: 'shortcut', visible: false},
-                {data: 'acdhid', visible: false},
-                {data: 'sumcount', visible: false}
-            ],
-            fnDrawCallback: function () {
-                $(".child-table thead").remove();
-            }
-        });
-        
-         //$("#sortBy").change(function () {
-         //var colIdx = $('#sortBy :selected').val();
-         //let id = colIdx.substring(0, 1);
-         //let order = colIdx.substring(2, 3);
-         //orderVal = 'asc';
-         //if (order > 0) {
-         //orderVal = 'desc';
-        // }
-         
-         //childTable.order([id, orderVal]).draw();
-         //});
-    }
-*/
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
@@ -785,43 +696,7 @@ jQuery(function ($) {
             }
         });
     }
-    /*
-    function fetchTopcollections() {
-        $.ajax({
-            url: '/browser/api/topcollections/8/en',
-            type: "GET",
-            success: function (data, status) {
-                if (data) {
-                    var i = 0;
-                    $.each(data, function (index, value) {
-                        var html = '<div class="col-md-3 arche-home-card">';
-                        html += '<div class="card">';
-                        html += '<img src="https://arche-thumbnails.acdh.oeaw.ac.at/' + value.acdhid.replace('https://', '') + '?width=350" class="card-img-top" alt="' + value.title.value + '">';
-                        html += '<div class="card-body">';
-                        html += '<h5 class="card-title">' + value.title.value + '</h5>';
-                        html += '<p class="card-text">' + value.description.value.slice(0, 200) + '...</p>';
-                        html += '<a class="btn basic-arche-btn home-collections-btn" href="/browser/metadata/' + index + '">' + Drupal.t("More") + '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        if (i < 4) {
-                            $('#home-carousel-first-page').append(html);
-                        } else {
-                            $('#home-carousel-second-page').append(html);
-                        }
-                        i++;
-                    });
-                }
-                $('#home-collections-slider-loader').fadeOut('slow');
-                $('#detail-overview-api-div').html(data);
-            },
-            error: function (xhr, status, error) {
-                $('#home-collections-slider-loader').fadeOut('slow');
-                $('#detail-overview-api-div').html(error);
-            }
-        });
-    }*/
-
+   
     ///////////// CITE ////////////////////
     /**
      * Generate the cite tab header

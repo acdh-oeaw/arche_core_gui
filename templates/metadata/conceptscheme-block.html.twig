@@ -217,7 +217,7 @@
             -->
 
           
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' } ) }}
           
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}

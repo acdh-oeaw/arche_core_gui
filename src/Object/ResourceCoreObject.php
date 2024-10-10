@@ -381,49 +381,6 @@ class ResourceCoreObject {
     }
 
     /**
-     * get the title image url
-     *
-     * @return string
-     */
-    public function getTitleImage(string $width = '300px'): string {
-        $img = '';
-        $width = str_replace('px', '', $width);
-        //check the thumbnail service first
-        if ($this->getOneID()) {
-            $acdhid = str_replace('https://', '', str_replace('http://', '', $this->getOneID()));
-            if ($file = @fopen($this->thumbUrl . $acdhid, "r")) {
-                $type = fgets($file, 40);
-                if (!empty($type)) {
-                    $img = $this->thumbUrl . $acdhid . '?width=' . $width;
-                    return '<img src="' . $img . '" class="img-responsive">';
-                }
-            }
-        }
-        return '';
-    }
-
-    /**
-     * Get the titleimage URL
-     * @param string $width
-     * @return string
-     */
-    public function getTitleImageUrl(string $width = '300px'): string {
-        $img = '';
-        $imgBinary = '';
-        $width = str_replace('px', '', $width);
-        $id = $this->properties["acdh:hasIdentifier"][0]['value'];
-
-        //but if we have acdhid, then use that one
-        if (!empty($this->getAcdhID())) {
-            $id = $this->getAcdhID();
-        }
-
-        $id = str_replace('http://', '', $id);
-        $id = str_replace('https://', '', $id);
-        return $this->thumbUrl . $id . '?width=' . $width;
-    }
-
-    /**
      * Get the acdh type string
      *
      * @return string

@@ -93,7 +93,7 @@
             </div>
             -->
 
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'data': data.getTitleImageUrl() } ) }}
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
             
               {% if data.getNonAcdhIdentifiers()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
