@@ -223,7 +223,7 @@ jQuery(function ($) {
         $.each(data, function (k, result) {
             if (result.title && result.id) {
                 var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
-
+               
                 results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
                 results += '<div class="col-block col-lg-10 discover-table-content-div" data-contentid="' + resourceUrl + '">';
                 //title
@@ -279,7 +279,7 @@ jQuery(function ($) {
                 results += '</div>';
                 results += '</div>';
                 
-                var thumbImgUrl = resourceUrl.replace('/browser/metadata/', '/api/');
+                var thumbImgUrl = result.url.replace('/browser/metadata/', '/api/');
                 results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                         '<div class="col-block discover-table-image-div">\n\
                                     <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
