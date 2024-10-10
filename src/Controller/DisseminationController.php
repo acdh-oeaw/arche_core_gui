@@ -20,6 +20,58 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         parent::__construct();
         $this->helper = new \Drupal\arche_core_gui\Helper\ArcheCoreHelper();
     }
+    
+    /**
+     * Return the collection download python script
+     * @param string $identifier
+     * @return Response
+     */
+    public function collectionDownloadScript(string $identifier) {
+        $content = "";
+        
+        $content = $this->processCDLData($this->repoDb->getBaseUrl() .$identifier);
+        $response = new Response();
+        $response->setContent($content);
+        $response->headers->set('Content-Type', 'application/x-python-code');
+        $response->headers->set('Content-Disposition', 'attachment; filename=collection_download_script.py');
+        return $response;
+    }
+    
+    /**
+     * Get the pyton file and change the content
+     * @param string $repoUrl
+     * @return string
+     */
+    private function processCDLData(string $repoUrl): string
+    {
+        try {
+            $text = @file_get_contents(\Drupal::request()->getSchemeAndHttpHost() . '/browser/sites/default/files/coll_dl_script/collection_download_repo.py');
+           
+            return $this->changeCDLSText($text, $repoUrl);
+        } catch (\Exception $e) {
+            return "";
+        }
+    }
+    
+    /**
+     * Chnage the pyton file content
+     * @param string $text
+     * @param string $repoUrl
+     * @return string
+     */
+    private function changeCDLSText(string $text, string $repoUrl): string
+    {
+        $replace = [
+            "{ingest.location}" => (string)$this->schema->ingest->location,
+            "{fileName}" => (string)$this->schema->fileName,
+            "{parent}" => (string)$this->schema->parent,
+            "{metadataReadMode}" => (string)$this->repoDb->getHeaderName('metadataReadMode'),
+            "{searchMatch}" => (string)$this->schema->searchMatch,
+            "{resourceUrl}" => (string)$repoUrl,
+        ];
+        $text = str_replace(array_keys($replace), array_values($replace), $text);
+        return $text;
+    }
 
     /**
      * This function is called if the user is jumping inside the arche content, 
@@ -27,7 +79,7 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
      * @param string $identifier
      * @return Response
      */
-    public function threedView(string $identifier) {
+    public function threedView(string $identifier): array {
         $this->setTmpDir();
         //download the file
         $identifier = $this->repoDb->getBaseUrl().$identifier;
@@ -116,14 +168,14 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
                     if (!isset($shown[$hash])) {
                         try {
                             //if the dissemination services has a title then i will use it, if not then the hasReturnType as a label
-                            if ($v->getGraph()->get($this->repoDb->getSchema()->label)->__toString()) {
-                                $kt = $v->getGraph()->get($this->repoDb->getSchema()->label)->__toString();
+                            if ($v->getGraph()->getValue($this->repoDb->getSchema()->label)) {
+                                $kt = $v->getGraph()->getValue($this->repoDb->getSchema()->label);
                             }
                             $result[$k]['uri'] = (string) $v->getRequest($repDiss)->getUri();
                             $result[$k]['title'] = (string) $kt;
                             //if we have a description then we will use it
-                            if ($v->getGraph()->get($this->repoDb->getSchema()->__get('namespaces')->ontology.'hasDescription')->__toString()) {
-                                $result[$k]['description'] = $v->getGraph()->get($this->repoDb->getSchema()->__get('namespaces')->ontology.'hasDescription')->__toString();
+                            if ($v->getGraph()->getValue($this->repoDb->getSchema()->__get('namespaces')->ontology.'hasDescription')) {
+                                $result[$k]['description'] = $v->getGraph()->getValue($this->repoDb->getSchema()->__get('namespaces')->ontology.'hasDescription');
                             }
                             $shown[$hash] = true;
                         } catch (\Exception $ex) {
@@ -133,8 +185,6 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
                     }
                 }
             }
-           
-            
             return $result;
         } catch (\Exception $ex) {
             return array();

@@ -73,4 +73,15 @@ arche_imprint:
   requirements:
     identifier: '^[^\?]*$'
     _permission: 'access content'
-    _access: 'TRUE'   
+    _access: 'TRUE'
+    
+arche_dissemination_collection_download_script:
+  path: '/dissemination/collection_download_script/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\DisseminationController::collectionDownloadScript'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'      
+    
+     
