@@ -55,7 +55,7 @@
                 </div>
 
                 {% if data.getData('acdh:hasAlternativeTitle')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %}    
 
@@ -69,10 +69,20 @@
                         {{ include(arche_core_gui_path ~ '/templates/content-blocks/person-contact-details-block.html.twig', {'data': data.getDataByPropertyList(propArr) } ) }}
                     </div>
                 {% endif %}  
-                
-                
 
-
+                 <div class="row contributed-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Contributed to"|trans }}</h5>
+                        <table class="contributed-table w-100  row-border" id="contributedDT">
+                            <!--<thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>-->
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -84,8 +94,8 @@
             -->
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
-            
-              {% if data.getNonAcdhIdentifier()  %}
+
+            {% if data.getNonAcdhIdentifier()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifier() } ) }}
             {% endif %} 
 

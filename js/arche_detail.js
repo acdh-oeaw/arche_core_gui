@@ -42,20 +42,294 @@ jQuery(function ($) {
 
 
     function loadAdditionalData() {
+        let acdhType = $('#resource-type').val().toLowerCase();
+
         initExpertView();
-        fetchChildTree();
-        //fetchChild();
+        if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
+            console.log("C-tc-r");
+            fetchChildTree();
+            fetchRPR();
+            fetchPublications();
+        }
+
+        if (acdhType === 'place') {
+            console.log('place');
+            fetchPlaceSpatialTable();
+        }
+
+        if (acdhType === 'person') {
+            console.log('person');
+            fetchPersonContributedTable();
+        }
+        if (acdhType === 'publication') {
+            console.log('publication');
+            fetchPublicationsRelatedResourcesTable();
+        }
+
+        if (acdhType === 'organisation') {
+            console.log('organisation');
+            fetchOrganisationInvolvedTable();
+        }
+
+        if (acdhType === 'concept') {
+            console.log('concept');
+            fetchPlaceSpatialTable();
+        }
+
+        if (acdhType === 'project') {
+            console.log('project');
+            fetchPlaceSpatialTable();
+        }
+
         showCiteBlock();
         if (versionVisible) {
             fetchVersionsBlock();
         }
         fetchBreadcrumb();
-        fetchRPR();
-        fetchPublications();
         fetchNextPrevItem();
         showTitleImage();
+
     }
-    
+
+    function fetchOrganisationInvolvedTable() {
+        var involvedTable = $('.involved-table').DataTable({
+            "paging": true,
+            "searching": false,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    console.log(response);
+                    $('.row.involved-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.involved-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR" + error);
+                    $('.row.involved-table-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+
+                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'property', title: Drupal.t('Property'), render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                }
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
+    function fetchPersonContributedTable() {
+        var contributedTable = $('.contributed-table').DataTable({
+            "paging": true,
+            "searching": false,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    console.log(response);
+                    $('.row.contributed-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.contributed-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR");
+                    $('.row.contributed-table-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+
+                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'property', title: Drupal.t('Property'), render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                }
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
+    function fetchPlaceSpatialTable() {
+        var spatialTable = $('.spatial-table').DataTable({
+            "paging": true,
+            "searching": false,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    console.log(response);
+                    $('.row.spatial-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.spatial-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR");
+                    $('.row.spatial-table-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+                {data: 'property', visible: false},
+                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                }
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
+    function fetchPublicationsRelatedResourcesTable() {
+        console.log("here");
+        var limit = 10;
+        var page = 0;
+        var order = 'titledesc';
+        var timeout = 10000; // in milliseconds
+        var rcrTable = $('.related-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "bInfo": false, // Hide table information
+            'language': {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                     console.log("here 2");
+                     console.log(response);
+                    if (response === undefined) {
+                        $('.related-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                     console.log("here3");
+                    $('.related-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'title', render: function (data, type, row, meta) {
+                        return '<a href="' + row.id + '">' + row.title + '</a>';
+                        var shortcut = row.type;
+                        shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
+                        var title = removeBeforeHash(row.title);
+                        var text = '<div class="col-block col-lg-12 child-table-content-div">';
+                        //title
+                        text += '<div class="res-property">';
+                        text += '<h5 class="h5-blue-title"><a href="/browser/metadata/' + row.identifier + '">' + title + '</a></h5></div>';
+                        //type
+                        text += '<div class="res-property">';
+                        text += '<a id="archeHref" href="/browser/search/type=' + shortcut + '&payload=false" class="btn btn-arche-gray">' + shortcut + '</a>';
+                        text += '</div>';
+                        //avdate
+
+                        text += '</div>';
+                        return  text;
+                    }
+                },
+                {data: 'property', render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'type', render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'acdhid', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
+
+
     /**
      * Display the titleimage with ajax if we a response 
      * @returns {undefined}
@@ -63,22 +337,22 @@ jQuery(function ($) {
     function showTitleImage() {
         var currentUrl = $(location).attr('href');
         currentUrl = currentUrl.replace('/browser/metadata/', '/api/');
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=600';
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=600';
         $.ajax({
-                url: imgSrc, 
-                type: 'GET',
-                success: function (data) {
-                    $('.titleimage-loader').hide();
-                    $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=600" data-lightbox="detail-titleimage">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl  + '&width=200" >\n\
+            url: imgSrc,
+            type: 'GET',
+            success: function (data) {
+                $('.titleimage-loader').hide();
+                $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=600" data-lightbox="detail-titleimage">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=200" >\n\
                                         </a></center>');
-                },
-                error: function () {
-                    $('.titleimage-loader').hide();
-                    $('.card.metadata.titleimage').hide();
-                    //console.log('Failed to fetch image.');
-                }
-            });
+            },
+            error: function () {
+                $('.titleimage-loader').hide();
+                $('.card.metadata.titleimage').hide();
+                //console.log('Failed to fetch image.');
+            }
+        });
     }
 
     /**
@@ -169,6 +443,10 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    /**
+     * Fetch the previos or next child elements with ajax
+     * @returns {undefined}
+     */
     function fetchNextPrevItem() {
         var acdhid = $('#resId').val();
         var rootId = $('#rootId').val();
@@ -179,15 +457,15 @@ jQuery(function ($) {
                 type: "GET",
                 success: function (data, status) {
                     if (data) {
-                        if(data.next) {
+                        if (data.next) {
                             console.log(data.next);
-                            $('#next-child-url').html('<a href="/browser/metadata/'+data.next.id+'" id="archeHref" alt="'+data.next.title+'" title="'+data.next.title+'">'+ Drupal.t('Next')+' >>> </a>');
+                            $('#next-child-url').html('<a href="/browser/metadata/' + data.next.id + '" id="archeHref" alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>> </a>');
                         }
-                        if(data.previous) {
+                        if (data.previous) {
                             console.log(data.previous);
-                            $('#previous-child-url').html('<a href="/browser/metadata/'+data.previous.id+'" id="archeHref" alt="'+data.previous.title+'" title="'+data.previous.title+'"> <<< '+ Drupal.t('Previous')+' </a>');
+                            $('#previous-child-url').html('<a href="/browser/metadata/' + data.previous.id + '" id="archeHref" alt="' + data.previous.title + '" title="' + data.previous.title + '"> <<< ' + Drupal.t('Previous') + ' </a>');
                         }
-                        
+
                     }
                 },
                 error: function (xhr, status, error) {
@@ -197,6 +475,10 @@ jQuery(function ($) {
         }
     }
 
+    /**
+     * Display and fetch the resource breadcrumb data
+     * @returns {undefined}
+     */
     function fetchBreadcrumb() {
         var acdhid = $('#resId').val();
         $.ajax({
@@ -227,6 +509,10 @@ jQuery(function ($) {
         }); //
     }
 
+    /**
+     * Fetch and display the resource versions
+     * @returns {undefined}
+     */
     function fetchVersionsBlock() {
         //get the data
         var url = $('#resId').val();
@@ -292,6 +578,10 @@ jQuery(function ($) {
         }
     }
 
+    /**
+     * Fetch and display the childtree
+     * @returns {undefined}
+     */
     function fetchChildTree() {
         //get the data
         var url = $('#resId').val();
@@ -304,7 +594,6 @@ jQuery(function ($) {
                             if (node.id != "#") {
                                 acdhid = node.id;
                             }
-
                             return '/browser/api/child-tree/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang;
                         },
                         'data': function (node) {
@@ -330,21 +619,7 @@ jQuery(function ($) {
                         console.log(errorThrown);
                         //$('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
                         hideEmptyTabs('#collection-content-tab');
-                    },
-                    /*
-                     search: {
-                     "ajax": {
-                     "url": '/browser/api/get_collection_data_lazy/' + $('#acdhid').val() + '/' + drupalSettings.arche_core_gui.gui_lang,
-                     "data": function (str) {
-                     return {
-                     "operation": "search",
-                     "q": str
-                     };
-                     }
-                     },
-                     case_sensitive: false
-                     },
-                     plugins: ['search']*/
+                    }
                 }
             });
             // not ready yet
@@ -352,14 +627,6 @@ jQuery(function ($) {
                 var searchString = $(this).val();
                 $('#child-tree').jstree('search', searchString);
             });
-
-            /*
-             $('#child-tree').on('ready.jstree', function () {
-             $('<div class="row"><div class="col-12 text-center pt-1"><button id="show-more-child-tree" class="ms-auto btn btn-arche-blue basic">Show More</button></div></div>').insertAfter('.child-elements-div');
-             $('#child-tree').css('max-height', '250px');
-             $('#child-tree').css('overflow', 'hidden');
-             });
-             */
 
             $('#child-tree').bind("click.jstree", function (node, data) {
                 if (node.originalEvent.target.id) {
@@ -376,24 +643,6 @@ jQuery(function ($) {
             });
         }
     }
-    /*
-     $(document).delegate("#show-more-child-tree", "click", function (e) {
-     var container = $('#child-tree');
-     
-     // Check if the container is collapsed or expanded
-     if (container.css('max-height') === '250px') {
-     // Expand the tree
-     container.css('max-height', 'none');
-     container.css('overflow', 'auto');
-     $(this).text('Show Less');
-     } else {
-     // Collapse the tree
-     container.css('max-height', '250px');
-     container.css('overflow', 'hidden');// Reset max-height to 150px (collapse)
-     $(this).text('Show More');  // Change button text to "Show More"
-     }
-     });
-     */
 
     function removeBeforeHash(str) {
         let hashIndex = str.indexOf('#');
@@ -404,7 +653,10 @@ jQuery(function ($) {
         }
     }
 
-
+    /**
+     * Fetch thepublications for collection, topcollection, resources
+     * @returns {undefined}
+     */
     function fetchPublications() {
         var limit = 10;
         var page = 0;
@@ -498,7 +750,10 @@ jQuery(function ($) {
         });
     }
 
-
+    /**
+     * Fetch the related resources publications for collection, topcoll. resources.
+     * @returns {undefined}
+     */
     function fetchRPR() {
         var limit = 10;
         var page = 0;
@@ -572,6 +827,8 @@ jQuery(function ($) {
         });
     }
 
+
+
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({
             "deferRender": true,
@@ -597,7 +854,7 @@ jQuery(function ($) {
             error: function (xhr, status, error) {
                 $('#block-arche-theme-content').html(error);
             }
-        }); 
+        });
     }
 
     //expertDtDiv
@@ -617,7 +874,7 @@ jQuery(function ($) {
             $(this).text(Drupal.t('Expert-View'));
         }
     });
-    
+
     $(document).delegate("a#archeHref", "click", function (e) {
         $('#meta-content-container').hide();
         var url = $(this).attr('href');
@@ -640,9 +897,10 @@ jQuery(function ($) {
             $(".loader-div").hide();
         }
     });
-  
+
     //update the UI elements
-  function showUI() {
+    function showUI() {
+        console.log("SHOW UI!");
         showAvailableDate();
         showType();
         //showRightSide();
@@ -661,6 +919,7 @@ jQuery(function ($) {
     }
 
     function showType() {
+        console.log("SHOW TYPE");
         if (resObj.getType()) {
             $('#av-rdfType').html(resObj.getType());
         } else {
@@ -669,6 +928,7 @@ jQuery(function ($) {
     }
 
     function showTitle() {
+        console.log("SHOW TITLE");
         if (resObj.getTitle()) {
             $('#av-hasTitle').html(resObj.getTitle());
         } else {
@@ -696,7 +956,10 @@ jQuery(function ($) {
             }
         });
     }
-   
+
+
+
+
     ///////////// CITE ////////////////////
     /**
      * Generate the cite tab header

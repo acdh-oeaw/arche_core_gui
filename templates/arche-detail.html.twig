@@ -2,6 +2,7 @@
 <input type="hidden" value="{{ identifier }}" id="resId"/>
 <input type="hidden" value="{{ data.getRootID() }}" id="rootId"/>
 <input type="hidden" value="{{ data.getTitle() }}" id="resource-main-title"/>
+<input type="hidden" value="{{ data.getAcdhType()|lower }}" id="resource-type"/>
 
 
 {% if data.getAcdhType()|lower == 'place' %}

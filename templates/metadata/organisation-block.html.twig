@@ -65,7 +65,7 @@
                 {% endif %}    
 
                 {% set propArr = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:hasPostcode',
-'acdh:hasCity', 'acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail', 'acdh:hasUrl'] %}
+                            'acdh:hasCity', 'acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail', 'acdh:hasUrl'] %}
                 {% if data.getDataByPropertyList(propArr)  %}
                     <div class="row">
                         <div class="col-lg-12 ">
@@ -75,6 +75,14 @@
                     </div>
                 {% endif %}  
                 
+                <div class="row involved-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Involved in"|trans }}</h5>
+                        <table class="involved-table w-100  row-border" id="involvedDT">
+                            
+                        </table>
+                    </div>
+                </div>
                 
 
 

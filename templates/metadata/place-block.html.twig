@@ -75,8 +75,8 @@
                         {{ include(arche_core_gui_path ~ '/templates/content-blocks/place-description-block.html.twig', {'data': data.getDataByPropertyList(descriptionPropArr) } ) }}
                     </div>
                 {% endif %}  
-                
-                
+
+
                 <!-- MAP -->
                 {% if data.getMapType()|lower == 'polygon'  %}
                     {{ include(arche_core_gui_path ~ '/templates/content-blocks/map-content-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon', 'objectData': data } ) }}
@@ -87,8 +87,20 @@
                 {% endif %}    
 
                 <!-- Spatial coverage of [] -->
-                {{ include(arche_core_gui_path ~ '/templates/content-blocks/place-spatial-coverage-block.html.twig', {'data': data } ) }}
 
+                <div class="row spatial-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Spatial coverage of"|trans }}</h5>
+                        <table class="spatial-table w-100  row-border" id="spatialDT">
+                            <!--<thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>-->
+                        </table>
+                    </div>
+                </div>
 
 
             </div>
@@ -102,8 +114,8 @@
             -->
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
-            
-              {% if data.getPlaceIds()  %}
+
+            {% if data.getPlaceIds()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getPlaceIds() } ) }}
             {% endif %} 
 
