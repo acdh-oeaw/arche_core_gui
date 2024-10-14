@@ -36,7 +36,7 @@
                         {% endif %}
                     </div>
                 </div>
-                    
+
                 <!-- Has newer version -->
                 <div class="row">
                     <div class="col">
@@ -48,13 +48,13 @@
                         <hr class="meatdata-view-top-hr">
                     </div>
                 </div>
-                
+
                 <!-- Has NExt/Previous item -->            
                 <div class="row">
                     <div class="col-lg-6 text-start" id="previous-child-url"></div>
                     <div class="col-lg-6 text-end" id="next-child-url"></div>
                 </div>
-                            
+
                 <!-- Title -->
                 <div class="row">
                     <div class="col-lg-12 " id="ad-hasTitle">
@@ -119,90 +119,17 @@
                     </div>
                     {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
                 </div>
-                    
-                <!-- SEE ALSO -->
-                {% if data.getData('acdh:hasUrl') or data.getData('acdh:hasRelatedProject') %}
-                    <div class="row" id="ad-see-also">
-                        <div class="col-lg-12 ">
-                            <h5>{{ "See Also"|trans }}</h5>
-                        </div>
-                        <div class="col-lg-12 " id="av-summary">
-                            <ul>
-                                
-                                {% if data.getData('acdh:hasUrl') %}
-                                    <li>
-                                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL', 'delimiter': '<br>' } ) }}
-                                    </li>
-                                {% endif %}
-                                {% if data.getData('acdh:hasRelatedProject') %}
-                                    <li>
-                                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                                     {'data': data.getData('acdh:hasRelatedProject'), 'label':  'Related Project' } ) }}
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>     
-                {% endif %}
 
 
-                <ul class="nav nav-tabs" id="arche-detail-tabs">
-                    <li class="nav-item" id="collection-content-tab">
-                        <a class="nav-link active"  data-bs-toggle="tab" href="#collection-content-tab-content">{{ "Collection Content"|trans }}</a>
-                    </li>     
-                    <li class="nav-item" id="associated-publications-tab">
-                        <a class="nav-link"  data-bs-toggle="tab" href="#associated-publications-tab-content">{{ "Associated Publications"|trans }}</a>
-                    </li>                    
-                    <li class="nav-item" id="associated-coll-res-tab">
-                        <a class="nav-link"  data-bs-toggle="tab" href="#associated-coll-res-tab-content">{{ "Associated Collections and Resources"|trans }}</a>
-                    </li>
 
-                </ul>
 
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div class="tab-pane container active" id="collection-content-tab-content">
-                        <!-- Collection Contents -->
-                        <div class="row basic-inside-content-div child-elements-div">
-                            <div class="col-lg-12 child-tree-div">
-                                <div id="child-tree" class="tree-view-container"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane container fade" id="associated-publications-tab-content">
-                        <div class="row basic-inside-content-div publications-elements-div">
 
-                            <div class="col-lg-12 publications-table-div">
-                                <table class="publications-table table row-border" cellspacing="0" width="100%" id='publicationsDT'>
-                                    <thead>
-                                        <tr>
-                                            <th>{{ "Citation"|trans }}</th>
-                                            <th>{{ "Relation Type"|trans }}</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row involved-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Involved in"|trans }}</h5>
+                        <table class="involved-table w-100  row-border" id="involvedDT">
 
-                    <div class="tab-pane container fade" id="associated-coll-res-tab-content">
-                        <div class="row basic-inside-content-div rcr-elements-div">
-                            <div class="col-lg-12 ">
-
-                            </div>
-                            <div class="col-lg-12 rcr-table-div">
-                                <table class="rcr-table table row-border" cellspacing="0" width="100%" id='rcrDT'>
-                                    <thead>
-                                        <tr>
-                                            <th>{{ "Title"|trans }}</th>
-                                            <th>{{ "Relation type"|trans }}</th>
-                                            <th>{{ "Type"|trans }}</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>  
+                        </table>
                     </div>
                 </div>
 
@@ -216,9 +143,9 @@
             </div>
             -->
 
-          
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' } ) }}
-          
+
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
+
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}
             {% elseif data.getMapType()|lower == 'multipolygon' %}

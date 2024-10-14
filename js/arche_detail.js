@@ -43,41 +43,35 @@ jQuery(function ($) {
 
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
-
+        console.log("ACDH TYPE:");
+        console.log(acdhType);
         initExpertView();
         if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
-            console.log("C-tc-r");
             fetchChildTree();
             fetchRPR();
             fetchPublications();
         }
 
         if (acdhType === 'place') {
-            console.log('place');
             fetchPlaceSpatialTable();
         }
 
         if (acdhType === 'person') {
-            console.log('person');
             fetchPersonContributedTable();
         }
         if (acdhType === 'publication') {
-            console.log('publication');
             fetchPublicationsRelatedResourcesTable();
         }
 
         if (acdhType === 'organisation') {
-            console.log('organisation');
             fetchOrganisationInvolvedTable();
         }
 
         if (acdhType === 'concept') {
-            console.log('concept');
             fetchPlaceSpatialTable();
         }
 
         if (acdhType === 'project') {
-            console.log('project');
             fetchPlaceSpatialTable();
         }
 
@@ -206,6 +200,7 @@ jQuery(function ($) {
     }
 
     function fetchPlaceSpatialTable() {
+        console.log("spatial");
         var spatialTable = $('.spatial-table').DataTable({
             "paging": true,
             "searching": false,
@@ -276,15 +271,12 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
-                     console.log("here 2");
-                     console.log(response);
                     if (response === undefined) {
                         $('.related-div').hide();
                         return;
                     }
                 },
                 error: function (xhr, status, error) {
-                     console.log("here3");
                     $('.related-div').hide();
                 }
             },

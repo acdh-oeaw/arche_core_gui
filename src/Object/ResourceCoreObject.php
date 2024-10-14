@@ -392,6 +392,14 @@ class ResourceCoreObject {
                     return str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', '', $v['title']);
                 } elseif (isset($v['value']) && !empty($v['value']) && (strpos($v['value'], 'https://vocabs.acdh.oeaw.ac.at/schema#') !== false)) {
                     return str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', '', $v['value']);
+                } else {
+                    if(isset($v['title']) && !empty($v['title'])) {
+                        return str_replace('http://www.w3.org/2004/02/skos/core#','', $v['title']);
+                    }
+                    if(isset($v['value']) && !empty($v['value'])) {
+                        return str_replace('http://www.w3.org/2004/02/skos/core#', '',$v['value']);
+                    }
+                    
                 }
             }
         }
@@ -978,90 +986,29 @@ class ResourceCoreObject {
     }
 
     /**
-     * Return the metadata view right box getCollectionTechnicalData card content
-     * @return array
-     */
-    public function getCollectionTechnicalData(): array {
-        $result = [];
-        $props = [
-            'acdh:hasLifeCycleStatus' => 'Life Cycle Status',
-            'acdh:hasExtent ' => 'Extent',
-            'acdh:hasNumberOfItems' => 'Number Of Items',
-            'acdh:hasBinarySize' => 'Binary Size'
-        ];
-
-        foreach ($props as $k => $v) {
-            if (isset($this->properties[$k])) {
-                if (is_array($this->properties[$k])) {
-                    foreach ($this->properties[$k] as $val) {
-                        if (isset($val['value'])) {
-
-                            if ($k === 'acdh:hasBinarySize') {
-                                $result[$v][] = $this->formatBytes($val['value']);
-                            } else {
-                                $result[$v][] = $val['value'];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-' .
-                    date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-        } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
-        } elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-        }
-        return $result;
-    }
-
-    /**
      * Return the metadata view right box getResMetaTechnicalData card content
      * @return array
      */
-    public function getResMetaTechnicalData(): array {
+    public function getTechnicalData(array $props): array {
         $result = [];
-        $props = [
-            'acdh:hasCategory' => 'Category',
-            'acdh:hasFormat' => 'File format',
-            'acdh:hasBinarySize' => 'File Size',
-            'acdh:hasExtent ' => 'Extent'
-        ];
-
-        /*
-         *     hasCreatedStartDate (only display year; Created Date: start – end) [Entstehungszeit:/Created Date:] 
-
-          hasCreatedEndDate (see above)
-         */
-
-
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
                 if (is_array($this->properties[$k])) {
+                    $i = 0;
                     foreach ($this->properties[$k] as $val) {
+                       
                         if (isset($val['value'])) {
-
+                            $result[$v][$i]['id'] = $val['id'];
+                            $result[$v][$i]['type'] = $val['type'];
                             if ($k === 'acdh:hasBinarySize') {
-                                $result[$v][] = $this->formatBytes($val['value']);
+                                $result[$v][$i]['title'] = $this->formatBytes($val['value']);
                             } else {
-                                $result[$v][] = $val['value'];
+                                $result[$v][$i]['title'] = $val['value'];
                             }
                         }
                     }
                 }
             }
-        }
-
-        if (isset($this->properties['acdh:hasCreatedStartDate']) && isset($this->properties['acdh:hasCreatedEndDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value'])) . '-' .
-                    date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
-        } elseif (isset($this->properties['acdh:hasCreatedStartDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedStartDate'][0]['value']));
-        } elseif (isset($this->properties['acdh:hasCreatedEndDate'])) {
-            $result['Created Date'][] = date('Y', strtotime($this->properties['acdh:hasCreatedEndDate'][0]['value']));
         }
 
         return $result;

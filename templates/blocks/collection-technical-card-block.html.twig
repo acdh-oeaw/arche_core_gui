@@ -14,11 +14,15 @@
     <div id="technicalInfoBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
             {% for key, value in data %}
-                <div>
-                    <b>{{ key|trans }}:</b></br>
-                {% for val in value %}
-                    {{ val }} <br>
-                {% endfor %}    
+                 <div>
+                    <b>{{ key|trans }}:</b></br> 
+                    {% for val in value %}
+                        {% if val['type'] == 'REL' %}
+                            <a href="/browser/metadata/{{ val['id'] }}">{{ val['title'] }}</a>
+                        {% else %}
+                            {{ val['title'] }} <br>
+                        {% endif %}
+                    {% endfor %}    
                 </div>
             {% endfor %}
         </div>
