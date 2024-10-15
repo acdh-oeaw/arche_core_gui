@@ -79,10 +79,7 @@ jQuery(function ($) {
         }
         
         $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
-        window.updateUrl(param);
-        
-        fetchSearchToolTips();
-        
+        window.updateUrl(param);           
     }
 
     function createFacetCards(data, param) {
@@ -290,7 +287,7 @@ jQuery(function ($) {
                                 </div>';
 
                 results += '</div>';
-                window.checkThumbnailImage(resourceUrl);
+                window.checkThumbnailImage(thumbImgUrl);
                 results += '</div>';
             }
         });
@@ -310,8 +307,4 @@ jQuery(function ($) {
         return ret;
     }
     
-    
-    function fetchSearchToolTips(){
-        console.log("fetchSearchToolTips");
-    }
 });

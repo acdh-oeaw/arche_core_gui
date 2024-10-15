@@ -113,10 +113,7 @@ class ArcheCoreHelper {
 
         while ($triple = $obj->fetchObject()) {
             $rid = (string) $triple->id;
-            echo "<pre>";
-            var_dump($triple);
-            echo "</pre>";
-
+            
             if ($rid === $id) {
                 $triple->lang = ($triple->lang === null) ? 'en' : $triple->lang;
                 if ($triple->type === 'REL') {
@@ -139,7 +136,6 @@ class ArcheCoreHelper {
             }
         }
 
-        die();
         foreach ($root as $rpk => $rpv) {
             foreach ($rpv as $rk => $rv) {
                 if (array_key_exists($rk, $relArr)) {

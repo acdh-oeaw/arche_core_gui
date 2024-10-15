@@ -28,6 +28,9 @@ jQuery(function ($) {
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
+        
+        checkUserPermission();
+        
     });
 
     $(document).keydown(function (event) {
@@ -40,6 +43,39 @@ jQuery(function ($) {
     });
     /** CTRL PRess check for the tree view   #19924  END **/
 
+    function checkUserPermission(){
+        console.log("user permission");
+        
+        if ($('div').hasClass('download-login-div')) {
+            let resourceId = $("#resId").val();
+            console.log('/browser/api/checkUser/' + resourceId);
+            //first check if the user is logged in
+            $.ajax({
+                        url: '/browser/api/checkUser/' + resourceId,
+                        method: 'GET',
+                        success: function (data) {
+                            if(data.length === 0) {
+                                console.log("display login button");
+                                $('#download-not-logged').removeClass('d-none');
+                            } else {
+                                console.log("display logged in text");
+                                $('#download-logged').removeClass('d-none');
+                                console.log(data);
+                                $('#user-logged-text').html(data.message);
+                                console.log("___");
+                            }
+                            console.log("ok");
+                            console.log(data);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('error :'+ error);
+                        }
+                    });
+            
+            
+        }
+        
+    }
 
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
@@ -200,7 +236,6 @@ jQuery(function ($) {
     }
 
     function fetchPlaceSpatialTable() {
-        console.log("spatial");
         var spatialTable = $('.spatial-table').DataTable({
             "paging": true,
             "searching": false,
@@ -818,8 +853,6 @@ jQuery(function ($) {
             }
         });
     }
-
-
 
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({

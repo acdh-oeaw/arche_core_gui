@@ -744,6 +744,18 @@ class ResourceCoreObject {
         }
         return false;
     }
+    
+    /**
+     * Check if the user is logged in or not
+     * @return bool
+     */
+    public function isUserLoggedIn(): bool {
+        
+         if (isset($this->config->authLoginCookie) && !empty($_COOKIE[$this->config->authLoginCookie])) {
+             return true;
+         }
+         return false;
+    }
 
     /**
      * Check the resource is public or not
@@ -752,7 +764,14 @@ class ResourceCoreObject {
     public function isPublic(): bool {
         $result = false;
         $access = $this->getAccessRestriction();
-
+        
+        /*
+         * If there is noa ccessrestriction, then it is a collection
+         */
+        if(count($access) === 0) {
+            return true;
+        }
+        
         if (
                 count((array) $access) > 0 &&
                 isset($access['vocabsid']) &&
