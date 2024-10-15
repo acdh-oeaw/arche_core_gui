@@ -6,19 +6,19 @@
 
 
 {% if data.getAcdhType()|lower == 'place' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% elseif data.getAcdhType()|lower == 'person' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/person-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/person-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% elseif data.getAcdhType()|lower == 'organisation' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/organisation-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/organisation-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% elseif data.getAcdhType()|lower == 'publication' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/publication-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/publication-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% elseif data.getAcdhType()|lower == 'project' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/project-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/project-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% elseif data.getAcdhType()|lower == 'concept' %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/concept-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/concept-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% else %}
-    {{ include(arche_core_gui_path ~ '/templates/metadata/basic-block.html.twig', {'data': data } ) }}
+    {{ include(arche_core_gui_path ~ '/templates/metadata/basic-block.html.twig', {'data': data, 'cookie': cookie } ) }}
 {% endif %}
 
 
