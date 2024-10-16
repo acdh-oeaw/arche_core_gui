@@ -124,7 +124,7 @@
     Use geonames ID, if no geonames then whatever is not ARCHE domain, else ARCHE domain.  -->
 
             {% if data  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
             {% endif %}
 
             {% if data  %}

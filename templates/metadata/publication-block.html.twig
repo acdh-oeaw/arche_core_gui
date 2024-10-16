@@ -154,7 +154,7 @@
 
 
             {% if data  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data } ) }}    
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
             {% endif %}
 
             {% if data  %}

@@ -782,7 +782,6 @@ class ResourceCoreObject {
                 in_array($access['title'], $this->publicAccessTitle)) {
             $result = true;
         }
-
         return $result;
     }
 

@@ -14,11 +14,11 @@
         <div class="card-body meta-sidebar downloadcard">
             <div class="download-login-div">
                 {% set isDownloadEnabled = true %}
-                {% if data.isUserLoggedIn() == true %}
+                {% if cookie.archeLogin %}
                     {% set isDownloadEnabled = true %}
                 {% endif %}
                 
-                {% if data.isPublic() == false and data.isUserLoggedIn() == false %}
+                {% if data.isPublic() == false and cookie.archeLogin is not defined %}
                     {% set isDownloadEnabled = false %}
                     <div class="row" id="download-restricted">
                         <div class="col-lg-12">

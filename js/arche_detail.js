@@ -44,28 +44,20 @@ jQuery(function ($) {
     /** CTRL PRess check for the tree view   #19924  END **/
 
     function checkUserPermission(){
-        console.log("user permission");
-        
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
-            console.log('/browser/api/checkUser/' + resourceId);
             //first check if the user is logged in
             $.ajax({
                         url: '/browser/api/checkUser/' + resourceId,
                         method: 'GET',
                         success: function (data) {
                             if(data.length === 0) {
-                                console.log("display login button");
                                 $('#download-not-logged').removeClass('d-none');
                             } else {
-                                console.log("display logged in text");
                                 $('#download-logged').removeClass('d-none');
-                                console.log(data);
                                 $('#user-logged-text').html(data.message);
-                                console.log("___");
                             }
-                            console.log("ok");
-                            console.log(data);
+                            
                         },
                         error: function (xhr, status, error) {
                             console.log('error :'+ error);
@@ -79,8 +71,7 @@ jQuery(function ($) {
 
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
-        console.log("ACDH TYPE:");
-        console.log(acdhType);
+        
         initExpertView();
         if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
             fetchChildTree();
@@ -138,7 +129,6 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
-                    console.log(response);
                     $('.row.involved-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.involved-table-div').hide();
@@ -195,7 +185,6 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
-                    console.log(response);
                     $('.row.contributed-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.contributed-table-div').hide();
@@ -203,7 +192,6 @@ jQuery(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log("ERROR");
                     $('.row.contributed-table-div').hide();
                 }
             },
@@ -252,7 +240,6 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
-                    console.log(response);
                     $('.row.spatial-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.spatial-table-div').hide();
@@ -260,7 +247,6 @@ jQuery(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log("ERROR");
                     $('.row.spatial-table-div').hide();
                 }
             },
@@ -286,7 +272,6 @@ jQuery(function ($) {
     }
 
     function fetchPublicationsRelatedResourcesTable() {
-        console.log("here");
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
@@ -415,10 +400,8 @@ jQuery(function ($) {
     function redrawTabs() {
         // Check if there is an active tab
         if ($('#arche-detail-tabs li.active').length === 0) {
-            console.log("redraw tab");
             // Activate the first visible tab
             var firstVisibleTab = $('#arche-detail-tabs li:visible').first();
-            console.log(firstVisibleTab);
             $('#' + firstVisibleTab.attr('id') + ' .nav-link').addClass('active');
             $('#' + firstVisibleTab.attr('id') + '-content').addClass('show active');
             $('#' + firstVisibleTab.attr('id') + ' .nav-link').attr('aria-selected', 'true');
@@ -485,11 +468,9 @@ jQuery(function ($) {
                 success: function (data, status) {
                     if (data) {
                         if (data.next) {
-                            console.log(data.next);
                             $('#next-child-url').html('<a href="/browser/metadata/' + data.next.id + '" id="archeHref" alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>> </a>');
                         }
                         if (data.previous) {
-                            console.log(data.previous);
                             $('#previous-child-url').html('<a href="/browser/metadata/' + data.previous.id + '" id="archeHref" alt="' + data.previous.title + '" title="' + data.previous.title + '"> <<< ' + Drupal.t('Previous') + ' </a>');
                         }
 
@@ -627,9 +608,6 @@ jQuery(function ($) {
                             return {'id': node.id};
                         },
                         'success': function (nodes) {
-                            console.log("Success:");
-                            console.log(nodes);
-
                             if (nodes.length === 0) {
                                 //$('#collection-content-tab').hide();  // Show message for no data
                                 $('#collection-content-tab-content').hide();  // Show message for no data
@@ -923,53 +901,6 @@ jQuery(function ($) {
         }
     });
 
-    //update the UI elements
-    function showUI() {
-        console.log("SHOW UI!");
-        showAvailableDate();
-        showType();
-        //showRightSide();
-        showTitle();
-        //showCite();
-        //showSummary();
-        //showChildView();
-        //showRPR();
-        //showExpertView();
-        //showInverseTable();
-        //showBreadcrumb();
-        $('#meta-content-container').show();
-        $('#meta-right-container').show();
-        $('.metadata-main-loader').hide();
-        $('.metadata-right-loader').hide();
-    }
-
-    function showType() {
-        console.log("SHOW TYPE");
-        if (resObj.getType()) {
-            $('#av-rdfType').html(resObj.getType());
-        } else {
-            $('#ad-rdfType').hide();
-        }
-    }
-
-    function showTitle() {
-        console.log("SHOW TITLE");
-        if (resObj.getTitle()) {
-            $('#av-hasTitle').html(resObj.getTitle());
-        } else {
-            $('#ad-hasTitle').hide();
-        }
-    }
-
-    function showAvailableDate() {
-        if (resObj.getAvailableDate()) {
-            var text = $('#av-hasAvailableDate').text();
-            $('#av-hasAvailableDate').html(text + resObj.getAvailableDate());
-        } else {
-            $('#ad-hasAvailableDate').hide();
-        }
-    }
-
     function checkDetailCardEvents() {
         $(".mdr-card-collapse-btn").click(function () {
             var dataValue = $(this).data('bs-target');
@@ -981,9 +912,6 @@ jQuery(function ($) {
             }
         });
     }
-
-
-
 
     ///////////// CITE ////////////////////
     /**
