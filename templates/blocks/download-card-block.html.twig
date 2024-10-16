@@ -14,6 +14,8 @@
         <div class="card-body meta-sidebar downloadcard">
             <div class="download-login-div">
                 {% set isDownloadEnabled = true %}
+                
+                
                 {% if cookie.archeLogin %}
                     {% set isDownloadEnabled = true %}
                 {% endif %}
@@ -32,9 +34,22 @@
                     <div class="col-lg-6"><a href="/Shibboleth.sso/Login?target={{ data.getRepoGuiUrl() }}" class="btn btn-arche-blue">Federated LOGIN</a></div>
                     <div class="col-lg-12"><hr></div>
                 </div>
-                
+                    
+                <div class="row d-none" id="download-not-authorized">
+                    <div class="col-lg-12">
+                        <div class="alert alert-warning">
+                            {{ "You are not authorized to download this data!"|trans }}
+                        </div>
+                    </div>    
+                </div>
+                    
+                    
                 <div class="row d-none" id="download-logged">
-                    <div class="col-lg-12"><span id="user-logged-text"></span></div>
+                    <div class="col-lg-12">
+                        <div class="alert alert-success">
+                            {{ "You are logged in as"|trans }}: <span id="user-logged-text"></span> {{ "Please close your browser to log out."|trans }}
+                        </div>
+                    </div>    
                 </div>
             </div>
                     

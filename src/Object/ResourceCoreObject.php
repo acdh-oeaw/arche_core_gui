@@ -829,6 +829,31 @@ class ResourceCoreObject {
         }
         return "";
     }
+    
+    
+    /**
+     * Fetch property which has more than one value as array or as string
+     * @param string $property
+     * @param string $output
+     * @return mixed
+     */
+    public function getDataArrayString(string $property, string $output = "array"): mixed {
+        $result = [];
+        if (isset($this->properties[$property][0]['title']) && !empty($this->properties[$property][0]['title'])) {
+            foreach($this->properties[$property] as $val){
+                $result[] = $val['title'];
+            }
+        } elseif (isset($this->properties[$property][0]['value']) && !empty($this->properties[$property][0]['value'])) {
+            foreach($this->properties[$property] as $val){
+                $result[] = $val['value'];
+            }
+        }
+        if($output === "string") {
+            return implode(',', $result);
+        }
+        return $result;
+    }
+    
 
     public function isContactDetails(): bool {
         $props = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:Postcode',

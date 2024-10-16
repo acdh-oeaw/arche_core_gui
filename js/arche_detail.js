@@ -28,9 +28,9 @@ jQuery(function ($) {
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
-        
+
         checkUserPermission();
-        
+
     });
 
     $(document).keydown(function (event) {
@@ -43,35 +43,46 @@ jQuery(function ($) {
     });
     /** CTRL PRess check for the tree view   #19924  END **/
 
-    function checkUserPermission(){
+    /**
+     * After user login, check if the user is allowed to download the actual resource
+     * @returns {undefined}
+     */
+    function checkUserPermission() {
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
+            let aclRead = $("#resource-acl-read").val();
             //first check if the user is logged in
             $.ajax({
-                        url: '/browser/api/checkUser/' + resourceId,
-                        method: 'GET',
-                        success: function (data) {
-                            if(data.length === 0) {
-                                $('#download-not-logged').removeClass('d-none');
-                            } else {
-                                $('#download-logged').removeClass('d-none');
-                                $('#user-logged-text').html(data.message);
-                            }
-                            
-                        },
-                        error: function (xhr, status, error) {
-                            console.log('error :'+ error);
+                url: '/browser/api/checkUser/' + resourceId+'/'+aclRead,
+                method: 'GET',
+                success: function (data) {
+                    if (data.length === 0) {
+                        $('#download-not-logged').removeClass('d-none');
+                    } else {
+                        if(data.access == 'authorized'){
+                             $('#download-logged').removeClass('d-none');
+                            $('#user-logged-text').html(data.username+' : ' + data.roles);
                         }
-                    });
-            
-            
+                        
+                        if(data.access == 'not authorized'){
+                            $('#download-not-authorized').removeClass('d-none');
+                            $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
+                        }
+                        if(data.access == 'login'){
+                            $('#download-not-logged').removeClass('d-none');
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('checkUserPermission error :' + error);
+                }
+            });
         }
-        
     }
 
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
-        
+
         initExpertView();
         if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
             fetchChildTree();
