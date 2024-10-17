@@ -59,24 +59,20 @@ jQuery(function ($) {
                 success: function (data) {
                     console.log(data);
                     if (data.length === 0) {
-                        console.log("ott 0");
                         $('#download-not-logged').removeClass('d-none');
                     } else {
                         if(data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection' )){
-                            console.log("ott");
                             $('#download-resource-section').removeClass('d-none');
-                             $('#download-logged').removeClass('d-none');
+                            $('#download-logged').removeClass('d-none');
                             $('#user-logged-text').html(data.username+' : ' + data.roles);
                             $('#download-logout').removeClass('d-none');
                         }else if(data.access == 'not authorized'){
-                            console.log("ott 3");
                             $('#download-restricted').addClass('d-none');
                             $('#download-not-authorized').removeClass('d-none');
                             $('#user-logged-not-auth-text').html(data.username+' : ' + data.roles);
                             $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
                              $('#download-logout').removeClass('d-none');
                         }else if(data.access == 'login'){
-                            console.log("ott 4");
                             $('#download-not-logged').removeClass('d-none');
                         }
                     }
