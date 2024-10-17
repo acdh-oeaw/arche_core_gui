@@ -51,24 +51,32 @@ jQuery(function ($) {
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
             let aclRead = $("#resource-acl-read").val();
+            let acdhType = $('#resource-type').val();
             //first check if the user is logged in
             $.ajax({
                 url: '/browser/api/checkUser/' + resourceId+'/'+aclRead,
                 method: 'GET',
                 success: function (data) {
+                    console.log(data);
                     if (data.length === 0) {
+                        console.log("ott 0");
                         $('#download-not-logged').removeClass('d-none');
                     } else {
-                        if(data.access == 'authorized'){
+                        if(data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection' )){
+                            console.log("ott");
+                            $('#download-resource-section').removeClass('d-none');
                              $('#download-logged').removeClass('d-none');
                             $('#user-logged-text').html(data.username+' : ' + data.roles);
-                        }
-                        
-                        if(data.access == 'not authorized'){
+                            $('#download-logout').removeClass('d-none');
+                        }else if(data.access == 'not authorized'){
+                            console.log("ott 3");
+                            $('#download-restricted').addClass('d-none');
                             $('#download-not-authorized').removeClass('d-none');
+                            $('#user-logged-not-auth-text').html(data.username+' : ' + data.roles);
                             $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
-                        }
-                        if(data.access == 'login'){
+                             $('#download-logout').removeClass('d-none');
+                        }else if(data.access == 'login'){
+                            console.log("ott 4");
                             $('#download-not-logged').removeClass('d-none');
                         }
                     }
