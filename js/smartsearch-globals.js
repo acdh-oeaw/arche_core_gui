@@ -129,6 +129,7 @@ jQuery(function ($) {
         var img = new Image();
         img.src = imgSrc;
         img.onerror = function () {
+             resourceUrl = resourceUrl.replace(/^https?:\/\//, '');
             $('[data-thumbnailid="' + resourceUrl + '"]').hide();
             $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
             $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');

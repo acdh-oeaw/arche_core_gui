@@ -66,6 +66,12 @@ jQuery(function ($) {
                             $('#download-logged').removeClass('d-none');
                             $('#user-logged-text').html(data.username+' : ' + data.roles);
                             $('#download-logout').removeClass('d-none');
+                            $('#download-restricted').addClass('d-none');
+                            if(data.access == 'shibboleth') {
+                              $('.gui-shibboleth-logout').removeClass('d-none');
+                            } else {
+                                $('.gui-https-logout').removeClass('d-none');
+                            }
                         }else if(data.access == 'not authorized'){
                             $('#download-restricted').addClass('d-none');
                             $('#download-not-authorized').removeClass('d-none');

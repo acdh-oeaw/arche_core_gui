@@ -103,6 +103,11 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         }
     }
     
+    /**
+     * Image viewer dissemination view
+     * @param string $identifier
+     * @return type
+     */
     public function iiifView(string $identifier) {
         
         $diss = $this->getDissServices($identifier);
@@ -125,6 +130,11 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         ];
     }
     
+    /**
+     * The PDF viewer dissemination view
+     * @param string $identifier
+     * @return type
+     */
     public function pdfView(string $identifier) {
         $basicData = $this->fetchBasicData($identifier);
         return $return = [
@@ -140,6 +150,11 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         ];
     }
     
+    /**
+     * The Audio player dissemination view
+     * @param string $identifier
+     * @return type
+     */
     public function audioView(string $identifier) {
         $basicData = $this->fetchBasicData($identifier);
         return $return = [
