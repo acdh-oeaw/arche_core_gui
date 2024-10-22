@@ -62,9 +62,6 @@ jQuery(function ($) {
                     url: '/browser/api/checkUser/' + resourceId + '/' + aclRead,
                     method: 'GET',
                     success: function (data) {
-                        console.log(data);
-                        
-
                         if (data.length === 0 || data.access == 'login') {
                             $('#download-not-logged').removeClass('d-none');
                         } else {
@@ -94,9 +91,6 @@ jQuery(function ($) {
                                 $('#download-not-logged').removeClass('d-none');
                             }
                         }
-
-
-
                     },
                     error: function (xhr, status, error) {
                         console.log('checkUserPermission error :' + error);
