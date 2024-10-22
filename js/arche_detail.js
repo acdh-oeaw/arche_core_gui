@@ -52,46 +52,57 @@ jQuery(function ($) {
             let resourceId = $("#resId").val();
             let aclRead = $("#resource-acl-read").val();
             let acdhType = $('#resource-type').val();
-            //first check if the user is logged in
-            $.ajax({
-                url: '/browser/api/checkUser/' + resourceId+'/'+aclRead,
-                method: 'GET',
-                success: function (data) {
-                    console.log(data);
-                    if (data.length === 0 || data.access == 'login') {
-                        $('#download-not-logged').removeClass('d-none');
-                    } else {
-                        if(data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection' )){
-                            $('#download-resource-section').removeClass('d-none');
-                            $('#download-logged').removeClass('d-none');
-                            $('#user-logged-text').html(data.username+' : ' + data.roles);
-                            $('#download-logout').removeClass('d-none');
-                            $('#download-restricted').addClass('d-none');
-                            if(data.loginMethod == 'shibboleth') {
-                              $('.gui-shibboleth-logout').removeClass('d-none');
-                            } else {
-                                $('.gui-https-logout').removeClass('d-none');
-                            }
-                        }else if(data.access == 'not authorized'){
-                            $('#download-restricted').addClass('d-none');
-                            $('#download-not-authorized').removeClass('d-none');
-                            $('#user-logged-not-auth-text').html(data.username+' : ' + data.roles);
-                            $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
-                             $('#download-logout').removeClass('d-none');
-                             if(data.loginMethod == 'shibboleth') {
-                              $('.gui-shibboleth-logout').removeClass('d-none');
-                            } else {
-                                $('.gui-https-logout').removeClass('d-none');
-                            }
-                        }else if(data.access == 'login'){
+            let resourceAccess = $('#resource-access').val();
+            //if the resource or collection is public then we show all download possbility
+            if (resourceAccess) {
+                $('#download-resource-section').removeClass('d-none');
+            } else {
+                //if not then we have to check the actual logged user permissions
+                $.ajax({
+                    url: '/browser/api/checkUser/' + resourceId + '/' + aclRead,
+                    method: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        
+
+                        if (data.length === 0 || data.access == 'login') {
                             $('#download-not-logged').removeClass('d-none');
+                        } else {
+                            if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {
+                                $('#download-resource-section').removeClass('d-none');
+                                $('#download-logged').removeClass('d-none');
+                                $('#user-logged-text').html(data.username + ' : ' + data.roles);
+                                $('#download-logout').removeClass('d-none');
+                                $('#download-restricted').addClass('d-none');
+                                if (data.loginMethod == 'shibboleth') {
+                                    $('.gui-shibboleth-logout').removeClass('d-none');
+                                } else {
+                                    $('.gui-https-logout').removeClass('d-none');
+                                }
+                            } else if (data.access == 'not authorized') {
+                                $('#download-restricted').addClass('d-none');
+                                $('#download-not-authorized').removeClass('d-none');
+                                $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);
+                                $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
+                                $('#download-logout').removeClass('d-none');
+                                if (data.loginMethod == 'shibboleth') {
+                                    $('.gui-shibboleth-logout').removeClass('d-none');
+                                } else {
+                                    $('.gui-https-logout').removeClass('d-none');
+                                }
+                            } else if (data.access == 'login') {
+                                $('#download-not-logged').removeClass('d-none');
+                            }
                         }
+
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('checkUserPermission error :' + error);
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.log('checkUserPermission error :' + error);
-                }
-            });
+                });
+            }
         }
     }
 

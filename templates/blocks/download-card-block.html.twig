@@ -78,12 +78,14 @@
                     {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
                         <!-- <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>-->
                         <a href="{{ data.getRepoBaseUrl }}/dissemination/collection_download_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a>
-                        {% elseif data.acdhType|lower == "resource" %}
-
-                        {% if data.isBinary %}
-                            <a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Binary"|trans }} <img src="{{ arche_dl_ico }}"/></a>
-                            {% endif  %}
-                        {% endif  %}    
+                    {% elseif data.acdhType|lower == "resource" %}
+                    
+                    {% endif  %}
+                    
+                    {% if data.isBinary %}
+                        <a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Binary"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+                    
+                    {% endif  %}    
                 </div>
             </div>
         </div>

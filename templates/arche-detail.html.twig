@@ -4,6 +4,7 @@
 <input type="hidden" value="{{ data.getTitle() }}" id="resource-main-title"/>
 <input type="hidden" value="{{ data.getAcdhType()|lower }}" id="resource-type"/>
 <input type="hidden" value="{{ data.getDataArrayString('acdh:aclRead', 'string') }}" id="resource-acl-read"/>
+<input type="hidden" value="{{ data.isPublic() }}" id="resource-access"/>
 
 
 
