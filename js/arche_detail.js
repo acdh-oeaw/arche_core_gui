@@ -67,7 +67,7 @@ jQuery(function ($) {
                             $('#user-logged-text').html(data.username+' : ' + data.roles);
                             $('#download-logout').removeClass('d-none');
                             $('#download-restricted').addClass('d-none');
-                            if(data.access == 'shibboleth') {
+                            if(data.loginMethod == 'shibboleth') {
                               $('.gui-shibboleth-logout').removeClass('d-none');
                             } else {
                                 $('.gui-https-logout').removeClass('d-none');
@@ -78,6 +78,11 @@ jQuery(function ($) {
                             $('#user-logged-not-auth-text').html(data.username+' : ' + data.roles);
                             $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
                              $('#download-logout').removeClass('d-none');
+                             if(data.loginMethod == 'shibboleth') {
+                              $('.gui-shibboleth-logout').removeClass('d-none');
+                            } else {
+                                $('.gui-https-logout').removeClass('d-none');
+                            }
                         }else if(data.access == 'login'){
                             $('#download-not-logged').removeClass('d-none');
                         }
@@ -1064,7 +1069,7 @@ jQuery(function ($) {
     $(document).delegate("a#copyCite", "click", function (e) {
         var $tempTextarea = $('<textarea>');
         // Set the textarea value to the content of the div
-        $tempTextarea.val($('.csl-entry').text());
+        $tempTextarea.val($('.cite-content.selected .csl-entry').text());
         // Append the textarea to the body
         $('body').append($tempTextarea);
         // Select the textarea content
