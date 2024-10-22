@@ -56,6 +56,7 @@ jQuery(function ($) {
             //if the resource or collection is public then we show all download possbility
             if (resourceAccess) {
                 $('#download-resource-section').removeClass('d-none');
+                $('#download-not-logged').removeClass('d-none');
             } else {
                 //if not then we have to check the actual logged user permissions
                 $.ajax({
