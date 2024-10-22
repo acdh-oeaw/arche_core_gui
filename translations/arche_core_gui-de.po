@@ -671,3 +671,6 @@ msgstr "Sie sind nicht berechtigt, diese Daten herunterzuladen!"
 msgid "You are logged in as"
 msgstr "Sie sind angemeldet als"
 
+msgid "Image Viewer"
+msgstr "Bildbetrachter"
+
