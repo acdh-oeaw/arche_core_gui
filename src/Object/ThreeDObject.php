@@ -27,7 +27,7 @@ class ThreeDObject
 
     public function downloadFile(string $repoUrl, string $tmpDir): array
     {
-        $this->setTmpDir($tmpDir);
+        $this->setTmpDir($tmpDir.'/tmp_files/');
         try {
             $this->doTheRequest($repoUrl);
         } catch (\GuzzleHttp\Exception\ClientException $ex) {

@@ -58,7 +58,7 @@ jQuery(function ($) {
                 method: 'GET',
                 success: function (data) {
                     console.log(data);
-                    if (data.length === 0) {
+                    if (data.length === 0 || data.access == 'login') {
                         $('#download-not-logged').removeClass('d-none');
                     } else {
                         if(data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection' )){

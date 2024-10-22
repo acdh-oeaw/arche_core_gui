@@ -85,10 +85,11 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         $identifier = $this->repoDb->getBaseUrl().$identifier;
         $obj = new \Drupal\arche_core_gui\Object\ThreeDObject();
         $fileObj = $obj->downloadFile($identifier, $this->tmpDir);
-        
+        $basicData = $this->fetchBasicData($identifier);
         return $return = [
             '#theme' => 'dissemination-3d-viewer',
             '#data' => $fileObj['result'],
+            '#basic' => $basicData,
             '#cache' => ['max-age' => 0],
             
         ];
