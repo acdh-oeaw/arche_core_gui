@@ -14,7 +14,6 @@ class ThreeDObject
     private $allowedExtension = array("ply", "nxs");
     private $result = array();
 
-    // tmpDir =  \Drupal::service('file_system')->realpath(\Drupal::config('system.file')->get('default_scheme') . "://") . "/"
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client(['verify' => false]);
@@ -25,6 +24,12 @@ class ThreeDObject
         $this->tmpDir = $tmpDir;
     }
 
+    /**
+     * Download the 3d model
+     * @param string $repoUrl
+     * @param string $tmpDir
+     * @return array
+     */
     public function downloadFile(string $repoUrl, string $tmpDir): array
     {
         $this->setTmpDir($tmpDir.'/tmp_files/');
@@ -41,6 +46,10 @@ class ThreeDObject
         return $this->result;
     }
 
+    /**
+     * Send the request to download the 3d file into the server
+     * @param string $repoUrl
+     */
     private function doTheRequest(string $repoUrl)
     {
         $request = new \GuzzleHttp\Psr7\Request('GET', $repoUrl);
@@ -104,7 +113,7 @@ class ThreeDObject
     {
         $this->checkTmpDirExists();
         
-        $this->setTmpDir($this->tmpDir . "/tmp_files/" . str_replace(".", "_", $filename) . "/");
+        $this->setTmpDir($this->tmpDir . str_replace(".", "_", $filename) . "/");
         if (!file_exists($this->tmpDir.$filename)) {
             if (!mkdir($this->tmpDir, 0777)) {
                 throw new \Exception(\error_get_last());
