@@ -11,6 +11,14 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     window.showResults = function (data, param, t0, initial = false) {
+        console.log("PARAM:");
+        console.log(param);
+        
+        console.log("data: ");
+        console.log(data);
+        
+        console.log("guobj:");
+        console.log(window.guiObj);
         //function showResults(data, param, t0, initial = false) {
         t0 = (new Date() - t0) / 1000;
         data = jQuery.parseJSON(data);

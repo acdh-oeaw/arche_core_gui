@@ -38,7 +38,7 @@
 %} 
 
 <div class="basic-inside-content-div" id="expertDtDiv">
-    <table class="table " id='expertDT' cellspacing="0" width="100%" style="display: block;">
+    <table class="table " id='expertDT' cellspacing="0" width="100%" >
         <h5>{{ "Expert view"|trans }}</h5>
         <thead style="width: 100%; display: table;">
             <tr>
@@ -60,7 +60,7 @@
                                 </a>
                             </div>
                         {% else %}
-                            {{ key }}
+                            {{ key|raw }}
                         {% endif %}
                     </td>
                     <td width='60%'>

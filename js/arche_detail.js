@@ -7,7 +7,6 @@ jQuery(function ($) {
     var cntrlIsPressed = false;
     const Cite = require('citation-js');
     var expertTable;
-    var childTable;
     var versionVisible = false;
     var smartSearchInputField = $('#sm-hero-str');
     var autocompleteTimeout = null;
@@ -751,7 +750,7 @@ jQuery(function ($) {
                     if (!data.customCitation.startsWith('@')) {
                         citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
                     }
-
+                   
                     let citeDT = new Cite(citationText);
                     let templateName = 'apa-6th';
                     var template = "";
@@ -779,7 +778,7 @@ jQuery(function ($) {
                             });
                 } catch (error) {
                     //console.log(error);
-                    cell.html('<a href="/browser/metadata/' + data.id + '">' + data.customCitation + '</a>');
+                    cell.html('<a href="/browser/metadata/' + data.id + '">' + data.title + '</a>');
                 }
             },
             fnDrawCallback: function () {
@@ -866,9 +865,20 @@ jQuery(function ($) {
 
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({
-            "deferRender": true,
+            "deferRender": true
             //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
+        /*
+        $('#expertDT').on('search.dt', function() {
+            var searchValue = $('#expertDT').DataTable().search();  // Get current search value
+            console.log("Search value: ", searchValue);
+
+            var filteredRows = $('#expertDT').DataTable().rows({ filter: 'applied' }).data();
+            console.log("Filtered rows after search: ", filteredRows.length);
+
+            // Optionally log all filtered rows
+            console.log("Filtered rows data: ", filteredRows);
+        });*/
     }
 
     function reloadDetail(id) {

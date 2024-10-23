@@ -1,26 +1,3 @@
-<!--
-
-The template is processing the following fields:
-Data: 
-- the property data
-
-Data Type :
-- REL
-- ID
-- http://www.w3.org/2001/XMLSchema#date 
-- http://www.w3.org/2001/XMLSchema#decimal
-- URI
-- http://www.w3.org/2001/XMLSchema#string
-- http://www.w3.org/2001/XMLSchema#anyURI
-
-Field extra type:
-- binary / date / shortCut
-- delimiter (optional): basic is ",", you can use also "<br>"
-- icon: the fontawesome icon name, what will be displayed before the label
-- label: the label what should be displayed before the value
-- dateformat (required just for the date type):  f.e: 'd MMM Y'
-
--->
 
 {%  if (delimiter) %}
     {% set limiter = delimiter|raw %}
@@ -42,7 +19,6 @@ Field extra type:
         <span class="res-prop-value">
             {% if data is iterable %}
                 {% for value in data %}
-                    <!-- ITERABLE START -->
                     {% if value is iterable %}
                         {% for v in value %}
                             {% if v.value %} 
@@ -73,8 +49,7 @@ Field extra type:
                                         <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" >{{ v.repoid|nl2br }}</a>
                                     {% endif %}
                                     {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
-                                {% elseif( (v.type == 'URI') or (v.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}
-                                    <!-- The URI will open in a new window -->
+                                {% elseif( (v.type == 'URI') or (v.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}                                  
                                     {% if (v.value)  %}
                                         <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
                                     {% elseif (v.title) %}   
@@ -84,7 +59,6 @@ Field extra type:
                                     {% endif %}
                                     {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                 {% elseif(type == 'binary') %}
-                                    <!-- the binary -->
                                     {% if(v.value == 0) %}
                                         {{ v.value }} KB
                                     {% else %}
@@ -111,7 +85,6 @@ Field extra type:
                                         {% endif %}
                                         {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                     {% else %}
-                                        <!-- simple string -->
                                         {% if (v.title) %} 
                                             <span>{{ v.title|nl2br }}</span>
                                         {% elseif (v.value) %} 
@@ -125,7 +98,6 @@ Field extra type:
                                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': v,  'dateformat': dateformat } ) }}
                                 {% else %}
-                                    <!-- if there is no type defined then simply display the title -->
                                     {% if (v.value) is not empty %}
                                         <span>{{ v.value|nl2br }}</span>
                                     {% elseif (v.title) is not empty %}
@@ -139,10 +111,8 @@ Field extra type:
                         {% endfor %}    
                     {% endif %}   
 
-                    <!-- ITERABLE END -->
-
+                  
                     {% if(value.type == 'REL') %}
-                        <!-- The ARCHE RELATIONS will open in the same window -->
                         {% if (value.title and value.repoid )  %}
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
                         {% elseif (value.value and value.repoid )  %}
@@ -156,7 +126,6 @@ Field extra type:
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.repoid|nl2br }}</a>
                         {% endif %}
                     {% elseif( (value.type == 'URI') or (value.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}
-                        <!-- The URI will open in a new window -->
                         {% if (value.value)  %}
                             <a href="{{ value.value }}" target="_blank">{{ value.value|nl2br }}</a>
                         {% elseif (value.title) %}   
@@ -165,7 +134,6 @@ Field extra type:
                             <a href="{{ value.relvalue }}" target="_blank">{{ value.relvalue|nl2br }}</a>
                         {% endif %}
                     {% elseif(type == 'binary') %}
-                        <!-- the binary -->
                         {% if(value.value == 0) %}
                             {{ value.value }} KB
                         {% else %}
@@ -197,7 +165,6 @@ Field extra type:
                                 {{ value.value|replace({'@': '(at)'}) }}
                             {% endif %}
                         {% else %}
-                            <!-- simple string -->
                             {% if (value.title) %} 
                                 <span>{{ value.title|nl2br }}</span>
                             {% elseif (value.value) %} 
@@ -210,7 +177,6 @@ Field extra type:
                         {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': value,  'dateformat': dateformat } ) }}
                     {% else %}
-                        <!-- if there is no type defined then simply display the title -->
                         {% if (value.value) is not empty %}
                             <span>{{ value.value|nl2br }}</span>
                         {% elseif (value.title) is not empty %}
@@ -219,11 +185,9 @@ Field extra type:
                             <span>{{ value.relvalue|nl2br }}</span>
                         {% endif %}
                     {% endif %}
-                    <!-- if there are more than 1 value then we will display the delimiter -->
                     {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                 {% endfor %}
             {% else %}
-                <!-- if the data is not an array then we will just simply display the value -->
                 {{ data }}
             {% endif %}
         </span>
