@@ -14,6 +14,12 @@ class ArcheGuiPathProcessor implements InboundPathProcessorInterface
             $names = str_replace('/', ':', $names);
             return "/discover/$names";
         }
+        
+        if (strpos($path, '/api/search_history_cookie/') === 0) {
+            $names = preg_replace('|^\/api/search_history_cookie\/|', '', $path);
+            $names = str_replace('/', ':', $names);
+            return "/api/search_history_cookie/$names";
+        }
         return $path;
     }
 }

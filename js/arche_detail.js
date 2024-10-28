@@ -379,6 +379,7 @@ jQuery(function ($) {
      */
     function showTitleImage() {
         var currentUrl = $(location).attr('href');
+        var isPublic = $('#resource-access').val();
         currentUrl = currentUrl.replace('/browser/metadata/', '/api/');
         var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=600';
         $.ajax({

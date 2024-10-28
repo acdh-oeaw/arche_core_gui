@@ -766,7 +766,7 @@ class ResourceCoreObject {
         $access = $this->getAccessRestriction();
         
         /*
-         * If there is noa ccessrestriction, then it is a collection
+         * If there is no accessrestriction, then it is a collection
          */
         if(count($access) === 0) {
             return true;
