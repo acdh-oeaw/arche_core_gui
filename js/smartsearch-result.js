@@ -73,8 +73,6 @@ jQuery(function ($) {
         }
         
         if(param.searchIn[0]) {
-            console.log("display searchin");
-            console.log(param.searchIn[0]);
             window.searchInAdd(param.searchIn[0], $(this).data('resource-title'));
             $('#searchIn').show();
         }

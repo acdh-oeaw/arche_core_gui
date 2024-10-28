@@ -1,6 +1,7 @@
 <?php
 
 function arche_core_gui_page_attachments(array &$page) {
+    $archeConfig = \acdhOeaw\arche\lib\Config::fromYaml(\Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config.yaml');
     $languageManager = \Drupal::languageManager();
     // Get the current language object
     $currentLanguage = $languageManager->getCurrentLanguage();
@@ -9,6 +10,9 @@ function arche_core_gui_page_attachments(array &$page) {
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
     $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
+    $page['#attached']['drupalSettings']['arche_core_gui']['baseApiUrl'] =  $archeConfig->>rest->urlBase.$archeConfig->>rest->pathBase;
+    $this->config->rest->urlBase
+    
     $roles = array();
     $roles = \Drupal::currentUser()->getRoles();
     if(count($roles) > 0){ $roles = implode(",", $roles); }

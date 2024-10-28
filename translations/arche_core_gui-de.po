@@ -674,3 +674,6 @@ msgstr "Sie sind angemeldet als"
 msgid "Image Viewer"
 msgstr "Bildbetrachter"
 
+msgid "Download File"
+msgstr "Datei herunterladen"
+

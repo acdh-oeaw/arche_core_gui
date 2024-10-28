@@ -2,11 +2,9 @@
 <input type="hidden" value="{{ identifier }}" id="resId"/>
 <input type="hidden" value="{{ data.getRootID() }}" id="rootId"/>
 <input type="hidden" value="{{ data.getTitle() }}" id="resource-main-title"/>
-<input type="hidden" value="{{ data.getAcdhType()|lower }}" id="resource-type"/>
-<input type="hidden" value="{{ data.getDataArrayString('acdh:aclRead', 'string') }}" id="resource-acl-read"/>
-<input type="hidden" value="{{ data.isPublic() }}" id="resource-access"/>
-
-
+<input type="hidden" value="{{ data.getAcdhType()|lower|raw }}" id="resource-type"/>
+<input type="hidden" value="{{ data.getDataArrayString('acdh:aclRead', 'string')|raw }}" id="resource-acl-read"/>
+<input type="hidden" value="{{ data.isPublic()|json_encode }}" id="resource-access"/>
 
 {% if data.getAcdhType()|lower == 'place' %}
     {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'data': data, 'cookie': cookie } ) }}

@@ -11,7 +11,10 @@ jQuery(function ($) {
     var smartSearchInputField = $('#sm-hero-str');
     var autocompleteTimeout = null;
     var autocompleteCounter = 1;
-
+    var currentUrl = $(location).attr('href');
+    var apiUrl = currentUrl.replace('/browser/metadata/', '/api/');
+    var baseApiUrl = drupalSettings.arche_core_gui.baseApiUrl;
+    
     $(document).ready(function () {
         addButtonToDescriptionText();
         $('#cite-loader').removeClass('hidden');
@@ -52,11 +55,13 @@ jQuery(function ($) {
             let aclRead = $("#resource-acl-read").val();
             let acdhType = $('#resource-type').val();
             let resourceAccess = $('#resource-access').val();
-            //if the resource or collection is public then we show all download possbility
-            if (resourceAccess) {
+            //if the resource or collection is public then we hide the login
+            //and display all download possbility
+            if (resourceAccess === "true") {
                 $('#download-resource-section').removeClass('d-none');
-                $('#download-not-logged').removeClass('d-none');
+                $('#download-not-logged').addClass('d-none');
             } else {
+                $('#download-not-logged').removeClass('d-none');
                 //if not then we have to check the actual logged user permissions
                 $.ajax({
                     url: '/browser/api/checkUser/' + resourceId + '/' + aclRead,
@@ -378,17 +383,17 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showTitleImage() {
-        var currentUrl = $(location).attr('href');
+        
         var isPublic = $('#resource-access').val();
-        currentUrl = currentUrl.replace('/browser/metadata/', '/api/');
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=600';
+        
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600';
         $.ajax({
             url: imgSrc,
             type: 'GET',
             success: function (data) {
                 $('.titleimage-loader').hide();
-                $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=600" data-lightbox="detail-titleimage">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + currentUrl + '&width=200" >\n\
+                $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600" data-lightbox="detail-titleimage">\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=200" >\n\
                                         </a></center>');
             },
             error: function () {
@@ -458,6 +463,12 @@ jQuery(function ($) {
             $(notHiddenTab + '-content').show();
         }
     }
+    
+    //httpd logout
+    $(document).delegate("#httpd-logout", "click", function (e) {
+        window.location.href = "https://invalid:credentials@"+baseApiUrl+"/user/logout?redirect="+apiUrl;
+    });
+
 
     /// hasDescription button ///
     $(document).delegate("#descriptionTextShortBtn", "click", function (e) {
@@ -525,17 +536,18 @@ jQuery(function ($) {
             url: '/browser/api/breadcrumb/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
             type: "GET",
             success: function (data, status) {
-                var currentUrl = window.location.href;
+                //var currentUrl = window.location.href;
                 var textToKeep = "/browser/metadata/";
+                var breadcrumbUrl = "";
                 var position = currentUrl.indexOf(textToKeep);
                 if (position !== -1) {
-                    currentUrl = currentUrl.substring(0, position + textToKeep.length);
+                    breadcrumbUrl = currentUrl.substring(0, position + textToKeep.length);
                 }
                 // 
                 if (data) {
                     var str = "";
                     $.each(data, function (index, value) {
-                        str += "<a href='" + currentUrl + value.id + "' title='" + value.placeholder + "'>" + value.title + "</a>";
+                        str += "<a href='" + breadcrumbUrl + value.id + "' title='" + value.placeholder + "'>" + value.title + "</a>";
                         if (index !== data.length - 1) {
                             str += " \\ ";
                         }
@@ -892,10 +904,11 @@ jQuery(function ($) {
                 var currentUrl = window.location.href;
                 var textToKeep = "/browser/metadata/";
                 var position = currentUrl.indexOf(textToKeep);
+                var reloadUrl = "";
                 if (position !== -1) {
-                    currentUrl = currentUrl.substring(0, position + textToKeep.length);
+                    reloadUrl = currentUrl.substring(0, position + textToKeep.length);
                 }
-                window.history.replaceState({}, '', currentUrl + id);
+                window.history.replaceState({}, '', reloadUrl + id);
             },
             error: function (xhr, status, error) {
                 $('#block-arche-theme-content').html(error);
