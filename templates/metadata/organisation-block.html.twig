@@ -55,12 +55,12 @@
                 </div>
 
                 {% if data.getData('acdh:hasAlternativeTitle')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %}    
-                
+
                 {% if data.getData('acdh:hasDescription')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasDescription'), 'label':  'Description' } ) }}
                 {% endif %}    
 
@@ -74,16 +74,21 @@
                         {{ include(arche_core_gui_path ~ '/templates/content-blocks/person-contact-details-block.html.twig', {'data': data.getDataByPropertyList(propArr) } ) }}
                     </div>
                 {% endif %}  
+
+                
+                <div class="loading-indicator text-center d-none">
+                    <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
+                </div>
                 
                 <div class="row involved-table-div d-none pt-3 basic-inside-content-div">
                     <div class="col-lg-12 child-tree-div">
                         <h5 class="pb-2">{{ "Involved in"|trans }}</h5>
                         <table class="involved-table w-100  row-border" id="involvedDT">
-                            
+
                         </table>
                     </div>
                 </div>
-                
+
 
 
             </div>
@@ -97,8 +102,8 @@
             -->
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
-            
-              {% if data.getNonAcdhIdentifiers()  %}
+
+            {% if data.getNonAcdhIdentifiers()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
             {% endif %} 
 

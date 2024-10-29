@@ -112,17 +112,19 @@ jQuery(function ($) {
             fetchRPR();
             fetchPublications();
         }
-
+        //ok
         if (acdhType === 'place') {
             fetchPlaceSpatialTable();
         }
-
+        //ok
         if (acdhType === 'person') {
             fetchPersonContributedTable();
         }
+        //need to check the table
         if (acdhType === 'publication') {
             fetchPublicationsRelatedResourcesTable();
         }
+
 
         if (acdhType === 'organisation') {
             fetchOrganisationInvolvedTable();
@@ -147,15 +149,21 @@ jQuery(function ($) {
     }
 
     function fetchOrganisationInvolvedTable() {
+        console.log("loading");
+        $('.loading-indicator').removeClass('d-none');
         var involvedTable = $('.involved-table').DataTable({
             "paging": true,
-            "searching": false,
+            "searching": true,
+            "searchDelay": 500,
             "lengthChange": false,
             "pageLength": 10,
             "processing": true,
             "deferRender": true,
+            "columnDefs": [
+                {targets: [4], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
             "bInfo": false, // Hide table information
-            'language': {
+            "language": {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
             },
             "serverSide": true,
@@ -163,6 +171,7 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
                     $('.row.involved-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.involved-table-div').hide();
@@ -172,6 +181,7 @@ jQuery(function ($) {
                 error: function (xhr, status, error) {
                     console.log("ERROR" + error);
                     $('.row.involved-table-div').hide();
+                    $('.loading-indicator').addClass('d-none');
                 }
             },
             'columns': [
@@ -200,16 +210,22 @@ jQuery(function ($) {
             fnDrawCallback: function () {
             }
         });
+
+
     }
 
     function fetchPersonContributedTable() {
+        $('.loading-indicator').removeClass('d-none');
         var contributedTable = $('.contributed-table').DataTable({
             "paging": true,
-            "searching": false,
+            "searching": true,
             "lengthChange": false,
             "pageLength": 10,
             "processing": true,
             "deferRender": true,
+            "columnDefs": [
+                {targets: [4], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
             "bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
@@ -219,6 +235,7 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
                     $('.row.contributed-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.contributed-table-div').hide();
@@ -226,6 +243,10 @@ jQuery(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
+                    $('.loading-indicator').addClass('d-none');
+                    console.log(xhr);
+                    console.log(status);
+                    console.log(error);
                     $('.row.contributed-table-div').hide();
                 }
             },
@@ -258,13 +279,15 @@ jQuery(function ($) {
     }
 
     function fetchPlaceSpatialTable() {
+        $('.loading-indicator').removeClass('d-none');
         var spatialTable = $('.spatial-table').DataTable({
             "paging": true,
-            "searching": false,
+            "searching": true,
             "lengthChange": false,
             "pageLength": 10,
             "processing": true,
             "deferRender": true,
+            "searchDelay": 500, // Optional: Add a delay for user typing
             "bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
@@ -274,6 +297,7 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
                     $('.row.spatial-table-div').removeClass('d-none');
                     if (response === undefined) {
                         $('.row.spatial-table-div').hide();
@@ -281,6 +305,10 @@ jQuery(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
+                    $('.loading-indicator').addClass('d-none');
+                    console.log(xhr);
+                    console.log(status);
+                    console.log(error);
                     $('.row.spatial-table-div').hide();
                 }
             },
@@ -306,6 +334,7 @@ jQuery(function ($) {
     }
 
     function fetchPublicationsRelatedResourcesTable() {
+        $('.loading-indicator').removeClass('d-none');
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
@@ -313,9 +342,13 @@ jQuery(function ($) {
         var rcrTable = $('.related-table').DataTable({
             "paging": true,
             "searching": true,
+            "searchDelay": 500,
             "pageLength": 10,
             "processing": true,
             "deferRender": true,
+            "columnDefs": [
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
             "bInfo": false, // Hide table information
             'language': {
                 "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
@@ -325,12 +358,14 @@ jQuery(function ($) {
             "ajax": {
                 'url': "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
                     if (response === undefined) {
                         $('.related-div').hide();
                         return;
                     }
                 },
                 error: function (xhr, status, error) {
+                    $('.loading-indicator').addClass('d-none');
                     $('.related-div').hide();
                 }
             },
