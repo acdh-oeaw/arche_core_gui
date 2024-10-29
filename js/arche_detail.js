@@ -472,6 +472,7 @@ jQuery(function ($) {
             },
             error: function () {
                 alert("You have been logged out.");
+                window.location.href = currentUrl;
             }
         });
     });

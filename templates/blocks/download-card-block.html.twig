@@ -66,26 +66,27 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        {% set resourceApiUrl = data.getRepoUrl()  %}
 
 
-        <div class="row d-none" id="download-resource-section">
+            {% set resourceApiUrl = data.getRepoUrl()  %}
 
-            {% if data.isBinary %}
-                <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download File"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
 
-            {% endif  %}    
-            {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
-                <!-- <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>-->
-                <div class="col-lg-12 pt-2 pb-2"><a href="{{ data.getRepoBaseUrl }}/dissemination/collection_download_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
-                    {% elseif data.acdhType|lower == "resource" %}
-                    {% endif  %}
+            <div class="row d-none" id="download-resource-section">
 
-        </div>
-        <div class="row" id="download-metadata-section">
-            <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+                {% if data.isBinary %}
+                    <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download File"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
+
+                {% endif  %}    
+                {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
+                    <!-- <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>-->
+                    <div class="col-lg-12 pt-2 pb-2"><a href="{{ data.getRepoBaseUrl }}/dissemination/collection_download_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
+                        {% elseif data.acdhType|lower == "resource" %}
+                        {% endif  %}
+
+            </div>
+            <div class="row" id="download-metadata-section">
+                <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+                </div>
             </div>
         </div>
     </div>
