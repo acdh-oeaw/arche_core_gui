@@ -77,19 +77,19 @@ jQuery(function ($) {
                         if (data.length === 0 || data.access == 'login') {
                             $('#download-not-logged').removeClass('d-none');
                         } else {
-                            if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {                                
+                            if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {
                                 $('#download-restricted').addClass('d-none');
-                                $('#download-not-logged').addClass('d-none');                                
+                                $('#download-not-logged').addClass('d-none');
                                 $('#download-logged').removeClass('d-none');
                                 $('#download-not-authorized').addClass('d-none');
                                 $('#download-resource-section').removeClass('d-none');
-                                $('#user-logged-text').html(data.username + ' : ' + data.roles);                                
+                                $('#user-logged-text').html(data.username + ' : ' + data.roles);
                             } else if (data.access == 'not authorized') {
                                 $('#download-restricted').addClass('d-none');
                                 $('#download-not-logged').addClass('d-none');
                                 $('#download-logged').addClass('d-none');
                                 $('#download-not-authorized').removeClass('d-none');
-                                $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);                                
+                                $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);
                             } else if (data.access == 'login') {
                                 $('#download-not-logged').removeClass('d-none');
                             }
@@ -465,14 +465,20 @@ jQuery(function ($) {
     //httpd logout
     $(document).delegate(".httpd-logout-btn", "click", function (e) {
         $.ajax({
-            url: "/api/user/logout?redirect=" + currentUrl,
+            url: "/api/user/logout",
             type: "GET",
             headers: {
                 "Authorization": "Basic " + btoa("invalid:credentials")
             },
             error: function () {
+                if (currentUrl.endsWith("#")) {
+                    currentUrl = currentUrl.slice(0, -1);
+                }
                 alert("You have been logged out.");
-                window.location.href = currentUrl;
+                setTimeout(function () {
+                    window.location.href = currentUrl;
+                }, 2000); // 2-second delay
+
             }
         });
     });
