@@ -14,7 +14,7 @@ jQuery(function ($) {
     var currentUrl = $(location).attr('href');
     var apiUrl = currentUrl.replace('/browser/metadata/', '/api/');
     var baseApiUrl = drupalSettings.arche_core_gui.baseApiUrl;
-    
+
     $(document).ready(function () {
         addButtonToDescriptionText();
         $('#cite-loader').removeClass('hidden');
@@ -50,6 +50,7 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function checkUserPermission() {
+        console.log("https://invalid:credentials@" + baseApiUrl + "/user/logout?redirect=" + apiUrl);
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
             let aclRead = $("#resource-acl-read").val();
@@ -57,14 +58,21 @@ jQuery(function ($) {
             let resourceAccess = $('#resource-access').val();
             //if the resource or collection is public then we hide the login
             //and display all download possbility
-            if (resourceAccess === "true") {
+            if (resourceAccess.includes("public")) {
+
                 $('#download-resource-section').removeClass('d-none');
                 $('#download-not-logged').addClass('d-none');
             } else {
                 $('#download-not-logged').removeClass('d-none');
+                var accessLevel = 'public';
+                if (resourceAccess) {
+                    accessLevel = resourceAccess;
+                } else if (aclRead) {
+                    accessLevel = aclRead;
+                }
                 //if not then we have to check the actual logged user permissions
                 $.ajax({
-                    url: '/browser/api/checkUser/' + resourceId + '/' + aclRead,
+                    url: '/browser/api/checkUser/' + resourceId + '/' + accessLevel,
                     method: 'GET',
                     success: function (data) {
                         if (data.length === 0 || data.access == 'login') {
@@ -73,6 +81,7 @@ jQuery(function ($) {
                             if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {
                                 $('#download-resource-section').removeClass('d-none');
                                 $('#download-logged').removeClass('d-none');
+                                $('#download-not-logged').addClass('d-none');
                                 $('#user-logged-text').html(data.username + ' : ' + data.roles);
                                 $('#download-logout').removeClass('d-none');
                                 $('#download-restricted').addClass('d-none');
@@ -83,6 +92,7 @@ jQuery(function ($) {
                                 }
                             } else if (data.access == 'not authorized') {
                                 $('#download-restricted').addClass('d-none');
+                                $('#download-logged').removeClass('d-none');
                                 $('#download-not-authorized').removeClass('d-none');
                                 $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);
                                 $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
@@ -383,9 +393,9 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showTitleImage() {
-        
+
         var isPublic = $('#resource-access').val();
-        
+
         var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600';
         $.ajax({
             url: imgSrc,
@@ -463,12 +473,20 @@ jQuery(function ($) {
             $(notHiddenTab + '-content').show();
         }
     }
-    
+
     //httpd logout
     $(document).delegate("#httpd-logout", "click", function (e) {
-        window.location.href = "https://invalid:credentials@"+baseApiUrl+"/user/logout?redirect="+apiUrl;
+        $.ajax({
+            url: "/api/user/logout?redirect=" + currentUrl,
+            type: "GET",
+            headers: {
+                "Authorization": "Basic " + btoa("invalid:credentials")
+            },
+            error: function () {
+                alert("You have been logged out.");
+            }
+        });
     });
-
 
     /// hasDescription button ///
     $(document).delegate("#descriptionTextShortBtn", "click", function (e) {
@@ -763,7 +781,7 @@ jQuery(function ($) {
                     if (!data.customCitation.startsWith('@')) {
                         citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
                     }
-                   
+
                     let citeDT = new Cite(citationText);
                     let templateName = 'apa-6th';
                     var template = "";
@@ -879,19 +897,19 @@ jQuery(function ($) {
     function initExpertView() {
         expertTable = $('#expertDT').DataTable({
             "deferRender": true
-            //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
+                    //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
         /*
-        $('#expertDT').on('search.dt', function() {
-            var searchValue = $('#expertDT').DataTable().search();  // Get current search value
-            console.log("Search value: ", searchValue);
-
-            var filteredRows = $('#expertDT').DataTable().rows({ filter: 'applied' }).data();
-            console.log("Filtered rows after search: ", filteredRows.length);
-
-            // Optionally log all filtered rows
-            console.log("Filtered rows data: ", filteredRows);
-        });*/
+         $('#expertDT').on('search.dt', function() {
+         var searchValue = $('#expertDT').DataTable().search();  // Get current search value
+         console.log("Search value: ", searchValue);
+         
+         var filteredRows = $('#expertDT').DataTable().rows({ filter: 'applied' }).data();
+         console.log("Filtered rows after search: ", filteredRows.length);
+         
+         // Optionally log all filtered rows
+         console.log("Filtered rows data: ", filteredRows);
+         });*/
     }
 
     function reloadDetail(id) {

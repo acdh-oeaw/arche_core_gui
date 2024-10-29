@@ -17,6 +17,7 @@ class ResourceCoreObject {
     private $iiifFormats = array('image/jpeg', 'image/png', 'image/tiff');
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
+    private $accessLevels = ['public' => 'öffentlich', 'academic' => 'akademisch', 'restricted' => 'eingeschränkt'];
 
     public function __construct(array $data, object $config, string $language = 'en') {
         $this->properties = array();
@@ -783,6 +784,34 @@ class ResourceCoreObject {
             $result = true;
         }
         return $result;
+    }
+    
+    /**
+     * Get the actual resource access level for the user login check
+     * @return string
+     */
+    public function getResourceAccessLevel(): string {
+        $access = $this->getAccessRestriction();
+        
+        if(count($access) > 0) {
+            if($this->language == "de") {
+                foreach($this->accessLevels as $k => $v) {
+                    if($v === $access['title']) {
+                        return $k;
+                    }
+                }
+            } 
+            return $access['title'];
+        }
+        $aclRead = $this->getData('acdh:aclRead');
+        $aclReadArr = [];
+        if(count($aclRead) > 0) {
+            foreach($aclRead as $v) {
+                $aclReadArr[] = $v['value'];
+            }
+            return implode(',', $aclReadArr);
+        }
+        return 'public';
     }
 
     /**
