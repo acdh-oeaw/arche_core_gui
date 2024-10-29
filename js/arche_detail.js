@@ -463,7 +463,7 @@ jQuery(function ($) {
     }
 
     //httpd logout
-    $(document).delegate("#httpd-logout", "click", function (e) {
+    $(document).delegate(".httpd-logout-btn", "click", function (e) {
         $.ajax({
             url: "/api/user/logout?redirect=" + currentUrl,
             type: "GET",

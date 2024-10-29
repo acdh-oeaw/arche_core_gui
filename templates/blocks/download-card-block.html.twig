@@ -42,52 +42,52 @@
                                 {{ "You are logged in as"|trans }}: <span id="user-logged-text"></span>
                             </div>
                             <div class="pt-2">
-                                <div class="col-lg-12 d-none gui-https-logout"><a href="#" class="btn btn-arche-blue" id="httpd-logout">{{ "Logout"|trans }}</a></div>
-                                <div class="col-lg-12 d-none gui-shibboleth-logout"><!--<a href="https://weblogin.oeaw.ac.at/idp/profile/Logout" class="btn btn-arche-blue">{{ "Logout"|trans }}</a>-->/div>
-                                </div>
+                                <div class="col-lg-12 gui-https-logout"><a href="#" class="btn btn-arche-blue httpd-logout-btn" >{{ "Logout"|trans }}</a></div>
+                                <div class="col-lg-12 gui-shibboleth-logout"><!--<a href="https://weblogin.oeaw.ac.at/idp/profile/Logout" class="btn btn-arche-blue">{{ "Logout"|trans }}</a>--></div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row d-none" id="download-not-authorized">
-                    <div class="col-lg-12">
-                        <div class="alert alert-warning">
-                            <div>
-                                {{ "You are not authorized to download this data!"|trans }}<br><br>
-                            </div>
-                            <div>
-                                {{ "You are logged in as"|trans }}: <span id="user-logged-not-auth-text"></span>
-                            </div>
-                            <div class="pt-2">
-                                <div class="col-lg-12 d-none gui-https-logout"><a href="#" class="btn btn-arche-blue" id="httpd-logout">{{ "Logout"|trans }}</a></div>
-                                <div class="col-lg-12 d-none gui-shibboleth-logout"><!-- <a href="https://weblogin.oeaw.ac.at/idp/profile/Logout" class="btn btn-arche-blue gui-shibboleth-logout-btn">{{ "Logout"|trans }}</a>--></div>                               
-                            </div>   
                         </div>
                     </div>
                 </div>
             </div>
 
-            {% set resourceApiUrl = data.getRepoUrl()  %}
-
-
-            <div class="row d-none" id="download-resource-section">
-
-                {% if data.isBinary %}
-                    <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download File"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
-
-                {% endif  %}    
-                {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
-                    <!-- <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>-->
-                    <div class="col-lg-12 pt-2 pb-2"><a href="{{ data.getRepoBaseUrl }}/dissemination/collection_download_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
-                        {% elseif data.acdhType|lower == "resource" %}
-                        {% endif  %}
-
-            </div>
-            <div class="row" id="download-metadata-section">
-                <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
+            <div class="row d-none" id="download-not-authorized">
+                <div class="col-lg-12">
+                    <div class="alert alert-warning">
+                        <div>
+                            {{ "You are not authorized to download this data!"|trans }}<br><br>
+                        </div>
+                        <div>
+                            {{ "You are logged in as"|trans }}: <span id="user-logged-not-auth-text"></span>
+                        </div>
+                        <div class="pt-2">
+                            <div class="col-lg-12 gui-https-logout"><a href="#" class="btn btn-arche-blue httpd-logout-btn">{{ "Logout"|trans }}</a></div>
+                            <div class="col-lg-12 gui-shibboleth-logout"><!-- <a href="https://weblogin.oeaw.ac.at/idp/profile/Logout" class="btn btn-arche-blue gui-shibboleth-logout-btn">{{ "Logout"|trans }}</a>--></div>                               
+                        </div>   
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        {% set resourceApiUrl = data.getRepoUrl()  %}
+
+
+        <div class="row d-none" id="download-resource-section">
+
+            {% if data.isBinary %}
+                <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download File"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
+
+            {% endif  %}    
+            {% if data.acdhType|lower == "collection" or data.acdhType|lower == "topcollection" %}
+                <!-- <a href="{{ data.getRepoBaseUrl }}dl_collection/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection"|trans }} <img src="{{ arche_dl_ico }}"/></a>-->
+                <div class="col-lg-12 pt-2 pb-2"><a href="{{ data.getRepoBaseUrl }}/dissemination/collection_download_script/{{ data.getRepoId }}" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Collection Script"|trans }} <img src="{{ arche_dl_ico }}"/></a></div>
+                    {% elseif data.acdhType|lower == "resource" %}
+                    {% endif  %}
+
+        </div>
+        <div class="row" id="download-metadata-section">
+            <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
             </div>
         </div>
     </div>
 </div>
+
