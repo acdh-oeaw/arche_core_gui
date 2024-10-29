@@ -50,7 +50,6 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function checkUserPermission() {
-        console.log("https://invalid:credentials@" + baseApiUrl + "/user/logout?redirect=" + apiUrl);
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
             let aclRead = $("#resource-acl-read").val();
@@ -78,30 +77,19 @@ jQuery(function ($) {
                         if (data.length === 0 || data.access == 'login') {
                             $('#download-not-logged').removeClass('d-none');
                         } else {
-                            if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {
-                                $('#download-resource-section').removeClass('d-none');
-                                $('#download-logged').removeClass('d-none');
-                                $('#download-not-logged').addClass('d-none');
-                                $('#user-logged-text').html(data.username + ' : ' + data.roles);
-                                $('#download-logout').removeClass('d-none');
+                            if (data.access == 'authorized' || (acdhType.toLowerCase() === 'collection' || acdhType.toLowerCase() === 'topcollection')) {                                
                                 $('#download-restricted').addClass('d-none');
-                                if (data.loginMethod == 'shibboleth') {
-                                    $('.gui-shibboleth-logout').removeClass('d-none');
-                                } else {
-                                    $('.gui-https-logout').removeClass('d-none');
-                                }
+                                $('#download-not-logged').addClass('d-none');                                
+                                $('#download-logged').removeClass('d-none');
+                                $('#download-not-authorized').addClass('d-none');
+                                $('#download-resource-section').removeClass('d-none');
+                                $('#user-logged-text').html(data.username + ' : ' + data.roles);                                
                             } else if (data.access == 'not authorized') {
                                 $('#download-restricted').addClass('d-none');
-                                $('#download-logged').removeClass('d-none');
+                                $('#download-not-logged').addClass('d-none');
+                                $('#download-logged').addClass('d-none');
                                 $('#download-not-authorized').removeClass('d-none');
-                                $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);
-                                $('#user-not-authorized-text').html(Drupal.t("You don't have enough rights!"));
-                                $('#download-logout').removeClass('d-none');
-                                if (data.loginMethod == 'shibboleth') {
-                                    $('.gui-shibboleth-logout').removeClass('d-none');
-                                } else {
-                                    $('.gui-https-logout').removeClass('d-none');
-                                }
+                                $('#user-logged-not-auth-text').html(data.username + ' : ' + data.roles);                                
                             } else if (data.access == 'login') {
                                 $('#download-not-logged').removeClass('d-none');
                             }
