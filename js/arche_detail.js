@@ -125,9 +125,10 @@ jQuery(function ($) {
             fetchPublicationsRelatedResourcesTable();
         }
 
-
+        // ok
         if (acdhType === 'organisation') {
             fetchOrganisationInvolvedTable();
+            fetchOrganisationHasMembersTable();
         }
 
         if (acdhType === 'concept') {
@@ -160,7 +161,7 @@ jQuery(function ($) {
             "processing": true,
             "deferRender": true,
             "columnDefs": [
-                {targets: [4], orderable: false}  // Disable ordering on columns 0 and 2
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
             ],
             "bInfo": false, // Hide table information
             "language": {
@@ -187,8 +188,15 @@ jQuery(function ($) {
             'columns': [
                 {data: 'acdhid', visible: false},
                 {data: 'id', visible: false},
-
-                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                
+                {data: 'property', title: Drupal.t('Role'), render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
                         return '<a href="' + row.acdhid + '">' + row.title + '</a>';
                     }
                 },
@@ -199,19 +207,58 @@ jQuery(function ($) {
                         return "";
                     }
                 },
-                {data: 'property', title: Drupal.t('Property'), render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                }
             ],
             fnDrawCallback: function () {
             }
         });
-
-
+    }
+    
+    function fetchOrganisationHasMembersTable() {
+        
+        var hasMembersTable = $('.hasmembers-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "searchDelay": 500,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "columnDefs": [
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
+            "bInfo": false, // Hide table information
+            "language": {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/hasMembersDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    $('.row.hasmembers-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.hasmembers-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR" + error);
+                    $('.row.hasmembers-table-div').hide();
+                }
+            },
+            'columns': [
+                {data: 'title', title: Drupal.t('Name'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+                {data: 'type', visible: false},
+                {data: 'property', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
     }
 
     function fetchPersonContributedTable() {
@@ -224,7 +271,7 @@ jQuery(function ($) {
             "processing": true,
             "deferRender": true,
             "columnDefs": [
-                {targets: [4], orderable: false}  // Disable ordering on columns 0 and 2
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
             ],
             "bInfo": false, // Hide table information
             'language': {
@@ -253,8 +300,14 @@ jQuery(function ($) {
             'columns': [
                 {data: 'acdhid', visible: false},
                 {data: 'id', visible: false},
-
-                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                {data: 'property', title: Drupal.t('Role'), render: function (data, type, row, meta) {
+                        if (row.property) {
+                            return removeBeforeHash(row.property);
+                        }
+                        return "";
+                    }
+                },
+                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
                         return '<a href="' + row.acdhid + '">' + row.title + '</a>';
                     }
                 },
@@ -264,14 +317,7 @@ jQuery(function ($) {
                         }
                         return "";
                     }
-                },
-                {data: 'property', title: Drupal.t('Property'), render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                }
+                }                
             ],
             fnDrawCallback: function () {
             }

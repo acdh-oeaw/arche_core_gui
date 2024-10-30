@@ -132,6 +132,7 @@ class ResourceCoreObject {
      */
     public function getNonAcdhIdentifiers(): array {
         $result = array();
+       
         if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
                 if ((strpos((string)$v['value'], 'oeaw.ac.at') === false) && (strpos((string)$v['value'], $this->config->baseUrl) === false) ) {
@@ -1028,6 +1029,10 @@ class ResourceCoreObject {
         return $result;
     }
 
+    /**
+     * Place view Address section
+     * @return array
+     */
     public function getPlaceAddress(): array {
         $result = [];
         $props = [

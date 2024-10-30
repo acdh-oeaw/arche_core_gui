@@ -59,11 +59,11 @@
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %}    
 
-                {% if data.getData('acdh:hasDescription')  %}
+                {% if data.getData('acdh:isMemberOf')  %}
                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasDescription'), 'label':  'Description' } ) }}
+                    {'data': data.getData('acdh:isMemberOf'), 'label':  'Member of' } ) }}
                 {% endif %}    
-
+                
                 {% set propArr = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:hasPostcode',
                             'acdh:hasCity', 'acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail', 'acdh:hasUrl'] %}
                 {% if data.getDataByPropertyList(propArr)  %}
@@ -75,6 +75,14 @@
                     </div>
                 {% endif %}  
 
+                <div class="row hasmembers-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Has members"|trans }}</h5>
+                        <table class="hasmembers-table w-100  row-border" id="hasMembersDT">
+
+                        </table>
+                    </div>
+                </div>
                 
                 <div class="loading-indicator text-center d-none">
                     <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">

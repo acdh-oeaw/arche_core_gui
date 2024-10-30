@@ -57,7 +57,14 @@
                 {% if data.getData('acdh:hasAlternativeTitle')  %}
                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
-                {% endif %}    
+                {% endif %} 
+                
+                {% if data.getData('acdh:isMemberOf')  %}
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:isMemberOf'), 'label':  'Member of' } ) }}
+                {% endif %} 
+                
+                
 
                 {% set propArr = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:hasPostcode',
 'acdh:hasCity', 'acdh:hasRegion', 'acdh:hasCountry', 'acdh:hasEmail', 'acdh:hasUrl'] %}
@@ -99,8 +106,8 @@
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
 
-            {% if data.getNonAcdhIdentifier()  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifier() } ) }}
+            {% if data.getNonAcdhIdentifiers()  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
             {% endif %} 
 
 
