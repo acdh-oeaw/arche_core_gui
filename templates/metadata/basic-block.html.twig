@@ -205,6 +205,12 @@
                         </div>  
                     </div>
                 </div>
+                                        
+                <!-- PDF viewer -->
+                {% if data.isPDF() %}
+                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-pdf-viewer.html.twig', {'data': data} ) }}
+                {% endif %}
+                                        
 
             </div>
         </div>
