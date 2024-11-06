@@ -144,6 +144,23 @@ class ResourceCoreObject {
     }
     
     /**
+     * Collect Vocabs identifiers for concept
+     * @return array
+     */
+    public function getVocabsIdentifiers(): array {
+        $result = array();
+       
+        if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+                if (strpos((string)$v['value'], 'https://vocabs.acdh.oeaw.ac.at/') !== false) {
+                     $result[] = $v;
+                }
+            }
+        }
+        return $result;
+    }
+    
+    /**
      * Use geonames ID, if no geonames then whatever is not ARCHE domain, else ARCHE domain
      * @return array
      */

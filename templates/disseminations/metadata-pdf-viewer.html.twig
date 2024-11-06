@@ -92,10 +92,11 @@
 
 <script>
 
-    let PDFFILE = "{{  data.getRepoUrl()|raw  }}";
-
+    var PDFFILE = "{{  data.getRepoUrl()|raw  }}";
+    var pdfViewer = "";
+    
     /** Now create the PDFjsViewer object in the DIV */
-    let pdfViewer = new PDFjsViewer($('.maindoc'), {
+    pdfViewer = new PDFjsViewer($('.maindoc'), {
         zoomValues: [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4],
 
         /** Update the zoom value in the toolbar */
@@ -106,8 +107,8 @@
 
         /** Update the active page */
         onActivePageChanged: function (page) {
-            let pageno = $(page).data('page');
-            let pagetotal = this.getPageCount();
+            var pageno = $(page).data('page');
+            var pagetotal = this.getPageCount();
 
             pdfThumbnails.setActivePage(pageno);
             $('#pageno').val(pageno);
@@ -134,34 +135,34 @@
         console.error('Error loading PDF:', error);
     });
 
-function generateTheThumbnails() {
-     /** Create the thumbnails */
-    let pdfThumbnails = new PDFjsViewer($('.thumbnails'), {
-        zoomFillArea: 0.7,
-        onNewPage: function (page) {
-            page.on('click', function () {
-                if (!pdfViewer.isPageVisible(page.data('page'))) {
-                    pdfViewer.scrollToPage(page.data('page'));
-                }
-            })
-        },
-        onDocumentReady: function () {
-            this.setZoom('fit');
-        }
-    });
+    function generateTheThumbnails() {
+        /** Create the thumbnails */
+        var pdfThumbnails = new PDFjsViewer($('.thumbnails'), {
+            zoomFillArea: 0.7,
+            onNewPage: function (page) {
+                page.on('click', function () {
+                    if (!pdfViewer.isPageVisible(page.data('page'))) {
+                        pdfViewer.scrollToPage(page.data('page'));
+                    }
+                })
+            },
+            onDocumentReady: function () {
+                this.setZoom('fit');
+            }
+        });
 
-    pdfThumbnails.setActivePage = function (pageno) {
-        this.$container.find('.pdfpage').removeClass('selected');
-        let $npage = this.$container.find('.pdfpage[data-page="' + pageno + '"]').addClass('selected');
-        if (!this.isPageVisible(pageno)) {
-            this.scrollToPage(pageno);
-        }
-    }.bind(pdfThumbnails);
+        pdfThumbnails.setActivePage = function (pageno) {
+            this.$container.find('.pdfpage').removeClass('selected');
+            var $npage = this.$container.find('.pdfpage[data-page="' + pageno + '"]').addClass('selected');
+            if (!this.isPageVisible(pageno)) {
+                this.scrollToPage(pageno);
+            }
+        }.bind(pdfThumbnails);
 
-    pdfThumbnails.loadDocument(PDFFILE);
-}
-   
-   
+        pdfThumbnails.loadDocument(PDFFILE);
+    }
+
+
 
 
     function dataURItoBinArray(data) {
@@ -175,8 +176,8 @@ function generateTheThumbnails() {
     }
     /** Function to load a PDF file using the input=file API */
     document.querySelector("#opendoc").addEventListener("change", function (e) {
-        let file = e.target;
-        let reader = new FileReader();
+        var file = e.target;
+        var reader = new FileReader();
         reader.onload = async function () {
             await pdfViewer.loadDocument({data: dataURItoBinArray(reader.result.replace(/^data:.*;base64,/, ""))});
             await pdfThumbnails.loadDocument({data: dataURItoBinArray(reader.result.replace(/^data:.*;base64,/, ""))}).then(() => pdfThumbnails.setZoom("fit"));
@@ -202,10 +203,5 @@ function generateTheThumbnails() {
             document.querySelector('.thumbnails').classList.remove('hide');
         }
     }
-
-
-
-
-
 
 </script>

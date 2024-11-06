@@ -55,85 +55,132 @@
                 </div>
 
                 {% if data.getData('acdh:hasAlternativeTitle')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %}    
-                
+
+                <div class="row">
+                    <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />
+                    <div class="col-lg-12 ">
+                        {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
+                            <h5>{{ "Cite Collection"|trans  }}</h5>
+                        {% elseif data.getAcdhType()|lower == 'resource' %}
+                            <h5>{{ "Cite Resource"|trans  }}</h5>
+                        {% endif %}
+                        <div class="basic-inside-content-div" id="cite-main-div">
+                            <div id="cite-loader">
+                                <center><div class="loader-cite"></div></center>
+                            </div>
+                            <div class="row mt-4">
+
+                                <div class="col-lg-12 hidden" id="cite-div"> 
+
+                                    <div class="row">
+                                        <div class="col-lg-12 hidden"  id='cite-content-div'>
+                                        </div>
+                                        <figure class="highlight" id="cite-content-figure"></figure>
+                                        <div class="col-lg-12">
+                                            <div class="container">
+                                                <div class="row justify-content-end">
+                                                    <div class="col-auto">
+                                                        <div class="cite-selector" id="cite-selector-div"></div>
+                                                        <div id="dropdown-container">
+                                                            <select id="cite-dropdown" class="btn btn-secondary dropdown-toggle">
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <a href="#" class="ms-auto btn btn-arche-blue cite" id="copyCite">{{ "Copy"|trans }}</a><br>
+                                                        <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <ul>                                    
                 {% if data.getData('acdh:hasAuthor')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasAuthor'), 'label':  'Author' } ) }}
+                    <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAuthor'), 'label':  'Author' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasEditor')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasEditor'), 'label':  'Editor' } ) }}
+                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasEditor'), 'label':  'Editor' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasSeriesInformation')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasSeriesInformation'), 'label':  'Series Information' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasSeriesInformation'), 'label':  'Series Information' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasExtent')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasExtent'), 'label':  'Extent' } ) }}
+                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasExtent'), 'label':  'Extent' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasPages')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasPages'), 'label':  'Pages' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPages'), 'label':  'Pages' } ) }}</li>
                 {% endif %} 
-                
-                
+
+
                 {% if data.getData('acdh:hasIssuedDate')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasIssuedDate'), 'label':  'Issued Date', 'dateformat': 'Y' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasIssuedDate'), 'label':  'Issued Date', 'dateformat': 'Y' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasCity')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasCity'), 'label':  'City' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasCity'), 'label':  'City' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasRegion')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasRegion'), 'label':  'Region' } ) }}
+                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasRegion'), 'label':  'Region' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasPublisher')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasPublisher'), 'label':  'Publisher' } ) }}
+                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPublisher'), 'label':  'Publisher' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasUrl')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}</li>
                 {% endif %} 
 
                 {% if data.getData('acdh:hasLanguage')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasLanguage'), 'label':  'Language' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasLanguage'), 'label':  'Language' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasEditorialPractice')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasEditorialPractice'), 'label':  'Editorial Practice' } ) }}
+                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasEditorialPractice'), 'label':  'Editorial Practice' } ) }}</li>
                 {% endif %} 
-                
+
                 {% if data.getData('acdh:hasNote')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}
+                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}</li>
                 {% endif %} 
-                
+                </ul>   
                 <div class="loading-indicator text-center d-none">
                     <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
                 </div>
-                
+
                 <div class="row related-table-div d-none pt-3 basic-inside-content-div">
                     <div class="col-lg-12 child-tree-div">
                         <h5 class="pb-2">{{ "Related Resource(s)"|trans }}</h5>
                         <table class="related-table w-100  row-border" id="involvedDT">
-                            
+
                         </table>
                     </div>
                 </div>
@@ -150,8 +197,8 @@
             -->
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
-            
-              {% if data.getNonAcdhIdentifiers()  %}
+
+            {% if data.getNonAcdhIdentifiers()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
             {% endif %} 
 

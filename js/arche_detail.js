@@ -106,7 +106,6 @@ jQuery(function ($) {
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
 
-        initExpertView();
         if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
             fetchChildTree();
             fetchRPR();
@@ -120,7 +119,7 @@ jQuery(function ($) {
         if (acdhType === 'person') {
             fetchPersonContributedTable();
         }
-        //need to check the table
+        //need to check the table and need to write the ispartof values
         if (acdhType === 'publication') {
             fetchPublicationsRelatedResourcesTable();
         }
@@ -146,6 +145,11 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchNextPrevItem();
         showTitleImage();
+        
+        setTimeout(function () {
+            initExpertView();
+        }, 2000);
+
 
     }
 
@@ -188,7 +192,7 @@ jQuery(function ($) {
             'columns': [
                 {data: 'acdhid', visible: false},
                 {data: 'id', visible: false},
-                
+
                 {data: 'property', title: Drupal.t('Role'), render: function (data, type, row, meta) {
                         if (row.property) {
                             return removeBeforeHash(row.property);
@@ -212,9 +216,9 @@ jQuery(function ($) {
             }
         });
     }
-    
+
     function fetchOrganisationHasMembersTable() {
-        
+
         var hasMembersTable = $('.hasmembers-table').DataTable({
             "paging": true,
             "searching": true,
@@ -317,7 +321,7 @@ jQuery(function ($) {
                         }
                         return "";
                     }
-                }                
+                }
             ],
             fnDrawCallback: function () {
             }
@@ -1036,13 +1040,14 @@ jQuery(function ($) {
             var id = url;
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
-            expertTable.ajax.reload();
+            
             fetchChildTree();
             resId = id;
             //fetchMetadata();
             reloadDetail(id);
             checkDetailCardEvents();
             //loadAdditionalData();
+            //expertTable.ajax.reload();
             e.preventDefault();
         } else {
             e.preventDefault();
@@ -1148,11 +1153,13 @@ jQuery(function ($) {
                         createCiteContent(data, 'BiblaTex', false);
                     });
                 } catch (error) {
+                    $('#cite-loader').addClass('hidden');
                     createCiteErrorResponse(error);
                     return false;
                 }
 
             }).fail(function (xhr) {
+                $('#cite-loader').addClass('hidden');
                 createCiteErrorResponse(Drupal.t("CITE is not available!"));
                 return false;
             });
