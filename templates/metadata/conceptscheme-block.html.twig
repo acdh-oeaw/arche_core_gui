@@ -26,10 +26,8 @@
             <div class="container-fluid" id="meta-content-container">
                 <!-- Available Date and type -->
                 <div class="row">
-                    <div class="col-6">
-                        <p class="mb-0">{{ "Available since"|trans }} {{ data.getAvailableDate() }}</p>
-                    </div>
-                    <div class="col-6 flex-gap-col flex-reverse mb-0" >
+                    
+                    <div class="col-12 flex-gap-col flex-reverse mb-0" >
                         {% if data.getAcdhType %}
                             <!-- <img src="{{arche_tooltip_ico}}" class="tooltip-icon"> -->
                             <p class="btn-detail-type-gray no-btn" >{{ data.getAcdhType() }}</p> 
@@ -61,77 +59,21 @@
                         <h4 id="av-hasTitle">{{ data.getTitle() }}</h4>
                     </div>
                 </div>
+                    
+                {% if data.getData('acdh:hasAlternativeTitle')  %}
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
+                {% endif %}  
 
-                <!-- CITE BLOCK -->
-                {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' or  data.getAcdhType()|lower == 'resource' or  data.getAcdhType()|lower == 'metadata' %}
-
-                    <div class="row">
-                        <input type="hidden" id="biblaTexUrl" value="{{ data.getBiblatexUrl() }}" />
-                        <div class="col-lg-12 ">
-                            {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
-                                <h5>{{ "Cite Collection"|trans  }}</h5>
-                            {% elseif data.getAcdhType()|lower == 'resource' %}
-                                <h5>{{ "Cite Resource"|trans  }}</h5>
-                            {% endif %}
-                            <div class="basic-inside-content-div" id="cite-main-div">
-                                <div id="cite-loader">
-                                    <center><div class="loader-cite"></div></center>
-                                </div>
-                                <div class="row mt-4">
-
-                                    <div class="col-lg-12 hidden" id="cite-div"> 
-
-                                        <div class="row">
-                                            <div class="col-lg-12 hidden"  id='cite-content-div'>
-                                            </div>
-                                            <figure class="highlight" id="cite-content-figure"></figure>
-                                            <div class="col-lg-12">
-                                                <div class="container">
-                                                    <div class="row justify-content-end">
-                                                        <div class="col-auto">
-                                                            <div class="cite-selector" id="cite-selector-div"></div>
-                                                            <div id="dropdown-container">
-                                                                <select id="cite-dropdown" class="btn btn-secondary dropdown-toggle">
-                                                                </select>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <a href="#" class="ms-auto btn btn-arche-blue cite" id="copyCite">{{ "Copy"|trans }}</a><br>
-                                                            <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                {% endif%}
-
-                <!-- SUMMARY -->
-                <div class="row" id="ad-summary">
-                    <div class="col-lg-12 ">
-                        <h5>{{ "Summary"|trans }}</h5>
-                    </div>
-                    {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
-                </div>
-
-
-
-
-
-                <div class="row involved-table-div d-none pt-3 basic-inside-content-div">
-                    <div class="col-lg-12 child-tree-div">
-                        <h5 class="pb-2">{{ "Involved in"|trans }}</h5>
-                        <table class="involved-table w-100  row-border" id="involvedDT">
-
-                        </table>
-                    </div>
-                </div>
+                {% if data.getData('dc:description')  %}
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('dc:description'), 'label':  'Description' } ) }}
+                {% endif %}
+                
+                <!-- 
+                Collection Content 
+                    List all Concepts – show them as “files” instead of “folders” in the list.
+                -->
 
             </div>
         </div>
@@ -143,57 +85,32 @@
             </div>
             -->
 
-
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
 
-            {% if data.getMapType()|lower == 'polygon'  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}
-            {% elseif data.getMapType()|lower == 'multipolygon' %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'multipolygon' } ) }}
-            {% elseif data.getMapType()|lower == 'coordinates' %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getCoordinates(), 'type': 'coordinates' } ) }}
+            {% if data.getVocabsIdentifiers()  %}
+               {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getVocabsIdentifiers() } ) }}
             {% endif %}    
-
-
-            {% if data.getPidOrAcdhIdentifier()  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/pid-card-block.html.twig', {'data': data.getPidOrAcdhIdentifier() } ) }}
-            {% endif %}    
-
+            
             {% if data.getLicenseData()|length > 0 %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/licenses-card-block.html.twig', {'obj': data.getLicenseData() } ) }}
             {% endif %}    
-
+            
             {% if data.getCreditsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
-            {% endif %}     
-
+            {% endif %} 
+            
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
             {% endif %}
 
             {% if data  %}
-
                 {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }} 
-
+            {% endif %}
+            
+            {% if data.getData('owl:versionInfo')  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/owl-versions-card-block.html.twig', {'data': data.getData('owl:versionInfo') } ) }}
             {% endif %}
 
-            {% if data.hasVersion  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
-            {% endif %}
-
-            <!-- TOP COLLECTION / COLLECTION -->
-            {% if data.getAcdhType()|lower == 'topcollection' or data.getAcdhType()|lower == 'collection' %}
-                {% if data.getCollectionTechnicalData()|length > 0  %}
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/collection-technical-card-block.html.twig', {'data': data.getCollectionTechnicalData() } ) }}
-                {% endif %}   
-            {% endif %}   
-
-            <!-- RESOURCE / METADATA -->
-            {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
-                {% if data.getResMetaTechnicalData()|length > 0  %}
-                    {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.getResMetaTechnicalData() } ) }}
-                {% endif %}   
-            {% endif %}   
         </div>
     </div>
 </div>

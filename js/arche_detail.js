@@ -129,13 +129,17 @@ jQuery(function ($) {
             fetchOrganisationInvolvedTable();
             fetchOrganisationHasMembersTable();
         }
-
+        // ok
         if (acdhType === 'concept') {
             fetchPlaceSpatialTable();
         }
-
+        
         if (acdhType === 'project') {
             fetchPlaceSpatialTable();
+        }
+        
+        if (acdhType === 'conceptscheme') {
+            fetchCollectionContentTable();
         }
 
         showCiteBlock();
@@ -153,6 +157,12 @@ jQuery(function ($) {
 
     }
 
+    //conceptscheme view DT
+    function fetchCollectionContentTable() {
+        
+    }
+    
+    // organisations view DT
     function fetchOrganisationInvolvedTable() {
         console.log("loading");
         $('.loading-indicator').removeClass('d-none');
