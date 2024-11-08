@@ -14,6 +14,7 @@ jQuery(function ($) {
     var currentUrl = $(location).attr('href');
     var apiUrl = currentUrl.replace('/browser/metadata/', '/api/');
     var baseApiUrl = drupalSettings.arche_core_gui.baseApiUrl;
+    var acdhType = $('#resource-type').val();
 
     $(document).ready(function () {
         addButtonToDescriptionText();
@@ -30,8 +31,16 @@ jQuery(function ($) {
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
+        if (acdhType == 'topcollection' || acdhType == 'collection' || acdhType == 'resource' || acdhType == 'metadata') {
+            checkUserPermission();
+        } else {
+            $('#download-restricted').addClass('d-none');
+            $('#download-not-logged').addClass('d-none');
+            $('#download-logged').removeClass('d-none');
+            $('#download-not-authorized').addClass('d-none');
+            $('#download-resource-section').removeClass('d-none');
+        }
 
-        checkUserPermission();
 
     });
 
@@ -53,7 +62,7 @@ jQuery(function ($) {
         if ($('div').hasClass('download-login-div')) {
             let resourceId = $("#resId").val();
             let aclRead = $("#resource-acl-read").val();
-            let acdhType = $('#resource-type').val();
+
             let resourceAccess = $('#resource-access').val();
             //if the resource or collection is public then we hide the login
             //and display all download possbility
@@ -61,6 +70,7 @@ jQuery(function ($) {
 
                 $('#download-resource-section').removeClass('d-none');
                 $('#download-not-logged').addClass('d-none');
+
             } else {
                 $('#download-not-logged').removeClass('d-none');
                 var accessLevel = 'public';
@@ -133,11 +143,12 @@ jQuery(function ($) {
         if (acdhType === 'concept') {
             fetchPlaceSpatialTable();
         }
-        
+        //waiting for instructions
         if (acdhType === 'project') {
             fetchPlaceSpatialTable();
         }
-        
+
+        // needs to be developed the Collection Content 
         if (acdhType === 'conceptscheme') {
             fetchCollectionContentTable();
         }
@@ -149,7 +160,7 @@ jQuery(function ($) {
         fetchBreadcrumb();
         fetchNextPrevItem();
         showTitleImage();
-        
+
         setTimeout(function () {
             initExpertView();
         }, 2000);
@@ -159,12 +170,58 @@ jQuery(function ($) {
 
     //conceptscheme view DT
     function fetchCollectionContentTable() {
-        
+        $('.loading-indicator').removeClass('d-none');
+        var involvedTable = $('.collection-content-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "searchDelay": 500,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "columnDefs": [
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
+            "bInfo": false, // Hide table information
+            "language": {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/collectionContentDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
+                    $('.row.collection-content-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.collection-content-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR" + error);
+                    $('.row.collection-content-table-div').hide();
+                    $('.loading-indicator').addClass('d-none');
+                }
+            },
+            'columns': [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+
+                {data: 'property', visible: false},
+                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
     }
-    
+
     // organisations view DT
     function fetchOrganisationInvolvedTable() {
-        console.log("loading");
         $('.loading-indicator').removeClass('d-none');
         var involvedTable = $('.involved-table').DataTable({
             "paging": true,
@@ -1050,7 +1107,7 @@ jQuery(function ($) {
             var id = url;
             id = id.replace("/browser/metadata/", "");
             id = id.replace("/browser//metadata/", "");
-            
+
             fetchChildTree();
             resId = id;
             //fetchMetadata();

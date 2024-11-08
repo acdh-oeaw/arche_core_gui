@@ -72,7 +72,7 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
         $text = str_replace(array_keys($replace), array_values($replace), $text);
         return $text;
     }
-
+    
     /**
      * This function is called if the user is jumping inside the arche content, 
      * it will rerender the metadata view
