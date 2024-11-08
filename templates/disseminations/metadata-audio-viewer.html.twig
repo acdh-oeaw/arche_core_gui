@@ -8,12 +8,12 @@
                 <div id="waveform"></div>
                 <div id="loader" style="display: none;">Audio is loading...</div>
                 <div class="controls" style="text-align: center;">
-                    <button class="btn btn-primary" data-action="play" id="audioPlayerBtn">
+                    <button class="ms-auto btn btn-arche-blue" data-action="play" id="audioPlayerBtn">
                         <i class="glyphicon glyphicon-play"></i>
                         Play
                         /
                         <i class="glyphicon glyphicon-pause"></i>
-                        Pause
+                        Pause Audio
                     </button>
                 </div>
             </div>
@@ -24,20 +24,28 @@
 <script type="text/javascript">
     $(document).delegate("#audioPlayerBtn", "click", function (e) {
         console.log("clicked");
+        document.getElementById('loader').style.display = 'block';
         $('#waveform').empty();
         var player = WaveSurfer.create({container: '#waveform', waveColor: 'violet',
             progressColor: 'purple', });
         // Show loader when audio starts loading
         player.on('loading', (progress) => {
-            document.getElementById('loader').style.display = 'block';
+            console.log('loading...');
+            console.log(progress);
         });
-        
+
         player.on('ready', function () {
             console.log("playing");
             document.getElementById('loader').style.display = 'none';
             player.play();
         });
-        
+
+        player.on('error', (error) => {
+            //document.getElementById('loader').style.display = 'none';
+            console.error('Error loading audio:', error);
+            $('#loader').html('Failed to load audio. Please try again or check the audio source.');
+        });
+
         player.load('{{ data.getRepoUrl() }}');
         // toggle play button
         document
