@@ -1,95 +1,78 @@
 <div class="container">
     <div class="row justify-content-center text-center">
-        <div>
-            {%  if basic.getRepoid() %}
-                <div>
-                    <a href="/browser/metadata/{{ basic.getRepoid() }}"><span>{{ "Back to the resource"|trans }}</span></a>
-                    <br/><br/>
-                </div>
-            {% endif %}   
-
-            {%  if basic.getTitle() %}
-                <h2>{{ basic.getTitle() }} </h2>
-            {% endif %}
+        <br>
+        <div id="controls">
+            <button id="prevButton" class="btn btn-arche-blue">Previous</button>
+            <span id="currentPage-iiif"></span>
+            <button id="nextButton" class="btn btn-arche-blue">Next</button>
         </div>
+        <br>
+        <div id="iiif_viewer" style="width:80%; height:750px;"></div>
 
-        {% if  data  %}    
-            <br>
-            <div id="controls">
-                <button id="prevButton" class="btn btn-arche-blue">Previous</button>
-                <span id="currentPage-iiif"></span>
-                <button id="nextButton" class="btn btn-arche-blue">Next</button>
-            </div>
-            <br>
-            <div id="iiif_viewer" style="width:80%; height:750px;"></div>
+        <script src="/browser/modules/contrib/arche_core_gui/js/iiif/openseadragon.js"></script>
 
-            <script src="/browser/modules/contrib/arche_core_gui/js/iiif/openseadragon.js"></script>
+        <script type="text/javascript">
+            var currentPage = 0;
+            var totalPages = 0;
+            var canvases = [];
+            var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}&mode=images";
+            //var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id=https%3A%2F%2Farche-curation.acdh-dev.oeaw.ac.at%2Fapi%2F2352&mode=images";
 
-            <script type="text/javascript">
-                var currentPage = 0;
-                var totalPages = 0;
-                var canvases = [];
-                var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ basic.getRepoUrl() }}&mode=images";
-                //var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id=https%3A%2F%2Farche-curation.acdh-dev.oeaw.ac.at%2Fapi%2F2352&mode=images";
+            var viewer = OpenSeadragon({
+                id: "iiif_viewer",
+                sequenceMode: true,
+                prefixUrl: "/browser/modules/contrib/arche_core_gui/js/iiif/images/",
+                showNavigator: true,
+                showSequenceControl: false,
+                navigatorPosition: "BOTTOM_LEFT",
+                showRotationControl: true,
+                "tiles": [{
+                        "scaleFactors": [1, 2, 4, 8, 16, 32],
+                        "width": 1024
+                    }]
+            });
 
-                var viewer = OpenSeadragon({
-                    id: "iiif_viewer",
-                    sequenceMode: true,
-                    prefixUrl: "/browser/modules/contrib/arche_core_gui/js/iiif/images/",
-                    showNavigator: true,
-                    showSequenceControl: false,
-                    navigatorPosition: "BOTTOM_LEFT",
-                    showRotationControl: true,
-                    "tiles": [{
-                            "scaleFactors": [1, 2, 4, 8, 16, 32],
-                            "width": 1024
-                        }]
-                });
+            $.getJSON(imageUrl, function (data) {
+                // Extract the tile source from the IIIF manifest
+                currentPage = data.index;
+                totalPages = data.images.length;
+                canvases = data.images;
+                loadPage(currentPage);
+                // Update page number display
+                updatePageNumber();
+            }).fail(function () {
+                console.log("Failed to load IIIF manifest");
+            });
 
-                $.getJSON(imageUrl, function (data) {
-                    // Extract the tile source from the IIIF manifest
-                    currentPage = data.index;
-                    totalPages = data.images.length;
-                    canvases = data.images;
+            // Update the page number display
+            function updatePageNumber() {
+                $('#currentPage-iiif').text((currentPage + 1) + ' / ' + totalPages);
+            }
+
+            // Load a specific page
+            function loadPage(pageIndex) {
+                var tileSource = canvases[pageIndex];
+                // Update OpenSeadragon with the new page
+                viewer.open(tileSource);
+            }
+
+            // Previous button click event
+            $('#prevButton').click(function () {
+                if (currentPage > 0) {
+                    currentPage--;
                     loadPage(currentPage);
-                    // Update page number display
                     updatePageNumber();
-                }).fail(function () {
-                    console.log("Failed to load IIIF manifest");
-                });
-
-                // Update the page number display
-                function updatePageNumber() {
-                    $('#currentPage-iiif').text((currentPage + 1) + ' / ' + totalPages);
                 }
+            });
 
-                // Load a specific page
-                function loadPage(pageIndex) {
-                    var tileSource = canvases[pageIndex];
-                    // Update OpenSeadragon with the new page
-                    viewer.open(tileSource);
+            // Next button click event
+            $('#nextButton').click(function () {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    loadPage(currentPage);
+                    updatePageNumber();
                 }
-
-                // Previous button click event
-                $('#prevButton').click(function () {
-                    if (currentPage > 0) {
-                        currentPage--;
-                        loadPage(currentPage);
-                        updatePageNumber();
-                    }
-                });
-
-                // Next button click event
-                $('#nextButton').click(function () {
-                    if (currentPage < totalPages - 1) {
-                        currentPage++;
-                        loadPage(currentPage);
-                        updatePageNumber();
-                    }
-                });
-            </script>
-        {% else %}   
-            <span style="color:red; font-size: 20px; font-weight: bold;">Loris Url does not exists!</span>
-        {% endif %}
+            });
+        </script>
     </div>
 </div>
