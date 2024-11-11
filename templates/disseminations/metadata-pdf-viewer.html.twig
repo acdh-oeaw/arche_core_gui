@@ -1,207 +1,197 @@
-{{ attach_library('arche_core_gui/dissemination-pdf') }}
+<!-- Include PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 
-<script>
-    var pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
-</script>
+<style type="text/css">
+    #pdf-viewer-container {
+        display: flex;
+        height: 600px; /* Set the desired height here */
+    }
 
-<div class="container pdfviewer-container d-none">
-    <div class="row">
-        <div class="pdfviewer">
-            <div class="pdftoolbar">
-                <button class="pushed" onclick="togglethumbs(this);"><i class="material-icons-outlined">view_sidebar</i></button>
-                <div class="v-sep"></div>
-                <button onclick="pdfViewer.prev();"><i class="material-icons-outlined">arrow_upward</i></button>
-                <div class="v-sep"></div>
-                <button onclick="pdfViewer.next();"><i class="material-icons-outlined">arrow_downward</i></button>
-                <input id="pageno" class="pageno" type="number" class="form-control form-control-sm d-inline w-auto" value="1" min="1" max="1000" onchange="pdfViewer.scrollToPage(parseInt(this.value))">
-                <span id="pagecount" class="pageno"></span>
-                <div class="divider"></div>
-                <button onclick="pdfViewer.setZoom('in')"><i class="material-icons-outlined">add</i></button>
-                <div class="v-sep"></div>
-                <button onclick="pdfViewer.setZoom('out')"><i class="material-icons-outlined">remove</i></button>
-                <div class="dropdown">
-                    <div class="dropdown-value" onclick="this.parentNode.classList.toggle('show');">
-                        <span class="zoomval">100%</span>
-                        <i class="material-icons-outlined">
-                            keyboard_arrow_down
-                        </i>                    
-                    </div>
-                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show');">
-                        <a href="#" onclick='pdfViewer.setZoom("width");
-                                return false;'>{{ "Adjust width"|trans }}</a>
-                        <a href="#" onclick='pdfViewer.setZoom("height");
-                                return false;'>{{ "Adjust height"|trans }}</a>
-                        <a href="#" onclick='pdfViewer.setZoom("fit");
-                                return false;'>{{ "Fit page"|trans }}</a>
-                        <a href="#" onclick='pdfViewer.setZoom(0.5);
-                                return false;'>50%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(0.75);
-                                return false;'>75%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(1);
-                                return false;'>100%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(1.25);
-                                return false;'>125%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(1.5);
-                                return false;'>150%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(2);
-                                return false;'>200%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(3);
-                                return false;'>300%</a>
-                        <a href="#" onclick='pdfViewer.setZoom(4);
-                                return false;'>400%</a>
-                    </div>                    
-                </div>
-                <div class="divider"></div>
-                <!-- <label class="button" for="opendoc"><i class="material-icons-outlined">file_open</i></label> -->
-                <input id="opendoc" type="file" accept="application/pdf">
-                <a id="filedownload" class="button"><i class="material-icons-outlined">file_download</i></a>
-                <div class="dropdown dropdown-right">
-                    <div onclick="this.parentNode.classList.toggle('show');">
-                        <button><i class="material-icons-outlined">keyboard_double_arrow_right</i></button>
-                    </div>
-                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show');">
-                        <a href="#" onclick='pdfViewer.scrollToPage(1);
-                                return false;'><i class="material-icons-outlined">vertical_align_top</i>{{ "First page"|trans }}</a>
-                        <a href="#" onclick='pdfViewer.scrollToPage(pdfViewer.pdf.numPages);
-                                return false;'><i class="material-icons-outlined">vertical_align_bottom</i>{{ "Last page"|trans }}</a>
-                        <div class="h-sep"></div>
-                        <a href="#" onclick='pdfViewer.rotate(-90, true);
-                                pdfThumbnails.rotate(-90, true).then(() => pdfThumbnails.setZoom("fit"));'><i class="material-icons-outlined">rotate_90_degrees_ccw</i>{{ "Rotate countrary clockwise"|trans }}</a>
-                        <a href="#" onclick='pdfViewer.rotate(90, true);
-                                pdfThumbnails.rotate(90, true).then(() => pdfThumbnails.setZoom("fit"));'><i class="material-icons-outlined">rotate_90_degrees_cw</i>{{ "Rotate clockwise"|trans }}</a>
-                        <div class="h-sep"></div>
-                        <a href="#" onclick='document.querySelector(".pdfjs-viewer").classList.remove("horizontal-scroll");
-                                pdfViewer.refreshAll();'><i class="material-icons-outlined">more_vert</i>{{ "Vertical scroll"|trans }}</a>
-                        <a href="#" onclick='setHorizontal()'><i class="material-icons-outlined">more_horiz</i>{{ "Horizontal scroll"|trans }}</a>
-                    </div>                    
-                </div>                
+    #thumbnail-container {
+        width: 150px;
+        overflow-y: auto;
+        border-right: 1px solid #ccc;
+        height: 100%; /* Ensures it matches the height of the main container */
+    }
+
+    #pdf-container {
+        flex: 1;
+        overflow: auto;
+        border: 1px solid #ccc;
+        height: 100%; /* Ensures it matches the height of the main container */
+    }
+
+</style>
+
+<div id="pdf-toolbar">
+
+    <div class="container">
+        <div class="row justify-content-center align-items-center g-4 my-3">
+            <!-- Paging Controls Column -->
+            <div class="col-lg-6">
+                <button id="prev-page" class="btn btn-arche-blue-sidebar me-2">Previous</button>
+                <span>Page: <span id="page-num">1</span> / <span id="page-count">--</span></span>
+                <button id="next-page" class="btn btn-arche-blue-sidebar ms-2">Next</button>
             </div>
-            <div class="pdfviewer-container">
-                <div class="thumbnails pdfjs-viewer">
-                </div>
-                <div class="maindoc pdfjs-viewer">
-                    <div class="pdfpage placeholder">
-                        <p class="my-auto mx-auto">{{ "Processing the pdf..."|trans }}</p>
-                    </div>
-                </div>    
+            <!-- Zoom Controls Column -->
+            <div class="col-lg-6 text-end">
+                <button id="zoom-out" class="btn btn-arche-blue-sidebar me-2">Zoom Out</button>
+                <button id="zoom-in" class="btn btn-arche-blue-sidebar ms-2">Zoom In</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="pdf-viewer-container" >
+    <div id="thumbnail-container"></div>
+    <div id="pdf-container" ></div>
+</div>
+
+
+
 <script>
+    $(document).ready(function () {
+        const url = '{{  data.getRepoUrl()|raw  }}'; // Replace with your PDF file URL
+        const pdfContainer = $('#pdf-container');
+        const thumbnailContainer = $('#thumbnail-container');
+        const toolbar = $('#pdf-toolbar');
+        let pdfDoc = null;
+        let currentPage = 1;
+        let scale = 1;
+        let baseScale = 1;  // Initial fit-to-container scale
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
 
-    var PDFFILE = "{{  data.getRepoUrl()|raw  }}";
-    var pdfViewer = "";
-    
-    /** Now create the PDFjsViewer object in the DIV */
-    pdfViewer = new PDFjsViewer($('.maindoc'), {
-        zoomValues: [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4],
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
-        /** Update the zoom value in the toolbar */
-        onZoomChange: function (zoom) {
-            zoom = parseInt(zoom * 10000) / 100;
-            $('.zoomval').text(zoom + '%');
-        },
+        // Load PDF document
+        pdfjsLib.getDocument(url).promise.then(function (pdf) {
+            pdfDoc = pdf;
+            $('#page-count').text(pdf.numPages);
+            renderPage(currentPage);
+            renderThumbnails();
+        }).catch((error) => {
+            $('#pdf-viewer-container').addClass('d-none');
+            $('#pdf-toolbar').addClass('d-none');
+            console.log('Error loading PDF:', error);
+        });
+// Function to render a page in the main viewer
+        function renderPage(pageNumber) {
+            pdfDoc.getPage(pageNumber).then(function (page) {
+                // Get the dimensions of the pdf-container
+                const containerWidth = pdfContainer.width();
+                const containerHeight = pdfContainer.height();
 
-        /** Update the active page */
-        onActivePageChanged: function (page) {
-            var pageno = $(page).data('page');
-            var pagetotal = this.getPageCount();
+                // Calculate base scale only if it hasn’t been set (for initial fit)
+                if (baseScale === 1) {
+                    const viewport = page.getViewport({scale: 1});
+                    const scaleX = containerWidth / viewport.width;
+                    const scaleY = containerHeight / viewport.height;
+                    baseScale = Math.min(scaleX, scaleY); // Set the initial fit-to-container scale
+                }
 
-            pdfThumbnails.setActivePage(pageno);
-            $('#pageno').val(pageno);
-            $('#pageno').attr('max', pagetotal);
-            $('#pagecount').text('de ' + pagetotal);
-        },
+                // Calculate the actual scale by multiplying baseScale with zoom scale
+                const viewport = page.getViewport({scale: baseScale * scale});
 
-        /** zoom to fit when the document is loaded and create the object if wanted to be downloaded */
-        onDocumentReady: function () {
-            pdfViewer.setZoom('fit');
-            pdfViewer.pdf.getData().then(function (data) {
-                document.querySelector('#filedownload').href = URL.createObjectURL(new Blob([data], {type: 'application/pdf'}));
-                document.querySelector('#filedownload').target = '_blank';
+                // Create and resize the canvas to fit the container
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Clear and append the canvas to the container
+                pdfContainer.empty().append(canvas);
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+                $('#page-num').text(pageNumber);
             });
         }
-    });
 
-    /** Load the initial PDF file */
-    pdfViewer.loadDocument(PDFFILE).then(function () {
-        document.querySelector('#filedownload').download = PDFFILE;
-        generateTheThumbnails();
-        $('.pdfviewer-container').removeClass('d-none');
-    }).catch((error) => {
-        console.error('Error loading PDF:', error);
-    });
+        // Function to render thumbnails
+        function renderThumbnails() {
+            thumbnailContainer.empty();
+            for (let pageNumber = 1; pageNumber <= pdfDoc.numPages; pageNumber++) {
+                pdfDoc.getPage(pageNumber).then(function (page) {
+                    const viewport = page.getViewport({scale: 0.3}); // Smaller scale for thumbnails
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-    function generateTheThumbnails() {
-        /** Create the thumbnails */
-        var pdfThumbnails = new PDFjsViewer($('.thumbnails'), {
-            zoomFillArea: 0.7,
-            onNewPage: function (page) {
-                page.on('click', function () {
-                    if (!pdfViewer.isPageVisible(page.data('page'))) {
-                        pdfViewer.scrollToPage(page.data('page'));
-                    }
-                })
-            },
-            onDocumentReady: function () {
-                this.setZoom('fit');
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    });
+
+                    // Set click handler to jump to page
+                    $(canvas).css('margin-bottom', '10px').click(function () {
+                        currentPage = pageNumber;
+                        renderPage(currentPage);
+                    });
+
+                    thumbnailContainer.append(canvas);
+                });
+            }
+        }
+
+        // Toolbar controls
+        $('#prev-page').click(function () {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
             }
         });
 
-        pdfThumbnails.setActivePage = function (pageno) {
-            this.$container.find('.pdfpage').removeClass('selected');
-            var $npage = this.$container.find('.pdfpage[data-page="' + pageno + '"]').addClass('selected');
-            if (!this.isPageVisible(pageno)) {
-                this.scrollToPage(pageno);
+        $('#next-page').click(function () {
+            if (currentPage < pdfDoc.numPages) {
+                currentPage++;
+                renderPage(currentPage);
             }
-        }.bind(pdfThumbnails);
+        });
 
-        pdfThumbnails.loadDocument(PDFFILE);
-    }
+        $('#zoom-in').click(function () {
+            scale += 0.25;
+            renderPage(currentPage);
+        });
 
+        $('#zoom-out').click(function () {
+            if (scale > 0.5) {
+                scale -= 0.25;
+                renderPage(currentPage);
+            }
+        });
 
+        // Enable dragging for zoomed content
+        pdfContainer.on('mousedown', function (e) {
+            isDragging = true;
+            startX = e.pageX - pdfContainer.offset().left;
+            startY = e.pageY - pdfContainer.offset().top;
+            scrollLeft = pdfContainer.scrollLeft();
+            scrollTop = pdfContainer.scrollTop();
+        });
 
+        $(document).on('mousemove', function (e) {
+            if (isDragging) {
+                e.preventDefault();
+                const x = e.pageX - pdfContainer.offset().left;
+                const y = e.pageY - pdfContainer.offset().top;
+                const walkX = x - startX;
+                const walkY = y - startY;
+                pdfContainer.scrollLeft(scrollLeft - walkX);
+                pdfContainer.scrollTop(scrollTop - walkY);
+            }
+        });
 
-    function dataURItoBinArray(data) {
-        // taken from: https://stackoverflow.com/a/11954337/14699733
-        var binary = atob(data);
-        var array = [];
-        for (var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-        }
-        return new Uint8Array(array);
-    }
-    /** Function to load a PDF file using the input=file API */
-    document.querySelector("#opendoc").addEventListener("change", function (e) {
-        var file = e.target;
-        var reader = new FileReader();
-        reader.onload = async function () {
-            await pdfViewer.loadDocument({data: dataURItoBinArray(reader.result.replace(/^data:.*;base64,/, ""))});
-            await pdfThumbnails.loadDocument({data: dataURItoBinArray(reader.result.replace(/^data:.*;base64,/, ""))}).then(() => pdfThumbnails.setZoom("fit"));
-        }
-        if (file.files.length > 0) {
-            reader.readAsDataURL(file.files[0]);
-            document.querySelector('#filedownload').download = document.querySelector('#opendoc').files[0].name;
-        }
+        $(document).on('mouseup', function () {
+            isDragging = false;
+        });
+
     });
-    /** Sets the document in horizontal scroll by changing the class for the pages container and refreshing the document 
-     *    so that the pages may be displayed in horizontal scroll if they were not visible before */
-    function setHorizontal() {
-        document.querySelector(".maindoc").classList.add("horizontal-scroll");
-        pdfViewer.refreshAll();
-    }
-    /** Toggles the visibility of the thumbnails */
-    function togglethumbs(el) {
-        if (el.classList.contains('pushed')) {
-            el.classList.remove('pushed');
-            document.querySelector('.thumbnails').classList.add('hide');
-        } else {
-            el.classList.add('pushed');
-            document.querySelector('.thumbnails').classList.remove('hide');
-        }
-    }
+
 
 </script>
+

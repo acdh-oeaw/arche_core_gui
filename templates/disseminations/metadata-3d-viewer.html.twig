@@ -48,7 +48,8 @@
             url: '/browser/api/get3DURL/' + resId,
             method: 'GET',
             success: function (data) {
-                console.log();
+                console.log("success");
+                console.log(data);
                 init3dhop(data);
                 setup3dhop();
                 moveToolbar(20, 20);

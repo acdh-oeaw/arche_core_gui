@@ -1064,17 +1064,6 @@ jQuery(function ($) {
             "deferRender": true
                     //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
-        /*
-         $('#expertDT').on('search.dt', function() {
-         var searchValue = $('#expertDT').DataTable().search();  // Get current search value
-         console.log("Search value: ", searchValue);
-         
-         var filteredRows = $('#expertDT').DataTable().rows({ filter: 'applied' }).data();
-         console.log("Filtered rows after search: ", filteredRows.length);
-         
-         // Optionally log all filtered rows
-         console.log("Filtered rows data: ", filteredRows);
-         });*/
     }
 
     function reloadDetail(id) {
