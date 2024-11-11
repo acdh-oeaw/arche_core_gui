@@ -1,0 +1,30 @@
+<div class="card metadata">
+    <div class="card-header">
+         <div class="row justify-content-center align-items-center">
+            <div class="col-10"><h6 class="mb-0 pb-0">{{ "Funding"|trans }}</h6></div>
+            <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div>-->
+            <div class="col-2 text-end">
+                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#fundingBody">
+                    <i class="fa fa-solid fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <div id="fundingBody" class="collapse show">
+        <div class="card-body meta-sidebar flex-column">
+            {% for key, value in data %}
+                <div>
+                    <b>{{ key|trans }}:</b></br>
+                    {% for val in value %}
+                        {% if val['id'] %} 
+                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                        {% else %}    
+                            {{ val['value'] }}<br>
+                        {% endif %}
+                    {% endfor %}    
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

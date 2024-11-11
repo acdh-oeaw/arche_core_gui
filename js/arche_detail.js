@@ -968,7 +968,10 @@ jQuery(function ($) {
      * Fetch the related resources publications for collection, topcoll. resources.
      * @returns {undefined}
      */
-    function fetchRPR() {
+    function fetchRPR(displayedView = 'tabView') {
+        if (displayedView == 'projectView') {
+            $('.loading-indicator').removeClass('d-none');
+        }
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
@@ -989,15 +992,30 @@ jQuery(function ($) {
                 'url': "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
                     if (response === undefined) {
-                        hideEmptyTabs('#associated-coll-res-tab');
+                        if (displayedView == 'projectView') {
+                            $('.associated-project-table-div').addClass('d-none');
+                            $('.loading-indicator').addClass('d-none');
+                        } else {
+                            hideEmptyTabs('#associated-coll-res-tab');
+                        }
+
                         //$('.child-elements-div').hide();
                         return;
+                    }
+
+                    if (displayedView == 'projectView') {
+                        $('.associated-project-table-div').removeClass('d-none');
+                        $('.loading-indicator').addClass('d-none');
                     }
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    hideEmptyTabs('#associated-coll-res-tab');
-                    $('.rcr-elements-div').hide();
+                    if (displayedView == 'projectView') {
+                        $('.associated-project-table-div').addClass('d-none');
+                    } else {
+                        hideEmptyTabs('#associated-coll-res-tab');
+                        $('.rcr-elements-div').hide();
+                    }
                 }
             },
             'columns': [

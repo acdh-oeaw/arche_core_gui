@@ -1014,6 +1014,63 @@ class ResourceCoreObject {
         }
         return $result;
     }
+    
+    public function getProjectDetailsData(): array {
+        $result = [];
+        $props = [
+            'acdh:hasStartDate' => 'Project Start Date',
+            'acdh:hasEndDate' => 'Project End Date',
+            'acdh:hasCollectedStartDate' => 'Start of data collection',
+            'acdh:hasCollectedEndDate' => 'End of data collection',
+            'acdh:hasAppliedMethod' => 'Methods',
+            'acdh:hasAppliedMethodDescription' => 'Methods description',
+            'acdh:hasLifeCycleStatus' => 'Life Cycle Status'
+        ];
+        
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $obj = [];
+                            if (isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+    
+    public function getFundingData(): array {
+        $result = [];
+        $props = [
+            'acdh:hasFunder' => 'Funding',
+            'acdh:hasNonLinkedIdentifier' => 'Project number'
+        ];
+
+        foreach ($props as $k => $v) {
+            if (isset($this->properties[$k])) {
+                if (is_array($this->properties[$k])) {
+                    foreach ($this->properties[$k] as $val) {
+                        if (isset($val['value'])) {
+                            $obj = [];
+                            if (isset($val['id'])) {
+                                $obj['id'] = $val['id'];
+                            }
+                            $obj['value'] = $val['value'];
+                            $result[$v][] = $obj;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 
     /**
      * Return the metadata view right box Size card content

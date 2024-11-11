@@ -55,32 +55,37 @@
                 </div>
 
                 {% if data.getData('acdh:hasAlternativeTitle')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %}    
+
+
+                <div class="row" id="ad-summary">
+                    <div class="col-lg-12 ">
+                        <h5>{{ "Summary"|trans }}</h5>
+                    </div>
+                    {{ include(arche_core_gui_path ~ '/templates/metadata/project-summary-block.html.twig', {'result': data } ) }}
+                </div>
                 
-                {% if data.getData('acdh:hasUrl')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}
-                {% endif %}  
+                <div class="loading-indicator text-center d-none">
+                    <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
+                </div>
                 
-                {% if data.getData('acdh:hasContact')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasContact'), 'label':  'Contact' } ) }}
-                {% endif %}  
-                
-                {% if data.getData('acdh:hasFunder')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasFunder'), 'label':  'Funder' } ) }}
-                {% endif %}  
-                
-                {% if data.getData('acdh:hasPrincipalInvestigator')  %}
-                   {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasPrincipalInvestigator'), 'label':  'Principal investigator' } ) }}
-                {% endif %}  
-                
-               
-                
+                 <div class="row associated-project-table-div d-none pt-3 basic-inside-content-div">
+                    <div class="col-lg-12 child-tree-div">
+                        <h5 class="pb-2">{{ "Contributed to"|trans }}</h5>
+                        <table class="rcr-table w-100  row-border" id="contributedDT">
+                            <!--<thead>
+                                <tr>
+                                    <th>{{ "Title"|trans }}</th>
+                                    <th>{{ "Type"|trans }}</th>
+                                </tr>
+                            </thead>-->
+                        </table>
+                    </div>
+                </div>
+
+
 
 
             </div>
@@ -94,10 +99,38 @@
             -->
 
             {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
-            
-              {% if data.getNonAcdhIdentifiers()  %}
+
+            {% if data.getNonAcdhIdentifiers()  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/place-id-card-block.html.twig', {'data': data.getNonAcdhIdentifiers() } ) }}
             {% endif %} 
+
+
+            {% if data.getCreditsData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
+            {% endif %}
+
+            {% if data.getFundingData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/funding-card-block.html.twig', {'data': data.getFundingData() } ) }}
+            {% endif %}
+            
+            
+            {% if data.getProjectDetailsData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/project-details-card-block.html.twig', {'data': data.getProjectDetailsData() } ) }}
+            {% endif %}
+
+
+
+            Project details [Projektdaten] 
+
+            acdh:hasStartDate – hasEndDate [Project Start - End Date/ Projektbegin/ProjektEnde] (order by earlier year first, display whole date, not just year) 
+
+            acdh:hasCollectedStartDate - acdh:hasCollectedEndDate [Start of data collection -End of data collection / Beginn der Datenerhebung - Ende der Datenerhebung] 
+
+            acdh:hasAppliedMethod [Methods/Methoden] 
+
+            acdh:hasAppliedMethodDescription  
+
+            acdh:hasLifeCycleStatus [Lebenszyklusstatus:/Life Cycle Status:] 
 
 
             {% if data  %}

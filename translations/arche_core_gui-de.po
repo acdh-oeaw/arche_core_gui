@@ -677,3 +677,20 @@ msgstr "Bildbetrachter"
 msgid "Download File"
 msgstr "Datei herunterladen"
 
+msgid "Project Start Date"
+msgstr "Projektbegin"
+
+msgid "Project End Date"
+msgstr "ProjektEnde"
+
+msgid "Start of data collection"
+msgstr "Beginn der Datenerhebung"
+
+msgid "End of data collection"
+msgstr "Ende der Datenerhebung"
+
+msgid "Methods"
+msgstr "Methoden"
+
+msgid "Methods description"
+msgstr "Methoden Beschreibung"
