@@ -42,17 +42,20 @@ class ArcheBaseController extends ControllerBase {
     
     private function checkTmpDirs(){
         //translations
-        // Ensure the directory exists (you may need to create it)
-        \Drupal::service('file_system')->prepareDirectory('public://translations', \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        $translationsDirectory = 'public://translations';
+        file_prepare_directory($translationsDirectory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
         
         //tmp_files
-        // Define a path for the temporary files subdirectory
-        // Ensure the directory exists (you may need to create it)
-        \Drupal::service('file_system')->prepareDirectory('public://tmp_files', \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        $tempDirectory = 'public://tmp_files';
+        file_prepare_directory($tempDirectory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
 
+        
         //config - sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync
-        \Drupal::service('file_system')->prepareDirectory('public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug', \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
-        \Drupal::service('file_system')->prepareDirectory('public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync', \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        $confDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug';
+        file_prepare_directory($confDir, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        $confSyncDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';
+        file_prepare_directory($confDir, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        
     }
     
     /**
