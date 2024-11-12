@@ -120,6 +120,9 @@ jQuery(function ($) {
             fetchChildTree();
             fetchRPR();
             fetchPublications();
+            setTimeout(() => {
+                hideEmptyTabs();
+            }, 1500);
         }
         //ok
         if (acdhType === 'place') {
@@ -587,7 +590,7 @@ jQuery(function ($) {
     function redrawTabs() {
         // Check if there is an active tab
         if ($('#arche-detail-tabs li.active').length === 0) {
-            // Activate the first visible tab
+            // Activae the first visible tab
             var firstVisibleTab = $('#arche-detail-tabs li:visible').first();
             $('#' + firstVisibleTab.attr('id') + ' .nav-link').addClass('active');
             $('#' + firstVisibleTab.attr('id') + '-content').addClass('show active');
@@ -595,23 +598,19 @@ jQuery(function ($) {
         }
     }
 
-    function hideEmptyTabs(tab) {
-        $(tab).addClass('hidden');
-        $(tab + '-content').addClass('hidden');
-
+    function hideEmptyTabs() {
         var tabs = ['#collection-content-tab', '#associated-publications-tab', '#associated-coll-res-tab'];
         var notHiddenTab = "";
         tabs.forEach(function (tabId, index) {
             if (!$(tabId).hasClass('hidden') && notHiddenTab === "") {
-                notHiddenTab = tabId;
-                return false;
+                $(tabId + ' a.nav-link').show();
+                $(tabId + ' a.nav-link').addClass('active');
+                $(tabId + '-content').show();
+                $(tabId + '-content').addClass('active');
+                $(tabId + '-content').removeClass('fade');
             }
         });
 
-        if (notHiddenTab) {
-            $(notHiddenTab + ' a.nav-link').tab('show');
-            $(notHiddenTab + '-content').show();
-        }
     }
 
     //httpd logout
@@ -818,9 +817,10 @@ jQuery(function ($) {
                         },
                         'success': function (nodes) {
                             if (nodes.length === 0) {
-                                //$('#collection-content-tab').hide();  // Show message for no data
-                                $('#collection-content-tab-content').hide();  // Show message for no data
-                                hideEmptyTabs('#collection-content-tab');
+                                $('#collection-content-tab').addClass('hidden');
+                                $('#collection-content-tab').removeClass('active');
+                                $('#collection-content-tab-content').addClass('hidden');
+                                $('#collection-content-tab-content').removeClass('active');
                                 //redrawTabs();
                             }
                         }
@@ -832,7 +832,10 @@ jQuery(function ($) {
                         console.log(textStatus);
                         console.log(errorThrown);
                         //$('#child-tree').html("<h3>Error: </h3><p>" + jqXHR.reason + "</p>");
-                        hideEmptyTabs('#collection-content-tab');
+                        $('#collection-content-tab').addClass('hidden');
+                        $('#collection-content-tab').removeClass('active');
+                        $('#collection-content-tab-content').addClass('hidden');
+                        $('#collection-content-tab-content').removeClass('active');
                     }
                 }
             });
@@ -893,14 +896,20 @@ jQuery(function ($) {
                 complete: function (response) {
                     if (response === undefined) {
                         //$('.child-elements-div').hide();
-                        hideEmptyTabs('#associated-publications-tab');
+                        $('#associated-publications-tab').addClass('hidden');
+                        $('#associated-publications-tab-content').addClass('hidden');
+                        $('#associated-publications-tab').removeClass('active');
+                        $('#associated-publications-tab-content').removeClass('active');
                         return;
                     }
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
                     $('.publications-elements-div').hide();
-                    hideEmptyTabs('#associated-publications-tab');
+                    $('#associated-publications-tab').addClass('hidden');
+                    $('#associated-publications-tab-content').addClass('hidden');
+                    $('#associated-publications-tab').removeClass('active');
+                    $('#associated-publications-tab-content').removeClass('active');
                 }
             },
             'columns': [
@@ -996,7 +1005,10 @@ jQuery(function ($) {
                             $('.associated-project-table-div').addClass('d-none');
                             $('.loading-indicator').addClass('d-none');
                         } else {
-                            hideEmptyTabs('#associated-coll-res-tab');
+                            $('#associated-coll-res-tab').addClass('hidden');
+                            $('#associated-coll-res-tab-content').addClass('hidden');
+                            $('#associated-coll-res-tab').removeClass('active');
+                            $('#associated-coll-res-tab-content').removeClass('active');
                         }
 
                         //$('.child-elements-div').hide();
@@ -1013,7 +1025,10 @@ jQuery(function ($) {
                     if (displayedView == 'projectView') {
                         $('.associated-project-table-div').addClass('d-none');
                     } else {
-                        hideEmptyTabs('#associated-coll-res-tab');
+                        $('#associated-coll-res-tab').addClass('hidden');
+                        $('#associated-coll-res-tab-content').addClass('hidden');
+                        $('#associated-coll-res-tab').removeClass('active');
+                        $('#associated-coll-res-tab-content').removeClass('active');
                         $('.rcr-elements-div').hide();
                     }
                 }

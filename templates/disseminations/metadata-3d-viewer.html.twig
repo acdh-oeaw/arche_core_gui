@@ -17,12 +17,16 @@
 <!--UTILITY-->
 <script type="text/javascript" src="/browser/modules/contrib/arche_core_gui/js/3d/init.js"></script>
 
-<div class="container viewer-3d-basic d-none">
+<div class="loading-indicator text-center">
+    <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
+</div>
+
+<div class="container viewer-3d-basic" >
     <div class="row justify-content-center text-center">
         <div class="col-lg-12">
             <div id="3dhop" class="tdhop" onmousedown="if (event.preventDefault)
                         event.preventDefault()"><div id="tdhlg"></div>
-                <div id="toolbar">
+                <div id="toolbar" class="viewer-3d-basic-toolbar d-none">
                     <img id="home"     title="Home"                  src="/browser/modules/contrib/arche_core_gui/images/viewer/home.png"   /><br/>
                     <img id="zoomin"   title="Zoom In"               src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomin.png" /><br/>
                     <img id="zoomout"  title="Zoom Out"              src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomout.png"/><br/>
@@ -53,30 +57,31 @@
                     setup3dhop(response);
                     moveToolbar(20, 20);
                     window.onerror = handleError;
-                    $('.viewer-3d-basic').removeClass('d-none');
+                    $('.viewer-3d-basic-toolbar').removeClass('d-none');
+                    $('.loading-indicator').addClass('d-none');
                 }
+                $('.loading-indicator').addClass('d-none');
             },
             error: function (xhr, status, error) {
                 console.log('get3DURL xhr :');
                 console.log(xhr);
                 console.log('get3DURL status :' + status);
                 console.log('get3DURL error :' + error);
+                $('.loading-indicator').addClass('d-none');
             }
         });
     }
 
     function handleError(message, source, lineno, colno, error) {
-        console.log("handlerror");
-        console.log(error);
-        console.log(message);
         $('#3dhop').html('<div>' + message + '</div>');
     }
 
     function setup3dhop(fileUrl) {
+        var objUrl = fileUrl;
         presenter = new Presenter("draw-canvas");
         presenter.setScene({
             meshes: {
-                "MS_Name": {url: fileUrl}
+                "MS_Name": {url: objUrl}
             },
             modelInstances: {
                 "Model1": {mesh: "MS_Name"}
