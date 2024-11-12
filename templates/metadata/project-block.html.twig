@@ -67,6 +67,27 @@
                     {{ include(arche_core_gui_path ~ '/templates/metadata/project-summary-block.html.twig', {'result': data } ) }}
                 </div>
                 
+                <!-- SEE ALSO -->
+                {% if data.getData('acdh:hasUrl')  %}
+                    <div class="row" id="ad-see-also">
+                        <div class="col-lg-12 ">
+                            <h5>{{ "See Also"|trans }}</h5>
+                        </div>
+                        <div class="col-lg-12 " id="av-summary">
+                            <ul>
+
+                                {% if data.getData('acdh:hasUrl') %}
+                                    <li>
+                                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL', 'delimiter': '<br>' } ) }}
+                                    </li>
+                                {% endif %}                               
+                            </ul>
+                        </div>
+                    </div>     
+                {% endif %}
+
+                
                 <div class="loading-indicator text-center d-none">
                     <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
                 </div>
@@ -117,20 +138,6 @@
             {% if data.getProjectDetailsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/project-details-card-block.html.twig', {'data': data.getProjectDetailsData() } ) }}
             {% endif %}
-
-
-
-            Project details [Projektdaten] 
-
-            acdh:hasStartDate – hasEndDate [Project Start - End Date/ Projektbegin/ProjektEnde] (order by earlier year first, display whole date, not just year) 
-
-            acdh:hasCollectedStartDate - acdh:hasCollectedEndDate [Start of data collection -End of data collection / Beginn der Datenerhebung - Ende der Datenerhebung] 
-
-            acdh:hasAppliedMethod [Methods/Methoden] 
-
-            acdh:hasAppliedMethodDescription  
-
-            acdh:hasLifeCycleStatus [Lebenszyklusstatus:/Life Cycle Status:] 
 
 
             {% if data  %}

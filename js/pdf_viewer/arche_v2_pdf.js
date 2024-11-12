@@ -4,7 +4,8 @@ jQuery(function ($) {
 
 
     $(document).ready(function () {
-        const url = '{{  data.getRepoUrl()|raw  }}'; // Replace with your PDF file URL
+        var currentUrl = $(location).attr('href');
+        var url = currentUrl.replace('/browser/metadata/', '/api/');
         var pdfContainer = $('#pdf-container');
         var thumbnailContainer = $('#thumbnail-container');
         var toolbar = $('#pdf-toolbar');
