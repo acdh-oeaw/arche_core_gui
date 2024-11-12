@@ -31,12 +31,13 @@ jQuery(function ($) {
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
         }
-        if (acdhType == 'topcollection' || acdhType == 'collection' || acdhType == 'resource' || acdhType == 'metadata') {
+        if (acdhType == 'resource' || acdhType == 'metadata') {
             checkUserPermission();
         } else {
+            $('.download-login-div').addClass('d-none');
             $('#download-restricted').addClass('d-none');
             $('#download-not-logged').addClass('d-none');
-            $('#download-logged').removeClass('d-none');
+            $('#download-logged').addClass('d-none');
             $('#download-not-authorized').addClass('d-none');
             $('#download-resource-section').removeClass('d-none');
         }
@@ -116,7 +117,7 @@ jQuery(function ($) {
     function loadAdditionalData() {
         let acdhType = $('#resource-type').val().toLowerCase();
 
-        if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource') {
+        if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource' || acdhType === 'metadata') {
             fetchChildTree();
             fetchRPR();
             fetchPublications();
