@@ -493,6 +493,7 @@ jQuery(function ($) {
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
                         return '<a href="' + row.id + '">' + row.title + '</a>';
+                        /*
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
                         var title = removeBeforeHash(row.title);
@@ -507,7 +508,7 @@ jQuery(function ($) {
                         //avdate
 
                         text += '</div>';
-                        return  text;
+                        return  text; */
                     }
                 },
                 {data: 'property', render: function (data, type, row, meta) {
@@ -1037,6 +1038,7 @@ jQuery(function ($) {
             'columns': [
                 {data: 'title', render: function (data, type, row, meta) {
                         return '<a href="' + row.id + '">' + row.title + '</a>';
+                        /*
                         var shortcut = row.type;
                         shortcut = shortcut.replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:');
                         var title = removeBeforeHash(row.title);
@@ -1052,6 +1054,7 @@ jQuery(function ($) {
 
                         text += '</div>';
                         return  text;
+                        */
                     }
                 },
                 {data: 'property', render: function (data, type, row, meta) {

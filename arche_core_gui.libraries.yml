@@ -93,17 +93,9 @@ dissemination-threed:
 dissemination-pdf:  
     header: true
     version: 1.0.2
-    css:
-        base:
-            css/pdf_viewer/pdfjs-viewer.css: {}
-            css/pdf_viewer/pdftoolbar.css: {}
-            css/pdf_viewer/arche-pdf-viewer.css: {}
-            https://fonts.googleapis.com/icon?family=Material+Icons: { type: external }
-            https://fonts.googleapis.com/icon?family=Material+Icons+Outlined: { type: external }
     js:
-        js/jquery-3.6.0.min.js: { minified: true }
-        js/pdf-2.11.338.min.js: { minified: true }
-        js/pdf_viewer/pdfjs-viewer.min.js: {}
+        https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js: { external: true, minified: true }
+        js/pdf_viewer/arche_v2_pdf.js: {}
     dependencies:
         - core/drupal
         - core/jquery
