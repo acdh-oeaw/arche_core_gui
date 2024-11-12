@@ -1,5 +1,5 @@
 jQuery(function ($) {
-
+    $.noConflict();
     "use strict";
     var resObj = {};
     var resId = "";

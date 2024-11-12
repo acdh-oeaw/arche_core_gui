@@ -47,15 +47,19 @@
         $.ajax({
             url: '/browser/api/get3DURL/' + resId,
             method: 'GET',
-            success: function (data) {
-                console.log("success");
-                console.log(data);
-                init3dhop(data);
-                setup3dhop();
-                moveToolbar(20, 20);
-                window.onerror = handleError;
+            success: function (response) {
+                if (typeof response !== 'undefined') {
+                    init3dhop();
+                    setup3dhop(response);
+                    moveToolbar(20, 20);
+                    window.onerror = handleError;
+                    $('.viewer-3d-basic').removeClass('d-none');
+                }
             },
             error: function (xhr, status, error) {
+                console.log('get3DURL xhr :');
+                console.log(xhr);
+                console.log('get3DURL status :' + status);
                 console.log('get3DURL error :' + error);
             }
         });
@@ -68,11 +72,11 @@
         $('#3dhop').html('<div>' + message + '</div>');
     }
 
-    function setup3dhop() {
+    function setup3dhop(url) {
         presenter = new Presenter("draw-canvas");
         presenter.setScene({
             meshes: {
-                "MS_Name": {url: '{{  data|raw  }}'}
+                "MS_Name": {url: url}
             },
             modelInstances: {
                 "Model1": {mesh: "MS_Name"}

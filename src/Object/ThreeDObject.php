@@ -11,7 +11,7 @@ class ThreeDObject
 {
     private $client;
     private $tmpDir;
-    private $allowedExtension = array("ply", "nxs");
+    private $allowedExtension = array("ply", "nxs", "obj");
     private $result = array();
 
     public function __construct()
@@ -33,8 +33,10 @@ class ThreeDObject
     public function downloadFile(string $repoUrl, string $tmpDir): array
     {
         $this->setTmpDir($tmpDir.'/tmp_files/');
+        
         try {
             $this->doTheRequest($repoUrl);
+           
         } catch (\GuzzleHttp\Exception\ClientException $ex) {
             \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             $this->result = array('error' => $ex->getMessage());
@@ -52,11 +54,13 @@ class ThreeDObject
      */
     private function doTheRequest(string $repoUrl)
     {
+         
         $request = new \GuzzleHttp\Psr7\Request('GET', $repoUrl);
         //send async request
-        
+       
         $promise = $this->client->sendAsync($request)->then(function ($response) {
             if ($response->getStatusCode() == 200) {
+               
                 //get the filename
                 if (count($response->getHeader('Content-Disposition')) > 0) {
                     $header = $this->getHeaderData($response->getHeader('Content-Disposition'));
