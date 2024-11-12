@@ -72,11 +72,11 @@
         $('#3dhop').html('<div>' + message + '</div>');
     }
 
-    function setup3dhop(url) {
+    function setup3dhop(fileUrl) {
         presenter = new Presenter("draw-canvas");
         presenter.setScene({
             meshes: {
-                "MS_Name": {url: url}
+                "MS_Name": {url: fileUrl}
             },
             modelInstances: {
                 "Model1": {mesh: "MS_Name"}

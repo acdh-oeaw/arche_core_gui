@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use acdhOeaw\arche\lib\Config;
 use acdhOeaw\arche\lib\RepoDb;
 use acdhOeaw\arche\lib\schema\Ontology;
+use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Description of ArcheBaseController
@@ -13,6 +14,7 @@ use acdhOeaw\arche\lib\schema\Ontology;
  * @author nczirjak
  */
 class ArcheBaseController extends ControllerBase {
+
     protected Config $config;
     protected RepoDb $repoDb;
     protected Ontology $ontology;
@@ -33,31 +35,38 @@ class ArcheBaseController extends ControllerBase {
             $headers = new \acdhOeaw\arche\lib\Schema($this->config->rest->headers);
             $nonRelProp = $this->config->metadataManagment->nonRelationProperties ?? [];
             $this->repoDb = new RepoDb($baseUrl, $this->schema, $headers, $this->pdo, $nonRelProp);
-            $this->ontology =  \acdhOeaw\arche\lib\schema\Ontology::factoryDb($this->pdo, $this->schema, $this->config->ontologyCacheFile ?? '', $this->config->ontologyCacheTtl ?? 600);
+            $this->ontology = \acdhOeaw\arche\lib\schema\Ontology::factoryDb($this->pdo, $this->schema, $this->config->ontologyCacheFile ?? '', $this->config->ontologyCacheTtl ?? 600);
         } catch (\Exception $ex) {
             \Drupal::messenger()->addWarning($this->t('Error during the BaseController initialization!') . ' ' . $ex->getMessage());
             return array();
         }
     }
-    
-    private function checkTmpDirs(){
-        //translations
-        $translationsDirectory = 'public://translations';
-        file_prepare_directory($translationsDirectory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
-        
-        //tmp_files
-        $tempDirectory = 'public://tmp_files';
-        file_prepare_directory($tempDirectory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
 
+    private function checkTmpDirs() {
+
+        $tempDirectory = 'public://tmp_files';
+        if (!\Drupal::service('file_system')->prepareDirectory($tempDirectory, FileSystemInterface::CREATE_DIRECTORY)) {
+            error_log('Could not create the temporary directory: ' . $tempDirectory);
+        }
         
-        //config - sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync
-        $confDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug';
-        file_prepare_directory($confDir, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
-        $confSyncDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';
-        file_prepare_directory($confDir, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+        $translationsDirectory = 'public://translations';
+        if (!\Drupal::service('file_system')->prepareDirectory($translationsDirectory, FileSystemInterface::CREATE_DIRECTORY)) {
+            error_log('Could not create the temporary directory: ' . $translationsDirectory);
+        }
         
+        $configDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug';
+        if (!\Drupal::service('file_system')->prepareDirectory($configDir, FileSystemInterface::CREATE_DIRECTORY)) {
+            error_log('Could not create the temporary directory: ' . $configDir);
+        }
+        
+        $configSyncDir = 'public://config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';
+        if (!\Drupal::service('file_system')->prepareDirectory($configSyncDir, FileSystemInterface::CREATE_DIRECTORY)) {
+            error_log('Could not create the temporary directory: ' . $configSyncDir);
+        }
+
+
     }
-    
+
     /**
      * If the API needs a different response language then we have to change the
      * session lang params to get the desired lang string translation
@@ -65,10 +74,10 @@ class ArcheBaseController extends ControllerBase {
      * @return void
      */
     protected function changeAPILanguage(string $lang): void {
-        if($this->getCurrentLanguage() !== $lang) {
+        if ($this->getCurrentLanguage() !== $lang) {
             $_SESSION['language'] = $lang;
-            $_SESSION['_sf2_attributes']['language'] = $lang;    
-        }        
+            $_SESSION['_sf2_attributes']['language'] = $lang;
+        }
     }
 
     /**

@@ -11,7 +11,7 @@ class ThreeDObject
 {
     private $client;
     private $tmpDir;
-    private $allowedExtension = array("ply", "nxs", "obj");
+    private $allowedExtension = array("ply", "nxs");
     private $result = array();
 
     public function __construct()
