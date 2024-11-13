@@ -154,7 +154,7 @@ jQuery(function ($) {
 
         // needs to be developed the Collection Content 
         if (acdhType === 'conceptscheme') {
-            fetchCollectionContentTable();
+            fetchCollectionConceptTable();
         }
 
         showCiteBlock();
@@ -168,14 +168,12 @@ jQuery(function ($) {
         setTimeout(function () {
             initExpertView();
         }, 2000);
-
-
     }
 
     //conceptscheme view DT
-    function fetchCollectionContentTable() {
+    function fetchCollectionConceptTable() {
         $('.loading-indicator').removeClass('d-none');
-        var involvedTable = $('.collection-content-table').DataTable({
+        var involvedTable = $('.collection-concept-table').DataTable({
             "paging": true,
             "searching": true,
             "searchDelay": 500,
@@ -193,18 +191,18 @@ jQuery(function ($) {
             "serverSide": true,
             "serverMethod": "post",
             "ajax": {
-                'url': "/browser/api/collectionContentDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                'url': "/browser/api/collectionConceptDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
-                    $('.row.collection-content-table-div').removeClass('d-none');
+                    $('.row.collection-concept-table-div').removeClass('d-none');
                     if (response === undefined) {
-                        $('.row.collection-content-table-div').hide();
+                        $('.row.collection-concept-table-div').hide();
                         return;
                     }
                 },
                 error: function (xhr, status, error) {
                     console.log("ERROR" + error);
-                    $('.row.collection-content-table-div').hide();
+                    $('.row.collection-concept-table-div').hide();
                     $('.loading-indicator').addClass('d-none');
                 }
             },
