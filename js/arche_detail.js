@@ -84,6 +84,7 @@ jQuery(function ($) {
                 $.ajax({
                     url: '/browser/api/checkUser/' + resourceId + '/' + accessLevel,
                     method: 'GET',
+                    timeout: 10000,
                     success: function (data) {
                         if (data.length === 0 || data.access == 'login') {
                             $('#download-not-logged').removeClass('d-none');
@@ -192,6 +193,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/collectionConceptDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.collection-concept-table-div').removeClass('d-none');
@@ -244,6 +246,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.involved-table-div').removeClass('d-none');
@@ -307,6 +310,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/hasMembersDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.row.hasmembers-table-div').removeClass('d-none');
                     if (response === undefined) {
@@ -354,6 +358,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.contributed-table-div').removeClass('d-none');
@@ -415,6 +420,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.spatial-table-div').removeClass('d-none');
@@ -457,7 +463,6 @@ jQuery(function ($) {
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
-        var timeout = 10000; // in milliseconds
         var rcrTable = $('.related-table').DataTable({
             "paging": true,
             "searching": true,
@@ -476,6 +481,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     if (response === undefined) {
@@ -543,6 +549,7 @@ jQuery(function ($) {
         $.ajax({
             url: imgSrc,
             type: 'GET',
+            timeout: 10000,
             success: function (data) {
                 $('.titleimage-loader').hide();
                 $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600" data-lightbox="detail-titleimage">\n\
@@ -618,6 +625,7 @@ jQuery(function ($) {
         $.ajax({
             url: "/api/user/logout",
             type: "GET",
+            timeout: 10000,
             headers: {
                 "Authorization": "Basic " + btoa("invalid:credentials")
             },
@@ -672,6 +680,7 @@ jQuery(function ($) {
             $.ajax({
                 url: '/browser/api/nextPrevItem/' + rootId + '/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
                 type: "GET",
+                timeout: 20000,
                 success: function (data, status) {
                     if (data) {
                         if (data.next) {
@@ -699,6 +708,7 @@ jQuery(function ($) {
         $.ajax({
             url: '/browser/api/breadcrumb/' + acdhid + '/' + drupalSettings.arche_core_gui.gui_lang,
             type: "GET",
+            timeout: 40000,
             success: function (data, status) {
                 //var currentUrl = window.location.href;
                 var textToKeep = "/browser/metadata/";
@@ -878,7 +888,6 @@ jQuery(function ($) {
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
-        var timeout = 10000; // in milliseconds
         var rcrTable = $('.publications-table').DataTable({
             "paging": true,
             "searching": true,
@@ -893,6 +902,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/publicationsDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     if (response === undefined) {
                         //$('.child-elements-div').hide();
@@ -984,7 +994,6 @@ jQuery(function ($) {
         var limit = 10;
         var page = 0;
         var order = 'titledesc';
-        var timeout = 10000; // in milliseconds
         var rcrTable = $('.rcr-table').DataTable({
             "paging": true,
             "searching": true,
@@ -999,6 +1008,7 @@ jQuery(function ($) {
             "serverMethod": "post",
             "ajax": {
                 'url': "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
                 complete: function (response) {
                     if (response === undefined) {
                         if (displayedView == 'projectView') {
