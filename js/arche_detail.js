@@ -129,6 +129,7 @@ jQuery(function ($) {
         //ok
         if (acdhType === 'place') {
             fetchPlaceSpatialTable();
+            fetchIsPartOf();
         }
         //ok
         if (acdhType === 'person') {
@@ -137,6 +138,7 @@ jQuery(function ($) {
         //need to check the table and need to write the ispartof values
         if (acdhType === 'publication') {
             fetchPublicationsRelatedResourcesTable();
+            fetchIsPartOf();
         }
 
         // ok
@@ -169,6 +171,58 @@ jQuery(function ($) {
         setTimeout(function () {
             initExpertView();
         }, 2000);
+    }
+    
+    function fetchIsPartOf(){
+        $('.loading-indicator.loading-indicator-ispartof').removeClass('d-none');
+        var involvedTable = $('.ispartof-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "searchDelay": 500,
+            "lengthChange": false,
+            "pageLength": 10,
+            "processing": true,
+            "deferRender": true,
+            "columnDefs": [
+                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
+            ],
+            "bInfo": false, // Hide table information
+            "language": {
+                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            "serverSide": true,
+            "serverMethod": "post",
+            "ajax": {
+                'url': "/browser/api/isPartOfDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
+                complete: function (response) {
+                    $('.loading-indicator.loading-indicator-ispartof').addClass('d-none');
+                    $('.row.ispartof-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.ispartof-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("ERROR" + error);
+                    $('.row.ispartof-table-div').hide();
+                    $('.loading-indicator.loading-indicator-ispartof').addClass('d-none');
+                }
+            },
+            'columns': [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+
+                {data: 'property', visible: false},
+                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', visible: false}
+            ],
+            fnDrawCallback: function () {
+            }
+        });
     }
 
     //conceptscheme view DT
