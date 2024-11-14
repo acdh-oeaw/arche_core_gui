@@ -12,7 +12,9 @@
     </div>
     <div id="versionsBody" class="collapse show">
         <div class="card-body meta-sidebar versions-body">
-            {{ data }}
+           {% for key, value in data %}
+               {{ value['value'] }}<br>
+            {% endfor %}
             
         </div>
     </div>
