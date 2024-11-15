@@ -101,3 +101,12 @@ dissemination-pdf:
         - core/jquery
         - core/drupalSettings        
         
+dissemination-iiif:  
+    header: true
+    version: 1.0.2
+    js:
+        js/iiif/openseadragon.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery
+        - core/drupalSettings           
