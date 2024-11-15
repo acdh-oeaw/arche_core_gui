@@ -228,7 +228,7 @@ jQuery(function ($) {
     //conceptscheme view DT
     function fetchCollectionConceptTable() {
         $('.loading-indicator').removeClass('d-none');
-        var involvedTable = $('.collection-concept-table').DataTable({
+        var collConceptTable = $('.collection-concept-table').DataTable({
             "paging": true,
             "searching": true,
             "searchDelay": 500,
