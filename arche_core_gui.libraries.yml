@@ -60,7 +60,8 @@ detail-view:
         js/jquery.dataTables-1.13.7.min.js: { minified: true }
         js/citation/citation-js-0.5.0.min.js: {}
         js/tree/jstree.min.js: {}        
-        js/arche_detail.js: {}        
+        js/arche_detail.js: {}
+        js/citation/arche_cite.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
