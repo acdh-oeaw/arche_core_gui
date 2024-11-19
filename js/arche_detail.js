@@ -120,7 +120,7 @@ jQuery(function ($) {
             $(this).text(Drupal.t('Expert-View'));
         }
     });
-
+    /*
     $(document).delegate("a#archeHref", "click", function (e) {
         $('#meta-content-container').html();
         var url = $(this).attr('href');
@@ -137,7 +137,7 @@ jQuery(function ($) {
             $(".loader-div").hide();
         }
     });
-
+*/
 
     /**
      * After user login, check if the user is allowed to download the actual resource
@@ -328,10 +328,10 @@ jQuery(function ($) {
                 success: function (data, status) {
                     if (data) {
                         if (data.next) {
-                            $('#next-child-url').html('<a href="/browser/metadata/' + data.next.id + '" id="archeHref" alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>> </a>');
+                            $('#next-child-url').html('<a href="/browser/metadata/' + data.next.id + '"  alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>> </a>');
                         }
                         if (data.previous) {
-                            $('#previous-child-url').html('<a href="/browser/metadata/' + data.previous.id + '" id="archeHref" alt="' + data.previous.title + '" title="' + data.previous.title + '"> <<< ' + Drupal.t('Previous') + ' </a>');
+                            $('#previous-child-url').html('<a href="/browser/metadata/' + data.previous.id + '"  alt="' + data.previous.title + '" title="' + data.previous.title + '"> <<< ' + Drupal.t('Previous') + ' </a>');
                         }
 
                     }

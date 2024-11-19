@@ -1216,7 +1216,9 @@ class ResourceCoreObject {
         if ($this->getAcdhType() === 'Concept' or $this->getAcdhType() === 'ConceptScheme') {
             $identifiers = $this->getConceptAndSchemeIdentifiers();
             if(count($identifiers) > 0 ) {
-                return $identifiers[0]['value'];
+                if(isset($identifiers[0]['value'])) {
+                    return $identifiers[0]['value'];
+                }
             }
         }
         return "";
