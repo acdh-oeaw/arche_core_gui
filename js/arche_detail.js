@@ -121,23 +121,23 @@ jQuery(function ($) {
         }
     });
     /*
-    $(document).delegate("a#archeHref", "click", function (e) {
-        $('#meta-content-container').html();
-        var url = $(this).attr('href');
-        if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
-            $('html, body').animate({scrollTop: '0px'}, 0);
-            var id = url;
-            id = id.replace("/browser/metadata/", "");
-            id = id.replace("/browser//metadata/", "");
-            reloadMainDetailView(id);
-            e.preventDefault();
-        } else {
-            e.preventDefault();
-            window.open(url, '_blank');
-            $(".loader-div").hide();
-        }
-    });
-*/
+     $(document).delegate("a#archeHref", "click", function (e) {
+     $('#meta-content-container').html();
+     var url = $(this).attr('href');
+     if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
+     $('html, body').animate({scrollTop: '0px'}, 0);
+     var id = url;
+     id = id.replace("/browser/metadata/", "");
+     id = id.replace("/browser//metadata/", "");
+     reloadMainDetailView(id);
+     e.preventDefault();
+     } else {
+     e.preventDefault();
+     window.open(url, '_blank');
+     $(".loader-div").hide();
+     }
+     });
+     */
 
     /**
      * After user login, check if the user is allowed to download the actual resource
@@ -217,7 +217,7 @@ jQuery(function ($) {
                 window.fetchPublications(reloadID);
             }
 
-           
+
 
         }
         //ok
@@ -589,7 +589,7 @@ jQuery(function ($) {
 
     window.redrawTabs = function () {
         var isActive = false;
-        if ($('#child-tree').html().trim() === '') {
+        if ($('.jstree-children').html().trim() === '') {
             $('#collection-content-tab').addClass('d-none');
             $('#collection-content-tab-content').addClass('d-none');
         } else {
@@ -599,9 +599,10 @@ jQuery(function ($) {
             $('#associated-publications-tab').addClass('d-none');
             $('#associated-publications-tab-content').addClass('d-none');
         } else {
-            if(isActive == false) {
+            if (isActive === false) {
                 $('#associated-publications-tab a.nav-link').addClass('active');
                 $('#associated-publications-tab-content').addClass('active');
+                $('#associated-publications-tab-content').removeClass('fade');
                 isActive = true;
             }
         }
@@ -609,9 +610,10 @@ jQuery(function ($) {
             $('#associated-coll-res-tab').addClass('d-none');
             $('#associated-coll-res-tab-content').addClass('d-none');
         } else {
-            if(isActive == false) {
+            if (isActive === false) {
                 $('#associated-coll-res-tab a.nav-link').addClass('active');
                 $('#associated-coll-res-tab-content').addClass('active');
+                $('#associated-coll-res-tab-content').removeClass('fade');
                 isActive = true;
             }
         }
