@@ -5,7 +5,6 @@ jQuery(function ($) {
     var resId = "";
     /** CTRL PRess check for the tree view  #19924 **/
     var cntrlIsPressed = false;
-    var expertTable;
     var versionVisible = false;
     var smartSearchInputField = $('#sm-hero-str');
     var autocompleteTimeout = null;
@@ -14,16 +13,7 @@ jQuery(function ($) {
     var apiUrl = currentUrl.replace('/browser/metadata/', '/api/');
     var baseApiUrl = drupalSettings.arche_core_gui.baseApiUrl;
     var acdhType = $('#resource-type').val();
-    var rprTable;
-    var publicationsTable;
-    var involvedTable;
-    var hasMemberTable;
-    var collectionConceptTable;
-    var contributedTable;
-    var spatialTable;
-    var relatedTable;
-    var isPartOfTable;
-    var relatedTable;
+
 
     $(document).ready(function () {
         addButtonToDescriptionText();
@@ -35,7 +25,7 @@ jQuery(function ($) {
         resId = $("#resId").val();
         checkDetailCardEvents();
 
-        loadAdditionalData();
+        loadAdditionalData(resId);
         // hide the summary div if there is no data inside it
         if ($('#av-summary').text().trim().length == 0) {
             $('#ad-summary').hide();
@@ -63,8 +53,6 @@ jQuery(function ($) {
         cntrlIsPressed = false;
     });
     /** CTRL PRess check for the tree view   #19924  END **/
-
-
 
     //httpd logout
     $(document).delegate(".httpd-logout-btn", "click", function (e) {
@@ -134,7 +122,7 @@ jQuery(function ($) {
     });
 
     $(document).delegate("a#archeHref", "click", function (e) {
-        $('#meta-content-container').hide();
+        $('#meta-content-container').html();
         var url = $(this).attr('href');
         if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
             $('html, body').animate({scrollTop: '0px'}, 0);
@@ -213,70 +201,98 @@ jQuery(function ($) {
 
     function loadAdditionalData(reloadID) {
         let acdhType = $('#resource-type').val().toLowerCase();
-        
+
         if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource' || acdhType === 'metadata') {
-            fetchChildTree();
+            fetchChildTree(reloadID);
 
             if ($.fn.dataTable.isDataTable('#rcrDT')) {
-                rprTable.ajax.url("/browser/api/rprDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+                window.rprTable.ajax.url("/browser/api/rprDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                fetchRPR();
+                window.fetchRPR(reloadID);
             }
 
             if ($.fn.dataTable.isDataTable('#publicationsDT')) {
-                publicationsTable.ajax.url("/browser/api/publicationsDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+                window.publicationsTable.ajax.url("/browser/api/publicationsDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                fetchPublications();
+                window.fetchPublications(reloadID);
             }
-            setTimeout(() => {
-                hideEmptyTabs();
-            }, 1500);
+
+           
+
         }
         //ok
         if (acdhType === 'place') {
-            fetchPlaceSpatialTable();
+            window.fetchPlaceSpatialTable();
             if ($.fn.dataTable.isDataTable('#isPartOfDT')) {
-                isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+                window.isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                fetchIsPartOf();
+                window.fetchIsPartOf(reloadID);
             }
         }
         //ok
         if (acdhType === 'person') {
-            fetchPersonContributedTable();
+            if ($.fn.dataTable.isDataTable('#contributedDT')) {
+                window.contributedTable.ajax.url("/browser/api/contributedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchPersonContributedTable(reloadID);
+            }
         }
         //need to check the table and need to write the ispartof values
         if (acdhType === 'publication') {
             if ($.fn.dataTable.isDataTable('#relatedDT')) {
-                relatedTable.ajax.url("/browser/api/relatedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+                window.relatedTable.ajax.url("/browser/api/relatedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                fetchPublicationsRelatedResourcesTable();
+                window.fetchPublicationsRelatedResourcesTable(reloadID);
             }
-            
+
             if ($.fn.dataTable.isDataTable('#isPartOfDT')) {
-                isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+                window.isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                fetchIsPartOf();
+                window.fetchIsPartOf(reloadID);
             }
         }
 
         // ok
         if (acdhType === 'organisation') {
-            fetchOrganisationInvolvedTable();
-            fetchOrganisationHasMembersTable();
+            if ($.fn.dataTable.isDataTable('#involvedDT')) {
+                window.involvedTable.ajax.url("/browser/api/involvedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchOrganisationInvolvedTable(reloadID);
+            }
+
+            if ($.fn.dataTable.isDataTable('#hasMembersDT')) {
+                window.hasMemberTable.ajax.url("/browser/api/hasMembersDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchOrganisationHasMembersTable(reloadID);
+            }
+
         }
+
         // ok
         if (acdhType === 'concept') {
-            fetchPlaceSpatialTable();
+            if ($.fn.dataTable.isDataTable('#spatialDT')) {
+                window.spatialTable.ajax.url("/browser/api/spatialDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchPlaceSpatialTable(reloadID);
+            }
         }
+
         //waiting for instructions
         if (acdhType === 'project') {
-            fetchPlaceSpatialTable();
+            if ($.fn.dataTable.isDataTable('#spatialDT')) {
+                window.spatialTable.ajax.url("/browser/api/spatialDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchPlaceSpatialTable(reloadID);
+            }
         }
 
         // needs to be developed the Collection Content 
         if (acdhType === 'conceptscheme') {
-            fetchCollectionConceptTable();
+            if ($.fn.dataTable.isDataTable('#collectionConceptDT')) {
+                window.collectionConceptTable.ajax.url("/browser/api/collectionConceptDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            } else {
+                window.fetchCollectionConceptTable(reloadID);
+            }
         }
 
         if (versionVisible) {
@@ -289,412 +305,12 @@ jQuery(function ($) {
             showTitleImage();
             fetchBreadcrumb();
             window.showCiteBlock();
-            initExpertView();
+            window.initExpertView();
+            redrawTabs();
         }, 2000);
     }
 
-    function fetchIsPartOf() {
-        $('.loading-indicator.loading-indicator-ispartof').removeClass('d-none');
-        
-        isPartOfTable = new DataTable('#isPartOfDT', {
-            paging: true,
-            searching: true,
-            searchDelay: 500,
-            lengthChange: false,
-            pageLength: 10,
-            processing: true,
-            deferRender: true,
-            columnDefs: [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            bInfo: false, // Hide table information
-            language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            serverSide: true,
-            serverMethod: "post",
-            ajax: {
-                url: "/browser/api/isPartOfDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator.loading-indicator-ispartof').addClass('d-none');
-                    $('.row.ispartof-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.ispartof-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("ERROR" + error);
-                    $('.row.ispartof-table-div').hide();
-                    $('.loading-indicator.loading-indicator-ispartof').addClass('d-none');
-                }
-            },
-            columns: [
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
 
-                {data: 'property', visible: false},
-                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'type', visible: false}
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    //conceptscheme view DT
-    function fetchCollectionConceptTable() {
-        $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
-        var collConceptTable = $('.collection-concept-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "searchDelay": 500,
-            "lengthChange": false,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "columnDefs": [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            "bInfo": false, // Hide table information
-            "language": {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/collectionConceptDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator').addClass('d-none');
-                    $('.row.collection-concept-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.collection-concept-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("ERROR" + error);
-                    $('.row.collection-concept-table-div').hide();
-                    $('.loading-indicator').addClass('d-none');
-                }
-            },
-            'columns': [
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
-
-                {data: 'property', visible: false},
-                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'type', visible: false}
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    // organisations view DT
-    function fetchOrganisationInvolvedTable() {
-        $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
-        var involvedTable = $('.involved-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "searchDelay": 500,
-            "lengthChange": false,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "columnDefs": [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            "bInfo": false, // Hide table information
-            "language": {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator').addClass('d-none');
-                    $('.row.involved-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.involved-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("ERROR" + error);
-                    $('.row.involved-table-div').hide();
-                    $('.loading-indicator').addClass('d-none');
-                }
-            },
-            'columns': [
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
-
-                {data: 'property', title: Drupal.t('Role'), render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
-                        if (row.type) {
-                            return removeBeforeHash(row.type);
-                        }
-                        return "";
-                    }
-                },
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    function fetchOrganisationHasMembersTable() {
-        //relatedTable = new DataTable('#relatedDT', {
-        var hasMembersTable = $('.hasmembers-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "searchDelay": 500,
-            "lengthChange": false,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "columnDefs": [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            "bInfo": false, // Hide table information
-            "language": {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/hasMembersDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.row.hasmembers-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.hasmembers-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("ERROR" + error);
-                    $('.row.hasmembers-table-div').hide();
-                }
-            },
-            'columns': [
-                {data: 'title', title: Drupal.t('Name'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
-                {data: 'type', visible: false},
-                {data: 'property', visible: false}
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    function fetchPersonContributedTable() {
-        $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
-        var contributedTable = $('.contributed-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "lengthChange": false,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "columnDefs": [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            "bInfo": false, // Hide table information
-            'language': {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator').addClass('d-none');
-                    $('.row.contributed-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.contributed-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    $('.loading-indicator').addClass('d-none');
-                    console.log(xhr);
-                    console.log(status);
-                    console.log(error);
-                    $('.row.contributed-table-div').hide();
-                }
-            },
-            'columns': [
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
-                {data: 'property', title: Drupal.t('Role'), render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'title', title: Drupal.t('Entity'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
-                        if (row.type) {
-                            return removeBeforeHash(row.type);
-                        }
-                        return "";
-                    }
-                }
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    function fetchPlaceSpatialTable() {
-        $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
-        var spatialTable = $('.spatial-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "lengthChange": false,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "searchDelay": 500, // Optional: Add a delay for user typing
-            "bInfo": false, // Hide table information
-            'language': {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator').addClass('d-none');
-                    $('.row.spatial-table-div').removeClass('d-none');
-                    if (response === undefined) {
-                        $('.row.spatial-table-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    $('.loading-indicator').addClass('d-none');
-                    console.log(xhr);
-                    console.log(status);
-                    console.log(error);
-                    $('.row.spatial-table-div').hide();
-                }
-            },
-            'columns': [
-                {data: 'acdhid', visible: false},
-                {data: 'id', visible: false},
-                {data: 'property', visible: false},
-                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
-                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
-                        if (row.type) {
-                            return removeBeforeHash(row.type);
-                        }
-                        return "";
-                    }
-                }
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    function fetchPublicationsRelatedResourcesTable() {
-        $('.loading-indicator').removeClass('d-none');
-         relatedTable = new DataTable('#relatedDT', {
-            "paging": true,
-            "searching": true,
-            "searchDelay": 500,
-            "pageLength": 10,
-            "processing": true,
-            "deferRender": true,
-            "columnDefs": [
-                {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
-            ],
-            "bInfo": false, // Hide table information
-            'language': {
-                "processing": "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            "serverSide": true,
-            "serverMethod": "post",
-            "ajax": {
-                'url': "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    $('.loading-indicator').addClass('d-none');
-                    if (response === undefined) {
-                        $('.related-div').hide();
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    $('.loading-indicator').addClass('d-none');
-                    $('.related-div').hide();
-                }
-            },
-            'columns': [
-                {data: 'title', render: function (data, type, row, meta) {
-                        return '<a href="' + row.id + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'property', render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'type', render: function (data, type, row, meta) {
-                        if (row.type) {
-                            return removeBeforeHash(row.type);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'acdhid', visible: false}
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
 
     /**
      * Fetch the previos or next child elements with ajax
@@ -836,15 +452,20 @@ jQuery(function ($) {
      * Fetch and display the childtree
      * @returns {undefined}
      */
-    function fetchChildTree() {
+    function fetchChildTree(reloadID = "") {
         //get the data
-        var url = $('#resId').val();
-        if (url) {
+        var acdhid = $('#resId').val();
+        if (reloadID) {
+            acdhid = reloadID;
+        }
+        if ($('#child-tree').jstree(true)) {
+            $('#child-tree').jstree('destroy');
+        }
+        if (acdhid) {
             $('#child-tree').jstree({
                 'core': {
                     'data': {
                         'url': function (node) {
-                            var acdhid = $('#resId').val();
                             if (node.id != "#") {
                                 acdhid = node.id;
                             }
@@ -855,12 +476,16 @@ jQuery(function ($) {
                         },
                         'success': function (nodes) {
                             if (nodes.length === 0) {
-                                $('#collection-content-tab').addClass('hidden');
-                                $('#collection-content-tab').removeClass('active');
-                                $('#collection-content-tab-content').addClass('hidden');
+                                $('#collection-content-tab').addClass('d-none');
+                                $('#collection-content-tab a.nav-link').removeClass('active');
+                                $('#collection-content-tab-content').addClass('d-none');
                                 $('#collection-content-tab-content').removeClass('active');
+                                //window.hideEmptyTabs();
                                 //redrawTabs();
                             }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('AJAX error:', error);
                         }
                     },
                     themes: {stripes: true},
@@ -874,6 +499,7 @@ jQuery(function ($) {
                         $('#collection-content-tab').removeClass('active');
                         $('#collection-content-tab-content').addClass('hidden');
                         $('#collection-content-tab-content').removeClass('active');
+                        // window.hideEmptyTabs();
                     }
                 }
             });
@@ -896,201 +522,9 @@ jQuery(function ($) {
                     }
                 }
             });
-        }
+    }
     }
 
-    /**
-     * Fetch thepublications for collection, topcollection, resources
-     * @returns {undefined}
-     */
-    function fetchPublications() {
-        publicationsTable = new DataTable('#publicationsDT', {
-            paging: true,
-            destroy: true,
-            searching: true,
-            pageLength: 10,
-            processing: true,
-            deferRender: true,
-            bInfo: false, // Hide table information
-            language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            serverSide: true,
-            serverMethod: "post",
-            ajax: {
-                'url': "/browser/api/publicationsDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    if (response === undefined) {
-                        //$('.child-elements-div').hide();
-                        $('#associated-publications-tab').addClass('hidden');
-                        $('#associated-publications-tab-content').addClass('hidden');
-                        $('#associated-publications-tab').removeClass('active');
-                        $('#associated-publications-tab-content').removeClass('active');
-                        return;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    //$(".loader-versions-div").hide();
-                    $('.publications-elements-div').hide();
-                    $('#associated-publications-tab').addClass('hidden');
-                    $('#associated-publications-tab-content').addClass('hidden');
-                    $('#associated-publications-tab').removeClass('active');
-                    $('#associated-publications-tab-content').removeClass('active');
-                }
-            },
-            columns: [
-                {data: 'customCitation', render: function (data, type, row, meta) {
-                        return 'Loading...'; // Initial placeholder
-                    }
-                },
-                {data: 'property', render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'title', visible: false},
-                {data: 'type', visible: false},
-                {data: 'acdhid', visible: false}
-            ],
-            createdRow: function (row, data, dataIndex) {
-                // Perform the AJAX request for the URL CS Content field
-                var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
-
-                try {
-                    var citationText = data.customCitation;
-                    if (!data.customCitation.startsWith('@')) {
-                        citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
-                    }
-
-                    let citeDT = new window.Cite(citationText);
-                    let templateName = 'apa-6th';
-                    var template = "";
-                    window.url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
-                            .done(function (data) {
-
-                                template = data;
-                                window.Cite.CSL.register.addTemplate(templateName, template);
-                                var opt = {
-                                    format: 'string'
-                                };
-                                opt.type = 'html';
-                                opt.style = 'citation-' + templateName;
-                                opt.lang = 'en-US';
-                                return citeDT.get(opt);
-                            })
-                            .then(function (d) {
-                                var opt = {
-                                    format: 'string'
-                                };
-                                opt.type = 'html';
-                                opt.style = 'citation-' + templateName;
-                                opt.lang = 'en-US';
-                                cell.html('<a href="/browser/metadata/' + data.id + '">' + citeDT.get(opt) + '</a>');
-                            });
-                } catch (error) {
-                    //console.log(error);
-                    cell.html('<a href="/browser/metadata/' + data.id + '">' + data.title + '</a>');
-                }
-            },
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    /**
-     * Fetch the related resources publications for collection, topcoll. resources.
-     * @returns {undefined}
-     */
-    function fetchRPR(displayedView = 'tabView') {
-        if (displayedView == 'projectView') {
-            $('.loading-indicator').removeClass('d-none');
-        }
-
-        rprTable = new DataTable('#rcrDT', {
-            destroy: true,
-            paging: true,
-            searching: true,
-            pageLength: 10,
-            processing: true,
-            deferRender: true,
-            bInfo: false, // Hide table information
-            language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
-            },
-            serverSide: true,
-            serverMethod: "post",
-            ajax: {
-                'url': "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
-                complete: function (response) {
-                    if (response === undefined) {
-                        if (displayedView == 'projectView') {
-                            $('.associated-project-table-div').addClass('d-none');
-                            $('.loading-indicator').addClass('d-none');
-                        } else {
-                            $('#associated-coll-res-tab').addClass('hidden');
-                            $('#associated-coll-res-tab-content').addClass('hidden');
-                            $('#associated-coll-res-tab').removeClass('active');
-                            $('#associated-coll-res-tab-content').removeClass('active');
-                        }
-
-                        //$('.child-elements-div').hide();
-                        return;
-                    }
-
-                    if (displayedView == 'projectView') {
-                        $('.associated-project-table-div').removeClass('d-none');
-                        $('.loading-indicator').addClass('d-none');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    //$(".loader-versions-div").hide();
-                    if (displayedView == 'projectView') {
-                        $('.associated-project-table-div').addClass('d-none');
-                    } else {
-                        $('#associated-coll-res-tab').addClass('hidden');
-                        $('#associated-coll-res-tab-content').addClass('hidden');
-                        $('#associated-coll-res-tab').removeClass('active');
-                        $('#associated-coll-res-tab-content').removeClass('active');
-                        $('.rcr-elements-div').hide();
-                    }
-                }
-            },
-            'columns': [
-                {data: 'title', render: function (data, type, row, meta) {
-                        return '<a href="' + row.id + '">' + row.title + '</a>';
-                    }
-                },
-                {data: 'property', render: function (data, type, row, meta) {
-                        if (row.property) {
-                            return removeBeforeHash(row.property);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'type', render: function (data, type, row, meta) {
-                        if (row.type) {
-                            return removeBeforeHash(row.type);
-                        }
-                        return "";
-                    }
-                },
-                {data: 'acdhid', visible: false}
-            ],
-            fnDrawCallback: function () {
-            }
-        });
-    }
-
-    function initExpertView() {
-        expertTable = $('#expertDT').DataTable({
-            "deferRender": true
-                    //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
-        });
-    }
 
     /**
      * Display the titleimage with ajax if we a response 
@@ -1153,18 +587,38 @@ jQuery(function ($) {
         }
     }
 
-    function redrawTabs() {
-        // Check if there is an active tab
-        if ($('#arche-detail-tabs li.active').length === 0) {
-            // Activae the first visible tab
-            var firstVisibleTab = $('#arche-detail-tabs li:visible').first();
-            $('#' + firstVisibleTab.attr('id') + ' .nav-link').addClass('active');
-            $('#' + firstVisibleTab.attr('id') + '-content').addClass('show active');
-            $('#' + firstVisibleTab.attr('id') + ' .nav-link').attr('aria-selected', 'true');
+    window.redrawTabs = function () {
+        var isActive = false;
+        if ($('#child-tree').html().trim() === '') {
+            $('#collection-content-tab').addClass('d-none');
+            $('#collection-content-tab-content').addClass('d-none');
+        } else {
+            isActive = true;
         }
+        if ($('.publications-table tbody').length === 0 || $('.publications-table tbody').children('tr').length === 0) {
+            $('#associated-publications-tab').addClass('d-none');
+            $('#associated-publications-tab-content').addClass('d-none');
+        } else {
+            if(isActive == false) {
+                $('#associated-publications-tab a.nav-link').addClass('active');
+                $('#associated-publications-tab-content').addClass('active');
+                isActive = true;
+            }
+        }
+        if ($('.rcr-table tbody').length === 0 || $('.rcr-table tbody').children('tr').length === 0) {
+            $('#associated-coll-res-tab').addClass('d-none');
+            $('#associated-coll-res-tab-content').addClass('d-none');
+        } else {
+            if(isActive == false) {
+                $('#associated-coll-res-tab a.nav-link').addClass('active');
+                $('#associated-coll-res-tab-content').addClass('active');
+                isActive = true;
+            }
+        }
+
     }
 
-    function hideEmptyTabs() {
+    window.hideEmptyTabs = function () {
         var tabs = ['#collection-content-tab', '#associated-publications-tab', '#associated-coll-res-tab'];
         var notHiddenTab = "";
         tabs.forEach(function (tabId, index) {
@@ -1178,18 +632,6 @@ jQuery(function ($) {
         });
 
     }
-
-
-    function removeBeforeHash(str) {
-        let hashIndex = str.indexOf('#');
-        if (hashIndex !== -1) {
-            return str.substring(hashIndex + 1);
-        } else {
-            return str; // Return the original string if no # found
-        }
-    }
-
-
 
     function reloadDetail(id) {
         $.ajax({
@@ -1214,7 +656,7 @@ jQuery(function ($) {
     }
 
     function reloadMainDetailView(id) {
-        fetchChildTree();
+        //fetchChildTree();
         reloadDetail(id);
         checkDetailCardEvents();
         loadAdditionalData(id);
