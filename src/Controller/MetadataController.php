@@ -36,6 +36,12 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj, $this->siteLang);
+            
+            $isConceptOrConceptScheme = $obj->isConceptOrConceptScheme();
+            
+            if(!empty($isConceptOrConceptScheme)) {
+                return new \Drupal\Core\Routing\TrustedRedirectResponse($isConceptOrConceptScheme);
+            }
         }
 
         $return = [
@@ -80,6 +86,12 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                 return [
                     '#theme' => 'arche-detail-empty'
                 ];
+            }
+            
+            $isConceptOrConceptScheme = $obj->isConceptOrConceptScheme();
+            
+            if(!empty($isConceptOrConceptScheme)) {
+                return new \Drupal\Core\Routing\TrustedRedirectResponse($isConceptOrConceptScheme);
             }
            
             $return = [

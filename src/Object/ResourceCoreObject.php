@@ -132,34 +132,34 @@ class ResourceCoreObject {
      */
     public function getNonAcdhIdentifiers(): array {
         $result = array();
-       
+
         if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
-                if ((strpos((string)$v['value'], 'oeaw.ac.at') === false) && (strpos((string)$v['value'], $this->config->baseUrl) === false) ) {
+                if ((strpos((string) $v['value'], 'oeaw.ac.at') === false) && (strpos((string) $v['value'], $this->config->baseUrl) === false)) {
                     $result[] = $v;
                 }
             }
         }
         return $result;
     }
-    
+
     /**
      * Collect Vocabs identifiers for concept
      * @return array
      */
     public function getVocabsIdentifiers(): array {
         $result = array();
-       
+
         if (isset($this->properties["acdh:hasIdentifier"][0]) && !empty($this->properties["acdh:hasIdentifier"])) {
             foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
-                if (strpos((string)$v['value'], 'https://vocabs.acdh.oeaw.ac.at/') !== false) {
-                     $result[] = $v;
+                if (strpos((string) $v['value'], 'https://vocabs.acdh.oeaw.ac.at/') !== false) {
+                    $result[] = $v;
                 }
             }
         }
         return $result;
     }
-    
+
     /**
      * Use geonames ID, if no geonames then whatever is not ARCHE domain, else ARCHE domain
      * @return array
@@ -176,8 +176,30 @@ class ResourceCoreObject {
                 }
             }
         }
-        
-        if(count($result) === 0) {
+
+        if (count($result) === 0) {
+            $result[] = $this->properties["acdh:hasIdentifier"][0];
+        }
+        return $result;
+    }
+    
+    public function getConceptAndSchemeIdentifiers(): array {
+        $result = array();
+        if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
+            foreach ($this->properties["acdh:hasIdentifier"] as $k => $v) {
+                //filter out the baseurl related identifiers and which contains the id.acdh
+                if ((strpos($v['value'], $this->config->baseUrl) === false) &&
+                        (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false) &&
+                        (strpos($v['value'], 'https://vocabs.acdh.oeaw.ac.at/rest/') === false) &&
+                        (strpos($v['value'], '.acdh.oeaw.ac.at/api/') === false)
+                        
+                ) {
+                    $result[] = $v;
+                }
+            }
+        }
+
+        if (count($result) === 0) {
             $result[] = $this->properties["acdh:hasIdentifier"][0];
         }
         return $result;
@@ -412,13 +434,12 @@ class ResourceCoreObject {
                 } elseif (isset($v['value']) && !empty($v['value']) && (strpos($v['value'], 'https://vocabs.acdh.oeaw.ac.at/schema#') !== false)) {
                     return str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', '', $v['value']);
                 } else {
-                    if(isset($v['title']) && !empty($v['title'])) {
-                        return str_replace('http://www.w3.org/2004/02/skos/core#','', $v['title']);
+                    if (isset($v['title']) && !empty($v['title'])) {
+                        return str_replace('http://www.w3.org/2004/02/skos/core#', '', $v['title']);
                     }
-                    if(isset($v['value']) && !empty($v['value'])) {
-                        return str_replace('http://www.w3.org/2004/02/skos/core#', '',$v['value']);
+                    if (isset($v['value']) && !empty($v['value'])) {
+                        return str_replace('http://www.w3.org/2004/02/skos/core#', '', $v['value']);
                     }
-                    
                 }
             }
         }
@@ -565,7 +586,7 @@ class ResourceCoreObject {
         } elseif (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
             $matches = "";
             preg_match('/POINT\(([^,]+) \s*([^)]+)\)/', $this->properties["acdh:hasWKT"][0]['value'], $matches);
-            
+
             if (!empty($matches)) {
                 // Swap the coordinates: $matches[1] is the first value, $matches[2] is the second value
                 $swappedCoordinates = "POINT({$matches[2]} {$matches[1]})";
@@ -612,7 +633,8 @@ class ResourceCoreObject {
      */
     public function getMapType(): string {
 
-        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
+        if (isset($this->properties["acdh:hasWKT"][0]['value']) && !empty($this->properties["acdh:hasWKT"][0]['value'])) {
+            if (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'multipolygon') !== false) {
                 return 'multipolygon';
             } elseif (strpos(strtolower($this->properties["acdh:hasWKT"][0]['value']), 'polygon') !== false) {
                 return 'polygon';
@@ -702,7 +724,7 @@ class ResourceCoreObject {
     public function isBinary(): bool {
         //check the resource categories
         if (strtolower($this->getAcdhType()) === "resource" && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
-                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 ) {
+                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0) {
             return true;
         }
 
@@ -763,17 +785,17 @@ class ResourceCoreObject {
         }
         return false;
     }
-    
+
     /**
      * Check if the user is logged in or not
      * @return bool
      */
     public function isUserLoggedIn(): bool {
-        
-         if (isset($this->config->authLoginCookie) && !empty($_COOKIE[$this->config->authLoginCookie])) {
-             return true;
-         }
-         return false;
+
+        if (isset($this->config->authLoginCookie) && !empty($_COOKIE[$this->config->authLoginCookie])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -783,14 +805,14 @@ class ResourceCoreObject {
     public function isPublic(): bool {
         $result = false;
         $access = $this->getAccessRestriction();
-        
+
         /*
          * If there is no accessrestriction, then it is a collection
          */
-        if(count($access) === 0) {
+        if (count($access) === 0) {
             return true;
         }
-        
+
         if (
                 count((array) $access) > 0 &&
                 isset($access['vocabsid']) &&
@@ -803,28 +825,28 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     /**
      * Get the actual resource access level for the user login check
      * @return string
      */
     public function getResourceAccessLevel(): string {
         $access = $this->getAccessRestriction();
-        
-        if(count($access) > 0) {
-            if($this->language == "de") {
-                foreach($this->accessLevels as $k => $v) {
-                    if($v === $access['title']) {
+
+        if (count($access) > 0) {
+            if ($this->language == "de") {
+                foreach ($this->accessLevels as $k => $v) {
+                    if ($v === $access['title']) {
                         return $k;
                     }
                 }
-            } 
+            }
             return $access['title'];
         }
         $aclRead = $this->getData('acdh:aclRead');
         $aclReadArr = [];
-        if(count($aclRead) > 0) {
-            foreach($aclRead as $v) {
+        if (count($aclRead) > 0) {
+            foreach ($aclRead as $v) {
                 $aclReadArr[] = $v['value'];
             }
             return implode(',', $aclReadArr);
@@ -876,8 +898,7 @@ class ResourceCoreObject {
         }
         return "";
     }
-    
-    
+
     /**
      * Fetch property which has more than one value as array or as string
      * @param string $property
@@ -887,20 +908,19 @@ class ResourceCoreObject {
     public function getDataArrayString(string $property, string $output = "array"): mixed {
         $result = [];
         if (isset($this->properties[$property][0]['title']) && !empty($this->properties[$property][0]['title'])) {
-            foreach($this->properties[$property] as $val){
+            foreach ($this->properties[$property] as $val) {
                 $result[] = $val['title'];
             }
         } elseif (isset($this->properties[$property][0]['value']) && !empty($this->properties[$property][0]['value'])) {
-            foreach($this->properties[$property] as $val){
+            foreach ($this->properties[$property] as $val) {
                 $result[] = $val['value'];
             }
         }
-        if($output === "string") {
+        if ($output === "string") {
             return implode(',', $result);
         }
         return $result;
     }
-    
 
     public function isContactDetails(): bool {
         $props = ['acdh:hasAddressLine1', 'acdh:hasAddressLine2', 'acdh:Postcode',
@@ -961,7 +981,7 @@ class ResourceCoreObject {
         $result = [];
         foreach ($props as $k) {
             if (isset($this->properties[$k])) {
-              
+
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
@@ -1014,7 +1034,7 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     public function getProjectDetailsData(): array {
         $result = [];
         $props = [
@@ -1026,7 +1046,7 @@ class ResourceCoreObject {
             'acdh:hasAppliedMethodDescription' => 'Methods description',
             'acdh:hasLifeCycleStatus' => 'Life Cycle Status'
         ];
-        
+
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
                 if (is_array($this->properties[$k])) {
@@ -1045,7 +1065,7 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     public function getFundingData(): array {
         $result = [];
         $props = [
@@ -1147,7 +1167,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     $i = 0;
                     foreach ($this->properties[$k] as $val) {
-                       
+
                         if (isset($val['value'])) {
                             $result[$v][$i]['id'] = $val['id'];
                             $result[$v][$i]['type'] = $val['type'];
@@ -1186,5 +1206,19 @@ class ResourceCoreObject {
         $bytes /= pow(1024, $pow);
 
         return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Providing the Concept and ConceptScheme identifier
+     * @return string
+     */
+    public function isConceptOrConceptScheme(): string {
+        if ($this->getAcdhType() === 'Concept' or $this->getAcdhType() === 'ConceptScheme') {
+            $identifiers = $this->getConceptAndSchemeIdentifiers();
+            if(count($identifiers) > 0 ) {
+                return $identifiers[0]['value'];
+            }
+        }
+        return "";
     }
 }
