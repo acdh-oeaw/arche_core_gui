@@ -310,7 +310,7 @@ jQuery(function ($) {
     window.setMapLabel = function (bbox) {
     //function setMapLabel(bbox) {
         var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn">X</a> ' + coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3) + '</div>');
+        $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn"><img src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png" class="smartsearch_trash_icon"></a> ' + coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3) + '</div>');
     }
 
 });

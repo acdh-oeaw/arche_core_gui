@@ -100,6 +100,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                 '#data' => $obj,
                 '#cache' => ['max-age' => 0],
                 '#cookie' => $_COOKIE,
+                '#conceptUrl' => $isConceptOrConceptScheme,
                 '#attached' => [
                     'library' => [
                         'arche_core_gui/detail-view',
