@@ -589,7 +589,7 @@ jQuery(function ($) {
 
     window.redrawTabs = function () {
         var isActive = false;
-        if ($('.jstree-children').html().trim() === '') {
+        if ($('.jstree-children').length === 0 ) {
             $('#collection-content-tab').addClass('d-none');
             $('#collection-content-tab-content').addClass('d-none');
         } else {

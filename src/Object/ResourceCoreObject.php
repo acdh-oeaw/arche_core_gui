@@ -89,12 +89,42 @@ class ResourceCoreObject {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
+            if(isset($v['property'])) {
+                $this->addExternalURL($v);
+            }
             if (isset($v['type']) && $v['type'] === 'REL') {
                 $this->properties[$prop][] = $v;
             } else {
                 $this->properties[$prop] = $v;
             }
         }
+    }
+    
+    /**
+     * If the property is concept or conceptscheme, then we have to add 
+     * an extrnal url property.
+     * @param array $v
+     * @return void
+     */
+    private function addExternalURL(array &$v): void {
+        
+        if ($v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#Concept" ||
+                    $v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#ConceptScheme") {
+
+                if (isset($v['identifiers']) && count($v['identifiers']) > 0) {
+                    foreach ($v['identifiers'] as $val) {
+                        if ((strpos($val, $this->config->baseUrl) === false) &&
+                                (strpos($val, 'https://id.acdh.oeaw.ac.at') === false) &&
+                                (strpos($val, 'https://vocabs.acdh.oeaw.ac.at/rest/') === false) &&
+                                (strpos($val, '.acdh.oeaw.ac.at/api/') === false) &&
+                                (strpos($val, 'arche-curation.') === false) && 
+                                (strpos($val, 'arche-dev.') === false)
+                        ) {
+                            $v['externalUrl'] = $val;
+                        }
+                    }
+                }
+            }
     }
 
     /**
@@ -182,7 +212,7 @@ class ResourceCoreObject {
         }
         return $result;
     }
-    
+
     public function getConceptAndSchemeIdentifiers(): array {
         $result = array();
         if (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) {
@@ -192,7 +222,6 @@ class ResourceCoreObject {
                         (strpos($v['value'], 'https://id.acdh.oeaw.ac.at') === false) &&
                         (strpos($v['value'], 'https://vocabs.acdh.oeaw.ac.at/rest/') === false) &&
                         (strpos($v['value'], '.acdh.oeaw.ac.at/api/') === false)
-                        
                 ) {
                     $result[] = $v;
                 }
@@ -955,14 +984,17 @@ class ResourceCoreObject {
 
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
+                       
                         if (isset($val['value'])) {
-                            $obj = [];
+                            /*$obj = [];
                             if (isset($val['id']) && (int) $this->repoid !== (int) $val['id']) {
                                 $obj['id'] = $val['id'];
                             }
                             $obj['value'] = $val['value'];
                             $obj['property'] = $k;
-                            $result[$v][] = $obj;
+                            
+                            $obj['type'] = $k;*/
+                            $result[$v][] = $val;
                         }
                     }
                 }
@@ -985,13 +1017,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $obj = [];
-                            if (isset($val['id'])) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['type'] = $val['type'];
-                            $obj['value'] = $val['value'];
-                            $result[$k][] = $obj;
+                            $result[$k][] = $val;
                         }
                     }
                 }
@@ -1021,12 +1047,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $obj = [];
-                            if (isset($val['id'])) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['value'] = $val['value'];
-                            $result[$v][] = $obj;
+                            $result[$v][] = $val;
                         }
                     }
                 }
@@ -1052,12 +1073,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $obj = [];
-                            if (isset($val['id'])) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['value'] = $val['value'];
-                            $result[$v][] = $obj;
+                            $result[$v][] = $val;
                         }
                     }
                 }
@@ -1078,12 +1094,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $obj = [];
-                            if (isset($val['id'])) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['value'] = $val['value'];
-                            $result[$v][] = $obj;
+                            $result[$v][] = $val;
                         }
                     }
                 }
@@ -1142,12 +1153,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            $obj = [];
-                            if (isset($val['id'])) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['value'] = $val['value'];
-                            $result[$v][] = $obj;
+                            $result[$v][] = $val;
                         }
                     }
                 }
@@ -1215,8 +1221,8 @@ class ResourceCoreObject {
     public function isConceptOrConceptScheme(): string {
         if ($this->getAcdhType() === 'Concept' or $this->getAcdhType() === 'ConceptScheme') {
             $identifiers = $this->getConceptAndSchemeIdentifiers();
-            if(count($identifiers) > 0 ) {
-                if(isset($identifiers[0]['value'])) {
+            if (count($identifiers) > 0) {
+                if (isset($identifiers[0]['value'])) {
                     return $identifiers[0]['value'];
                 }
             }

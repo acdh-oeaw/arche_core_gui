@@ -21,8 +21,10 @@
                 {% for value in data %}
                     {% if value is iterable %}
                         {% for v in value %}
-                            {% if v.value %} 
-                                {% if (v.type == 'ID') %}
+                            {% if v.value %}
+                                {% if (v.externalUrl) %}
+                                    <a href="{{ v.externalUrl }}" target="_blank">{{ v.title|nl2br }}</a>
+                                {% elseif (v.type == 'ID') %}
                                     {% if (v.title and v.repoid )  %}
                                         <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
                                     {% elseif (v.value and v.repoid )  %}                            
@@ -113,7 +115,9 @@
 
                   
                     {% if(value.type == 'REL') %}
-                        {% if (value.title and value.repoid )  %}
+                        {% if (value.externalUrl )  %}
+                            <a target="_blank" href="{{ value.externalUrl }}" >{{ value.value|nl2br }}</a>                        
+                        {% elseif (value.title and value.repoid )  %}
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
                         {% elseif (value.value and value.repoid )  %}
                             <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value|trim }}</a>

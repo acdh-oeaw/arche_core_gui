@@ -88,19 +88,12 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                 ];
             }
             
-            $isConceptOrConceptScheme = $obj->isConceptOrConceptScheme();
-            
-            if(!empty($isConceptOrConceptScheme)) {
-                return new \Drupal\Core\Routing\TrustedRedirectResponse($isConceptOrConceptScheme);
-            }
-           
             $return = [
                 '#theme' => 'arche-detail',
                 '#identifier' => $identifier,
                 '#data' => $obj,
                 '#cache' => ['max-age' => 0],
                 '#cookie' => $_COOKIE,
-                '#conceptUrl' => $isConceptOrConceptScheme,
                 '#attached' => [
                     'library' => [
                         'arche_core_gui/detail-view',
