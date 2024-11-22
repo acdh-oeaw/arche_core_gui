@@ -120,6 +120,23 @@
                     {{ include(arche_core_gui_path ~ '/templates/metadata/summary-block.html.twig', {'result': data } ) }}
                 </div>
 
+                {% if data.getAcdhType()|lower == 'topcollection' %}
+                    {% if data.getData('acdh:hasArrangement') %}
+                        <div class="row" id="ad-arrangement">
+                            <div class="col-lg-12 ">
+                                <h5>{{ "Arrangement"|trans }}</h5>
+                            </div>
+                            <div class="col-lg-12 " id="av-arrangement">
+                                {% if data.getData('acdh:hasArrangement') %}
+                                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                                     {'data': data.getData('acdh:hasArrangement'), 'delimiter': '<br>' } ) }}
+                                {% endif %}
+                            </div>
+                        </div>     
+                    {% endif %}
+                {% endif %}
+
+
                 <!-- SEE ALSO -->
                 {% if data.getData('acdh:hasUrl') or data.getData('acdh:hasRelatedProject') %}
                     <div class="row" id="ad-see-also">
@@ -218,10 +235,10 @@
                 {% if data.isAudio() %}
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-audio-viewer.html.twig', {'data': data} ) }}
                 {% endif%} 
-                
+
                 {% if data.is3DObject() %} 
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-3d-viewer.html.twig' ) }}
-               {% endif%} 
+                {% endif%} 
 
 
             </div>

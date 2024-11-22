@@ -85,16 +85,7 @@
         </div>
     {% endif %}
 
-    {% if data.getAcdhType()|lower == 'topcollection' %}
-        {% if data.getData('acdh:hasArrangement') %}
-            <ul>
-
-                <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasArrangement'), 'label':  'Arrangement' } ) }}</li>
-            </ul>
-        {% endif %}
-    {% endif %}
-
+   
     {% if data.getData('acdh:hasNote') %}
         <ul>
 
