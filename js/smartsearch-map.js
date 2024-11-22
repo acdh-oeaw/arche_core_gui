@@ -4,7 +4,7 @@ jQuery(function ($) {
 
     var markersArr = [];
     window.map;
-    
+
     window.initializeMaps = function (reinit = false) {
         map = L.map('map').setView([48.2, 16.3], 10);
 
@@ -33,6 +33,7 @@ jQuery(function ($) {
             },
             edit: {
                 edit: false,
+                delete: false,
                 featureGroup: drawnItems
             }
         });
@@ -97,8 +98,15 @@ jQuery(function ($) {
                 drawnItems.clearLayers();
             }
         });
-
+        
         map.on('draw:deleted', function (event) {
+            /*
+             * drawnItems.eachLayer(function(layer) {
+             if (layer.options.selected) { // Assuming layers have a "selected" property
+             drawnItems.removeLayer(layer);
+             }
+             });
+             */
             var layer = event.layer;
             map.removeLayer(layer);
             $('#mapLabel').html('');
@@ -308,7 +316,7 @@ jQuery(function ($) {
     });
 
     window.setMapLabel = function (bbox) {
-    //function setMapLabel(bbox) {
+        //function setMapLabel(bbox) {
         var coord = bbox.getLayers()[0].toGeoJSON().geometry.coordinates[0];
         $('#mapLabel').html('<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn"><img src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png" class="smartsearch_trash_icon"></a> ' + coord[0][0].toPrecision(3) + ', ' + coord[0][1].toPrecision(3) + ' - ' + coord[2][0].toPrecision(3) + ', ' + coord[2][1].toPrecision(3) + '</div>');
     }
