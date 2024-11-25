@@ -32,8 +32,8 @@ jQuery(function ($) {
                 circlemarker: false
             },
             edit: {
+                remove: false,
                 edit: false,
-                delete: false,
                 featureGroup: drawnItems
             }
         });
@@ -98,15 +98,8 @@ jQuery(function ($) {
                 drawnItems.clearLayers();
             }
         });
-        
+
         map.on('draw:deleted', function (event) {
-            /*
-             * drawnItems.eachLayer(function(layer) {
-             if (layer.options.selected) { // Assuming layers have a "selected" property
-             drawnItems.removeLayer(layer);
-             }
-             });
-             */
             var layer = event.layer;
             map.removeLayer(layer);
             $('#mapLabel').html('');
@@ -116,7 +109,7 @@ jQuery(function ($) {
 
         window.bbox = drawnItems;
 
-        var customControl = L.Control.extend({
+        var customCloseControl = L.Control.extend({
             options: {
                 position: 'topright' // Position the button in the top right corner
             },
@@ -147,9 +140,41 @@ jQuery(function ($) {
                 return container;
             }
         });
+        // Add the custom button to the map
+        map.addControl(new customCloseControl());
+
+        // Create a custom button for deleting all layers
+        var customDeleteControl = L.Control.extend({
+            options: {
+                position: 'topleft'
+            },
+            onAdd: function (map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+                container.style.backgroundColor = 'white';
+                container.style.width = '30px';
+                container.style.height = '30px';
+                container.style.lineHeight = '30px';
+                container.style.textAlign = 'center';
+                container.style.cursor = 'pointer';
+                container.title = 'Delete All Layers';
+
+                container.innerHTML = '<img class="smartsearch_trash_icon" src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png"/>'; // Trash icon (can be replaced with an image or text)
+
+                container.onclick = function () {
+                    drawnItems.clearLayers();
+                    $('#mapLabel').html('');
+                };
+
+                // Prevent click propagation to the map
+                L.DomEvent.disableClickPropagation(container);
+
+                return container;
+            }
+        });
 
         // Add the new control to the map
-        map.addControl(new customControl());
+        map.addControl(new customDeleteControl());
     }
 
 

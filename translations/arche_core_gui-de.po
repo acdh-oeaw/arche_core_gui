@@ -694,3 +694,9 @@ msgstr "Methoden"
 
 msgid "Methods description"
 msgstr "Methoden Beschreibung"
+
+msgid "Are you sure you want to delete all layers?"
+msgstr "Möchten Sie wirklich alle Ebenen löschen?"
+
+msgid "All layers have been deleted."
+msgstr "Alle Ebenen wurden gelöscht."
