@@ -90,4 +90,13 @@ class ArcheBaseController extends ControllerBase {
         $language_code = $current_language->getId();
         return $language_code;
     }
+    
+    /**
+     * we have to redirect the old metadata url to the new one
+     * old: oeaw_detail new: metadata
+     */
+    public function redirectOldDetailView(string $identifier) {
+        $destination = '/browser/metadata/' . $identifier; // Redirect to a path using the parameter
+        return new \Symfony\Component\HttpFoundation\RedirectResponse($destination, 301);
+    }
 }

@@ -20,7 +20,6 @@ arche_metadata:
     _permission: 'access content'
     _access: 'TRUE'    
     
-
 arche_metadata_ajax:
   path: '/metadata_ajax/{identifier}'
   defaults:
@@ -29,6 +28,15 @@ arche_metadata_ajax:
     identifier: '^[^\?]*$'
     _permission: 'access content'
     _access: 'TRUE'  
+
+arche_metadata_old:
+  path: '/oeaw_detail/{identifier}'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\ArcheBaseController::redirectOldDetailView'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'     
     
 arche_dissemination_3d:
   path: '/dissemination/3d/{identifier}'
