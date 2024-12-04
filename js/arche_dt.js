@@ -357,6 +357,63 @@ jQuery(function ($) {
             }
         });
     }
+    
+    window.fetchProjectAssociatedTable = function (resId) {
+        $('.loading-indicator').removeClass('d-none');
+        //relatedTable = new DataTable('#relatedDT', {
+        window.spatialTable = $('#projectAssociatedDT').DataTable({
+            paging: true,
+            searching: true,
+            lengthChange: false,
+            pageLength: 10,
+            processing: true,
+            deferRender: true,
+            searchDelay: 500, // Optional: Add a delay for user typing
+            bInfo: false, // Hide table information
+            'language': {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            },
+            serverSide: true,
+            serverMethod: "post",
+            ajax: {
+                url: "/browser/api/projectAssociatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                timeout: 10000,
+                complete: function (response) {
+                    $('.loading-indicator').addClass('d-none');
+                    $('.row.spatial-table-div').removeClass('d-none');
+                    if (response === undefined) {
+                        $('.row.spatial-table-div').hide();
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('.loading-indicator').addClass('d-none');
+                    console.log(xhr);
+                    console.log(status);
+                    console.log(error);
+                    $('.row.spatial-table-div').hide();
+                }
+            },
+            columns: [
+                {data: 'acdhid', visible: false},
+                {data: 'id', visible: false},
+                {data: 'property', visible: false},
+                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                        return '<a href="' + row.acdhid + '">' + row.title + '</a>';
+                    }
+                },
+                {data: 'type', title: Drupal.t('Type'), render: function (data, type, row, meta) {
+                        if (row.type) {
+                            return removeBeforeHash(row.type);
+                        }
+                        return "";
+                    }
+                }
+            ],
+            fnDrawCallback: function () {
+            }
+        });
+    }
 
     window.fetchPublicationsRelatedResourcesTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');

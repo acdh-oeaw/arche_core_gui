@@ -279,10 +279,10 @@ jQuery(function ($) {
 
         //waiting for instructions
         if (acdhType === 'project') {
-            if ($.fn.dataTable.isDataTable('#spatialDT')) {
-                window.spatialTable.ajax.url("/browser/api/spatialDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            if ($.fn.dataTable.isDataTable('#projectAssociatedDT')) {
+                window.projectAssociatedlTable.ajax.url("/browser/api/projectAssociatedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
-                window.fetchPlaceSpatialTable(reloadID);
+                window.fetchProjectAssociatedTable(reloadID);
             }
         }
 
