@@ -660,7 +660,10 @@ msgid "Era"
 msgstr "Zeitraum"
 
 msgid "Continue reading"
-msgstr "Weiterlesen"
+msgstr "Zeige mehr"
+
+msgid "Show Less"
+msgstr "Zeige weniger"
 
 msgid "Resource is not public! Please login to download!"
 msgstr "Die Ressource ist nicht öffentlich! Bitte melden Sie sich an, um sie herunterzuladen!"
