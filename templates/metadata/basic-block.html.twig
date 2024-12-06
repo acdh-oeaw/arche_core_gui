@@ -222,25 +222,6 @@
                         </div>  
                     </div>
                 </div>
-
-                <!-- PDF viewer -->
-                {% if data.isPDF() %}
-                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-pdf-viewer.html.twig', {'data': data} ) }}
-                {% endif %}
-
-                {% if data.isIIIF() %}
-                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-iiif-viewer.html.twig', {'data': data} ) }}
-                {% endif %}
-
-                {% if data.isAudio() %}
-                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-audio-viewer.html.twig', {'data': data} ) }}
-                {% endif%} 
-
-                {% if data.is3DObject() %} 
-                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-3d-viewer.html.twig' ) }}
-                {% endif%} 
-
-
             </div>
         </div>
 
