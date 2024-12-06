@@ -222,13 +222,14 @@
                         </div>  
                     </div>
                 </div>
-
+                {% set thumbnailHidden = '' %}                       
                 <!-- PDF viewer -->
                 {% if data.isPDF() %}
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-pdf-viewer.html.twig', {'data': data} ) }}
                 {% endif %}
 
                 {% if data.isIIIF() %}
+                    {% set thumbnailHidden = 'd-none' %}
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-iiif-viewer.html.twig', {'data': data} ) }}
                 {% endif %}
 
@@ -251,8 +252,7 @@
             </div>
             -->
 
-
-            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig' ) }}
+            {{ include(arche_core_gui_path ~ '/templates/blocks/titleimage-block.html.twig', {'hidden': thumbnailHidden } ) }}
 
             {% if data.getMapType()|lower == 'polygon'  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'polygon' } ) }}

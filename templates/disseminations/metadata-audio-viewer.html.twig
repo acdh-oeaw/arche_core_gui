@@ -26,7 +26,7 @@
     $(document).delegate("#audioPlayerBtn", "click", function (e) {
         console.log("clicked");
         document.getElementById('loader').style.display = 'block';
-        document.getElementById("myDiv").innerHTML = "";
+        document.getElementById("waveform-progress").innerHTML = "";
         var player = WaveSurfer.create({container: '#waveform', waveColor: 'violet',
             progressColor: 'purple', });
         // Show loader when audio starts loading
