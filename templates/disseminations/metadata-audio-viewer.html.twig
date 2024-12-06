@@ -6,6 +6,7 @@
         <div class="col-lg-12">
             <div class="arche-audio-player-container">
                 <div id="waveform"></div>
+                <div id="waveform-progress"> </div>
                 <div id="loader" style="display: none;">Audio is loading...</div>
                 <div class="controls" style="text-align: center;">
                     <button class="ms-auto btn btn-arche-blue" data-action="play" id="audioPlayerBtn">
@@ -25,17 +26,17 @@
     $(document).delegate("#audioPlayerBtn", "click", function (e) {
         console.log("clicked");
         document.getElementById('loader').style.display = 'block';
-        $('#waveform').empty();
+        document.getElementById("myDiv").innerHTML = "";
         var player = WaveSurfer.create({container: '#waveform', waveColor: 'violet',
             progressColor: 'purple', });
         // Show loader when audio starts loading
         player.on('loading', (progress) => {
-            console.log('loading...');
-            console.log(progress);
+            document.getElementById('waveform-progress').style.display = 'block';
+            document.getElementById("waveform-progress").innerHTML = progress+ "%";
         });
 
         player.on('ready', function () {
-            console.log("playing");
+            document.getElementById('waveform-progress').style.display = 'none';
             document.getElementById('loader').style.display = 'none';
             player.play();
         });
