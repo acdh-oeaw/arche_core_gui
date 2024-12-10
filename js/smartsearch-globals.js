@@ -96,6 +96,12 @@ jQuery(function ($) {
         return queryString.slice(0, -1);
     }
 
+     // Function to track dynamic pageviews
+    window.trackPageView = function (newUrl) {
+        window._paq.push(['setCustomUrl', newUrl]);
+        window._paq.push(['setDocumentTitle', document.title]);
+        window._paq.push(['trackPageView']);
+    }
 
 
     /* update the current url after a search was triggered */
