@@ -103,7 +103,7 @@ jQuery(function ($) {
             var layer = event.layer;
             map.removeLayer(layer);
             $('#mapLabel').html('');
-            $('.sm-map').css('top', '-1000px');
+            $('.sm-map').css('top', '-3000px');
             $('.sm-map').css('display', 'block');
         });
 
@@ -129,7 +129,7 @@ jQuery(function ($) {
 
                 // Setup the click event on the button
                 L.DomEvent.on(container, 'click', function () {
-                    $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+                    $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -3000 : 0);
                     $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
 
                     setTimeout(function () {

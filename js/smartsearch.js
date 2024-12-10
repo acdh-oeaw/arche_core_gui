@@ -83,9 +83,9 @@ jQuery(function ($) {
         }
 
         window.executeTheSearch();
-      
+
     });
-   
+
     ////// SEARCH IN Function END /////
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
@@ -124,6 +124,7 @@ jQuery(function ($) {
 
         // Update the URL without reloading the page
         var newFullUrl = window.location.pathname + newUrl;
+        window.trackPageView(newFullUrl);
         window.location.href = newFullUrl;
     });
 
@@ -153,7 +154,7 @@ jQuery(function ($) {
 
     $(document).delegate("#mapToggleBtn", "click", function (e) {
         e.preventDefault();
-        $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -2000 : 0);
+        $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -3000 : 0);
         $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
 
         setTimeout(function () {
@@ -214,7 +215,7 @@ jQuery(function ($) {
             alert(xhr.responseText);
             $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:22 " + error) + '</div>');
         };
-       
+
         param.error = function (xhr, status, error) {
             if (error === 'timeout') {
                 $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
@@ -239,10 +240,10 @@ jQuery(function ($) {
 
     window.buildParams = function (searchStr, pagerPage, apiUrl = '/browser/api/smartsearch') {
         var page = 0;
-        if(window.actualPage !== 0) {
-            page = window.actualPage -1;
+        if (window.actualPage !== 0) {
+            page = window.actualPage - 1;
         }
-        
+
         var param = {
             url: apiUrl,
             method: 'get',
@@ -256,7 +257,7 @@ jQuery(function ($) {
                 facets: {},
                 searchIn: [],
                 noCache: 0
-                //noCache: $('#noCache').is(':checked') ? 1 : 0
+                        //noCache: $('#noCache').is(':checked') ? 1 : 0
             }
         };
 
@@ -312,7 +313,7 @@ jQuery(function ($) {
             }
             param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
         });
-        
+
         /*
          if ($('#searchInChb:checked').length === 1) {
          $('#searchIn > div').each(function (n, el) {
@@ -350,10 +351,10 @@ jQuery(function ($) {
             return showJustSearchFacets();
         }
 
-       
+
         var searchStr = $('#sm-hero-str').val();
         var pagerPage = (window.getGuiSearchParams('page') ?? 1) - 1;
-        if(pagerPage === -1) {
+        if (pagerPage === -1) {
             pagerPage = 0;
         }
 
@@ -407,6 +408,8 @@ jQuery(function ($) {
             window.previousUrls.pop();
             sessionStorage.setItem('urls', JSON.stringify(window.previousUrls));
             // Navigate to the previous URL
+            let newFullUrl = window.location.href;
+            window.trackPageView(newFullUrl);
             window.location.href = previousUrl;
         }
     }
@@ -469,10 +472,10 @@ jQuery(function ($) {
         btn.attr('id', 'removeSearchInElementBtn');
         element.attr('id', 'in' + id);
         $('#searchIn').append(element);
-        
+
         // !!!! EXTEND! if the url is copied to a new browser, then we have to
         // fetch the resource base data by id
-        
+
     }
 
 });

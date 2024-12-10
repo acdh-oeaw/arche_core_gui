@@ -22,17 +22,17 @@ jQuery(function ($) {
         var baseUrl = window.location.origin + window.location.pathname;
         return baseUrl.split("/browser")[0];
     }
-    
+
     /* reset the searchUrl and remove the params */
     window.resetsearchUrl = function () {
         //function resetsearchUrl() {
         var currentUrl = window.location.href;
         var discoverIndex = currentUrl.indexOf('/discover/');
-         var discoverIndexQ = currentUrl.indexOf('/discover?');
+        var discoverIndexQ = currentUrl.indexOf('/discover?');
         if (discoverIndex !== -1) {
             currentUrl = currentUrl.substring(0, discoverIndex + '/discover/'.length);
         }
-         if (discoverIndexQ !== -1) {
+        if (discoverIndexQ !== -1) {
             currentUrl = currentUrl.substring(0, discoverIndexQ + '/discover?'.length);
         }
         history.pushState(null, "Discover", currentUrl);
@@ -41,7 +41,7 @@ jQuery(function ($) {
 
     /* reset search button clicked */
     window.resetSearch = function () {
-    //function resetSearch() {
+        //function resetSearch() {
         window.guiObj = {};
         window.guiObj = {'actualPage': 1};
         window.resetsearchUrl();
@@ -101,6 +101,7 @@ jQuery(function ($) {
     /* update the current url after a search was triggered */
     window.updateUrl = function (params) {
         //function updateUrl(params) {
+
         window.popstateActive = sessionStorage.getItem('popstate');
         if (window.popstateActive === 'false') {
             window.previousUrls.push(window.location.href);
@@ -113,6 +114,7 @@ jQuery(function ($) {
         if (currentUrl.slice(-1) === "/") {
             currentUrl = currentUrl.slice(0, -1);
         }
+        window.trackPageView(currentUrl + '/?' + queryString);
         history.pushState(null, "Discover", currentUrl + '/?' + queryString);
 
     }
@@ -125,11 +127,11 @@ jQuery(function ($) {
     window.checkThumbnailImage = function (resourceUrl) {
         //function checkThumbnailImage(resourceUrl) {
         // Create a new Image object
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + resourceUrl.replace('/browser/metadata/', '/api/')+ '&width=600';
+        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + resourceUrl.replace('/browser/metadata/', '/api/') + '&width=600';
         var img = new Image();
         img.src = imgSrc;
         img.onerror = function () {
-             resourceUrl = resourceUrl.replace(/^https?:\/\//, '');
+            resourceUrl = resourceUrl.replace(/^https?:\/\//, '');
             $('[data-thumbnailid="' + resourceUrl + '"]').hide();
             $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
             $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');
@@ -171,7 +173,7 @@ jQuery(function ($) {
     }
 
 
-  
+
     /**
      * Get the language
      * @param {type} data
