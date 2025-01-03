@@ -6,26 +6,15 @@ jQuery(function ($) {
 
         $('.main-content-warnings').html("");
         $('#searchInValue').val("");
-        $(window).on('popstate', function (e) {
-            // Call the function to handle the URL change
-            loadPreviousUrl();
-        });
-
-        function handleURLChange() {
-            var currentUrl = window.location.href;
-            // Create a URL object to extract pathname
-            var url = new URL(currentUrl);
-            // Check if the URL contains any params
-            if ((currentUrl.indexOf("/browser/discover?") !== -1 || currentUrl.indexOf("/browser/discover/") !== -1) && (url.search !== "" || url.search.trim() !== "")) {
-                window.getSearchParamsFromUrl(currentUrl);
-                window.executeTheSearch();
-            } else {
-                window.executeTheSearch();
-            }
-        }
-        // Call function specific to no popstate event
-        handleURLChange();
         window.initializeMaps();
+
+        $(window).on('popstate', function (e) {
+            if (event.state !== undefined) {
+                window.search('none', event.state);
+            }
+        });
+        var paramUrl = (new URL(window.location.href)).search.substring(1);
+        window.search('replace', paramUrl);
     });
 
     //// events ////
@@ -35,22 +24,16 @@ jQuery(function ($) {
     $(document).delegate("input", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
-            window.firstLoad = false;
-            // Prevent the default form submission behavior
             e.preventDefault();
-            // Trigger a click event on the submit button
-            window.executeTheSearch();
+            window.search();
         }
     });
 
     $(document).delegate("select", "keypress", function (e) {
         // Check if the Enter key (keyCode 13) is pressed
         if (e.keyCode === 13) {
-            window.firstLoad = false;
-            // Prevent the default form submission behavior
             e.preventDefault();
-            // Trigger a click event on the submit button
-            window.executeTheSearch();
+            window.search();
         }
     });
 
@@ -60,72 +43,34 @@ jQuery(function ($) {
     $(document).on('keyup', '.select2-search__field', function (e) {
         if (e.which === 13) {
             e.preventDefault();
-            window.firstLoad = false;
-            window.executeTheSearch();
+            window.search();
         }
     });
 
 
     ////// SEARCH IN Function START /////
     $(document).delegate(".searchInBtn", "click", function (e) {
-        var resourceId = $(this).data('resource-id');
-        var buttonId = $(this).attr('id');
-        $('#searchInValue').val(resourceId);
-        if (buttonId === 'removeSearchInElementBtn') { // Check if the id is equal to 'yourId'
-            $('#searchIn').empty();
+        var id = $(this).data('resource-id');
+        if (id === 'removeSearchInElementBtn') {
             $('#searchIn').hide();
-            $('#searchInValue').val("");
-            $('#searchIn').hide();
-            //$('.discover-content-main .smart-result-row .searchInBtn').prop('disabled', false);
+            window.searchIn = [];
         } else {
-            window.searchInAdd(resourceId, $(this).data('resource-title'));
-            $('#searchIn').show();
+            window.searchIn = [id];
         }
-
-        window.executeTheSearch();
-
+        window.search();
     });
 
     ////// SEARCH IN Function END /////
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
-        window.firstLoad = true;
         e.preventDefault();
-        $('#block-smartsearchblock input[type="text"]').val('');
-        $('#block-smartsearchblock input[type="search"]').val('');
-        $('#block-smartsearchblock input[type="checkbox"]').prop('checked', false);
-        $('#block-smartsearchblock textarea').val('');
-        $('#block-smartsearchblock select').val('');
-        $('#sm-hero-str').val('');
-        $('#searchInValue').val("");
-        $('#mapSelectedPlace').html('');
-        $('#mapLabel').html('');
-        // do a topcollection search
         window.resetSearch();
     });
 
     $(document).delegate("#mapRemoveFiltersBtn", "click", function (e) {
         e.preventDefault();
-        var url = window.location.href;
-        var paramsString = "";
-        if (url.split('/browser/discover?')[1]) {
-            paramsString = url.split('/browser/discover?')[1];
-        } else {
-            paramsString = url.split('/browser/discover/')[1];
-        }
-        var pattern = /&facets%5Bmap%5D=POLYGON\(\([^)]*\)\)&/;
-
-        // Replace the specific part with a single &
-        var newUrl = paramsString.replace(pattern, '&');
-
-        window.guiObj = {};
-        // Fix any potential issues with dangling & or multiple & in a row
-        newUrl = newUrl.replace(/&&/, '&').replace(/\?&/, '?').replace(/&$/, '');
-
-        // Update the URL without reloading the page
-        var newFullUrl = window.location.pathname + newUrl;
-        window.trackPageView(newFullUrl);
-        window.location.href = newFullUrl;
+        window.mapRemoveSearchArea();
+        window.search();
     });
 
     //main search block
@@ -134,98 +79,33 @@ jQuery(function ($) {
         if ($('.discover-content-main').is(':hidden')) {
             $('.discover-content-main').show();
         }
-        window.guiObj = {'actualPage': 1};
-        window.firstLoad = false;
-        window.executeTheSearch();
+        window.search();
     });
 
     $(document).delegate(".paginate_button", "click", function (e) {
         e.preventDefault();
         window.actualPage = parseInt($(this).text());
-        window.guiObj = {'actualPage': window.actualPage};
-        window.executeTheSearch();
+        window.search();
     });
 
     $(document).delegate("#smartPageSize", "change", function (e) {
         e.preventDefault();
-        window.guiObj = {'actualPage': 1};
-        window.executeTheSearch();
+        window.actualPage = 1;
+        window.search();
     });
 
-    $(document).delegate("#mapToggleBtn", "click", function (e) {
-        e.preventDefault();
-        $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -3000 : 0);
-        $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
-
-        setTimeout(function () {
-            window.map.invalidateSize();  // 'map' is your Leaflet map variable
-        }, 100);
-    });
-
+    $(document).delegate("#mapToggleBtn", "click", function() {window.mapToggle();});
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
     $('#hero-smart-search-form').on('keydown', 'input', function (event) {
         if (event.which === 13) { // Check if Enter key was pressed (key code 13)
-            window.firstLoad = false;
             event.preventDefault();
-            window.executeTheSearch();
+            window.search();
         }
     });
-
 
     /////////////////// EVENTS END /////////////////////
 
     //////////////// SMART SEARCH ///////////////////
-
-    /**
-     * The basic jsut facet display search function
-     * @returns {undefined}
-     */
-    function showJustSearchFacets() {
-        window.token++;
-        var localToken = window.token;
-        var pagerPage = (window.getGuiSearchParams('page') ?? 1) - 1;
-        $('.main-content-warnings').html('');
-        var param = {
-            url: '/browser/api/smartsearch',
-            method: 'get',
-            data: {
-                q: "",
-                preferredLang: drupalSettings.arche_core_gui.gui_lang,
-                includeBinaries: 0,
-                linkNamedEntities: 0,
-                page: pagerPage,
-                pageSize: $('#smartPageSize').val(),
-                facets: {},
-                searchIn: [],
-                noCache: 0
-            }
-        };
-
-        var t0 = new Date();
-        param.success = function (x) {
-            if (window.token === localToken) {
-                window.showResults(x, param.data, t0, true);
-                updateSearchGui(window.selectedSearchValues);
-            }
-        };
-        param.fail = function (xhr, status, error) {
-            if (xhr.status === 404) {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:11 " + error) + '</div>');
-            }
-            alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:22 " + error) + '</div>');
-        };
-
-        param.error = function (xhr, status, error) {
-            if (error === 'timeout') {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
-            } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:33 " + xhr.responseText) + '</div>');
-            }
-        };
-        param.timeout = drupalSettings.arche_core_gui.smartsearch_timeout;
-        $.ajax(param);
-    }
 
     /**
      * if the search is executed by the hero section, we have to update the input field
@@ -238,52 +118,45 @@ jQuery(function ($) {
         }
     }
 
-    window.buildParams = function (searchStr, pagerPage, apiUrl = '/browser/api/smartsearch') {
-        var page = 0;
-        if (window.actualPage !== 0) {
-            page = window.actualPage - 1;
+    window.getSearchParamBase = function() {
+        return {
+            q: '',
+            preferredLang: drupalSettings.arche_core_gui.gui_lang,
+            includeBinaries: 0,
+            linkNamedEntities: 1,
+            page: Math.max(0, window.actualPage !== 0 ? window.actualPage - 1 : 0),
+            pageSize: $('#smartPageSize').val(),
+            facets: {},
+            searchIn: [],
+            noCache: 0
         }
+    }
 
-        var param = {
-            url: apiUrl,
-            method: 'get',
-            data: {
-                q: searchStr,
-                preferredLang: drupalSettings.arche_core_gui.gui_lang,
-                includeBinaries: $('#inBinary').is(':checked') ? 1 : 0,
-                linkNamedEntities: $('#linkNamedEntities').is(':checked') ? 1 : 0,
-                page: page,
-                pageSize: $('#smartPageSize').val(),
-                facets: {},
-                searchIn: [],
-                noCache: 0
-                        //noCache: $('#noCache').is(':checked') ? 1 : 0
-            }
-        };
+    function collectBackendQueryParam() {
+        var param = window.getSearchParamBase();
 
-        //if we have already selected facets from the url then we have to update 
-        // the facets
-        if (window.getGuiSearchParams('facets')) {
-            param.data.facets = window.getGuiSearchParams('facets');
-        }
+        param.q = $('#sm-hero-str').val();
+        param.searchIn = window.searchIn;
+        param.includeBinaries = $('#inBinary').is(':checked') ? 1 : 0;
+        param.linkNamedEntities = $('#linkNamedEntities').is(':checked') ? 1 : 0;
 
         $(".smart-search-multi-select").each(function () {
             var prop = $(this).attr('data-property');
             var val = $(this).val();
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = [];
+            if (!(prop in param.facets)) {
+                param.facets[prop] = [];
             }
-            param.data.facets[prop] = val;
+            param.facets[prop] = val;
         });
 
         $('input.facet-min').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
             var val = $(facet).val();
             if (val !== "") {
-                if (!(prop in param.data.facets)) {
-                    param.data.facets[prop] = {};
+                if (!(prop in param.facets)) {
+                    param.facets[prop] = {};
                 }
-                param.data.facets[prop].min = val;
+                param.facets[prop].min = val;
             }
         });
 
@@ -291,46 +164,38 @@ jQuery(function ($) {
             var prop = $(facet).attr('data-value');
             var val = $(facet).val();
             if (val !== "") {
-                if (!(prop in param.data.facets)) {
-                    param.data.facets[prop] = {};
+                if (!(prop in param.facets)) {
+                    param.facets[prop] = {};
                 }
-                param.data.facets[prop].max = val;
+                param.facets[prop].max = val;
             }
         });
 
         $('input.range:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = {};
+            if (!(prop in param.facets)) {
+                param.facets[prop] = {};
             }
-            param.data.facets[prop].distribution = 1;
+            param.facets[prop].distribution = 1;
         });
 
         $('input.distribution:checked').each(function (n, facet) {
             var prop = $(facet).attr('data-value');
-            if (!(prop in param.data.facets)) {
-                param.data.facets[prop] = {};
+            if (!(prop in param.facets)) {
+                param.facets[prop] = {};
             }
-            param.data.facets[prop].distribution = (param.data.facets[prop].distribution || 0) + 2;
+            param.facets[prop].distribution = (param.facets[prop].distribution || 0) + 2;
         });
 
-        /*
-         if ($('#searchInChb:checked').length === 1) {
-         $('#searchIn > div').each(function (n, el) {
-         param.data.searchIn.push($(el).attr('data-value'));
-         });
-         }*/
-
-        if (window.getGuiSearchParams('searchIn')) {
-            param.data.searchIn.push(window.getGuiSearchParams('searchIn'));
+        var bbox = window.searchArea.getBounds();
+        if (bbox._northEast) {
+            var W = bbox.getWest().toPrecision(5);
+            var S = bbox.getSouth().toPrecision(5);
+            var E = bbox.getEast().toPrecision(5);
+            var N = bbox.getNorth().toPrecision(5);
+            param.facets['map'] = 'POLYGON((' + W + ' ' + S + ',' + W + ' ' + N + ',' + E + ' ' + N + ',' + E + ' ' + S + ',' + W + ' ' + S + '))';
         }
 
-        if (window.bboxObj.drawnItems) {
-            if (window.bboxObj.drawnItems.getLayers().length > 0) {
-                var coord = window.bboxObj.drawnItems.getLayers()[0].toGeoJSON().geometry.coordinates[0];
-                param.data.facets['map'] = 'POLYGON((' + coord.map((x) => x[0] + ' ' + x[1]).join(',') + '))';
-            }
-        }
         return param;
     }
 
@@ -338,83 +203,7 @@ jQuery(function ($) {
      * Perform the main search function
      * @returns {undefined}
      */
-    function search() {
-        window.token++;
-        $('.main-content-warnings').html('');
-        var localToken = window.token;
-
-        if (window.popstateActive === 'true') {
-            window.firstLoad = false;
-        }
-
-        if (window.firstLoad) {
-            return showJustSearchFacets();
-        }
-
-
-        var searchStr = $('#sm-hero-str').val();
-        var pagerPage = (window.getGuiSearchParams('page') ?? 1) - 1;
-        if (pagerPage === -1) {
-            pagerPage = 0;
-        }
-
-        //var guiFacets_ = (getGuiSearchParams('facets')) ? getGuiSearchParams('facets') : {};
-
-        if (searchStr === "") {
-            searchStr = (window.getGuiSearchParams('q')) ? window.getGuiSearchParams('q') : "";
-        }
-        updateSearchStrInput(searchStr);
-
-        var param = window.buildParams(searchStr, pagerPage);
-        var t0 = new Date();
-        param.success = function (x) {
-            if (window.token === localToken) {
-                //console.log("search ajax success - param.data: ");
-                //console.log(param.data);
-                window.showResults(x, param.data, t0);
-            }
-        };
-
-        param.fail = function (xhr, textStatus, errorThrown) {
-            alert(xhr.responseText);
-            $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: 44" + error) + '</div>');
-        };
-
-        param.error = function (xhr, status, error) {
-            if (error === 'timeout') {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
-                $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
-            } else {
-                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:55 " + xhr.responseText) + '</div>');
-                $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
-            }
-        };
-        sessionStorage.setItem('popstate', false);
-        param.timeout = drupalSettings.arche_core_gui.smartsearch_timeout;
-        $.ajax(param);
-    }
-
-    /**
-     * Load the latest url after the user clicked the back button on the browser
-     * @returns {undefined}
-     */
-    function loadPreviousUrl() {
-        sessionStorage.setItem('popstate', true);
-        if (window.previousUrls.length > 0) {
-            // Get the previous URL
-            var previousUrl = window.previousUrls[window.previousUrls.length - 1];
-            // Update sessionStorage
-            // Remove the current URL
-            window.previousUrls.pop();
-            sessionStorage.setItem('urls', JSON.stringify(window.previousUrls));
-            // Navigate to the previous URL
-            let newFullUrl = window.location.href;
-            window.trackPageView(newFullUrl);
-            window.location.href = previousUrl;
-        }
-    }
-
-    window.executeTheSearch = function () {
+    window.search = function(historyAction, paramUrl) {
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -423,59 +212,54 @@ jQuery(function ($) {
                 ' </div>' +
                 '</div>');
         $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", true);
-        search();
-    }
+        $('.main-content-warnings').html('');
 
-    function updateSearchGui(data) {
-        $.each(data, function (k, v) {
-            var elementId = "";
-            var dataValue = "";
-            var elementValue = "";
-            $.each(v, function (key, val) {
-
-                if (key === "id") {
-                    elementId = "#" + val;
+        window.token++;
+        var localToken = window.token;
+        var data = paramUrl || paramUrl === '' ? window.parseQueryString(paramUrl) : collectBackendQueryParam(); // empty paramUrl is used to reset the search
+        var t0 = new Date();
+        var param = {
+            url: window.apiUrl,
+            method: 'get',
+            data: data,
+            timeout: drupalSettings.arche_core_gui.smartsearch_timeout,
+            success: function (x) {
+                if (window.token === localToken) {
+                    //console.log("search ajax success - data: ");
+                    //console.log(data);
+                    window.showResults(x, data, t0);
                 }
-
-                if (key === "value") {
-                    elementValue = val;
+            },
+            fail: function (xhr, textStatus, errorThrown) {
+                alert(xhr.responseText);
+                $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error: 44" + error) + '</div>');
+            },
+            error: function (xhr, status, error) {
+                if (error === 'timeout') {
+                    $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Timeout error, please refine your Query!") + '</div>');
+                    $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
+                } else {
+                    $('.main-content-row').html('<div class="alert alert-danger" role="alert">' + Drupal.t("Error! Search API has the following error:55 " + xhr.responseText) + '</div>');
+                    $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
                 }
-
-                if (key === "data") {
-                    dataValue = val;
-                }
-            });
-            if (elementId) {
-                $('#block-smartsearchblock')
-                        .find('[id="' + elementId + '"][value="' + elementValue + '"]')
-                        .each(function () {
-                            $(this).addClass("selected");
-                        });
             }
-            if (dataValue) {
-                $('#block-smartsearchblock')
-                        .find('[data-value="' + dataValue + '"][value="' + elementValue + '"]')
-                        .each(function () {
-                            $(this).prop("checked", true);
-                        });
-            }
-        });
-    }
-
-    window.searchInAdd = function (id, title) {
-        if ($('#in' + id).length === 1) {
-            return;
+        };
+        // convert backend search parameters to an URL part
+        var newParamUrl = $.param(data);
+        // generate the URL for the current search
+        // by taking the current URL and replacing its search part
+        // with the current search parameters
+        var newUrl = new URL(window.location.href);
+        newUrl.search = newParamUrl;
+        newUrl = newUrl.toString();
+        // push the current search on top of the browsing history stack
+        if (historyAction === 'replace') {
+            // used on page load
+            history.replaceState(newParamUrl, null, newUrl);
+        } else if (historyAction !== 'none') {
+            // used on all other searches but the one triggered by the history back
+            history.pushState(newParamUrl, null, newUrl);
         }
-        var element = $('#res' + id).clone();
-        var btn = element.find('button');
-        btn.text('-');
-        btn.attr('id', 'removeSearchInElementBtn');
-        element.attr('id', 'in' + id);
-        $('#searchIn').append(element);
-
-        // !!!! EXTEND! if the url is copied to a new browser, then we have to
-        // fetch the resource base data by id
-
+        $.ajax(param);
     }
-
 });

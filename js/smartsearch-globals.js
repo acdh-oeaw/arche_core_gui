@@ -1,152 +1,37 @@
 jQuery(function ($) {
 
-    window.selectedSearchValues = [];
-    window.firstLoad = true;
+    window.apiUrl = '/browser/api/smartsearch';
     window.token = 1;
-    window.previousUrls = JSON.parse(sessionStorage.getItem('urls')) || [];
-    window.popstateActive = sessionStorage.getItem('popstate') || false;
-    window.bbox = null;
-    window.map = null;
+    window.searchIn = [];
     window.preferredLang = drupalSettings.arche_core_gui.gui_lang;
     window.archeBaseUrl = getInstanceUrl();
     window.actualPage = 1;
-    window.guiObj = {};
-    window.bboxObj = {};
+    window.map = null;
+    window.searchArea = null;
     var nmsp = [
         {prefix: 'https://vocabs.acdh.oeaw.ac.at/schema#', alias: 'acdh'},
         {prefix: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#', alias: 'rdf'}
     ];
-
 
     function getInstanceUrl() {
         var baseUrl = window.location.origin + window.location.pathname;
         return baseUrl.split("/browser")[0];
     }
 
-    /* reset the searchUrl and remove the params */
-    window.resetsearchUrl = function () {
-        //function resetsearchUrl() {
-        var currentUrl = window.location.href;
-        var discoverIndex = currentUrl.indexOf('/discover/');
-        var discoverIndexQ = currentUrl.indexOf('/discover?');
-        if (discoverIndex !== -1) {
-            currentUrl = currentUrl.substring(0, discoverIndex + '/discover/'.length);
-        }
-        if (discoverIndexQ !== -1) {
-            currentUrl = currentUrl.substring(0, discoverIndexQ + '/discover?'.length);
-        }
-        history.pushState(null, "Discover", currentUrl);
-    }
-
-
     /* reset search button clicked */
     window.resetSearch = function () {
-        //function resetSearch() {
-        window.guiObj = {};
-        window.guiObj = {'actualPage': 1};
-        window.resetsearchUrl();
-        var url = window.location.href;
-
-        // Find the position of the first '?'
-        var indexOfQuestionMark = url.indexOf('?');
-
-        // If there are query parameters, remove them
-        if (indexOfQuestionMark !== -1) {
-            // Get the URL without query parameters
-            var newUrl = url.substring(0, indexOfQuestionMark);
-
-            // Reload the page with the new URL
-            window.location.href = newUrl;
-        } else {
-            // If no query parameters, simply reload the page
-            window.location.reload();
-        }
+        window.search('', '');
     }
 
-    /**
-     * Creates the new url params based on the search facets
-     * @param {type} obj
-     * @param {type} prefix
-     * @returns {String}
-     */
-    function customParam(obj, prefix) {
-        var queryString = '';
-
-        $.each(obj, function (key, value) {
-            var fullKey = prefix ? prefix + '[' + key + ']' : key;
-
-            if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-                // If the value is a nested object, recurse into it
-                var nestedQuery = customParam(value, fullKey);
-                if (nestedQuery) {
-                    queryString += nestedQuery + '&';
-                }
-            } else if (Array.isArray(value)) {
-                // If the value is an array, join its elements into a single string if not empty
-                if (value.length > 0) {
-                    queryString += encodeURIComponent(fullKey) + '=[' + encodeURIComponent(value.join(',')) + ']&';
-                }
-            } else if (value !== '' && value !== null) {
-                // If the value is a simple type and not empty, add it directly                
-                queryString += encodeURIComponent(fullKey) + '=' + encodeURIComponent(value) + '&';
-            }
-        });
-
-        // Remove the trailing '&' and return the query string
-        return queryString.slice(0, -1);
-    }
-
-     // Function to track dynamic pageviews
+    // Function to track dynamic pageviews
     window.trackPageView = function (newUrl) {
         window._paq.push(['setCustomUrl', newUrl]);
         window._paq.push(['setDocumentTitle', document.title]);
         window._paq.push(['trackPageView']);
     }
 
-
-    /* update the current url after a search was triggered */
-    window.updateUrl = function (params) {
-        //function updateUrl(params) {
-
-        window.popstateActive = sessionStorage.getItem('popstate');
-        if (window.popstateActive === 'false') {
-            window.previousUrls.push(window.location.href);
-            sessionStorage.setItem('urls', JSON.stringify(window.previousUrls));
-        }
-
-        resetsearchUrl();
-        var queryString = customParam(params);
-        var currentUrl = window.location.href;
-        if (currentUrl.slice(-1) === "/") {
-            currentUrl = currentUrl.slice(0, -1);
-        }
-        window.trackPageView(currentUrl + '/?' + queryString);
-        history.pushState(null, "Discover", currentUrl + '/?' + queryString);
-
-    }
-
-    /**
-     * Check the thumbnail, if not exists then hide it and change the divs
-     * @param {type} resourceUrl
-     * @returns {undefined}
-     */
-    window.checkThumbnailImage = function (resourceUrl) {
-        //function checkThumbnailImage(resourceUrl) {
-        // Create a new Image object
-        var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + resourceUrl.replace('/browser/metadata/', '/api/') + '&width=600';
-        var img = new Image();
-        img.src = imgSrc;
-        img.onerror = function () {
-            resourceUrl = resourceUrl.replace(/^https?:\/\//, '');
-            $('[data-thumbnailid="' + resourceUrl + '"]').hide();
-            $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
-            $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');
-        };
-    }
-
     window.createPager = function (totalPages) {
-        //function createPager(totalPages) {
-        var actualPage = (getGuiSearchParams('actualPage') ?? 1);
+        var actualPage = window.actualPage ?? 1;
         $('#smartsearch-pager').empty();
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 3, totalPages);
@@ -178,8 +63,6 @@ jQuery(function ($) {
         }
     }
 
-
-
     /**
      * Get the language
      * @param {type} data
@@ -191,7 +74,6 @@ jQuery(function ($) {
         prefLang = prefLang || 'en';
         return data[prefLang] || Object.values(data)[0];
     }
-
 
     /**
      * Display warning text on the search page
@@ -276,6 +158,4 @@ jQuery(function ($) {
         }
         return v;
     }
-
-
 });
