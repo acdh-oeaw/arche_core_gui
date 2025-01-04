@@ -11,7 +11,7 @@ jQuery(function ($) {
                 param[key] = value;
             } else {
                 // Handle nested keys
-                var keys = key.replace(']', '').split('[');
+                var keys = key.replaceAll(']', '').split('[');
                 var current = param;
                 var nestedKey;
                 while (keys.length > 1) {

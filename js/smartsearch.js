@@ -9,8 +9,8 @@ jQuery(function ($) {
         window.initializeMaps();
 
         $(window).on('popstate', function (e) {
-            if (event.state !== undefined) {
-                window.search('none', event.state);
+            if (e.state !== undefined) {
+                window.search('none', e.state);
             }
         });
         var paramUrl = (new URL(window.location.href)).search.substring(1);
