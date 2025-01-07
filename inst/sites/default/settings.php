@@ -813,4 +813,15 @@ if( substr(\Drupal::VERSION, 0, 1) == "8") {
     $settings['config_sync_directory']   = 'sites/default/files/config_tlpXNA-ReYSeqYjmFBBCPxdygkZ95C_n73LVRKAXtzVywwEXIa2HSiI8OMNjzjxZcXYpMKd3ug/sync';
 }
 
-$settings['environment'] = 'dev';
+
+if (isset($_SERVER['HTTP_HOST'])) {
+    $base_url = (string) (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+    // Check if the base URL does not contain the specified string
+    if (strpos($base_url, 'arche.acdh.oeaw.ac.at') === false) {
+        $settings['environment'] = 'dev';
+    } else {
+        $settings['environment'] = 'production';
+    }
+}
+
+?>
