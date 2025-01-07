@@ -103,9 +103,12 @@ jQuery(function ($) {
         });
     }
 
-    window.mapToggle = function() {
-        $('.sm-map').css('top', $('.sm-map').css('top') == '0px' ? -3000 : 0);
-        $('.sm-map').css('position', $('.sm-map').css('position') == 'absolute' ? 'inherit' : 'absolute');
+    window.mapToggle = function(show) {
+        if (show === undefined) {
+            show = $('.sm-map').css('top') != '0px';
+        }
+        $('.sm-map').css('top', show ? 0 : -3000);
+        $('.sm-map').css('position', show ? 'inherit' : 'absolute');
         window.setTimeout(function () {window.map.invalidateSize();}, 100);
     }
 

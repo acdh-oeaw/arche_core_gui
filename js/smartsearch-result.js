@@ -53,6 +53,7 @@ jQuery(function ($) {
             window.displaySearchWarningMessage(data.messages, data.class);
         }
         
+        window.mapToggle(false);
         if (param.facets['map']) {
             var coords = param.facets['map'].replace('POLYGON((', '').replace('))', '');
             coords = coords.split(',');
@@ -60,7 +61,8 @@ jQuery(function ($) {
             window.searchArea.clearLayers();
             window.searchArea.addLayer(L.polygon(coords));
             window.map.fitBounds(window.searchArea.getBounds());
-            window.mapToggle();
+            window.mapToggle(true);
+            window.mapRefreshLabel();
         }
 
         if (data.allPins) {
