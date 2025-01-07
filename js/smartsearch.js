@@ -56,6 +56,9 @@ jQuery(function ($) {
             window.searchIn = [];
         } else {
             window.searchIn = [id];
+            // hardcoded badly but lack of that really harms user experience
+            var typeFilter = $('[data-property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]');
+            typeFilter.val(typeFilter.val().filter(function(x) { return x !== 'https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'; }));
         }
         window.search();
     });
