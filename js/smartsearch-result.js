@@ -16,7 +16,7 @@ jQuery(function ($) {
         var totalPages = Math.ceil(data.totalCount / pageSize);
         var currentPage = Math.max(1, data.page + 1);
         
-        window.createPager(totalPages);
+        window.createPager(totalPages, currentPage);
         $('div.dateValues').text('');
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');

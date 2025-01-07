@@ -30,8 +30,7 @@ jQuery(function ($) {
         window._paq.push(['trackPageView']);
     }
 
-    window.createPager = function (totalPages) {
-        var actualPage = window.actualPage ?? 1;
+    window.createPager = function (totalPages, actualPage) {
         $('#smartsearch-pager').empty();
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 3, totalPages);
