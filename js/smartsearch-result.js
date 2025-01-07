@@ -1,84 +1,164 @@
 jQuery(function ($) {
 
     var mapPins = null;
+    var mapPinsAll = null;
 
     /**
      * Display the smartsearch results
      * @param {type} data
      * @param {type} param
      * @param {type} t0
-     * @param {type} initial
      * @returns {undefined}
      */
-    window.showResults = function (data, param, t0, initial = false) {
-       
-        //function showResults(data, param, t0, initial = false) {
+    window.showResults = function (data, param, t0) {
         t0 = (new Date() - t0) / 1000;
-        data = jQuery.parseJSON(data);
         var pageSize = data.pageSize;
         var totalPages = Math.ceil(data.totalCount / pageSize);
-        var currentPage = $('a.paginate_button.current').text();
+        var currentPage = Math.max(1, data.page + 1);
         
-        if (!currentPage && data.page === 0) {
-            currentPage = 1;
-        } else {
-            currentPage = data.page;
-        }
-
-        window.createPager(totalPages);
+        window.createPager(totalPages, currentPage);
         $('div.dateValues').text('');
         $('input.facet-min').attr('placeholder', '');
         $('input.facet-max').attr('placeholder', '');
+        $('#sm-hero-str').val(param.q);
+        $('#linkNamedEntities').prop('checked', parseInt(param.linkNamedEntities) === 1);
+        $('#inBinary').prop('checked', parseInt(param.includeBinaries) === 1);
         var results = '';
-        //we have some results already or empty search
+        // we have some results already or empty search
         if ((data.totalCount > 0) || data.totalCount === -1) {
             createFacetCards(data, param);   
         }
 
         if(data.results) {
-            results += displaySearchResult(data.results);
+            results += '<div class="container">';
+            $.each(data.results, function (k, result) {
+                if (result.title && result.id) {
+                    results += window.getResourceCard(result);
+                }
+            });
+
             $('.main-content-row').html(results);
-            //if the user selected a value from the map then we have to display it.
-            window.displayMapSelectedValue();
         }
         
-        //var countText = countNullText;
-        if (!initial) {
-            var countText = Drupal.t('0 Result(s)');
-            if (data.results.length > 0) {
-                countText = data.totalCount + ' ' + Drupal.t("Result(s)");
-            } else {
-                $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
-                //showJustSearchFacets();
-            }
-            $('#smartSearchCount').html(countText);
+        var countText = Drupal.t('0 Result(s)');
+        if (data.results.length > 0) {
+            countText = data.totalCount + ' ' + Drupal.t("Result(s)") + ' ' + t0.toPrecision(2) + 's';
         } else {
-            $('#smartSearchCount').html('0 ' + Drupal.t("Result(s)"));
-            $('.main-content-row .container').html('<div class="alert alert-primary" role="alert">' + Drupal.t("Please start to search") + "</div>");
+            $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
         }
+        $('#smartSearchCount').html(countText);
 
-        //display warnings 
+        // display warnings 
         if (data.messages !== "") {
             window.displaySearchWarningMessage(data.messages, data.class);
         }
         
-        if (window.bboxObj !== undefined) {
-            if (window.bboxObj.drawnItems) {
-                setMapLabel(window.bboxObj.drawnItems);
-            }
+        window.mapToggle(false);
+        if (param.facets['map']) {
+            var coords = param.facets['map'].replace('POLYGON((', '').replace('))', '');
+            coords = coords.split(',');
+            coords = coords.map(function(x) {return x.split(' ').reverse();}); // leaflet takes lat,lon while WKT is lon,lat
+            window.searchArea.clearLayers();
+            window.searchArea.addLayer(L.polygon(coords));
+            window.map.fitBounds(window.searchArea.getBounds());
+            window.mapToggle(true);
+            window.mapRefreshLabel();
         }
 
-        if (window.bbox !== undefined) {
-            setMapLabel(window.bbox);
+        if (data.allPins) {
+            if (mapPinsAll) {
+                window.map.removeLayer(mapPinsAll);
+            }
+            mapPinsAll = L.geoJSON(JSON.parse(data.allPins));
+            mapPinsAll.addTo(window.map);
         }
-        
-        if(param.searchIn[0]) {
-            window.searchInAdd(param.searchIn[0], $(this).data('resource-title'));
+
+        if (data.searchIn && data.searchIn.length > 0) {
+            $('#searchIn').html(window.getResourceCard(data.searchIn[0], true));
             $('#searchIn').show();
+            window.searchIn = [data.searchIn[0].id];
         }
-        
+
         $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", false);
-        window.updateUrl(param);           
+    }
+
+    window.getResourceCard = function(result, searchIn) {
+        var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
+        searchIn = searchIn || false;
+
+        var id = searchIn ? 'in' + result.id : 'res' + result.id;
+        var searchInBtnId = searchIn ? 'removeSearchInElementBtn' : result.id;
+        var searchInBtnLabel = searchIn ? '-' : '+';
+
+        results = '';
+        results += '<div class="row smart-result-row" id="' + id + '" data-value="' + result.id + '">';
+        results += '<div class="col-block col-lg-10 discover-table-content-div" data-contentid="' + resourceUrl + '">';
+
+        //<-- title part
+        results += '<div class="res-property">';
+        results += '<h5 class="h5-blue-title">';
+        results += '<button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + searchInBtnId + '">' + searchInBtnLabel + '</button>';
+        results += '<a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a>';
+        results += '</h5>';
+        results += '</div>';
+        //-->
+
+        if (result.description) {
+            results += '<div class="res-property sm-description">';
+            results += window.getLangValue(result.description, window.preferredLang);
+            results += '</div>';
+        }
+
+        results += '<div class="res-property sm-highlight">';
+        if (result.matchHighlight) {
+            results += 'Highlight: ' + result.matchHighlight;
+        }
+        //results += 'Match score: ' + result.matchWeight + '<br/>';
+        if (result.matchProperty.length > 0) {
+            results += 'Matches in:<div class="ml-5">';
+            for (var j = 0; j < result.matchProperty.length; j++) {
+                if (result.matchHiglight && result.matchHiglight[j]) {
+                    results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
+                } else {
+                    results += shorten(result.matchProperty[j] || '') + '<br/>';
+                }
+            }
+            results += '</div>';
+        }
+        results += getParents(result.parent || false, true, window.preferredLang);
+        results += '</div>';
+
+        results += '<div class="res-property discover-content-toolbar">';
+        results += '<p class="btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
+
+        if (result.accessRestriction) {
+            results += window.setAccessRestrictionLabel(result.accessRestriction[0].title['en']);
+            results += result.accessRestriction[0].title[window.preferredLang].replace(/\n/g, ' / ');
+            results += '</p>';
+        }
+
+        if (result.accessRestrictionSummary) {
+            results += window.setAccessRestrictionLabel(result.accessRestrictionSummary['en']);
+            results += result.accessRestrictionSummary[window.preferredLang].replace(/\n/g, ' / ');
+            results += '</p>';
+        }
+
+        results += '</div>';
+        results += '</div>';
+                
+        var thumbImgUrl = result.url.replace('/browser/metadata/', '/api/');
+        results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
+                '<div class="col-block discover-table-image-div">\n\
+                            <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
+                                <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
+                                <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=200" onerror="window.hideThumbnail(this)" data-resourceurl="' + resourceUrl + '">\n\
+                                </a></center>\n\
+                            </div>\n\
+                        </div>';
+
+        results += '</div>';
+        results += '</div>';
+        return results;
     }
 
     function createFacetCards(data, param) {
@@ -130,12 +210,12 @@ jQuery(function ($) {
 
                     if (fd.type === 'map') {
                         if (mapPins) {
-                            map.removeLayer(mapPins);
+                            window.map.removeLayer(mapPins);
                         }
                        
                         if (fd.values !== '') {
                             mapPins = L.geoJSON(JSON.parse(fd.values));
-                            mapPins.addTo(map);
+                            mapPins.addTo(window.map);
                         }
                         select = '<div id="mapLabel"></div>' +
                                 '<button type="button" id="mapToggleBtn" class="btn btn-arche-blue w-100">' + Drupal.t('Map') + '</button>';
@@ -207,91 +287,12 @@ jQuery(function ($) {
         return text;
     }
 
-    /**
-     * Generate HTML code for the result view
-     * @param {type} data
-     * @returns {String}
-     */
-    function displaySearchResult(data) {
-        var results = "";
-        results += '<div class="container">';
-
-        $.each(data, function (k, result) {
-            if (result.title && result.id) {
-                var resourceUrl = result.url.replace(/(https?:\/\/)/g, '');
-               
-                results += '<div class="row smart-result-row" id="res' + result.id + '" data-value="' + result.id + '">';
-                results += '<div class="col-block col-lg-10 discover-table-content-div" data-contentid="' + resourceUrl + '">';
-                //title
-                results += '<div class="res-property">';
-                results += '<h5 class="h5-blue-title"><button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + result.id + '" data-resource-title="' + getLangValue(result.title, preferredLang) + '" >+</button><a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a></h5>';
-                //results += '<h5 class="h5-blue-title"><a href="' + window.archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + window.getLangValue(result.title, window.preferredLang) + '</a></h5>';
-                results += '</div>';
-
-                //description
-                if (result.description) {
-                    results += '<div class="res-property sm-description">';
-                    results += window.getLangValue(result.description, window.preferredLang);
-                    results += '</div>';
-                }
-
-                results += '<div class="res-property sm-highlight">';
-                if (result.matchHighlight) {
-                    results += 'Highlight: ' + result.matchHighlight;
-                }
-
-                //results += 'Match score: ' + result.matchWeight + '<br/>';
-                if (result.matchProperty.length > 0) {
-                    results += 'Matches in:<div class="ml-5">';
-                    for (var j = 0; j < result.matchProperty.length; j++) {
-                        if (result.matchHiglight && result.matchHiglight[j]) {
-                            results += shorten(result.matchProperty[j] || '') + ': ' + result.matchHiglight[j] + '<br/>';
-                        } else {
-                            results += shorten(result.matchProperty[j] || '') + '<br/>';
-                        }
-                    }
-                    results += '</div>';
-                }
-
-                results += getParents(result.parent || false, true, window.preferredLang);
-
-                results += '</div>';
-                results += '<div class="res-property discover-content-toolbar">';
-
-                results += '<p class="btn-toolbar-gray btn-toolbar-text no-btn">' + shorten(result.class[0]) + '</p>';
-
-                if (result.accessRestriction) {
-                    results += window.setAccessRestrictionLabel(result.accessRestriction[0].title['en']);
-                    results += result.accessRestriction[0].title[window.preferredLang].replace(/\n/g, ' / ');
-                    results += '</p>';
-                }
-
-                if (result.accessRestrictionSummary) {
-                    results += window.setAccessRestrictionLabel(result.accessRestrictionSummary['en']);
-                    results += result.accessRestrictionSummary[window.preferredLang].replace(/\n/g, ' / ');
-                    results += '</p>';
-                }
-
-                results += '</div>';
-                results += '</div>';
-                
-                var thumbImgUrl = result.url.replace('/browser/metadata/', '/api/');
-                results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
-                        '<div class="col-block discover-table-image-div">\n\
-                                    <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
-                                        <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=200" >\n\
-                                        </a></center>\n\
-                                    </div>\n\
-                                </div>';
-
-                results += '</div>';
-                window.checkThumbnailImage(thumbImgUrl);
-                results += '</div>';
-            }
-        });
-        return results;
-    }
+    window.hideThumbnail = function(x) {
+        var resourceUrl = $(x).data('resourceurl');
+        $('[data-thumbnailid="' + resourceUrl + '"]').hide();
+        $('[data-contentid="' + resourceUrl + '"]').removeClass('col-lg-10');
+        $('[data-contentid="' + resourceUrl + '"]').addClass('col-lg-12');
+    };
 
     function getParents(parent, top, preferredLang) {
         if (parent === false) {
@@ -305,5 +306,4 @@ jQuery(function ($) {
         }
         return ret;
     }
-    
 });

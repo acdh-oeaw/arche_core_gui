@@ -58,6 +58,4 @@ jQuery(function ($) {
             }
         }
     });
-
-    
 });
