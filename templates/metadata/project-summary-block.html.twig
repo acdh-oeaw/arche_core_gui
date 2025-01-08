@@ -28,11 +28,21 @@
                 <div class="res-property">
                     <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
                     <span class="res-prop-value">
-                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                        {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]|date('Y') %}
+                        {% set endYear = data.getData('acdh:hasCoverageEndDate')[0]|date('Y') %}
+                        {% if startYear and endYear %}
+                            {% if startYear == endYear %}
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': data.getData('acdh:hasCoverageStartDate')[0],  'dateformat': 'Y' } ) }} 
-                        - 
-                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                            {% else %}
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCoverageStartDate')[0],  'dateformat': 'Y' } ) }} 
+                                - 
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
+                            {% endif %}
+                        {% endif %}
+                        
                     </span>
                 </div>
 
