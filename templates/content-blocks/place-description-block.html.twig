@@ -13,11 +13,12 @@
          {% if data['acdh:hasPart'] %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data['acdh:hasPart'], 'label':  'Part(s)' } ) }}</li>
-            {% endif %}
-         {% if data[('acdh:isPartOf'] %}
+        {% endif %}
+         
+         {% if data['acdh:isPartOf'] %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data['acdh:isPartOf'], 'label':  'Is part of' } ) }}</li>
-            {% endif %}
+        {% endif %}
     </ul>
     
 </div>
