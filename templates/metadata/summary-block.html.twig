@@ -20,9 +20,22 @@
                 <div class="res-property">
                     <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
                     <span class="res-prop-value">
+
+                        {% set startYear = "" %}
+                        {% set endYear = "" %}
                         
-                        {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]|date('Y') %}
-                        {% set endYear = data.getData('acdh:hasCoverageEndDate')[0]|date('Y') %}
+                        {% if data.getData('acdh:hasCoverageStartDate')[0]['value'] %}
+                            {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]|date('Y') %}
+                        {% endif %}
+                        
+                        {% if data.getData('acdh:hasCoverageEndDate')[0]['value'] %}
+                            {% set endYear = data.getData('acdh:hasCoverageEndDate')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set endYear = data.getData('acdh:hasCoverageEndDate')[0]|date('Y') %}
+                        {% endif %}
+                        
                         {% if startYear and endYear %}
                             {% if startYear == endYear %}
                                 {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
@@ -35,7 +48,7 @@
                                 {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
                             {% endif %}
                         {% endif %}
-                        
+
                     </span>
                 </div>
 
@@ -63,8 +76,21 @@
                 <div class="res-property">
                     <span class="res-prop-label">{{ "Creation Date of Original"|trans }}:</span>
                     <span class="res-prop-value">
-                        {% set startYear = data.getData('acdh:hasCreatedStartDateOriginal')[0]|date('Y') %}
-                        {% set endYear = data.getData('acdh:hasCreatedEndDateOriginal')[0]|date('Y') %}
+                        {% set startYear = "" %}
+                        {% set endYear = "" %}
+                        
+                        {% if data.getData('acdh:hasCreatedStartDateOriginal')[0]['value'] %}
+                            {% set startYear = data.getData('acdh:hasCreatedStartDateOriginal')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set startYear = data.getData('acdh:hasCreatedStartDateOriginal')[0]|date('Y') %}
+                        {% endif %}
+                        
+                        {% if data.getData('acdh:hasCreatedEndDateOriginal')[0]['value'] %}
+                            {% set endYear = data.getData('acdh:hasCreatedEndDateOriginal')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set endYear = data.getData('acdh:hasCreatedEndDateOriginal')[0]|date('Y') %}
+                        {% endif %}
+                        
                         {% if startYear and endYear %}
                             {% if startYear == endYear %}
                                 {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
