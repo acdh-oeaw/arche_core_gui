@@ -701,7 +701,12 @@ class ResourceCoreObject {
 
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (isset($category['value']) && strtolower($category['value']) === strtolower("3d data")) {
+                if (
+                        isset($category['value']) && 
+                        (
+                            strtolower($category['value']) === strtolower("3d data") || strtolower($category['value']) === strtolower("3d-daten")
+                        )
+                    ) {
                     $cat = true;
                 }
             }
@@ -729,7 +734,9 @@ class ResourceCoreObject {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
                 if (isset($category['value']) &&
                         (strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/image") ||
-                        strtolower($category['value']) === strtolower("image")
+                        strtolower($category['value']) === strtolower("image") ||
+                        strtolower($category['value']) === strtolower("https://vocabs.acdh.oeaw.ac.at/archecategory/bild") ||
+                        strtolower($category['value']) === strtolower("bild")
                         )) {
                     $cat = true;
                 }
