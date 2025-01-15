@@ -701,12 +701,11 @@ class ResourceCoreObject {
 
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (
-                        isset($category['value']) && 
+                 if (isset($category['value']) &&
                         (
-                            strtolower($category['value']) === strtolower("3d data") || strtolower($category['value']) === strtolower("3d-daten")
-                        )
-                    ) {
+                        strtolower($category['value']) === "3d data" ||
+                        strtolower($category['value']) === "3d-daten"
+                        )) {
                     $cat = true;
                 }
             }
