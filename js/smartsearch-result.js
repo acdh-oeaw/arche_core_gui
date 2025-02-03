@@ -7,14 +7,16 @@ jQuery(function ($) {
      * Display the smartsearch results
      * @param {type} data
      * @param {type} param
-     * @param {type} t0
+     * @param {type} t0paging_simple_numbers
      * @returns {undefined}
      */
     window.showResults = function (data, param, t0) {
         t0 = (new Date() - t0) / 1000;
+         data.page = param.page;
         var pageSize = data.pageSize;
         var totalPages = Math.ceil(data.totalCount / pageSize);
-        var currentPage = Math.max(1, data.page + 1);
+        var currentPage = data.page+1;
+       
         
         window.createPager(totalPages, currentPage);
         $('div.dateValues').text('');

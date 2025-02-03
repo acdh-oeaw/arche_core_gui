@@ -58,7 +58,9 @@ jQuery(function ($) {
             window.searchIn = [id];
             // hardcoded badly but lack of that really harms user experience
             var typeFilter = $('[data-property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]');
-            typeFilter.val(typeFilter.val().filter(function(x) { return x !== 'https://vocabs.acdh.oeaw.ac.at/schema#TopCollection'; }));
+            typeFilter.val(typeFilter.val().filter(function (x) {
+                return x !== 'https://vocabs.acdh.oeaw.ac.at/schema#TopCollection';
+            }));
         }
         window.search();
     });
@@ -87,7 +89,7 @@ jQuery(function ($) {
 
     $(document).delegate(".paginate_button", "click", function (e) {
         e.preventDefault();
-        window.actualPage = parseInt($(this).text());
+        window.actualPage = parseInt($(this).attr('data-page'));
         window.search();
     });
 
@@ -97,7 +99,9 @@ jQuery(function ($) {
         window.search();
     });
 
-    $(document).delegate("#mapToggleBtn", "click", function() {window.mapToggle();});
+    $(document).delegate("#mapToggleBtn", "click", function () {
+        window.mapToggle();
+    });
     /* SUBMIT THE SMART SEARCH FORM WITH ENTER - NOT WORKING*/
     $('#hero-smart-search-form').on('keydown', 'input', function (event) {
         if (event.which === 13) { // Check if Enter key was pressed (key code 13)
@@ -121,13 +125,14 @@ jQuery(function ($) {
         }
     }
 
-    window.getSearchParamBase = function() {
+    window.getSearchParamBase = function () {
         return {
             q: '',
             preferredLang: drupalSettings.arche_core_gui.gui_lang,
             includeBinaries: 0,
             linkNamedEntities: 1,
-            page: Math.max(0, window.actualPage !== 0 ? window.actualPage - 1 : 0),
+            //page: Math.max(0, window.actualPage !== 0 ? window.actualPage - 1 : 0),
+            page: window.actualPage !== 0 ? window.actualPage : 1,
             pageSize: $('#smartPageSize').val(),
             facets: {},
             searchIn: [],
@@ -206,7 +211,7 @@ jQuery(function ($) {
      * Perform the main search function
      * @returns {undefined}
      */
-    window.search = function(historyAction, paramUrl) {
+    window.search = function (historyAction, paramUrl) {
         $('.arche-smartsearch-page-div').show();
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
@@ -220,6 +225,13 @@ jQuery(function ($) {
         window.token++;
         var localToken = window.token;
         var data = paramUrl || paramUrl === '' ? window.parseQueryString(paramUrl) : collectBackendQueryParam(); // empty paramUrl is used to reset the search
+        
+        if (Number(data.page) === 0) {
+            //for the backend we have to remove one because
+            data.page = 1;
+        }
+
+        
         var t0 = new Date();
         var param = {
             url: window.apiUrl,
@@ -228,8 +240,7 @@ jQuery(function ($) {
             timeout: drupalSettings.arche_core_gui.smartsearch_timeout,
             success: function (x) {
                 if (window.token === localToken) {
-                    //console.log("search ajax success - data: ");
-                    //console.log(data);
+                    x.page = x.page + 1;
                     window.showResults(x, data, t0);
                 }
             },
@@ -247,8 +258,10 @@ jQuery(function ($) {
                 }
             }
         };
+
         // convert backend search parameters to an URL part
         var newParamUrl = $.param(data);
+       
         // generate the URL for the current search
         // by taking the current URL and replacing its search part
         // with the current search parameters
@@ -262,6 +275,10 @@ jQuery(function ($) {
         } else if (historyAction !== 'none') {
             // used on all other searches but the one triggered by the history back
             history.pushState(newParamUrl, null, newUrl);
+        }
+        
+        if(Number(param.data.page) !== 0) {
+            param.data.page = param.data.page -1;
         }
         $.ajax(param);
     }

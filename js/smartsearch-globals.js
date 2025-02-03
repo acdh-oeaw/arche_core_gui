@@ -34,7 +34,6 @@ jQuery(function ($) {
         $('#smartsearch-pager').empty();
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 3, totalPages);
-
         if (actualPage > 1) {
             $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
         }
