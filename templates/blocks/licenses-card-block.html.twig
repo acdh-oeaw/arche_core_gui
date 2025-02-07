@@ -16,10 +16,11 @@
                 <div>
                     <b>{{ key|trans }}:</b></br>
                     {% for val in value %}
+                        
                         {% set values = val['value'] %}
                         {% if val['externalUrl'] %}
                             <a href="{{ val['externalUrl'] }}" target="_blank">{{ values }}</a><br>
-                        {% elseif val['id'] %} 
+                        {% elseif val['type'] == 'REL' %} 
                             <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ values }}</a><br>
                         {% else %}    
                             {{ values|nl2br }}<br>
