@@ -54,7 +54,12 @@
                     </div>
                 </div>
 
-                {% if data.getData('acdh:hasAlternativeTitle')  %}
+                {% if data.getData('acdh:hasPersonalTitle')  %}
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasPersonalTitle'), 'label':  'Personal Title' } ) }}
+                {% endif %} 
+                
+                 {% if data.getData('acdh:hasAlternativeTitle')  %}
                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAlternativeTitle'), 'label':  'Alternative Title' } ) }}
                 {% endif %} 
