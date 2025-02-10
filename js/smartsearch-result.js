@@ -48,7 +48,7 @@ jQuery(function ($) {
         } else {
             $('.main-content-row .container').html('<div class="alert alert-warning" role="alert">' + Drupal.t("No result! Please start a new search!") + "</div>");
         }
-        $('#smartSearchCount').html(countText);
+        $('.smartSearchCount').html(countText);
 
         // display warnings 
         if (data.messages !== "") {

@@ -31,33 +31,33 @@ jQuery(function ($) {
     }
 
     window.createPager = function (totalPages, actualPage) {
-        $('#smartsearch-pager').empty();
+        $('.smartsearch-pager-pages').empty();
         var startPage = Math.max(actualPage - 2, 1);
         var endPage = Math.min(startPage + 3, totalPages);
         if (actualPage > 1) {
-            $('#smartsearch-pager').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
+            $('.smartsearch-pager-pages').append('<a href="#" class="paginate_button previous" data-page="' + (actualPage - 1) + '"><</a>');
         }
 
-        $('#smartsearch-pager').append('<span class="search-paging-numbers" >');
+        $('.smartsearch-pager-pages').append('<span class="search-paging-numbers" >');
         for (var i = startPage; i <= endPage; i++) {
             var current = "";
             if (i === parseInt(actualPage)) {
                 current = "current";
             }
 
-            $('#smartsearch-pager').append('<a href="#"  class="paginate_button ' + current + '" data-page="' + i + '">' + i + '</a>');
+            $('.smartsearch-pager-pages').append('<a href="#"  class="paginate_button ' + current + '" data-page="' + i + '">' + i + '</a>');
 
         }
         if (totalPages > endPage) {
-            $('#smartsearch-pager').append('<span>...</span>');
-            $('#smartsearch-pager').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
+            $('.smartsearch-pager-pages').append('<span>...</span>');
+            $('.smartsearch-pager-pages').append('<a href="#"  class="paginate_button" data-page="' + totalPages + '">' + totalPages + '</a>');
         }
 
-        $('#smartsearch-pager').append('</span>');
+        $('.smartsearch-pager-pages').append('</span>');
 
         // Add "Next" button
         if (actualPage < totalPages) {
-            $('#smartsearch-pager').append('<a href="#"  class="paginate_button next" data-page="' + (actualPage + 1) + '">></a>');
+            $('.smartsearch-pager-pages').append('<a href="#"  class="paginate_button next" data-page="' + (actualPage + 1) + '">></a>');
         }
     }
 

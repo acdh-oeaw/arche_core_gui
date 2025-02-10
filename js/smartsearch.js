@@ -69,18 +69,21 @@ jQuery(function ($) {
 
     $(document).delegate(".resetSmartSearch", "click", function (e) {
         e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         window.resetSearch();
     });
 
     $(document).delegate("#mapRemoveFiltersBtn", "click", function (e) {
         e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         window.mapRemoveSearchArea();
-        window.search();
+        window.search();        
     });
 
     //main search block
     $(document).delegate(".smartsearch-btn", "click", function (e) {
         e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         if ($('.discover-content-main').is(':hidden')) {
             $('.discover-content-main').show();
         }
@@ -89,12 +92,14 @@ jQuery(function ($) {
 
     $(document).delegate(".paginate_button", "click", function (e) {
         e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         window.actualPage = parseInt($(this).attr('data-page'));
         window.search();
     });
 
-    $(document).delegate("#smartPageSize", "change", function (e) {
+    $(document).delegate(".smartPageSize", "change", function (e) {
         e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         window.actualPage = 1;
         window.search();
     });
@@ -133,7 +138,7 @@ jQuery(function ($) {
             linkNamedEntities: 1,
             //page: Math.max(0, window.actualPage !== 0 ? window.actualPage - 1 : 0),
             page: window.actualPage !== 0 ? window.actualPage : 1,
-            pageSize: $('#smartPageSize').val(),
+            pageSize: $('.smartPageSize').val(),
             facets: {},
             searchIn: [],
             noCache: 0
