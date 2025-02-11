@@ -329,11 +329,11 @@ jQuery(function ($) {
                     if (data) {
                         if (data.next) {
                             $('#next-child-url').html('<a href="/browser/metadata/' + data.next.id + '"  alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>> </a>');
-                            $('#next-child-url-iiif-btn').html('<a href="/browser/metadata/' + data.next.id + '" class="btn btn-arche-blue"  alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + '</a>');
+                            $('#next-child-url-iiif-btn').html('<a href="/browser/metadata/' + data.next.id + '" class=""  alt="' + data.next.title + '" title="' + data.next.title + '">' + Drupal.t('Next') + ' >>></a>');
                         }
                         if (data.previous) {
                             $('#previous-child-url').html('<a href="/browser/metadata/' + data.previous.id + '"  alt="' + data.previous.title + '" title="' + data.previous.title + '"> <<< ' + Drupal.t('Previous') + ' </a>');
-                            $('#previous-child-url-iiif-btn').html('<a href="/browser/metadata/' + data.previous.id + '" class="btn btn-arche-blue" alt="' + data.previous.title + '" title="' + data.previous.title + '">' + Drupal.t('Previous') + '</a>');
+                            $('#previous-child-url-iiif-btn').html('<a href="/browser/metadata/' + data.previous.id + '" class="" alt="' + data.previous.title + '" title="' + data.previous.title + '"><<< ' + Drupal.t('Previous') + '</a>');
                         }
 
                     }
