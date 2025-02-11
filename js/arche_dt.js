@@ -70,7 +70,6 @@ jQuery(function ($) {
     //conceptscheme view DT
     window.fetchCollectionConceptTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
         window.collectionConceptTable = $('#collectionConceptDT').DataTable({
             paging: true,
             searching: true,
@@ -124,7 +123,6 @@ jQuery(function ($) {
     // organisations view DT
     window.fetchOrganisationInvolvedTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
         window.involvedTable = $('#involvedDT').DataTable({
             paging: true,
             searching: true,
@@ -188,7 +186,6 @@ jQuery(function ($) {
     }
 
     window.fetchOrganisationHasMembersTable = function (resId) {
-        //relatedTable = new DataTable('#relatedDT', {
         window.hasMemberTable = $('#hasMembersDT').DataTable({
             paging: true,
             searching: true,
@@ -238,7 +235,6 @@ jQuery(function ($) {
 
     window.fetchPersonContributedTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
         window.contributedTable = $('#contributedDT').DataTable({
             paging: true,
             searching: true,
@@ -303,7 +299,6 @@ jQuery(function ($) {
 
     window.fetchPlaceSpatialTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
         window.spatialTable = $('#spatialDT').DataTable({
             paging: true,
             searching: true,
@@ -360,7 +355,6 @@ jQuery(function ($) {
     
     window.fetchProjectAssociatedTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        //relatedTable = new DataTable('#relatedDT', {
         window.spatialTable = $('#projectAssociatedDT').DataTable({
             paging: true,
             searching: true,
@@ -417,7 +411,7 @@ jQuery(function ($) {
 
     window.fetchPublicationsRelatedResourcesTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
-        window.relatedTable = new DataTable('#relatedDT', {
+        window.relatedTable = new DataTable('#publicationInverseDT', {
             paging: true,
             searching: true,
             searchDelay: 500,
@@ -434,7 +428,7 @@ jQuery(function ($) {
             serverSide: true,
             serverMethod: "post",
             ajax: {
-                url: "/browser/api/relatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
+                url: "/browser/api/publicationInverseDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
                 timeout: 10000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');

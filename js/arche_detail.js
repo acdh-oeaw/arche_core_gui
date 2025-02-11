@@ -239,12 +239,13 @@ jQuery(function ($) {
         }
         //need to check the table and need to write the ispartof values
         if (acdhType === 'publication') {
-            if ($.fn.dataTable.isDataTable('#relatedDT')) {
-                window.relatedTable.ajax.url("/browser/api/relatedDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+            /*
+            if ($.fn.dataTable.isDataTable('#publicationInverseDT')) {
+                window.relatedTable.ajax.url("/browser/api/publicationInverseDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
                 window.fetchPublicationsRelatedResourcesTable(reloadID);
             }
-
+*/
             if ($.fn.dataTable.isDataTable('#isPartOfDT')) {
                 window.isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {

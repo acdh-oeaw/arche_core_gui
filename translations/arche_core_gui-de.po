@@ -703,3 +703,6 @@ msgstr "Möchten Sie wirklich alle Ebenen löschen?"
 
 msgid "All layers have been deleted."
 msgstr "Alle Ebenen wurden gelöscht."
+
+msgid "Spatial coverage of"
+msgstr "Räumliche Abdeckung von"

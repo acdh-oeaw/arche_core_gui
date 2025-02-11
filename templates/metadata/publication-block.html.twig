@@ -106,73 +106,75 @@
                 </div>
 
                 <ul>                                    
-                {% if data.getData('acdh:hasAuthor')  %}
-                    <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasAuthor')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasAuthor'), 'label':  'Author' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasEditor')  %}
-                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasEditor')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasEditor'), 'label':  'Editor' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasSeriesInformation')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasSeriesInformation')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSeriesInformation'), 'label':  'Series Information' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasExtent')  %}
-                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasExtent')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasExtent'), 'label':  'Extent' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasPages')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasPages')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasPages'), 'label':  'Pages' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
 
-                {% if data.getData('acdh:hasIssuedDate')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasIssuedDate')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasIssuedDate'), 'label':  'Issued Date', 'dateformat': 'Y' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasCity')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasCity')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasCity'), 'label':  'City' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasRegion')  %}
-                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                    {'data': data.getData('acdh:hasRegion'), 'label':  'Region' } ) }}</li>
-                {% endif %} 
-
-                {% if data.getData('acdh:hasPublisher')  %}
-                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasPublisher')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasPublisher'), 'label':  'Publisher' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasUrl')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasUrl')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasUrl'), 'label':  'URL' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasLanguage')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasLanguage')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasLanguage'), 'label':  'Language' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasEditorialPractice')  %}
-                   <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasEditorialPractice')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasEditorialPractice'), 'label':  'Editorial Practice' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
 
-                {% if data.getData('acdh:hasNote')  %}
-                    <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {% if data.getData('acdh:hasTableOfContent')  %}
+                        <li> {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasTableOfContent'), 'label':  'Table of content' } ) }}</li>
+                        {% endif %} 
+
+                    {% if data.getData('acdh:hasNote')  %}
+                        <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasNote'), 'label':  'Note' } ) }}</li>
-                {% endif %} 
+                        {% endif %} 
                 </ul> 
-                
+
+              
+
                 <div class="loading-indicator loading-indicator-ispartof text-center d-none">
                     <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
                 </div>
@@ -185,21 +187,37 @@
                         </table>
                     </div>
                 </div>
+
                         
-                <div class="loading-indicator text-center d-none">
-                    <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
-                </div>
+                <div class="basic-inside-content-div" id="publicationInverseDTDiv">
+                     <h5 class="pb-2">{{ "Associated Collections and Resources"|trans }}</h5>
+                    <table class="table w-100  row-border" id='publicationInverseDT' cellspacing="0" width="100%" >
+                        
+                        <thead style="width: 100%; display: table;">
+                            <tr>
+                                <th width='40%'>Property</th>
+                                <th width='60%'>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody style="width: inherit; display: table; word-break: break-all;">
+                            {% for key,value in data.getPublicationDataTable() %}
+                                <tr>
+                                    <td width='40%'>
+                                       {{ value['#property'] }}
+                                    </td>
+                                    <td width='60%'>
+                                        <a href="/browser/metadata/{{ value['#repoid'] }}">{{ value['#value'] }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>        
 
-                <div class="row related-table-div d-none pt-3 basic-inside-content-div">
-                    <div class="col-lg-12 child-tree-div">
-                        <h5 class="pb-2">{{ "Related Resource(s)"|trans }}</h5>
-                        <table class="related-table w-100  row-border" id="relatedDT">
-
-                        </table>
-                    </div>
-                </div>
 
 
+
+               
             </div>
         </div>
 

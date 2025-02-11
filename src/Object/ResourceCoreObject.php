@@ -18,12 +18,14 @@ class ResourceCoreObject {
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
     private $accessLevels = ['public' => 'öffentlich', 'academic' => 'akademisch', 'restricted' => 'eingeschränkt'];
+    private $publicationTableProperties = ['acdh:relation','acdh:continues','acdhisContinuedBy', 'acdh:documents',
+            'acdh:isDocumentedBy','acdh:isDerivedPublicationOf','acdh:isSourceOf','acdh:hasSource']; 
 
     public function __construct(array $data, object $config, string $language = 'en') {
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-
+       
         foreach ($data as $k => $v) {
             if (is_array($v)) {
 
@@ -518,6 +520,22 @@ class ResourceCoreObject {
      */
     public function getExpertTableData(): array {
         return $this->properties;
+    }
+    
+    public function getPublicationDataTable(): array {
+        $result = array();
+        foreach($this->publicationTableProperties as $property) {
+            if (isset($this->properties[$property])) {
+                $item = [];
+                foreach($this->properties[$property] as $k => $v) {
+                    $item['#repoid'] = (string)$v['id'];
+                    $item['#value'] = $v['value'];
+                    $item['#property'] =  str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:', $v['property'][$this->language]);
+                    array_push($result, $item);
+                }
+            }
+        }
+        return $result;
     }
 
     /**
