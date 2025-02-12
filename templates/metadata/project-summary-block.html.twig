@@ -5,18 +5,16 @@
         {% if data.getData('acdh:hasRelatedDiscipline') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasRelatedDiscipline'),  'label':  'Research Discipline' } ) }}</li>
-        {% endif %} 
-        {% if data.getData('acdh:hasSubject') %}
+            {% endif %} 
+            {% if data.getData('acdh:hasSubject') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSubject'), 'label':  'Subject' } ) }}</li>
-        {% endif %}
+            {% endif %}
 
         {% if data.getData('acdh:hasSpatialCoverage') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasSpatialCoverage'), 'label':  'Spatial Coverage' } ) }}</li>
-        {% endif %}
-
-
+            {% endif %}
 
         {% if data.getData('acdh:hasTemporalCoverage') %}
             <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
@@ -30,13 +28,13 @@
                     <span class="res-prop-value">
                         {% set startYear = "" %}
                         {% set endYear = "" %}
-                        
+
                         {% if data.getData('acdh:hasCoverageStartDate')[0]['value'] %}
                             {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]['value']|date('Y') %}
                         {% else %}
                             {% set startYear = data.getData('acdh:hasCoverageStartDate')[0]|date('Y') %}
                         {% endif %}
-                        
+
                         {% if data.getData('acdh:hasCoverageEndDate')[0]['value'] %}
                             {% set endYear = data.getData('acdh:hasCoverageEndDate')[0]['value']|date('Y') %}
                         {% else %}
@@ -54,28 +52,103 @@
                                 {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
                             {% endif %}
                         {% endif %}
-                        
+
                     </span>
                 </div>
 
             </li>
         {% elseif data.getData('acdh:hasCoverageStartDate') %}
-            <div class="res-property">
-                <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
-                <span class="res-prop-value">
-                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': data.getData('acdh:hasCoverageStartDate')[0],  'dateformat': 'Y' } ) }}
-                </span>
-            </div>
+                    </span>
+                </div>
+            </li>
         {% elseif data.getData('acdh:hasCoverageEndDate') %}
-            <div class="res-property">
-                <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
-                <span class="res-prop-value">
-                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Coverage Date"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': data.getData('acdh:hasCoverageEndDate')[0],  'dateformat': 'Y' } ) }}
-                </span>
-            </div>
+                    </span>
+                </div>
+            </li>
         {% endif %}
+
+
+        {% if data.getData('acdh:hasAppliedMethod') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAppliedMethod'), 'label':  'Methods' } ) }}</li>
+            {% endif %}
+
+
+        {% if data.getData('acdh:hasAppliedMethodDescription') %}
+            <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasAppliedMethodDescription'), 'label':  'Methods description' } ) }}</li>
+        {% endif %}
+
+         {% if data.getData('acdh:hasCollectedStartDate') and data.getData('acdh:hasCollectedEndDate') %}
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Data Collection Date"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {% set startYear = "" %}
+                        {% set endYear = "" %}
+
+                        {% if data.getData('acdh:hasCollectedStartDate')[0]['value'] %}
+                            {% set startYear = data.getData('acdh:hasCollectedStartDate')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set startYear = data.getData('acdh:hasCollectedStartDate')[0]|date('Y') %}
+                        {% endif %}
+
+                        {% if data.getData('acdh:hasCollectedEndDate')[0]['value'] %}
+                            {% set endYear = data.getData('acdh:hasCollectedEndDate')[0]['value']|date('Y') %}
+                        {% else %}
+                            {% set endYear = data.getData('acdh:hasCollectedEndDate')[0]|date('Y') %}
+                        {% endif %}
+                        {% if startYear and endYear %}
+                            {% if startYear == endYear %}
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCollectedStartDate')[0],  'dateformat': 'Y' } ) }} 
+                            {% else %}
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCollectedStartDate')[0],  'dateformat': 'Y' } ) }} 
+                                - 
+                                {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCollectedEndDate')[0],  'dateformat': 'Y' } ) }}
+                            {% endif %}
+                        {% endif %}
+
+                    </span>
+                </div>
+
+            </li>
+        {% elseif data.getData('acdh:hasCollectedStartDate') %}
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "Start of data collection"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCollectedStartDate')[0],  'dateformat': 'Y' } ) }}
+                    </span>
+                </div>
+            </li>
+        {% elseif data.getData('acdh:hasCollectedEndDate') %}
+            <li>
+                <div class="res-property">
+                    <span class="res-prop-label">{{ "End of data collection"|trans }}:</span>
+                    <span class="res-prop-value">
+                        {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
+                                {'value': data.getData('acdh:hasCollectedEndDate')[0],  'dateformat': 'Y' } ) }}
+                    </span>
+                </div>
+            </li>
+        {% endif %}
+
 
     </ul>
 
