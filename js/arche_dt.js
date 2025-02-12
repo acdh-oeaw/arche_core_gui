@@ -1,8 +1,8 @@
 jQuery(function ($) {
     $.noConflict();
     "use strict";
-    
-    
+
+
     window.expertTable;
     window.rprTable;
     window.publicationsTable;
@@ -142,7 +142,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/involvedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 500000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.involved-table-div').removeClass('d-none');
@@ -155,6 +155,7 @@ jQuery(function ($) {
                     console.log("ERROR" + error);
                     $('.row.involved-table-div').hide();
                     $('.loading-indicator').addClass('d-none');
+                    $('.row.involved-table-div').removeClass('d-none').html(error);
                 }
             },
             columns: [
@@ -299,6 +300,9 @@ jQuery(function ($) {
 
     window.fetchPlaceSpatialTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
+        if (!resId) {
+            resId = $('#resId').val();
+        }
         window.spatialTable = $('#spatialDT').DataTable({
             paging: true,
             searching: true,
@@ -315,7 +319,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/spatialDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.spatial-table-div').removeClass('d-none');
@@ -352,7 +356,7 @@ jQuery(function ($) {
             }
         });
     }
-    
+
     window.fetchProjectAssociatedTable = function (resId) {
         $('.loading-indicator').removeClass('d-none');
         window.spatialTable = $('#projectAssociatedDT').DataTable({
@@ -492,28 +496,14 @@ jQuery(function ($) {
                 timeout: 10000,
                 complete: function (response) {
                     if (response === undefined) {
-                        console.log("fetchPublications undefined");
-                        //$('.child-elements-div').hide();
-                        /*
-                        $('#associated-publications-tab').addClass('hidden');
-                        $('#associated-publications-tab-content').addClass('hidden');
-                        $('#associated-publications-tab').removeClass('active');
-                        $('#associated-publications-tab-content').removeClass('active');*/
-                         //window.hideEmptyTabs();
-                         
+
                     }
                 },
                 error: function (xhr, status, error) {
                     console.log("fetchPublications error");
-                    //$(".loader-versions-div").hide();
-                    /*
-                    $('#associated-publications-tab').addClass('hidden');
-                    $('#associated-publications-tab-content').addClass('hidden');
-                    $('#associated-publications-tab').removeClass('active');
-                    $('#associated-publications-tab-content').removeClass('active');
-                    $('.publications-elements-div').hide();*/
                     
-                    
+
+
                 }
             },
             columns: [
@@ -608,13 +598,13 @@ jQuery(function ($) {
                             $('.associated-project-table-div').addClass('d-none');
                             $('.loading-indicator').addClass('d-none');
                         } else {
-                            console.log("fetchRPR undefined");
+                            
                             /*
-                            $('#associated-coll-res-tab').addClass('hidden');
-                            $('#associated-coll-res-tab-content').addClass('hidden');
-                            $('#associated-coll-res-tab').removeClass('active');
-                            $('#associated-coll-res-tab-content').removeClass('active');*/
-                             //window.hideEmptyTabs();
+                             $('#associated-coll-res-tab').addClass('hidden');
+                             $('#associated-coll-res-tab-content').addClass('hidden');
+                             $('#associated-coll-res-tab').removeClass('active');
+                             $('#associated-coll-res-tab-content').removeClass('active');*/
+                            //window.hideEmptyTabs();
                         }
 
                         //$('.child-elements-div').hide();
@@ -633,12 +623,12 @@ jQuery(function ($) {
                     } else {
                         console.log("fetchRPR error");
                         /*
-                        $('#associated-coll-res-tab').addClass('hidden');
-                        $('#associated-coll-res-tab-content').addClass('hidden');
-                        $('#associated-coll-res-tab').removeClass('active');
-                        $('#associated-coll-res-tab-content').removeClass('active');
-                        $('.rcr-elements-div').hide();*/
-                         //window.hideEmptyTabs();
+                         $('#associated-coll-res-tab').addClass('hidden');
+                         $('#associated-coll-res-tab-content').addClass('hidden');
+                         $('#associated-coll-res-tab').removeClass('active');
+                         $('#associated-coll-res-tab-content').removeClass('active');
+                         $('.rcr-elements-div').hide();*/
+                        //window.hideEmptyTabs();
                     }
                 }
             },
@@ -674,7 +664,7 @@ jQuery(function ($) {
                     //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
     }
-    
+
     function removeBeforeHash(str) {
         let hashIndex = str.indexOf('#');
         if (hashIndex !== -1) {
@@ -683,5 +673,5 @@ jQuery(function ($) {
             return str; // Return the original string if no # found
         }
     }
-    
+
 });

@@ -222,7 +222,7 @@ jQuery(function ($) {
         }
         //ok
         if (acdhType === 'place') {
-            window.fetchPlaceSpatialTable();
+            window.fetchPlaceSpatialTable(reloadID);
             if ($.fn.dataTable.isDataTable('#isPartOfDT')) {
                 window.isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
@@ -534,16 +534,13 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     function showTitleImage() {
-        console.log("showtitleimage::");
         var isPublic = $('#resource-access').val();
-        console.log(apiUrl);
         var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600';
         $.ajax({
             url: imgSrc,
             type: 'GET',
             timeout: 5000,
             success: function (data) {
-                console.log("showTitleImage success");
                 $('.titleimage-loader').hide();
                 $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600" data-lightbox="detail-titleimage">\n\
                                         <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=200" >\n\
@@ -554,7 +551,6 @@ jQuery(function ($) {
                 $('.titleimage-loader').hide();
                 $('.card.metadata.titleimage').addClass('d-none');
                 //console.log('Failed to fetch image.');
-                console.log("errr");
                 return;
             }
         });
