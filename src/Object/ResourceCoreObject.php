@@ -1085,10 +1085,6 @@ class ResourceCoreObject {
         $props = [
             'acdh:hasStartDate' => 'Project Start Date',
             'acdh:hasEndDate' => 'Project End Date',
-            'acdh:hasCollectedStartDate' => 'Start of data collection',
-            'acdh:hasCollectedEndDate' => 'End of data collection',
-            'acdh:hasAppliedMethod' => 'Methods',
-            'acdh:hasAppliedMethodDescription' => 'Methods description',
             'acdh:hasLifeCycleStatus' => 'Life Cycle Status'
         ];
 
