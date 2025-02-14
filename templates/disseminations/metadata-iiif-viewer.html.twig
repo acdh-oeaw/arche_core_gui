@@ -23,12 +23,12 @@
                 var currentPage = 0;
                 var totalPages = 0;
                 var canvases = [];
-                var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}&mode=image";
+                var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}&mode=images";
                 //var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id=https%3A%2F%2Farche-curation.acdh-dev.oeaw.ac.at%2Fapi%2F2352&mode=images";
 
                 var viewer = OpenSeadragon({
                     id: "iiif_viewer",
-                    sequenceMode: true,
+                    sequenceMode: false,
                     prefixUrl: "/browser/modules/contrib/arche_core_gui/js/iiif/images/",
                     showNavigator: true,
                     showSequenceControl: false,
@@ -43,7 +43,8 @@
                 $.getJSON(imageUrl, function (data) {
                     // Extract the tile source from the IIIF manifest
                     currentPage = data.index;
-                    totalPages = data.images.length;
+                    //totalPages = data.images.length;
+                    totalPages = 1;
                     canvases = data.images;
                     loadPage(currentPage);
                     // Update page number display
