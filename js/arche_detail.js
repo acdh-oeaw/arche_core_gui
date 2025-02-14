@@ -24,7 +24,6 @@ jQuery(function ($) {
 
         resId = $("#resId").val();
         checkDetailCardEvents();
-
         loadAdditionalData(resId);
         // hide the summary div if there is no data inside it
         if ($('#av-summary').text().trim().length == 0) {
@@ -588,13 +587,13 @@ jQuery(function ($) {
 
     window.redrawTabs = function () {
         var isActive = false;
-        if ($('.jstree-children').length === 0 ) {
+        if ($('.jstree-children').find('li').length === 0 ) {
             $('#collection-content-tab').addClass('d-none');
             $('#collection-content-tab-content').addClass('d-none');
         } else {
             isActive = true;
         }
-        if ($('.publications-table tbody').length === 0 || $('.publications-table tbody').children('tr').length === 0) {
+        if ($(".publications-table tbody").find("tr").length === 0) {
             $('#associated-publications-tab').addClass('d-none');
             $('#associated-publications-tab-content').addClass('d-none');
         } else {
@@ -605,7 +604,7 @@ jQuery(function ($) {
                 isActive = true;
             }
         }
-        if ($('.rcr-table tbody').length === 0 || $('.rcr-table tbody').children('tr').length === 0) {
+        if ($(".rcr-table tbody").find("tr").length === 0) {
             $('#associated-coll-res-tab').addClass('d-none');
             $('#associated-coll-res-tab-content').addClass('d-none');
         } else {
