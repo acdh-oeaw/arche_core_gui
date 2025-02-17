@@ -18,14 +18,14 @@ class ResourceCoreObject {
     private $publicAccessValue = 'https://vocabs.acdh.oeaw.ac.at/archeaccessrestrictions/public';
     private $publicAccessTitle = ['public', 'öffentlich'];
     private $accessLevels = ['public' => 'öffentlich', 'academic' => 'akademisch', 'restricted' => 'eingeschränkt'];
-    private $publicationTableProperties = ['acdh:relation','acdh:continues','acdhisContinuedBy', 'acdh:documents',
-            'acdh:isDocumentedBy','acdh:isDerivedPublicationOf','acdh:isSourceOf','acdh:hasSource']; 
+    private $publicationTableProperties = ['acdh:relation', 'acdh:continues', 'acdhisContinuedBy', 'acdh:documents',
+        'acdh:isDocumentedBy', 'acdh:isDerivedPublicationOf', 'acdh:isSourceOf', 'acdh:hasSource'];
 
     public function __construct(array $data, object $config, string $language = 'en') {
         $this->properties = array();
         $this->config = $config;
         $this->language = $language;
-       
+
         foreach ($data as $k => $v) {
             if (is_array($v)) {
 
@@ -91,7 +91,7 @@ class ResourceCoreObject {
         if (
                 isset($prop) && count((array) $v) > 0
         ) {
-            if(isset($v['property'])) {
+            if (isset($v['property'])) {
                 $this->addExternalURL($v);
             }
             if (isset($v['type']) && $v['type'] === 'REL') {
@@ -101,7 +101,7 @@ class ResourceCoreObject {
             }
         }
     }
-    
+
     /**
      * If the property is concept or conceptscheme, then we have to add 
      * an extrnal url property.
@@ -109,24 +109,24 @@ class ResourceCoreObject {
      * @return void
      */
     private function addExternalURL(array &$v): void {
-        
-        if ($v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#Concept" ||
-                    $v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#ConceptScheme") {
 
-                if (isset($v['identifiers']) && count($v['identifiers']) > 0) {
-                    foreach ($v['identifiers'] as $val) {
-                        if ((strpos($val, $this->config->baseUrl) === false) &&
-                                (strpos($val, 'https://id.acdh.oeaw.ac.at') === false) &&
-                                (strpos($val, 'https://vocabs.acdh.oeaw.ac.at/rest/') === false) &&
-                                (strpos($val, '.acdh.oeaw.ac.at/api/') === false) &&
-                                (strpos($val, 'arche-curation.') === false) && 
-                                (strpos($val, 'arche-dev.') === false)
-                        ) {
-                            $v['externalUrl'] = $val;
-                        }
+        if ($v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#Concept" ||
+                $v['property'][$this->language] === "http://www.w3.org/2004/02/skos/core#ConceptScheme") {
+
+            if (isset($v['identifiers']) && count($v['identifiers']) > 0) {
+                foreach ($v['identifiers'] as $val) {
+                    if ((strpos($val, $this->config->baseUrl) === false) &&
+                            (strpos($val, 'https://id.acdh.oeaw.ac.at') === false) &&
+                            (strpos($val, 'https://vocabs.acdh.oeaw.ac.at/rest/') === false) &&
+                            (strpos($val, '.acdh.oeaw.ac.at/api/') === false) &&
+                            (strpos($val, 'arche-curation.') === false) &&
+                            (strpos($val, 'arche-dev.') === false)
+                    ) {
+                        $v['externalUrl'] = $val;
                     }
                 }
             }
+        }
     }
 
     /**
@@ -521,21 +521,46 @@ class ResourceCoreObject {
     public function getExpertTableData(): array {
         return $this->properties;
     }
-    
+
     public function getPublicationDataTable(): array {
         $result = array();
-        foreach($this->publicationTableProperties as $property) {
+        foreach ($this->publicationTableProperties as $property) {
             if (isset($this->properties[$property])) {
                 $item = [];
-                foreach($this->properties[$property] as $k => $v) {
-                    $item['#repoid'] = (string)$v['id'];
+                foreach ($this->properties[$property] as $k => $v) {
+                    $item['#repoid'] = (string) $v['id'];
                     $item['#value'] = $v['value'];
-                    $item['#property'] =  str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:', $v['property'][$this->language]);
+                    $item['#property'] = str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:', $v['property'][$this->language]);
                     array_push($result, $item);
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * php 8.2 xdebig dynamic property issues with negative numbers
+     * @param type $dateString
+     * @return type
+     */
+    private function normalizeDateString($dateString) {
+        // Match a date string that starts with a signed or unsigned year
+        // and captures the remainder (like "-01-01" or "-12-31")
+        if (preg_match('/^(-?\d+)(-.*)$/', $dateString, $matches)) {
+            $year = $matches[1];  // e.g. "-332" or "2023"
+            $rest = $matches[2];  // e.g. "-01-01"
+            // If the year is negative, remove the sign, pad, and reattach it.
+            if ($year[0] === '-') {
+                $yearNumber = substr($year, 1); // "332"
+                $paddedYear = '-' . str_pad($yearNumber, 4, '0', STR_PAD_LEFT);
+            } else {
+                // For positive years, pad to 4 digits if necessary.
+                $paddedYear = str_pad($year, 4, '0', STR_PAD_LEFT);
+            }
+            return $paddedYear . $rest;
+        }
+        // If the date string doesn't match the expected format, return it unchanged.
+        return $dateString;
     }
 
     /**
@@ -548,8 +573,12 @@ class ResourceCoreObject {
     public function getFormattedDateByProperty(string $property, string $dateFormat = 'Y'): string {
         if (isset($this->properties[$property])) {
             if (isset($this->properties[$property][0]['value'])) {
-                $val = strtotime($this->properties[$property][0]['value']);
-                return date($dateFormat, $val);
+                $normalizedDate = $this->normalizeDateString($this->properties[$property][0]['value']);
+                $date = new \DateTime($normalizedDate);
+                // To get just the year:
+                $year = $date->format($dateFormat);
+                // If you prefer to remove leading zeros, cast to int:
+                return (int) $year;
             }
         }
         return '';
@@ -719,7 +748,7 @@ class ResourceCoreObject {
 
         if (isset($this->properties["acdh:hasCategory"])) {
             foreach ($this->properties["acdh:hasCategory"] as $category) {
-                 if (isset($category['value']) &&
+                if (isset($category['value']) &&
                         (
                         strtolower($category['value']) === "3d data" ||
                         strtolower($category['value']) === "3d-daten"
@@ -1008,16 +1037,16 @@ class ResourceCoreObject {
 
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
-                       
+
                         if (isset($val['value'])) {
-                            /*$obj = [];
-                            if (isset($val['id']) && (int) $this->repoid !== (int) $val['id']) {
-                                $obj['id'] = $val['id'];
-                            }
-                            $obj['value'] = $val['value'];
-                            $obj['property'] = $k;
-                            
-                            $obj['type'] = $k;*/
+                            /* $obj = [];
+                              if (isset($val['id']) && (int) $this->repoid !== (int) $val['id']) {
+                              $obj['id'] = $val['id'];
+                              }
+                              $obj['value'] = $val['value'];
+                              $obj['property'] = $k;
+
+                              $obj['type'] = $k; */
                             $result[$v][] = $val;
                         }
                     }
