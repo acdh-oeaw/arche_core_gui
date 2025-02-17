@@ -18,4 +18,8 @@ services:
     acdh_core_gui_path_processor.path_processor:
         class: 'Drupal\arche_core_gui\PathProcessor\ArcheGuiPathProcessor'
         tags:
-            - { name: path_processor_inbound, priority: 350 }        
+            - { name: path_processor_inbound, priority: 350 }
+    arche.exception_subscribtr:
+        class: Drupal\arche_core_gui\EventSubscriber\ExceptionSubscriber
+        tags:
+            - { name: event_subscriber }        
