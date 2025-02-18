@@ -1,7 +1,7 @@
 
 <div class="container pt-3">
     <div class="row">
-        <div class="col-lg-9 metadata-breadcrumb"></div>
+        <div class="col-lg-9"></div>
         <div class="col-lg-3 metadata-expert"  >
             <a class="ms-auto d-flex btn btn-arche-blue basic" href="#" id="expertViewBtn">{{ "Expert view"|trans }}</a>
         </div>
@@ -298,7 +298,7 @@
 
             <!-- RESOURCE / METADATA -->
             {% set resourcePropArr = {'acdh:hasCategory': 'Category', 'acdh:hasFormat': 'File format', 'acdh:hasBinarySize': 'File Size', 'acdh:hasExtent': 'Extent'} %}
-            {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' %}
+            {% if data.getAcdhType()|lower == 'resource' or data.getAcdhType()|lower == 'metadata' or data.getAcdhType()|lower == 'oldresource' %}
                 {% if data.getTechnicalData(resourcePropArr)|length > 0  %}
                     {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.TechnicalData(resourcePropArr) } ) }}
                 {% endif %}   

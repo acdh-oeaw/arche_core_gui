@@ -805,7 +805,8 @@ class ResourceCoreObject {
      */
     public function isBinary(): bool {
         //check the resource categories
-        if (strtolower($this->getAcdhType()) === "resource" && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+        if ((strtolower($this->getAcdhType()) === "resource" || strtolower($this->getAcdhType()) === "oldresource" ) 
+                && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
                 (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0) {
             return true;
         }

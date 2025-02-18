@@ -201,7 +201,7 @@ jQuery(function ($) {
     function loadAdditionalData(reloadID) {
         let acdhType = $('#resource-type').val().toLowerCase();
 
-        if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource' || acdhType === 'metadata') {
+        if (acdhType === 'collection' || acdhType === 'topcollection' || acdhType === 'resource' || acdhType === 'oldresource' || acdhType === 'metadata') {
             fetchChildTree(reloadID);
 
             if ($.fn.dataTable.isDataTable('#rcrDT')) {
