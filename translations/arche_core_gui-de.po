@@ -720,4 +720,13 @@ msgid "Spatial coverage of"
 msgstr "Räumliche Abdeckung von"
 
 msgid "Entity"
-msgstr "Entity"
+msgstr "Entität"
+
+msgid "Property"
+msgstr "Eigenschaft"
+
+msgid "Value(s)"
+msgstr "Wert(e)"
+
+msgid "Value"
+msgstr "Wert"

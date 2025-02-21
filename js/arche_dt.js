@@ -13,12 +13,11 @@ jQuery(function ($) {
     window.spatialTable;
     window.relatedTable;
     window.isPartOfTable;
-    var currentLanguage = drupalSettings.path.currentLanguage;
+    var currentLanguage = drupalSettings.arche_core_gui.gui_lang;
     var datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/en-GB.json';
     if(currentLanguage === 'de') {
         datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/de-DE.json';
     }
-    
     
     window.fetchIsPartOf = function (resId) {
         $('.loading-indicator.loading-indicator-ispartof').removeClass('d-none');
