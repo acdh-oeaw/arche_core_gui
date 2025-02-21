@@ -7,10 +7,7 @@
                 <div class="col-lg-6 text-start" id="previous-child-url-iiif-btn"></div>
                 <div class="col-lg-6 text-end" id="next-child-url-iiif-btn"></div>
             </div>
-            <!--
-            <button id="prevButton" class="btn btn-arche-blue">Previous</button>
-            <span id="currentPage-iiif"></span>
-            <button id="nextButton" class="btn btn-arche-blue">Next</button>-->
+           
         </div>
         <br>
         <div id="iiif_viewer" style="width:80%; height:750px;"></div>
@@ -20,10 +17,8 @@
             jQuery(function ($) {
                 $('.card.metadata.titleimage').hide();
                 "use strict";
-                var currentPage = 0;
-                var totalPages = 0;
-                var canvases = [];
-                var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}&mode=images";
+               
+                var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}&mode=image";
                 //var imageUrl = "https://arche-iiifmanifest.acdh.oeaw.ac.at/?id=https%3A%2F%2Farche-curation.acdh-dev.oeaw.ac.at%2Fapi%2F2352&mode=images";
 
                 var viewer = OpenSeadragon({
@@ -37,52 +32,11 @@
                     "tiles": [{
                             "scaleFactors": [1, 2, 4, 8, 16, 32],
                             "width": 1024
-                        }]
+                        }],
+                    tileSources:  [
+                        imageUrl
+                    ]
                 });
-
-                $.getJSON(imageUrl, function (data) {
-                    // Extract the tile source from the IIIF manifest
-                    currentPage = data.index;
-                    //totalPages = data.images.length;
-                    totalPages = 1;
-                    canvases = data.images;
-                    loadPage(currentPage);
-                    // Update page number display
-                    updatePageNumber();
-                }).fail(function () {
-                    console.log("Failed to load IIIF manifest");
-                });
-
-                // Update the page number display
-                function updatePageNumber() {
-                    $('#currentPage-iiif').text((currentPage + 1) + ' / ' + totalPages);
-                }
-
-                // Load a specific page
-                function loadPage(pageIndex) {
-                    var tileSource = canvases[pageIndex];
-                    // Update OpenSeadragon with the new page
-                    viewer.open(tileSource);
-                }
-
-                // Previous button click event
-                $('#prevButton').click(function () {
-                    if (currentPage > 0) {
-                        currentPage--;
-                        loadPage(currentPage);
-                        updatePageNumber();
-                    }
-                });
-
-                // Next button click event
-                $('#nextButton').click(function () {
-                    if (currentPage < totalPages - 1) {
-                        currentPage++;
-                        loadPage(currentPage);
-                        updatePageNumber();
-                    }
-                });
-
             });
         </script>
     </div>

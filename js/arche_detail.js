@@ -110,13 +110,13 @@ jQuery(function ($) {
             $('#expertdt-container').fadeIn(200);
             $(this).removeClass('basic');
             $(this).addClass('expert');
-            $(this).text(Drupal.t('Basic-View'));
+            $(this).text(Drupal.t('Basic view'));
         } else {
             $('#expertdt-container').hide();
             $('#meta-content-container').fadeIn(200);
             $(this).removeClass('expert');
             $(this).addClass('basic');
-            $(this).text(Drupal.t('Expert-View'));
+            $(this).text(Drupal.t('Expert view'));
         }
     });
     /*

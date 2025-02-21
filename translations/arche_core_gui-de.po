@@ -23,8 +23,20 @@ msgstr "Ressourcenlink kopieren"
 msgid "Switch to Expert-View"
 msgstr "Zur Expertenansicht wechseln"
 
+msgid "Expert view"
+msgstr "Expertenansicht"
+
+msgid "Switch to Expert view"
+msgstr "Zur Expertenansicht wechseln"
+
 msgid "Refine your search using filters"
 msgstr "Suchergebnisse filtern"
+
+msgid "Basic view"
+msgstr "Basisansicht"
+
+msgid "Switch to Basic view"
+msgstr "Zur Basisansicht wechseln"
 
 msgid "Switch to Basic-View"
 msgstr "Zur Basisansicht wechseln"
