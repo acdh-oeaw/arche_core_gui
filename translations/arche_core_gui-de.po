@@ -718,3 +718,6 @@ msgstr "Alle Ebenen wurden gelöscht."
 
 msgid "Spatial coverage of"
 msgstr "Räumliche Abdeckung von"
+
+msgid "Entity"
+msgstr "Entity"

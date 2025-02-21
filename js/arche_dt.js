@@ -13,7 +13,13 @@ jQuery(function ($) {
     window.spatialTable;
     window.relatedTable;
     window.isPartOfTable;
-
+    var currentLanguage = drupalSettings.path.currentLanguage;
+    var datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/en-GB.json';
+    if(currentLanguage === 'de') {
+        datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/de-DE.json';
+    }
+    
+    
     window.fetchIsPartOf = function (resId) {
         $('.loading-indicator.loading-indicator-ispartof').removeClass('d-none');
 
@@ -30,7 +36,8 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -83,7 +90,8 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -136,7 +144,8 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -200,7 +209,8 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -240,6 +250,7 @@ jQuery(function ($) {
             paging: true,
             searching: true,
             lengthChange: false,
+            
             pageLength: 10,
             processing: true,
             deferRender: true,
@@ -247,8 +258,9 @@ jQuery(function ($) {
                 {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
             ],
             bInfo: false, // Hide table information
-            'language': {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -305,15 +317,16 @@ jQuery(function ($) {
         }
         window.spatialTable = $('#spatialDT').DataTable({
             paging: true,
-            searching: true,
+            searching: true,            
             lengthChange: false,
             pageLength: 10,
             processing: true,
             deferRender: true,
             searchDelay: 500, // Optional: Add a delay for user typing
             bInfo: false, // Hide table information
-            'language': {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -368,8 +381,9 @@ jQuery(function ($) {
             deferRender: true,
             searchDelay: 500, // Optional: Add a delay for user typing
             bInfo: false, // Hide table information
-            'language': {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -426,8 +440,9 @@ jQuery(function ($) {
                 {targets: [2], orderable: false}  // Disable ordering on columns 0 and 2
             ],
             bInfo: false, // Hide table information
-            'language': {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -487,7 +502,8 @@ jQuery(function ($) {
             deferRender: true,
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -501,7 +517,7 @@ jQuery(function ($) {
                 },
                 error: function (xhr, status, error) {
                     console.log("fetchPublications error");
-                    
+
 
 
                 }
@@ -585,7 +601,8 @@ jQuery(function ($) {
             deferRender: true,
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />"
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
             },
             serverSide: true,
             serverMethod: "post",
@@ -598,7 +615,7 @@ jQuery(function ($) {
                             $('.associated-project-table-div').addClass('d-none');
                             $('.loading-indicator').addClass('d-none');
                         } else {
-                            
+
                             /*
                              $('#associated-coll-res-tab').addClass('hidden');
                              $('#associated-coll-res-tab-content').addClass('hidden');
@@ -660,6 +677,10 @@ jQuery(function ($) {
 
     window.initExpertView = function () {
         window.expertTable = $('#expertDT').DataTable({
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                url: datatableLanguage
+            },
             deferRender: true
                     //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
