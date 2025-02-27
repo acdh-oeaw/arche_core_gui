@@ -274,17 +274,9 @@
             {% if data.getCreditsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
             {% endif %}     
-
-            {% if data  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
-            {% endif %}
-
-            {% if data  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
-            {% endif %}
-
-            {% if data.hasVersion  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
+            
+            {% if data.getFundingData()|length > 0  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/funding-card-block.html.twig', {'data': data.getFundingData() } ) }}
             {% endif %}
 
             <!-- TOP COLLECTION / COLLECTION -->
@@ -303,6 +295,19 @@
                     {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.TechnicalData(resourcePropArr) } ) }}
                 {% endif %}   
             {% endif %}   
+            
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
+            {% endif %}
+
+            {% if data  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/view-share-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+
+            {% if data.hasVersion  %}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
+            {% endif %}
+            
         </div>
     </div>
 </div>
