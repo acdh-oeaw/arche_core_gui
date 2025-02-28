@@ -805,8 +805,7 @@ class ResourceCoreObject {
      */
     public function isBinary(): bool {
         //check the resource categories
-        if ((strtolower($this->getAcdhType()) === "resource" || strtolower($this->getAcdhType()) === "oldresource" ) 
-                && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+        if ((strtolower($this->getAcdhType()) === "resource" || strtolower($this->getAcdhType()) === "oldresource" ) && isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
                 (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0) {
             return true;
         }
@@ -1134,10 +1133,17 @@ class ResourceCoreObject {
 
     public function getFundingData(): array {
         $result = [];
+
         $props = [
             'acdh:hasFunder' => 'Funder',
-            'acdh:hasNonLinkedIdentifier' => 'Project number'
-        ];
+        ];    
+        
+        if (strtolower($this->getAcdhType()) === 'topcollection' || strtolower($this->getAcdhType()) === 'project') {
+            $props = [
+                'acdh:hasFunder' => 'Funder',
+                'acdh:hasNonLinkedIdentifier' => 'Project number'
+            ];
+        }
 
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
