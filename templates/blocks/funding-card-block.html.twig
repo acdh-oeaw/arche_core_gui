@@ -20,7 +20,7 @@
                     {'data': data.getData('acdh:hasFunder'), 'label':  'Funder' } ) }}
             {% endif %}    
 
-            {% if data.getAcdhType()|lower == 'project' or data.getAcdhType()|lower == 'topcollection' %}
+            {% if (data.getAcdhType()|lower == 'project') or (data.getAcdhType()|lower == 'topcollection' ) %}
                 {% if data.getData('acdh:hasNonLinkedIdentifier')  %}
                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                         {'data': data.getData('acdh:hasNonLinkedIdentifier'), 'label':  'Project number' } ) }}

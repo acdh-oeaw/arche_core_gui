@@ -276,7 +276,7 @@
             {% endif %}     
             
             {% if data.getFundingData()|length > 0  %}
-                {{ include(arche_core_gui_path ~ '/templates/blocks/funding-card-block.html.twig', {'data': data.getFundingData() } ) }}
+                {{ include(arche_core_gui_path ~ '/templates/blocks/funding-card-block.html.twig', {'data': data } ) }}
             {% endif %}
 
             <!-- TOP COLLECTION / COLLECTION -->
