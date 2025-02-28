@@ -1135,7 +1135,7 @@ class ResourceCoreObject {
     public function getFundingData(): array {
         $result = [];
         $props = [
-            'acdh:hasFunder' => 'Funding',
+            'acdh:hasFunder' => 'Funder',
             'acdh:hasNonLinkedIdentifier' => 'Project number'
         ];
 

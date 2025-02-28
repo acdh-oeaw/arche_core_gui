@@ -730,3 +730,7 @@ msgstr "Wert(e)"
 
 msgid "Value"
 msgstr "Wert"
+
+msgid "Project number"
+msgstr "Projektnummer"
+

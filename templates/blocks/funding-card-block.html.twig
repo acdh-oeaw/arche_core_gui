@@ -1,6 +1,6 @@
 <div class="card metadata">
     <div class="card-header">
-         <div class="row justify-content-center align-items-center">
+        <div class="row justify-content-center align-items-center">
             <div class="col-10"><h6 class="mb-0 pb-0">{{ "Funding"|trans }}</h6></div>
             <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div>-->
             <div class="col-2 text-end">
@@ -13,20 +13,20 @@
     </div>
     <div id="fundingBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
-            {% for key, value in data %}
-                <div>
-                    <b>{{ key|trans }}:</b></br>
-                    {% for val in value %}
-                        {% if val['externalUrl'] %}
-                            <a href="{{ val['externalUrl'] }}" target="_blank">{{ values }}</a><br>
-                        {% elseif val['id'] %} 
-                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
-                        {% else %}    
-                            {{ val['value'] }}<br>
-                        {% endif %}
-                    {% endfor %}    
-                </div>
-            {% endfor %}
+
+
+            {% if data.getData('acdh:hasFunder')  %}
+                {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                    {'data': data.getData('acdh:hasFunder'), 'label':  'Funder' } ) }}
+            {% endif %}    
+
+            {% if data.getAcdhType()|lower == 'project' || data.getAcdhType()|lower == 'topcollection' %}
+                {% if data.getData('acdh:hasNonLinkedIdentifier')  %}
+                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
+                        {'data': data.getData('acdh:hasNonLinkedIdentifier'), 'label':  'Project number' } ) }}
+                {% endif %}    
+            {% endif %}    
+
         </div>
     </div>
 </div>
