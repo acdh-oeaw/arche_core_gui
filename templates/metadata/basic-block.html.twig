@@ -240,6 +240,10 @@
                 {% if data.is3DObject() %} 
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-3d-viewer.html.twig' ) }}
                 {% endif%} 
+                
+                {% if data.isGLB3DObject() %} 
+                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-glb-3d-viewer.html.twig' {'data': data}) }}
+                {% endif%} 
 
 
             </div>

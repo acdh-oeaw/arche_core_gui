@@ -111,4 +111,15 @@ dissemination-iiif:
     dependencies:
         - core/drupal
         - core/jquery
-        - core/drupalSettings           
+        - core/drupalSettings    
+        
+dissemination-glb-3d:
+    header: true
+    version: 1.0.2
+    js:
+        https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js: { external: true, minified: true }
+    dependencies:
+        - core/drupal
+        - core/jquery
+        - core/drupalSettings 
+        

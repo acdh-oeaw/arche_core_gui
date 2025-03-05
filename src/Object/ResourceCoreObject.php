@@ -39,8 +39,6 @@ class ResourceCoreObject {
                 }
             }
         }
-
-
         //set acdhid /repoid / repourl
         $this->repoid = $this->getRepoID();
     }
@@ -135,8 +133,6 @@ class ResourceCoreObject {
      * @return string
      */
     public function getTitle(): string {
-
-
         if (isset($this->properties["acdh:hasTitle"][0]['title']) && !empty($this->properties["acdh:hasTitle"][0]['title'])) {
             return $this->properties["acdh:hasTitle"][0]['title'];
         }
@@ -239,7 +235,7 @@ class ResourceCoreObject {
     /**
      * Get all identifiers which are not acdh api related
      *
-     * @return type
+     * @return array
      */
     public function getNonAcdhApiIdentifiers(): array {
         $result = array();
@@ -736,6 +732,44 @@ class ResourceCoreObject {
         return "";
     }
 
+    /**
+     * Check the resource is a 3d object
+     * @return bool
+     */
+    public function isGLB3DObject(): bool {
+        $cat = false;
+        $format = false;
+        if (!$this->isPublic()) {
+            return false;
+        }
+
+        if (isset($this->properties["acdh:hasCategory"])) {
+            foreach ($this->properties["acdh:hasCategory"] as $category) {
+                if (isset($category['value']) &&
+                        (
+                        strtolower($category['value']) === "3d data" ||
+                        strtolower($category['value']) === "3d-daten"
+                        )) {
+                    $cat = true;
+                }
+            }
+        }
+        
+        if (isset($this->properties["acdh:hasFormat"][0]['value']) && 
+                $this->properties["acdh:hasFormat"][0]['value'] === "model/gltf-binary ") {
+             $format=true;
+        }
+        
+        
+        if (isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
+                (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
+                $cat && $format) {
+            return true;
+        }
+
+        return false;
+    }
+    
     /**
      * Check the resource is a 3d object
      * @return bool
