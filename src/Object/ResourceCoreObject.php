@@ -756,7 +756,7 @@ class ResourceCoreObject {
         }
         
         if (isset($this->properties["acdh:hasFormat"][0]['value']) && 
-                $this->properties["acdh:hasFormat"][0]['value'] === "model/gltf-binary ") {
+                $this->properties["acdh:hasFormat"][0]['value'] === "model/gltf-binary") {
              $format=true;
         }
         
