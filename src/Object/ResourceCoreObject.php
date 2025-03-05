@@ -1150,6 +1150,9 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
+                            if($val['id'] === $this->repoid) {
+                                unset($val['id']);
+                            }
                             $result[$v][] = $val;
                         }
                     }
