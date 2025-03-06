@@ -13,18 +13,30 @@
             <model-viewer alt="" 
                           id="modelViewer"
                           src="https://arche-glb.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}" 
-                          shadow-intensity="1" camera-controls touch-action="pan-y"
+                          shadow-intensity="1" 
+                          camera-controls 
+                          touch-action="pan-y"
+                          camera-orbit="0deg 75deg 3m"
                           class="glb-viewer-class">
             </model-viewer>
+
+            <div class="controls pt-2 d-none" id="glb-controls">
+                <button id="glbResetView" class="ms-auto btn btn-arche-blue">Reset View</button>
+                <button id="glbZoomIn" class="ms-auto btn btn-arche-blue">Zoom In</button>
+                <button id="glbZoomOut" class="ms-auto btn btn-arche-blue">Zoom Out</button>
+            </div>
 
             <script type="module">
                 const modelViewer = document.getElementById('modelViewer');
                 const loader = document.getElementById('glb-loader');
                 const loader_text = document.getElementById('glb-loader-text');
+                const glbControls = document.getElementById('glb-controls');
 
                 // When the model has loaded, hide the loader.
                 modelViewer.addEventListener('load', () => {
                     loader.style.display = 'none';
+                    // Remove a class
+                    glbControls.classList.remove('d-none');
                 });
 
                 // Optionally, you can update the loader on progress:
@@ -33,7 +45,65 @@
                         loader.textContent = `Loading model... ${Math.floor(event.detail.totalProgress * 100)}%`;
                     }
                 });
-            </script>        
+                $(document).delegate("#glbZoomIn", "click", function (e) {
+                    const orbit = modelViewer.getCameraOrbit();
+                    let radiusValue;
+                    let unit = 'm'; // default unit if none is provided
+
+                    if (typeof orbit.radius === 'string') {
+                        radiusValue = parseFloat(orbit.radius);
+                        const unitMatch = orbit.radius.match(/[a-zA-Z]+$/);
+                        if (unitMatch) {
+                            unit = unitMatch[0];
+                        }
+                    } else if (typeof orbit.radius === 'number') {
+                        radiusValue = orbit.radius;
+                    } else {
+                        // Fallback if it's neither string nor number.
+                        radiusValue = 3;
+                    }
+
+                    // Decrease the radius to zoom in (with a lower limit).
+                    const newRadius = Math.max(radiusValue - 0.5, 0.5);
+                    modelViewer.cameraOrbit = `${orbit.theta} ${orbit.phi} ${newRadius}${unit}`;
+                });
+
+                $(document).delegate("#glbZoomOut", "click", function (e) {
+                    const orbit = modelViewer.getCameraOrbit();
+                    let radiusValue;
+                    let unit = 'm';
+
+                    if (typeof orbit.radius === 'string') {
+                        radiusValue = parseFloat(orbit.radius);
+                        const unitMatch = orbit.radius.match(/[a-zA-Z]+$/);
+                        if (unitMatch) {
+                            unit = unitMatch[0];
+                        }
+                    } else if (typeof orbit.radius === 'number') {
+                        radiusValue = orbit.radius;
+                    } else {
+                        radiusValue = 3;
+                    }
+
+                    // Increase the radius to zoom out.
+                    const newRadius = radiusValue + 0.5;
+                    modelViewer.cameraOrbit = `${orbit.theta} ${orbit.phi} ${newRadius}${unit}`;
+                });
+
+                $(document).delegate("#glbResetView", "click", function (e) {
+                    if (typeof modelViewer.resetCameraOrbit === 'function') {
+                        modelViewer.resetCameraOrbit();
+                    } else {
+                        // Fallback: Reset to the default orbit value.
+                        // This assumes you've set a default value in the camera-orbit attribute.
+                        const defaultOrbit = modelViewer.getAttribute('camera-orbit') || '0deg 75deg 3m';
+                        modelViewer.cameraOrbit = defaultOrbit;
+                    }
+                });
+
+            </script>    
+
+
         </div>
     </div>
 </div>
