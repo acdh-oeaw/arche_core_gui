@@ -27,6 +27,12 @@
                     {% endfor %}    
                 </div>
             {% endfor %}
+            
+            {% if logos %}
+                {% for key,value in logos %}
+                    <img src="{{ value['value'] }}" class="img-fluid pt-2" style="max-height: 72px" /><br>
+                {% endfor %}  
+            {% endif %}
         </div>
     </div>
 </div>
