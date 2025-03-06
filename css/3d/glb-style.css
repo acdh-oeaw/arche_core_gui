@@ -1,10 +1,4 @@
 .glb-viewer-class {
     width: 100% !important;
-    min-height: 350px !important;
-}
-
-@media (max-width: 768px) {
-  .glb-viewer-class {
-      min-height: 200px !important
-  }
+    height: 70vh !important;
 }

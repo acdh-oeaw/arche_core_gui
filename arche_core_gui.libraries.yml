@@ -118,9 +118,7 @@ dissemination-glb-3d:
     version: 1.0.2
     css:
         base:
-            css/3d/glb-stlye.css: { }
-    js:
-        https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js: { external: true, minified: true }
+            css/3d/glb-style.css: { }
     dependencies:
         - core/drupal
         - core/jquery

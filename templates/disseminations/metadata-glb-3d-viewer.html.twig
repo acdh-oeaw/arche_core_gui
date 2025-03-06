@@ -1,17 +1,39 @@
 {{ attach_library('arche_core_gui/dissemination-glb-3d') }}
-<!-- <div class="loading-indicator text-center">
+<div class="loading-indicator text-center" id="glb-loader">
     <img src="/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif" alt="Loading...">
-</div>-->
+    <br>
+    <p id="glb-loader-text"></p>
+</div>
+
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <div class="container viewer-3d-basic" >
     <div class="row justify-content-center text-center">
         <div class="col-lg-12">
             <model-viewer alt="" 
+                          id="modelViewer"
                           src="https://arche-glb.acdh.oeaw.ac.at/?id={{ data.getRepoUrl() }}" 
-                shadow-intensity="1" camera-controls touch-action="pan-y"
-                class="glb-viewer-class">
+                          shadow-intensity="1" camera-controls touch-action="pan-y"
+                          class="glb-viewer-class">
             </model-viewer>
 
+            <script type="module">
+                const modelViewer = document.getElementById('modelViewer');
+                const loader = document.getElementById('glb-loader');
+                const loader_text = document.getElementById('glb-loader-text');
+
+                // When the model has loaded, hide the loader.
+                modelViewer.addEventListener('load', () => {
+                    loader.style.display = 'none';
+                });
+
+                // Optionally, you can update the loader on progress:
+                modelViewer.addEventListener('progress', (event) => {
+                    if (event.detail.totalProgress) {
+                        loader.textContent = `Loading model... ${Math.floor(event.detail.totalProgress * 100)}%`;
+                    }
+                });
+            </script>        
         </div>
     </div>
 </div>
