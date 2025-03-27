@@ -40,11 +40,12 @@ jQuery(function ($) {
      */
      window.showCiteBlock = function () {
         var url = $('#biblaTexUrl').val();
-        console.log("showCiteBlock");
-        console.log(url);
+       
         if (url) {
-            //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/214536&lang=en";
-            $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang).done(function (data) {
+            //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/262625&lang=en&format=application%2Fvnd.citationstyles.csl%2Bjson";
+            //console.log(url);
+            //$.get(url).done(function (data) {
+            $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fvnd.citationstyles.csl%2Bjson').done(function (data) {
                 $('#cite-div').removeClass('hidden');
                 $('#cite-main-div').removeClass('hidden');
                 $('#cite-loader').addClass('hidden');
@@ -88,8 +89,10 @@ jQuery(function ($) {
                         opt.lang = 'en-US';
                         createCiteTab('vancouver', 'vancouver');
                         createCiteContent(cite.get(opt), 'vancouver', false);
-                        createCiteTab('BiblaTex', 'biblatex');
-                        createCiteContent(data, 'BiblaTex', false);
+                        createCiteTab('bibtex', 'bibtex');
+                        createCiteContent(cite.get(opt), 'bibtex', false);
+                        createCiteTab('json-csl', 'json-csl');
+                        createCiteContent(data.abstract, 'json-csl', false);
                     });
                 } catch (error) {
                     console.log("CITE ERROR");
@@ -99,7 +102,7 @@ jQuery(function ($) {
                 }
 
             }).fail(function (xhr) {
-                console.log("CITE FAIL");
+                console.log("CITE FAIL : " + url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fvnd.citationstyles.csl%2Bjson');
                 $('#cite-loader').addClass('d-none');
                 createCiteErrorResponse(Drupal.t("CITE is not available!"));
                 return false;
