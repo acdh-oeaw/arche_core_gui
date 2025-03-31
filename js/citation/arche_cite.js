@@ -1,8 +1,8 @@
 jQuery(function ($) {
     $.noConflict();
     "use strict";
-    
-    
+
+
     window.Cite = require('citation-js');
 
     ///////////// CITE ////////////////////
@@ -24,25 +24,69 @@ jQuery(function ($) {
      * @param string first
      * @returns string
      */
-    function createCiteContent(data, typeid, first) {
+    function createCiteContent(data, typeid, first, json = false) {
         var selected = 'selected';
         if (!first) {
             selected = 'hidden';
         }
-
-        var html = "<span class='cite-content " + selected + "' id='highlight-" + typeid.toLowerCase() + "'>" + data + "</span>";
+        var prewrap = "white-space: unset;";
+        if(json) {
+            prewrap = "white-space: pre-wrap;"
+        }
+        var html = "<span class='cite-content " + selected + "' style='"+prewrap+"' id='highlight-" + typeid.toLowerCase() + "'>" + data + "</span>";
         $('#cite-content-figure').append(html);
+        
+    }
+
+    function displayHarvard(cite, apa_loaded) {
+        var opt = {
+            format: 'string'
+        };
+        opt.type = 'html';
+        opt.style = 'citation-harvard1';
+        opt.lang = 'en-US';
+        createCiteTab('harvard', 'harvard');
+        createCiteContent(cite.get(opt), 'harvard', apa_loaded);
+    }
+
+    function displayVancouver(cite, apa_loaded) {
+        var opt = {
+            format: 'string'
+        };
+        opt.type = 'html';
+        opt.template = 'vancouver';
+        opt.style = 'citation-vancouver';
+        opt.lang = 'en-US';
+        createCiteTab('vancouver', 'vancouver');
+        createCiteContent(cite.get(opt), 'vancouver', false);
+    }
+
+    function displayJsonCsl(data) {
+        const formattedJson = JSON.stringify(data, null, 2);
+        createCiteTab('json-csl', 'json-csl');
+        createCiteContent(formattedJson, 'json-csl', false, true);
+    }
+
+    function displayBiblatex(url) {
+        $.get(url).done(function (data) {
+            createCiteTab('BiblaTex', 'biblatex');
+            createCiteContent(data, 'BiblaTex', false, true);
+        }).fail(function (xhr) {
+            console.log("Biblatex fetch is not possible!");
+            return;
+        });
+
     }
 
     /**
      * Show the CITE block
      * @returns {undefined}
      */
-     window.showCiteBlock = function () {
+    window.showCiteBlock = function () {
         var url = $('#biblaTexUrl').val();
-       
+
         if (url) {
-            //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche-dev.acdh-dev.oeaw.ac.at/api/262625&lang=en&format=application%2Fvnd.citationstyles.csl%2Bjson";
+            //url = "https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche.acdh.oeaw.ac.at/api/1819726&lang=en&format=application%2Fvnd.citationstyles.csl%2Bjson";
             //console.log(url);
             //$.get(url).done(function (data) {
             $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fvnd.citationstyles.csl%2Bjson').done(function (data) {
@@ -72,27 +116,15 @@ jQuery(function ($) {
                             }).then(function (d) {
 
                         //harvard
-                        var opt = {
-                            format: 'string'
-                        };
-                        opt.type = 'html';
-                        opt.style = 'citation-harvard1';
-                        opt.lang = 'en-US';
-                        createCiteTab('harvard', 'harvard');
-                        createCiteContent(cite.get(opt), 'harvard', apa_loaded);
+                        displayHarvard(cite, apa_loaded);
+
                         //Vancouver
-                        var opt = {
-                            format: 'string'
-                        };
-                        opt.type = 'html';
-                        opt.style = 'citation-vancouver';
-                        opt.lang = 'en-US';
-                        createCiteTab('vancouver', 'vancouver');
-                        createCiteContent(cite.get(opt), 'vancouver', false);
-                        createCiteTab('bibtex', 'bibtex');
-                        createCiteContent(cite.get(opt), 'bibtex', false);
-                        createCiteTab('json-csl', 'json-csl');
-                        createCiteContent(data.abstract, 'json-csl', false);
+                        displayVancouver(cite, apa_loaded);
+
+                        // url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fvnd.citationstyles.csl%2Bjson'
+                        displayBiblatex(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fx-bibtex');
+                        //displayBiblatex("https://arche-biblatex.acdh.oeaw.ac.at/?id=https://arche.acdh.oeaw.ac.at/api/1819726&lang=en&format=application%2Fx-bibtex");
+                        displayJsonCsl(data);
                     });
                 } catch (error) {
                     console.log("CITE ERROR");
