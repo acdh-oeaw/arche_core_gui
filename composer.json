@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "acdh-oeaw/arche-lib": "7.2.0",
+        "acdh-oeaw/arche-lib": "7.2.1",
         "acdh-oeaw/arche-lib-disserv": "4.0.6",
         "acdh-oeaw/arche-lib-schema": "7.1.2",   
 	"acdh-oeaw/arche-assets": "^3.14.1", 
