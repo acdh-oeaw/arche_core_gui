@@ -15,10 +15,10 @@ jQuery(function ($) {
     window.isPartOfTable;
     var currentLanguage = drupalSettings.arche_core_gui.gui_lang;
     var datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/en-GB.json';
-    if(currentLanguage === 'de') {
+    if (currentLanguage === 'de') {
         datatableLanguage = '//cdn.datatables.net/plug-ins/2.2.2/i18n/de-DE.json';
     }
-    
+
     window.fetchIsPartOf = function (resId) {
         $('.loading-indicator.loading-indicator-ispartof').removeClass('d-none');
 
@@ -249,7 +249,7 @@ jQuery(function ($) {
             paging: true,
             searching: true,
             lengthChange: false,
-            
+
             pageLength: 10,
             processing: true,
             deferRender: true,
@@ -316,7 +316,7 @@ jQuery(function ($) {
         }
         window.spatialTable = $('#spatialDT').DataTable({
             paging: true,
-            searching: true,            
+            searching: true,
             lengthChange: false,
             pageLength: 10,
             processing: true,
@@ -492,6 +492,7 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     window.fetchPublications = function (resId) {
+        console.log("publications DT");
         return window.publicationsTable = new DataTable('#publicationsDT', {
             paging: true,
             destroy: true,
@@ -540,42 +541,36 @@ jQuery(function ($) {
             createdRow: function (row, data, dataIndex) {
                 // Perform the AJAX request for the URL CS Content field
                 var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
+                var cellIdentifier = data.id;
+                const citeServiceUrl = "https://arche-biblatex.acdh.oeaw.ac.at/?id=";
+                var baseApiUrl = drupalSettings.arche_core_gui.baseApiUrl;
+                
+                var url = citeServiceUrl + baseApiUrl + data.id;
+                $.get(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=application%2Fvnd.citationstyles.csl%2Bjson').done(function (data) {
 
-                try {
-                    var citationText = data.customCitation;
-                    if (!data.customCitation.startsWith('@')) {
-                        citationText = "@dataset{" + data.id + ", " + data.customCitation + "}";
+                    try {
+                        let cite = new Cite(data);
+                        let templateName = 'apa-6th';
+                        url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
+                                .done(function (template) {
+
+                                    Cite.CSL.register.addTemplate(templateName, template);
+                                    var opt = {
+                                        format: 'string'
+                                    };
+                                    opt.type = 'html';
+                                    opt.style = 'citation-' + templateName;
+                                    opt.lang = 'en-US';
+                                    cell.html('<a href="/browser/metadata/' + cellIdentifier + '">' + cite.get(opt) + '</a>');
+                                });
+                                
+                    } catch (error) {
+                         cell.html('<a href="/browser/metadata/' + cellIdentifier + '">' + data.title + '</a>');
                     }
 
-                    let citeDT = new window.Cite(citationText);
-                    let templateName = 'apa-6th';
-                    var template = "";
-                    window.url_csl_content("/browser/modules/contrib/arche_core_gui/csl/apa-6th-edition.csl")
-                            .done(function (data) {
-
-                                template = data;
-                                window.Cite.CSL.register.addTemplate(templateName, template);
-                                var opt = {
-                                    format: 'string'
-                                };
-                                opt.type = 'html';
-                                opt.style = 'citation-' + templateName;
-                                opt.lang = 'en-US';
-                                return citeDT.get(opt);
-                            })
-                            .then(function (d) {
-                                var opt = {
-                                    format: 'string'
-                                };
-                                opt.type = 'html';
-                                opt.style = 'citation-' + templateName;
-                                opt.lang = 'en-US';
-                                cell.html('<a href="/browser/metadata/' + data.id + '">' + citeDT.get(opt) + '</a>');
-                            });
-                } catch (error) {
-                    //console.log(error);
-                    cell.html('<a href="/browser/metadata/' + data.id + '">' + data.title + '</a>');
-                }
+                }).fail(function (xhr) {
+                     cell.html('<a href="/browser/metadata/' + cellIdentifier + '">' + data.title + '</a>');
+                });
             },
             fnDrawCallback: function () {
             }
