@@ -119,12 +119,12 @@ class SpatialMapData {
     public function getCoordinates(): string {
         $str = "";
 
-        if (isset($this->mapData["acdh:hasLongitude"][$this->id]['en'][0]['value']) && !empty($this->mapData["acdh:hasLongitude"][$this->id]['en'][0]['value']) &&
-                isset($this->mapData["acdh:hasLatitude"][$this->id]['en'][0]['value']) && !empty($this->mapData["acdh:hasLatitude"][$this->id]['en'][0]['value'])) {
-            $str = "[" . $this->mapData["acdh:hasLatitude"][$this->id]['en'][0]['value'] . ", " . $this->mapData["acdh:hasLongitude"][$this->id]['en'][0]['value'] . "]";
-        } elseif (isset($this->mapData["acdh:hasWKT"][$this->id]['en'][0]['value']) && !empty($this->mapData["acdh:hasWKT"][$this->id]['en'][0]['value'])) {
+        if (isset($this->mapData[0]["acdh:hasLongitude"][$this->id]['en'][0]['value']) && !empty($this->mapData[0]["acdh:hasLongitude"][$this->id]['en'][0]['value']) &&
+                isset($this->mapData[0]["acdh:hasLatitude"][$this->id]['en'][0]['value']) && !empty($this->mapData[0]["acdh:hasLatitude"][$this->id]['en'][0]['value'])) {
+            $str = "[" . $this->mapData[0]["acdh:hasLatitude"][$this->id]['en'][0]['value'] . ", " . $this->mapData[0]["acdh:hasLongitude"][$this->id]['en'][0]['value'] . "]";
+        } elseif (isset($this->mapData[0]["acdh:hasWKT"][$this->id]['en'][0]['value']) && !empty($this->mapData[0]["acdh:hasWKT"][$this->id]['en'][0]['value'])) {
             $matches = "";
-            preg_match('/POINT\(([^,]+) \s*([^)]+)\)/', $this->mapData["acdh:hasWKT"][$this->id]['en'][0]['value'], $matches);
+            preg_match('/POINT\(([^,]+) \s*([^)]+)\)/', $this->mapData[0]["acdh:hasWKT"][$this->id]['en'][0]['value'], $matches);
 
             if (!empty($matches)) {
                 // Swap the coordinates: $matches[1] is the first value, $matches[2] is the second value
