@@ -43,7 +43,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                 return new \Drupal\Core\Routing\TrustedRedirectResponse($isConceptOrConceptScheme);
             }
         }
-
+      
         $return = [
             '#theme' => 'arche-detail',
             '#identifier' => $identifier,
@@ -87,7 +87,6 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                     '#theme' => 'arche-detail-empty'
                 ];
             }
-         
             $return = [
                 '#theme' => 'arche-detail',
                 '#identifier' => $identifier,

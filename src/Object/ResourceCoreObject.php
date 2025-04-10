@@ -754,13 +754,13 @@ class ResourceCoreObject {
                 }
             }
         }
-        
-        if (isset($this->properties["acdh:hasFormat"][0]['value']) && 
+
+        if (isset($this->properties["acdh:hasFormat"][0]['value']) &&
                 $this->properties["acdh:hasFormat"][0]['value'] === "model/gltf-binary") {
-             $format=true;
+            $format = true;
         }
-        
-        
+
+
         if (isset($this->properties["acdh:hasBinarySize"][0]['value']) &&
                 (int) $this->properties["acdh:hasBinarySize"][0]['value'] > 0 &&
                 $cat && $format) {
@@ -769,7 +769,7 @@ class ResourceCoreObject {
 
         return false;
     }
-    
+
     /**
      * Check the resource is a 3d object
      * @return bool
@@ -1170,8 +1170,8 @@ class ResourceCoreObject {
 
         $props = [
             'acdh:hasFunder' => 'Funder',
-        ];    
-        
+        ];
+
         if (strtolower($this->getAcdhType()) === 'topcollection' || strtolower($this->getAcdhType()) === 'project') {
             $props = [
                 'acdh:hasFunder' => 'Funder',
@@ -1184,7 +1184,7 @@ class ResourceCoreObject {
                 if (is_array($this->properties[$k])) {
                     foreach ($this->properties[$k] as $val) {
                         if (isset($val['value'])) {
-                            if($val['id'] === $this->repoid) {
+                            if ($val['id'] === $this->repoid) {
                                 unset($val['id']);
                             }
                             $result[$v][] = $val;
@@ -1321,5 +1321,23 @@ class ResourceCoreObject {
             }
         }
         return "";
+    }
+
+    /**
+     * fetch the right side map box data for the hasSpatialCoverage property
+     * redmine: #24313
+     * @return array
+     */
+    public function getSpatialCoordinates(): array {
+        
+        if (isset($this->properties['acdh:hasSpatialCoverage'])) {
+            $spatialId = isset($this->properties['acdh:hasSpatialCoverage'][0]['id']) ? $this->properties['acdh:hasSpatialCoverage'][0]['id'] : "";
+
+            if (!empty($spatialId)) {
+                $class = new \Drupal\arche_core_gui\Object\SpatialMapData();
+                return $class->getData($this->getRepoBaseUrl().'/api/getCoordinates/' . $spatialId);
+            }
+        }
+        return [];
     }
 }

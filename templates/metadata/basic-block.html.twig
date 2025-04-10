@@ -236,7 +236,7 @@
                 {% if data.isAudio() %}
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-audio-viewer.html.twig', {'data': data} ) }}
                 {% endif%} 
-                
+
                 {% if data.isGLB3DObject() %} 
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-glb-3d-viewer.html.twig', {'data': data}) }}
                 {% elseif data.is3DObject() %} 
@@ -262,7 +262,21 @@
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getPolygon(), 'type': 'multipolygon' } ) }}
             {% elseif data.getMapType()|lower == 'coordinates' %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': data.getCoordinates(), 'type': 'coordinates' } ) }}
+
+            {% elseif data.getSpatialCoordinates() %}    
+                <!--  REDMINE #24313 -->
+                {% set type = data.getSpatialCoordinates()['type'] %}
+                {% set mapData = data.getSpatialCoordinates()['data'] %}
+                {% if type|lower == 'polygon'  %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': mapData, 'type': 'polygon' } ) }}
+                {% elseif type|lower == 'multipolygon' %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': mapData, 'type': 'multipolygon' } ) }}
+                {% elseif type|lower == 'coordinates' %}
+                    {{ include(arche_core_gui_path ~ '/templates/blocks/map-card-block.html.twig', {'data': mapData, 'type': 'coordinates' } ) }}
+                {% endif %}    
+
             {% endif %}    
+
 
 
             {% if data.getPidOrAcdhIdentifier()  %}
@@ -276,7 +290,7 @@
             {% if data.getCreditsData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/credits-card-block.html.twig', {'data': data.getCreditsData() } ) }}
             {% endif %}     
-            
+
             {% if data.getFundingData()|length > 0  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/funding-card-block.html.twig', {'data': data.getFundingData(), 'logos': data.getData('acdh:hasFunderLogo') } ) }}
             {% endif %}
@@ -297,7 +311,7 @@
                     {{ include(arche_core_gui_path ~ '/templates/blocks/res-meta-technical-card-block.html.twig', {'data': data.TechnicalData(resourcePropArr) } ) }}
                 {% endif %}   
             {% endif %}   
-            
+
             {% if data  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/download-card-block.html.twig', {'data': data, 'cookie': cookie } ) }}    
             {% endif %}
@@ -309,7 +323,7 @@
             {% if data.hasVersion  %}
                 {{ include(arche_core_gui_path ~ '/templates/blocks/versions-card-block.html.twig', {'data': data } ) }}
             {% endif %}
-            
+
         </div>
     </div>
 </div>
