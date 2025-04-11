@@ -175,7 +175,7 @@
                                 <span>{{ value.relvalue|nl2br }}</span>
                             {% endif %}
                         {% endif %}
-                    {% elseif(type == 'date' and dateformat) %}
+                    {% elseif(value.type == 'http://www.w3.org/2001/XMLSchema#date' and dateformat) %}
                         {{ include(arche_core_gui_path ~ '/templates/helper/helper-date.html.twig', 
                                 {'value': value,  'dateformat': dateformat } ) }}
                     {% else %}
