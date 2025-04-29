@@ -131,7 +131,7 @@
                     {'data': data.getData('acdh:hasPages'), 'label':  'Pages' } ) }}</li>
                         {% endif %} 
 
-
+                    {{ dump(data.getData('acdh:hasIssuedDate')) }}
                     {% if data.getData('acdh:hasIssuedDate')  %}
                         <li>{{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
                     {'data': data.getData('acdh:hasIssuedDate'), 'label':  'Issued Date', 'dateformat': 'Y' } ) }}</li>

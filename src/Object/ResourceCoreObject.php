@@ -832,6 +832,24 @@ class ResourceCoreObject {
         }
         return false;
     }
+    
+    
+    public function isTEI(): bool {
+        $cat = false;
+        if (!$this->isPublic()) {
+            return false;
+        }
+
+        if (isset($this->properties["acdh:hasCategory"])) {
+            foreach ($this->properties["acdh:hasCategory"] as $category) {
+                if (isset($category['value']) && strtolower($category['value']) === strtolower("xml/tei") ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      * check if the Resource is an uploaded binary
@@ -1194,6 +1212,13 @@ class ResourceCoreObject {
             }
         }
         return $result;
+    }
+    
+    public function getBinarySize(): int {
+        if (isset($this->properties['acdh:hasBinarySize'])) {
+            return $this->properties['acdh:hasBinarySize'][0]['value'];
+        }
+        return 0;
     }
 
     /**

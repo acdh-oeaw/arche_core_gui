@@ -241,8 +241,12 @@
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-glb-3d-viewer.html.twig', {'data': data}) }}
                 {% elseif data.is3DObject() %} 
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-3d-viewer.html.twig' ) }}
-                {% endif%} 
-
+                {% endif%}
+                
+                
+                {% if data.isTEI() and data.getBinarySize() < 500000 %} 
+                    {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-tei-viewer.html.twig' ) }}
+                {% endif%}
 
             </div>
         </div>

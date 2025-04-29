@@ -123,4 +123,16 @@ dissemination-glb-3d:
         - core/drupal
         - core/jquery
         - core/drupalSettings 
-        
+
+dissemination-tei:
+    header: true
+    version: 1.0.2
+    css:
+        base:
+            css/tei_boilerplate_viewer/custom.css: { }
+    js:
+        js/tei_boilerplate_viewer/tei-loader.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery
+        - core/drupalSettings 

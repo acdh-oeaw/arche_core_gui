@@ -1,6 +1,7 @@
 {% set moduleDir = "{{ arche_core_gui_path }}" %}
 <input type="hidden" value="{{ identifier }}" id="resId"/>
 <input type="hidden" value="{{ data.getRootID() }}" id="rootId"/>
+<input type="hidden" value="{{ data.getRepoUrl()}}" id="resApiId"/>
 <input type="hidden" value="{{ data.getTitle() }}" id="resource-main-title"/>
 <input type="hidden" value="{{ data.getAcdhType()|lower|raw }}" id="resource-type"/>
 <input type="hidden" value="{{ data.getDataArrayString('acdh:aclRead', 'string')|raw }}" id="resource-acl-read"/>
