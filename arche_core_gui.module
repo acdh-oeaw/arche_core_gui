@@ -10,7 +10,9 @@ function arche_core_gui_page_attachments(array &$page) {
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['id'] = \Drupal::currentUser()->id();
     $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
-    $page['#attached']['drupalSettings']['arche_core_gui']['baseApiUrl'] =  $archeConfig->rest->urlBase.$archeConfig->rest->pathBase;
+    $page['#attached']['drupalSettings']['arche_core_gui']['pathBase'] = $archeConfig->rest->pathBase;
+    $page['#attached']['drupalSettings']['arche_core_gui']['apiUrl'] = (string)$archeConfig->rest->urlBase . $archeConfig->rest->pathBase;
+    $page['#attached']['drupalSettings']['arche_core_gui']['baseApiUrl'] =  (string) $archeConfig->rest->urlBase . $archeConfig->rest->pathBase;
     
     $current_uri = \Drupal::request()->getRequestUri();
     
