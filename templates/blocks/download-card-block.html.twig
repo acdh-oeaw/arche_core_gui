@@ -88,6 +88,13 @@
                 <div class="col-lg-12 pt-2 pb-2"><a href="{{ resourceApiUrl }}/metadata?format=text/turtle&readMode=relatives&parentProperty=https%3A%2F%2Fvocabs.acdh.oeaw.ac.at%2Fschema%23isPartOf" class="btn-arche-blue-sidebar" target="_blank">{{ "Download Metadata"|trans }} <img src="{{ arche_dl_ico }}"/></a>
                 </div>
             </div>
+                
+           {% if get_arche_instance()|raw == 'dev' %}
+                <div class="row" id="download-cart-section">
+                    <div class="col-lg-12 pt-2 pb-2"><a href="" class="btn-arche-blue-sidebar" id="add-resource-cart">{{ "Add to Cart"|trans }} <i class="fas fa-shopping-cart" style="color: #ffffff"></i> </a>
+                    </div>
+                </div>    
+            {% endif  %}    
         </div>
     </div>
 </div>

@@ -7,6 +7,7 @@ basic:
     js:
         js/citation-js-0.5.0.min.js: {}
         js/arche_core_gui_base.js: {}
+        js/arche-cookie.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
@@ -40,6 +41,7 @@ smart-search:
         js/smartsearch-result.js: {}
         js/smartsearch-autocomplete.js: {}
         js/vcrSubmit.js: {}
+        js/arche-cookie.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
@@ -63,6 +65,8 @@ detail-view:
         js/arche_detail.js: {}
         js/arche_dt.js: {}
         js/citation/arche_cite.js: {}
+        js/arche-cookie.js: {}
+        js/cart.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
@@ -78,11 +82,27 @@ discover-view:
     js:
         js/jquery.dataTables-1.13.7.min.js: { minified: true }
         js/arche_discover.js: {}
+        js/arche-cookie.js: {}
     dependencies:
         - core/drupal
         - core/drupal.form
         - core/drupalSettings
         - core/jquery              
+
+cart:
+    version: 1.0
+    header: true
+    css:
+        base:
+            css/jquery.dataTables-1.13.7.min.css: { minified: true }
+    js:
+        js/jquery.dataTables-1.13.7.min.js: { minified: true }        
+        js/arche-cookie.js: {}
+        js/cart.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupalSettings
+        - core/jquery      
 
 dissemination-threed:
     version: 1.0
@@ -136,3 +156,4 @@ dissemination-tei:
         - core/drupal
         - core/jquery
         - core/drupalSettings 
+        

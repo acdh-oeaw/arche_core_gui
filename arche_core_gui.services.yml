@@ -11,6 +11,10 @@ services:
         class: Drupal\arche_core_gui\TwigExtension\SessionTwigExtension
         tags:
             - { name: twig.extension } 
+    arche_core_gui_get_instance.twig_extension:
+        class: Drupal\arche_core_gui\TwigExtension\GetInstanceTwigExtension
+        tags:
+            - { name: twig.extension }         
     arche_core_gui_site_language.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\SiteLanguageTwigExtension
         tags:

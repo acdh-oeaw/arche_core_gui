@@ -12,11 +12,20 @@ function arche_core_gui_page_attachments(array &$page) {
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['name'] = $account->getAccountName();
     $page['#attached']['drupalSettings']['arche_core_gui']['baseApiUrl'] =  $archeConfig->rest->urlBase.$archeConfig->rest->pathBase;
     
+    $current_uri = \Drupal::request()->getRequestUri();
+    
+    $page['#attached']['drupalSettings']['arche_core_gui']['baseApiUrl'] =   str_contains($current_uri, 'instance=dev');
+    
     $roles = array();
     $roles = \Drupal::currentUser()->getRoles();
     if(count($roles) > 0){ $roles = implode(",", $roles); }
     $page['#attached']['drupalSettings']['arche_core_gui']['users']['roles'] = $roles;
     $attachments['#attached']['library'][] = 'custom_jquery/metadata-class';
+}
+
+function arche_core_gui_preprocess_page(array &$variables) {
+  $current_uri = \Drupal::request()->getRequestUri();
+  $variables['is_dev_instance'] = str_contains($current_uri, 'instance=dev');
 }
 
 function getSmartSearchTimeout() {
@@ -78,7 +87,13 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
         ],
         'imprint' => [
             'variables' => ['content' => NULL]
+        ],
+        'helper-cart-block' => [
+            'variables' => ['data' => NULL],
         ],        
+         'arche-cart' => [
+            'variables' => ['data' => NULL],
+        ],  
     ];
 }
 

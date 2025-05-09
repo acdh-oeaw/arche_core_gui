@@ -92,4 +92,11 @@ arche_dissemination_collection_download_script:
     _permission: 'access content'
     _access: 'TRUE'      
     
+arche_cart:
+  path: '/cart'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\CartController::showContent'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'         
      

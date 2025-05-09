@@ -3,25 +3,26 @@
     'use strict';
     //const url = "https://arche.acdh.oeaw.ac.at/api/1820794"; 
     //const url = "https://arche.acdh.oeaw.ac.at/api/208298";
-    const url = $('#resApiId').val();
-    console.log(url);
-    $.ajax({
-        url: url,
-        method: "GET",
-        dataType: "xml",
-        success: function (xml) {
-            // Convert XML to string
-            const xmlString = new XMLSerializer().serializeToString(xml.documentElement);
-            const formatted = formatXml(xmlString);
-            $("#tei-container").show();
-            $('#tei-content').html('<pre>' + formatted + '</pre>');
-        },
-        error: function (xhr, status, error) {
-            $("#tei-container").hide();
-            console.log("Failed to load TEI document.");
-            //$("#tei-content").text("Failed to load TEI document.");
-            //console.error("Error fetching XML:", status, error);
-        }
+    var url = $('#resApiId').val();
+    $(document).ready(function () {
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "xml",
+            success: function (xml) {
+                // Convert XML to string
+                const xmlString = new XMLSerializer().serializeToString(xml.documentElement);
+                const formatted = formatXml(xmlString);
+                $("#tei-container").show();
+                $('#tei-content').html('<pre>' + formatted + '</pre>');
+            },
+            error: function (xhr, status, error) {
+                $("#tei-container").hide();
+                console.log("Failed to load TEI document.");
+                //$("#tei-content").text("Failed to load TEI document.");
+                //console.error("Error fetching XML:", status, error);
+            }
+        });
     });
 
     function formatXml(xml) {
