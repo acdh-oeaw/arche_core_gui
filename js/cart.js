@@ -18,7 +18,7 @@ jQuery(function ($) {
                 title: item.title,
                 accessres: item.accessres,
                 type: item.type,
-                size: 0
+                size: item.size
             }));
 
         cartTable.clear().rows.add(cartArray).draw();
@@ -43,7 +43,7 @@ jQuery(function ($) {
                 title: item.title,
                 accessres: item.accessres,
                 type: item.type,
-                size: 0
+                size: item.size
             }));
 
 
@@ -58,7 +58,12 @@ jQuery(function ($) {
                     }
                 },
                 {data: 'title'},
-                {data: 'size'},
+                {data: 'size', title: Drupal.t('Size'), render: function (data, type, row, meta) {
+                        console.log("data:");
+                        console.log(data);
+                        return formatBytes(data);
+                    }
+                },
                 {data: 'accessres'},
                 {data: 'type'},
                 {data: 'status', title: Drupal.t('Status'), render: function (data, type, row, meta) {
@@ -133,7 +138,8 @@ jQuery(function ($) {
         var title = $('#resource-main-title').val();
         var accessRes = $('#resource-access').val();
         var type = $('#resource-type').val();
-        var resource = {title: title, accessres: accessRes, type: type};
+        var size = $('#binary-size').val() ? $('#binary-size').val() : "0";
+        var resource = {title: title, accessres: accessRes, type: type, size: size};
         window.addCartItem(resId, resource);
 
         const rawCart = window.getCookieByName('cart_items');
@@ -145,6 +151,18 @@ jQuery(function ($) {
             $('#cart-items-header-menu').html('(' + cartCount + ')');
         }
     });
+
+    function formatBytes(bytes) {
+        if (bytes >= 1073741824) {
+            return (bytes / 1073741824).toFixed(2) + ' GB';
+        } else if (bytes >= 1048576) {
+            return (bytes / 1048576).toFixed(2) + ' MB';
+        } else if (bytes >= 1024) {
+            return (bytes / 1024).toFixed(2) + ' KB';
+        } else {
+            return bytes + ' B';
+        }
+    }
 
 
 });

@@ -6,6 +6,7 @@
 <input type="hidden" value="{{ data.getAcdhType()|lower|raw }}" id="resource-type"/>
 <input type="hidden" value="{{ data.getDataArrayString('acdh:aclRead', 'string')|raw }}" id="resource-acl-read"/>
 <input type="hidden" value="{{ data.getResourceAccessLevel() }}" id="resource-access"/>
+<input type="hidden" value="{{ data.getBinarySize() }}" id="binary-size"/>
 
 {% if data.getAcdhType()|lower == 'place' %}
     {{ include(arche_core_gui_path ~ '/templates/metadata/place-block.html.twig', {'data': data, 'cookie': cookie } ) }}
