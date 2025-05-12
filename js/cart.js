@@ -54,7 +54,7 @@ jQuery(function ($) {
             data: cartArray,
             columns: [
                 {data: 'downloadAll', title: '<input type="checkbox" id="check_all_cart_items">', render: function (data, type, row, meta) {
-                        return '<input type="checkbox" class="check_cart_item" data-id="'+row.id+'">';
+                        return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
                     }
                 },
                 {data: 'title'},
@@ -62,7 +62,7 @@ jQuery(function ($) {
                 {data: 'accessres'},
                 {data: 'type'},
                 {data: 'status', title: Drupal.t('Status'), render: function (data, type, row, meta) {
-                        return '<div class="downloadStatus dlres-'+row.id+'"></div>';
+                        return '<div class="downloadStatus dlres-' + row.id + '"></div>';
                     }
                 },
                 {data: 'download', title: Drupal.t('Download'), render: function (data, type, row, meta) {
@@ -79,16 +79,30 @@ jQuery(function ($) {
     }
 
     function startDownloadAndTrack(url, id) {
-        $('.downloadStatus.dlres-'+id).text('Downloading...');
+        $('.downloadStatus.dlres-' + id).text('Downloading...');
 
         // Start download
         $('#downloadFrame').attr('src', url);
 
         // Optionally detect when the iframe has finished loading
         $('#downloadFrame').on('load', function () {
-            $('.downloadStatus.dlres-'+id).text('Download ready.');
+            $('.downloadStatus.dlres-' + id).text('Download ready.');
         });
     }
+
+
+    // Handle select-all checkbox
+    $(document).delegate("#check_all_cart_items", "change", function (e) {
+        e.preventDefault();
+        const checked = this.checked;
+        $('#cartTable').find('.check_cart_item').prop('checked', checked);
+    });
+
+    $('#cartTable').on('change', '.check_cart_item', function () {
+        console.log("checked 2");
+        const allChecked = $('.check_cart_item').length === $('.check_cart_item:checked').length;
+        $('#check_all_items').prop('checked', allChecked);
+    });
 
     $(document).delegate(".download-cart-element", "click", function (e) {
         e.preventDefault();
