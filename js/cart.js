@@ -113,10 +113,10 @@ jQuery(function ($) {
     $(document).delegate(".download-cart-element", "click", function (e) {
         e.preventDefault();
         var id = $(this).data('id');
-        console.log(id);
-
         var baseApi = drupalSettings.arche_core_gui.apiUrl;
-        var resourceUrl = baseApi + id;
+        // if the user is not logged in
+        //&skipUnauthorized=true
+        var resourceUrl = baseApi + 'download?ids[]='+id+'&skipUnauthorized=true';
         console.log(drupalSettings.arche_core_gui);
         console.log(resourceUrl);
         startDownloadAndTrack(resourceUrl, id);
