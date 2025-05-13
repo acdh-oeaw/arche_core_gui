@@ -38,7 +38,7 @@ jQuery(function ($) {
         param.error = function (xhr, status, error) {
             $('#vcr-search-result-text').append(Drupal.t('VCR Data Submit Failed') + error);
         };
-        param.timeout = 60000;
+        param.timeout = 10000;
         $.ajax(param);
     });
 

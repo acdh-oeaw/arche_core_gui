@@ -57,10 +57,11 @@ jQuery(function ($) {
                         return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
                     }
                 },
-                {data: 'title'},
+                {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
+                        return '<a href="/browser/metadata/'+row.id+'" target="_blank">' + row.title + '</a> ';
+                    }
+                },
                 {data: 'size', title: Drupal.t('Size'), render: function (data, type, row, meta) {
-                        console.log("data:");
-                        console.log(data);
                         return formatBytes(data);
                     }
                 },

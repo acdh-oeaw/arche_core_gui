@@ -16,13 +16,15 @@ jQuery(function ($) {
 
 
     $(document).ready(function () {
+        resId = $("#resId").val();
         addButtonToDescriptionText();
+        checkCartButton();
         $('#cite-loader').removeClass('hidden');
         if ($('#resourceHasVersion').val()) {
             versionVisible = true;
         }
 
-        resId = $("#resId").val();
+
         checkDetailCardEvents();
         loadAdditionalData(resId);
         // hide the summary div if there is no data inside it
@@ -119,6 +121,28 @@ jQuery(function ($) {
             $(this).text(Drupal.t('Expert view'));
         }
     });
+    
+    $(document).delegate("#remove-resource-cart", "click", function (e) {
+        e.preventDefault();
+        window.removeCartItem(resId);
+        $('#remove-resource-cart').addClass('d-none');
+        $('#add-resource-cart').removeClass('d-none');
+    });
+    
+
+    function checkCartButton() {
+        console.log("checkCartButton");
+        const rawCart = window.getCookieByName('cart_items');
+        const cart = rawCart ? JSON.parse(rawCart) : {};
+        jQuery.each(cart, function (index, item) {
+            if (resId === index) {
+                $('#remove-resource-cart').removeClass('d-none');
+                $('#add-resource-cart').addClass('d-none');
+            }
+        });
+    }
+
+
     /*
      $(document).delegate("a#archeHref", "click", function (e) {
      $('#meta-content-container').html();
@@ -239,12 +263,12 @@ jQuery(function ($) {
         //need to check the table and need to write the ispartof values
         if (acdhType === 'publication') {
             /*
-            if ($.fn.dataTable.isDataTable('#publicationInverseDT')) {
-                window.relatedTable.ajax.url("/browser/api/publicationInverseDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
-            } else {
-                window.fetchPublicationsRelatedResourcesTable(reloadID);
-            }
-*/
+             if ($.fn.dataTable.isDataTable('#publicationInverseDT')) {
+             window.relatedTable.ajax.url("/browser/api/publicationInverseDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
+             } else {
+             window.fetchPublicationsRelatedResourcesTable(reloadID);
+             }
+             */
             if ($.fn.dataTable.isDataTable('#isPartOfDT')) {
                 window.isPartOfTable.ajax.url("/browser/api/isPartOfDT/" + reloadID + "/" + drupalSettings.arche_core_gui.gui_lang, ).load();
             } else {
@@ -587,7 +611,7 @@ jQuery(function ($) {
 
     window.redrawTabs = function () {
         var isActive = false;
-        if ($('.jstree-children').find('li').length === 0 ) {
+        if ($('.jstree-children').find('li').length === 0) {
             $('#collection-content-tab').addClass('d-none');
             $('#collection-content-tab-content').addClass('d-none');
         } else {
