@@ -1,10 +1,20 @@
 #tei-content {
     overflow: scroll;
+    width: 100%;
+}
+
+.tei-iframe {
+    width: 100%;
+    height: 100%;
 }
 #tei-container {
-    display: none;
+    width: 100%;
+    display: block;
 }
 @media (min-width: 576px) {
+    #tei-container {
+        max-height: 200px;
+    }
     #tei-content {
         max-height: 200px;
     }
@@ -12,28 +22,28 @@
 
 /*Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-    #tei-content {
+    #tei-content, #tei-container {
         max-height: 300px;
     }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-    #tei-content {
+    #tei-content, #tei-container {
         max-height: 600px;
     }
 }
 
 /* X-Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-    #tei-content {
+    #tei-content, #tei-container {
         max-height: 800px;
     }
 }
 
 /* XX-Large devices (larger desktops, 1400px and up) */
 @media (min-width: 1400px) {
-    #tei-content {
+    #tei-content, #tei-container {
         max-height: 800px;
     }
 }
