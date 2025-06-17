@@ -58,7 +58,7 @@ jQuery(function ($) {
                     }
                 },
                 {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
-                        return '<a href="/browser/metadata/'+row.id+'" target="_blank">' + row.title + '</a> ';
+                        return '<a href="/browser/metadata/' + row.id + '" target="_blank">' + row.title + '</a> ';
                     }
                 },
                 {data: 'size', title: Drupal.t('Size'), render: function (data, type, row, meta) {
@@ -116,7 +116,7 @@ jQuery(function ($) {
         var baseApi = drupalSettings.arche_core_gui.apiUrl;
         // if the user is not logged in
         //&skipUnauthorized=true
-        var resourceUrl = baseApi + 'download?ids[]='+id+'&skipUnauthorized=true';
+        var resourceUrl = baseApi + 'download?ids[]=' + id + '&skipUnauthorized=true';
         console.log(drupalSettings.arche_core_gui);
         console.log(resourceUrl);
         startDownloadAndTrack(resourceUrl, id);
@@ -135,6 +135,7 @@ jQuery(function ($) {
     $(document).delegate("#add-resource-cart", "click", function (e) {
         e.preventDefault();
 
+        flyIconCart();
         var resId = $('#resId').val();
         var title = $('#resource-main-title').val();
         var accessRes = $('#resource-access').val();
@@ -163,6 +164,47 @@ jQuery(function ($) {
         } else {
             return bytes + ' B';
         }
+    }
+
+    function flyIconCart() {
+        const $icon = $('#iconToFly');
+        const $target = $('.cart-content');
+
+        // Clone the icon and add it to the body
+        const $clone = $icon.clone().addClass('flying-cart-icon').appendTo('body');
+
+        // Get start and end positions
+        const startOffset = $icon.offset();
+        const endOffset = $target.offset();
+
+        // Set initial position
+        $clone.css({
+            top: startOffset.top,
+            left: startOffset.left,
+            fontSize: $icon.css('font-size'),
+            color: "#88DBDF"
+        });
+
+        // SCROLL PAGE to bring target into view
+        $('html, body').animate({
+            scrollTop: endOffset.top - 100
+        }, 800); // scroll duration matches fly duration
+
+
+        // Trigger animation
+        setTimeout(() => {
+            $clone.css({
+                top: endOffset.top,
+                left: endOffset.left,
+                transform: 'scale(0.5)',
+                opacity: 0.5
+            });
+        }, 10);
+
+        // Remove clone after animation
+        setTimeout(() => {
+            $clone.remove();
+        }, 1600);
     }
 
 

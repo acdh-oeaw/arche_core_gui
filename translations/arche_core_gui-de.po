@@ -734,3 +734,11 @@ msgstr "Wert"
 msgid "Project number"
 msgstr "Projektnummer"
 
+msgid "If you added a collection then the system will automatically download all of the resources of the given collection"
+msgstr "Wenn Sie eine Kollektion hinzugefügt haben, lädt das System automatisch alle Ressourcen der jeweiligen Kollektion herunter."
+
+msgid "Saved records"
+msgstr "Merkliste"
+
+msgid "Favourites"
+msgstr "Favoriten"
