@@ -416,11 +416,11 @@ msgstr "Gesucht nach"
 msgid "containing"
 msgstr "enthält"
 
-msgid "ACDH-CH runs a helpdesk offering advice for questions related to various digital humanities topics."
-msgstr "Das ACDH-CH bietet über das Helpdesk-Service Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
+msgid "ACDH runs a helpdesk offering advice for questions related to various digital humanities topics."
+msgstr "Das ACDH bietet über das Helpdesk-Service Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
 
-msgid "ACDH-CH runs a <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>helpdesk</a> offering advice for questions related to various digital humanities topics."
-msgstr "Das ACDH-CH bietet über das <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
+msgid "ACDH runs a <a href='mailto:acdh-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>helpdesk</a> offering advice for questions related to various digital humanities topics."
+msgstr "Das ACDH bietet über das <a href='mailto:acdh-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
  
 msgid "ASK US!"
 msgstr "KONTAKT"
@@ -548,8 +548,8 @@ msgstr "Um eine kurze Einführung zu erhalten, können Sie sich eines unserer Vi
 msgid "Contact us before submitting the data to clarify any open questions, ensure that the data fulfils ARCHE’s requirements and inform us of the planned deposition in good time. Please bear in mind that submission, including curation, can be a lengthy process and allow sufficient time."
 msgstr "Nehmen Sie mit uns vor der Einreichung der Daten Kontakt auf, um offene Fragen zu klären, sicherzustellen, dass die Daten den Anforderungen von ARCHE genügen und uns zeitgerecht über die geplante Einreichung zu informieren. Berücksichtigen Sie dabei, dass die Einreichung inklusive der Kuratierung ein langwieriger Prozess sein kann und planen Sie ausreichend Zeit ein."
 
-msgid "ACDH-CH runs a <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at'>helpdesk</a> offering advice for questions related to various digital humanities topics."
-msgstr "Das ACDH-CH bietet über das <a href='mailto:acdh-ch-helpdesk@oeaw.ac.at'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
+msgid "ACDH runs a <a href='mailto:acdh-helpdesk@oeaw.ac.at'>helpdesk</a> offering advice for questions related to various digital humanities topics."
+msgstr "Das ACDH bietet über das <a href='mailto:acdh-helpdesk@oeaw.ac.at'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
 
 msgid "Contact us!"
 msgstr "Kontaktieren Sie uns!"
