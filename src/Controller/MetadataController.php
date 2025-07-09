@@ -36,14 +36,14 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj, $this->siteLang);
-            
+
             $isConceptOrConceptScheme = $obj->isConceptOrConceptScheme();
-            
-            if(!empty($isConceptOrConceptScheme)) {
+
+            if (!empty($isConceptOrConceptScheme)) {
                 return new \Drupal\Core\Routing\TrustedRedirectResponse($isConceptOrConceptScheme);
             }
         }
-      
+
         $return = [
             '#theme' => 'arche-detail',
             '#identifier' => $identifier,
@@ -69,9 +69,9 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
         
         $api = new \Drupal\arche_core_gui_api\Controller\ApiController();
         $data = $api->expertData($identifier, $this->siteLang);
-       
+
         $content = $data->getContent();
-        
+
         $return = [
             '#theme' => 'arche-detail-empty'
         ];
@@ -80,7 +80,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $content = json_decode($content, true);
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
-          
+
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj, $this->siteLang);
             if ($obj->getRepoID() === '') {
                 return [
@@ -109,7 +109,7 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
      * @return string
      */
     public function discoverView($str = NULL) {
-        
+
         $return = [
             '#theme' => 'arche-discover',
             '#cache' => ['max-age' => 0],

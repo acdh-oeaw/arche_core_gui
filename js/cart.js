@@ -5,8 +5,9 @@ jQuery(function ($) {
     var cartTable;
 
     $(document).ready(function () {
+        //window.deleteCartCookie(); 
+        updateCartCookie();
         updateCartHeader();
-        displayCartTable();
     });
 
     function reloadCartTable() {
@@ -25,25 +26,59 @@ jQuery(function ($) {
     }
 
     function updateCartHeader() {
+
         const rawCart = window.getCookieByName('cart_items');
-        const cart = rawCart ? JSON.parse(rawCart) : {};
+        console.log("updateCartHeader");
+        console.log(rawCart);
+        console.log(JSON.parse(rawCart));
+        const cart = JSON.parse(rawCart) ??  {};
         const cartCount = Object.keys(cart).length;
         if (cartCount > 0) {
             $('#cart-items-header-menu').html('(' + cartCount + ')');
         }
     }
 
+
+
+    function updateCartCookie() {
+        console.log("updateCartCookie");
+        $.ajax({
+            url: "/browser/api/cartDT",
+            type: "GET",
+            timeout: 10000,
+            success: function (data) {
+                console.log("success");
+                window.setCartCookieJson(data.cart_items);
+                window.setCartCookieOrderedJson(data.cart_items_ordered);
+                displayCartTable();
+            },
+            error: function () {
+                console.log("error cart cookie update");
+
+            }
+        });
+    }
+
     function displayCartTable() {
 
         const rawCart = window.getCookieByName('cart_items');
-        const cart = rawCart ? JSON.parse(rawCart) : {};
+        console.log("displayCART::");
+        console.log(rawCart);
+
+        const rawCartOrdered = window.getCookieByName('cart_items_ordered');
+        console.log("displayCART ordered::");
+        console.log(rawCartOrdered);
+
+
+        const cart = JSON.parse(rawCartOrdered) ??  {};
 
         const cartArray = Object.entries(cart).map(([id, item]) => ({
                 id,
                 title: item.title,
                 accessres: item.accessres,
                 type: item.type,
-                size: item.size
+                size: item.size,
+                children: item.children || null
             }));
 
 
@@ -57,6 +92,10 @@ jQuery(function ($) {
                         return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
                     }
                 },
+                {className: 'dt-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: ''},
                 {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
                         return '<a href="/browser/metadata/' + row.id + '" target="_blank">' + row.title + '</a> ';
                     }
@@ -83,6 +122,70 @@ jQuery(function ($) {
             ],
         });
     }
+
+    // 1) Recursively build a nested <ul> from your children‐object
+    function formatChildrenTable(children) {
+        let html = '<table class="child-table" style="margin:10px 0 10px 50px; border-collapse:collapse;">'
+                + '<thead>'
+                + '<tr>'
+                + '<th style="border:1px solid #ccc;padding:4px;">ID</th>'
+                + '<th style="border:1px solid #ccc;padding:4px;">Title</th>'
+                + '<th style="border:1px solid #ccc;padding:4px;">Type</th>'
+                + '<th style="border:1px solid #ccc;padding:4px;">Size</th>'
+                + '<th style="border:1px solid #ccc;padding:4px;">Access</th>'
+                + '<th style="border:1px solid #ccc;padding:4px;">Action</th>'
+                + '</tr>'
+                + '</thead>'
+                + '<tbody>';
+
+        $.each(children, function (id, rec) {
+            html += '<tr>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">'+id+'</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.title+'</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.type+'</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.size+'</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.accessres+'</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">' 
+                    + '<a href="#" id="" class="btn btn-arche-green download-cart-element" data-id="' + id + '">' + Drupal.t("Download") + '</a>' 
+                    + '</td>'
+                    + '</tr>';
+
+            // if there are deeper children, add a full‐width row with a nested table
+            if (rec.children) {
+                html += '<tr>'
+                        + `<td colspan="6" style="border:1px solid #ccc;padding:4px;">`
+                        + formatChildrenTable(rec.children)
+                        + '</td>'
+                        + '</tr>';
+            }
+        });
+
+        html += '</tbody></table>';
+        return html;
+    }
+
+
+    // 4) add the expand/collapse listener
+    $(document).delegate("#cartTable tbody td.dt-control", "click", function (e) {
+        //$('#cartTable tbody').on('click', 'td.dt-control', function () {
+        e.preventDefault();
+        const tr = $(this).closest('tr');
+        const row = cartTable.row(tr);
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            const rec = row.data();
+            if (rec.children) {
+                // render **all** depths in one shot
+                row.child(formatChildrenTable(rec.children)).show();
+            } else {
+                row.child('<em>No children</em>').show();
+            }
+            tr.addClass('shown');
+        }
+    });
 
     function startDownloadAndTrack(url, id) {
         $('.downloadStatus.dlres-' + id).text('Downloading...');
