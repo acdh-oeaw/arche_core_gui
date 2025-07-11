@@ -11,26 +11,39 @@ jQuery(function ($) {
     });
 
     function reloadCartTable() {
-        const rawCart = window.getCookieByName('cart_items');
-        const cart = rawCart ? JSON.parse(rawCart) : {};
 
-        const cartArray = Object.entries(cart).map(([id, item]) => ({
-                id,
-                title: item.title,
-                accessres: item.accessres,
-                type: item.type,
-                size: item.size
-            }));
+        $.ajax({
+            url: "/browser/api/cartDT",
+            type: "GET",
+            timeout: 10000,
+            success: function (data) {
+                window.setCartCookieJson(data.cart_items);
+                window.setCartCookieOrderedJson(data.cart_items_ordered);
+                const rawCart = window.getCookieByName('cart_items_ordered');
+                const cart = rawCart ? JSON.parse(rawCart) : {};
 
-        cartTable.clear().rows.add(cartArray).draw();
+                const cartArray = Object.entries(cart).map(([id, item]) => ({
+                        id,
+                        title: item.title,
+                        accessres: item.accessres,
+                        type: item.type,
+                        size: item.size
+                    }));
+
+                cartTable.clear().rows.add(cartArray).draw();
+            },
+            error: function () {
+                console.log("error cart cookie update");
+
+            }
+        });
+
+
     }
 
     function updateCartHeader() {
 
         const rawCart = window.getCookieByName('cart_items');
-        console.log("updateCartHeader");
-        console.log(rawCart);
-        console.log(JSON.parse(rawCart));
         const cart = JSON.parse(rawCart) ??  {};
         const cartCount = Object.keys(cart).length;
         if (cartCount > 0) {
@@ -41,13 +54,11 @@ jQuery(function ($) {
 
 
     function updateCartCookie() {
-        console.log("updateCartCookie");
         $.ajax({
             url: "/browser/api/cartDT",
             type: "GET",
             timeout: 10000,
             success: function (data) {
-                console.log("success");
                 window.setCartCookieJson(data.cart_items);
                 window.setCartCookieOrderedJson(data.cart_items_ordered);
                 displayCartTable();
@@ -62,14 +73,7 @@ jQuery(function ($) {
     function displayCartTable() {
 
         const rawCart = window.getCookieByName('cart_items');
-        console.log("displayCART::");
-        console.log(rawCart);
-
         const rawCartOrdered = window.getCookieByName('cart_items_ordered');
-        console.log("displayCART ordered::");
-        console.log(rawCartOrdered);
-
-
         const cart = JSON.parse(rawCartOrdered) ??  {};
 
         const cartArray = Object.entries(cart).map(([id, item]) => ({
@@ -80,7 +84,6 @@ jQuery(function ($) {
                 size: item.size,
                 children: item.children || null
             }));
-
 
         cartTable = $('#cartTable').DataTable({
             columnDefs: [
@@ -125,7 +128,8 @@ jQuery(function ($) {
 
     // 1) Recursively build a nested <ul> from your children‐object
     function formatChildrenTable(children) {
-        let html = '<table class="child-table" style="margin:10px 0 10px 50px; border-collapse:collapse;">'
+
+        let html = '<table class="child-cart-table" style="margin:10px 0 10px 50px; border-collapse:collapse;">'
                 + '<thead>'
                 + '<tr>'
                 + '<th style="border:1px solid #ccc;padding:4px;">ID</th>'
@@ -139,25 +143,40 @@ jQuery(function ($) {
                 + '<tbody>';
 
         $.each(children, function (id, rec) {
+
+            var accessresClass = 'background-color: #1dd1a1;';
+            if (rec.accessres !== 'public') {
+                accessresClass = 'background-color: rgb(238, 82, 83);';
+            }
+
+            if (rec.title === "(no title)") {
+                console.log("NOT TITLE FOUND " + id);
+
+            }
+
             html += '<tr>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">'+id+'</td>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.title+'</td>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.type+'</td>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.size+'</td>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">'+rec.accessres+'</td>'
-                    + '<td style="border:1px solid #ccc;padding:4px;">' 
-                    + '<a href="#" id="" class="btn btn-arche-green download-cart-element" data-id="' + id + '">' + Drupal.t("Download") + '</a>' 
+                    + '<td style="border:1px solid #ccc;padding:4px;">' + id + '</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">' + rec.title + '</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">' + rec.type + '</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;">' + formatBytes(rec.size) + '</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;' + accessresClass + '">' + rec.accessres + '</td>'
+                    + '<td style="border:1px solid #ccc;padding:4px;display: flex; gap: 5px;">'
+                    + '<a href="#" id="" class="btn btn-arche-green-small download-cart-element" data-id="' + id + '">' + Drupal.t("Download") + '</a>'
+                    + '<a href="#" id="" class="btn btn-arche-red-small delete-cart-element" data-id="' + id + '">' + Drupal.t("Delete") + '</a>'
                     + '</td>'
                     + '</tr>';
 
             // if there are deeper children, add a full‐width row with a nested table
             if (rec.children) {
+                console.log("SIMPLE IF REC CHILDREN");
+
                 html += '<tr>'
                         + `<td colspan="6" style="border:1px solid #ccc;padding:4px;">`
                         + formatChildrenTable(rec.children)
                         + '</td>'
                         + '</tr>';
             }
+
         });
 
         html += '</tbody></table>';
@@ -208,7 +227,6 @@ jQuery(function ($) {
     });
 
     $('#cartTable').on('change', '.check_cart_item', function () {
-        console.log("checked 2");
         const allChecked = $('.check_cart_item').length === $('.check_cart_item:checked').length;
         $('#check_all_items').prop('checked', allChecked);
     });
@@ -220,19 +238,16 @@ jQuery(function ($) {
         // if the user is not logged in
         //&skipUnauthorized=true
         var resourceUrl = baseApi + 'download?ids[]=' + id + '&skipUnauthorized=true';
-        console.log(drupalSettings.arche_core_gui);
-        console.log(resourceUrl);
         startDownloadAndTrack(resourceUrl, id);
 
     });
 
     $(document).delegate(".delete-cart-element", "click", function (e) {
         e.preventDefault();
+        console.log();
         var id = $(this).data('id');
-        console.log(id);
         window.removeCartItem(id);
         reloadCartTable();
-
     });
 
     $(document).delegate("#add-resource-cart", "click", function (e) {
@@ -251,7 +266,6 @@ jQuery(function ($) {
         const cart = rawCart ? JSON.parse(rawCart) : {};
         // update the header
         const cartCount = Object.keys(cart).length;
-        console.log(cartCount);
         if (cartCount > 0) {
             $('#cart-items-header-menu').html('(' + cartCount + ')');
         }
