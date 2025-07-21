@@ -11,18 +11,17 @@
 <div class="container mt-3">
     <div class="row basic-inside-content-div">
         <div class="col-lg-12 cart-content-div">
-            <p>{{ "If the saved record type is a collection/topcollection, then the download will download all of the child elements of the saved record."|trans }}</p>
+            <p class="fw-bold text-center">{{ "If the saved record type is a collection/topcollection, then the download will download all of the child elements of the saved record."|trans }}</p>
 
             <table class="table row-border table-striped w-100" id="cartTable">
                 <thead>
                     <tr>
                         <th><input type="checkbox"/>&nbsp;{{ "Download all"|trans }}</th>
-                        <th class="dt-control">{{ "Saved child element(s)"|trans }}</th>
+                        <!--<th class="dt-control">{{ "Saved child element(s)"|trans }}</th> -->
                         <th>{{ "Title"|trans }}</th>
                         <th>{{ "Size"|trans }}</th>          
                         <th>{{ "Access Right"|trans }}</th>
                         <th>{{ "Type"|trans }}</th>
-                        <th>{{ "Status"|trans }}</th>
                         <th class="text-center">{{ "Download"|trans }}</th>
                         <th class="text-center">{{ "Delete"|trans }}</th>
                     </tr>

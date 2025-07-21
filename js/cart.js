@@ -37,12 +37,9 @@ jQuery(function ($) {
 
             }
         });
-
-
     }
 
     function updateCartHeader() {
-
         const rawCart = window.getCookieByName('cart_items');
         const cart = JSON.parse(rawCart) ??  {};
         const cartCount = Object.keys(cart).length;
@@ -58,6 +55,12 @@ jQuery(function ($) {
             url: "/browser/api/cartDT",
             type: "GET",
             timeout: 10000,
+            processing: true,
+            deferRender: true,
+            bInfo: false, // Hide table information
+            language: {
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+            },
             success: function (data) {
                 window.setCartCookieJson(data.cart_items);
                 window.setCartCookieOrderedJson(data.cart_items_ordered);
@@ -65,7 +68,6 @@ jQuery(function ($) {
             },
             error: function () {
                 console.log("error cart cookie update");
-
             }
         });
     }
@@ -82,7 +84,7 @@ jQuery(function ($) {
                 accessres: item.accessres,
                 type: item.type,
                 size: item.size,
-                children: item.children || null
+                //children: item.children || null
             }));
 
         cartTable = $('#cartTable').DataTable({
@@ -94,11 +96,11 @@ jQuery(function ($) {
                 {data: 'downloadAll', title: '<input type="checkbox" id="check_all_cart_items">', render: function (data, type, row, meta) {
                         return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
                     }
-                },
+                },/*
                 {className: 'dt-control',
                     orderable: false,
                     data: null,
-                    defaultContent: ''},
+                    defaultContent: ''},*/
                 {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
                         return '<a href="/browser/metadata/' + row.id + '" target="_blank">' + row.title + '</a> ';
                     }
@@ -109,16 +111,12 @@ jQuery(function ($) {
                 },
                 {data: 'accessres'},
                 {data: 'type'},
-                {data: 'status', title: Drupal.t('Status'), render: function (data, type, row, meta) {
-                        return '<div class="downloadStatus dlres-' + row.id + '"></div>';
-                    }
-                },
                 {data: 'download', title: Drupal.t('Download'), render: function (data, type, row, meta) {
-                        return '<a href="#" id="" class="btn btn-arche-green download-cart-element" data-id="' + row.id + '">' + Drupal.t("Download") + '</a> ';
+                        return '<a href="#" id="" class="btn btn-arche-green-small download-cart-element" data-id="' + row.id + '">' + Drupal.t("Download") + '</a> ';
                     }
                 },
                 {data: 'delete', title: Drupal.t('Delete'), render: function (data, type, row, meta) {
-                        return '<a href="#" id="" class="btn btn-arche-red delete-cart-element" data-id="' + row.id + '">' + Drupal.t("Delete") + '</a> ';
+                        return '<a href="#" id="" class="btn btn-arche-red-small delete-cart-element" data-id="' + row.id + '">' + Drupal.t("Delete") + '</a> ';
                     }
                 }
 
@@ -207,10 +205,10 @@ jQuery(function ($) {
     });
 
     function startDownloadAndTrack(url, id) {
-        $('.downloadStatus.dlres-' + id).text('Downloading...');
+        $('.downloadStatus.dlres-' + id).text('Downloaded');
 
         // Start download
-        $('#downloadFrame').attr('src', url);
+        
 
         // Optionally detect when the iframe has finished loading
         $('#downloadFrame').on('load', function () {
@@ -238,7 +236,8 @@ jQuery(function ($) {
         // if the user is not logged in
         //&skipUnauthorized=true
         var resourceUrl = baseApi + 'download?ids[]=' + id + '&skipUnauthorized=true';
-        startDownloadAndTrack(resourceUrl, id);
+        $('#downloadFrame').attr('src', resourceUrl);
+        //startDownloadAndTrack(resourceUrl, id);
 
     });
 
@@ -313,10 +312,10 @@ jQuery(function ($) {
             $clone.css({
                 top: endOffset.top,
                 left: endOffset.left,
-                transform: 'scale(0.5)',
-                opacity: 0.5
+                transform: 'scale(2.0)',
+                color: "#000000"
             });
-        }, 10);
+        }, 150);
 
         // Remove clone after animation
         setTimeout(() => {
