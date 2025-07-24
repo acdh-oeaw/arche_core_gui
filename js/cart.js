@@ -96,11 +96,11 @@ jQuery(function ($) {
                 {data: 'downloadAll', title: '<input type="checkbox" id="check_all_cart_items">', render: function (data, type, row, meta) {
                         return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
                     }
-                },/*
-                {className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''},*/
+                }, /*
+                 {className: 'dt-control',
+                 orderable: false,
+                 data: null,
+                 defaultContent: ''},*/
                 {data: 'title', title: Drupal.t('Title'), render: function (data, type, row, meta) {
                         return '<a href="/browser/metadata/' + row.id + '" target="_blank">' + row.title + '</a> ';
                     }
@@ -159,7 +159,7 @@ jQuery(function ($) {
                     + '<td style="border:1px solid #ccc;padding:4px;">' + formatBytes(rec.size) + '</td>'
                     + '<td style="border:1px solid #ccc;padding:4px;' + accessresClass + '">' + rec.accessres + '</td>'
                     + '<td style="border:1px solid #ccc;padding:4px;display: flex; gap: 5px;">'
-                    + '<a href="#" id="" class="btn btn-arche-green-small download-cart-element" data-id="' + id + '">' + Drupal.t("Download") + '</a>'
+                    + '<a href="#" id="" class="btn btn-arche-green-small download-cart-element" data-id="' + id + '" data-restriction="' + rec.accessres + '">' + Drupal.t("Download") + '</a>'
                     + '<a href="#" id="" class="btn btn-arche-red-small delete-cart-element" data-id="' + id + '">' + Drupal.t("Delete") + '</a>'
                     + '</td>'
                     + '</tr>';
@@ -208,7 +208,7 @@ jQuery(function ($) {
         $('.downloadStatus.dlres-' + id).text('Downloaded');
 
         // Start download
-        
+
 
         // Optionally detect when the iframe has finished loading
         $('#downloadFrame').on('load', function () {
@@ -217,25 +217,96 @@ jQuery(function ($) {
     }
 
 
+    async function fetchAndDownload(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok)
+                throw new Error(`HTTP error! ${response.status}`);
+
+            const blob = await response.blob();
+
+            // Try to extract filename from URL
+            const filename = url.split('/').pop() || 'download';
+
+            // Create a temporary blob URL
+            const blobUrl = URL.createObjectURL(blob);
+
+            // Create and click a hidden download link
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+
+            // Cleanup
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error('Download failed:', url, err);
+        }
+    }
+
+    $(document).delegate("#download_cart_content", "click", async function (e) {
+        e.preventDefault();
+
+        var baseApi = drupalSettings.arche_core_gui.apiUrl;
+        // if the user is not logged in
+        //&skipUnauthorized=true
+        const checkedIds = $('.check_cart_item:checked').map(function () {
+            return $(this).data('id');
+        }).get();
+
+        for (const url of checkedIds) {
+            await fetchAndDownload(baseApi + 'download?ids[]=' + url);
+        }
+
+    });
+
+
     // Handle select-all checkbox
     $(document).delegate("#check_all_cart_items", "change", function (e) {
         e.preventDefault();
         const checked = this.checked;
         $('#cartTable').find('.check_cart_item').prop('checked', checked);
+        if ($('#cartTable .check_cart_item:checked').length > 0) {
+            $('.cart-dl-selected-files-div').removeClass('hidden');
+        } else {
+            if (!$('.cart-dl-selected-files-div').hasClass('hidden')) {
+                // It does NOT have the 'hidden' class
+                $('.cart-dl-selected-files-div').addClass('hidden');
+            }
+        }
+
     });
 
     $('#cartTable').on('change', '.check_cart_item', function () {
         const allChecked = $('.check_cart_item').length === $('.check_cart_item:checked').length;
         $('#check_all_items').prop('checked', allChecked);
+        if ($('#cartTable .check_cart_item:checked').length > 0) {
+            $('.cart-dl-selected-files-div').removeClass('hidden');
+        } else {
+            if (!$('.cart-dl-selected-files-div').hasClass('hidden')) {
+                // It does NOT have the 'hidden' class
+                $('.cart-dl-selected-files-div').addClass('hidden');
+            }
+        }
+
     });
 
     $(document).delegate(".download-cart-element", "click", function (e) {
         e.preventDefault();
         var id = $(this).data('id');
+        var restriction = $(this).data('restriction');
+
         var baseApi = drupalSettings.arche_core_gui.apiUrl;
         // if the user is not logged in
         //&skipUnauthorized=true
         var resourceUrl = baseApi + 'download?ids[]=' + id + '&skipUnauthorized=true';
+        if (restriction !== 'public' || restriction !== 'öffentlich') {
+            resourceUrl = baseApi + 'download?ids[]=' + id + '&skipUnauthorized=false';
+        }
+
         $('#downloadFrame').attr('src', resourceUrl);
         //startDownloadAndTrack(resourceUrl, id);
 

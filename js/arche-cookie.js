@@ -73,6 +73,7 @@ jQuery(function ($) {
 
     window.deleteCartCookie = function () {
         document.cookie = "cart_items=; path=/; max-age=0";
+        document.cookie = "cart_items_ordered=; path=/; max-age=0";
     }
 
 
