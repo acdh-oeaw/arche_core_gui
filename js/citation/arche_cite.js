@@ -176,7 +176,13 @@ jQuery(function ($) {
     $(document).delegate("a#copyCite", "click", function (e) {
         var $tempTextarea = $('<textarea>');
         // Set the textarea value to the content of the div
-        $tempTextarea.val($('.cite-content.selected .csl-entry').text());
+        var contentText = "";
+        if (!$('.cite-content.selected .csl-entry').length || !$('.cite-content.selected .csl-entry').text().trim()) {
+            contentText = $('.cite-content.selected').text();
+        } else {
+            contentText = $('.cite-content.selected .csl-entry').text();
+        }
+        $tempTextarea.val(contentText);
         // Append the textarea to the body
         $('body').append($tempTextarea);
         // Select the textarea content
