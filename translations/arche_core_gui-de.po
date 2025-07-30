@@ -742,3 +742,12 @@ msgstr "Merkliste"
 
 msgid "Favourites"
 msgstr "Favoriten"
+
+msgid "EXTENSION"
+msgstr "ERWEITERUNG"
+
+msgid "FORMAT NAME & VERSION"
+msgstr "FORMATNAME & VERSION"
+
+msgid "PREFERENCE"
+msgstr "PRÄFERENZ"
