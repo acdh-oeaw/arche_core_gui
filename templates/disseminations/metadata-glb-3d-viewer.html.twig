@@ -4,7 +4,10 @@
     <br>
     <p id="glb-loader-text"></p>
 </div>
-
+<script>
+    self.ModelViewerElement = self.ModelViewerElement || {};
+    self.ModelViewerElement.meshoptDecoderLocation = 'https://cdn.jsdelivr.net/npm/meshoptimizer/meshopt_decoder.js';
+</script>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <div class="container viewer-3d-basic" >
@@ -46,61 +49,46 @@
                         loader.textContent = `Loading model... ${Math.floor(event.detail.totalProgress * 100)}%`;
                     }
                 });
-                $(document).delegate("#glbZoomIn", "click", function (e) {
-                    const orbit = modelViewer.getCameraOrbit();
-                    let radiusValue;
-                    let unit = 'm'; // default unit if none is provided
 
-                    if (typeof orbit.radius === 'string') {
-                        radiusValue = parseFloat(orbit.radius);
-                        const unitMatch = orbit.radius.match(/[a-zA-Z]+$/);
-                        if (unitMatch) {
-                            unit = unitMatch[0];
-                        }
-                    } else if (typeof orbit.radius === 'number') {
-                        radiusValue = orbit.radius;
-                    } else {
-                        // Fallback if it's neither string nor number.
-                        radiusValue = 3;
-                    }
 
-                    // Decrease the radius to zoom in (with a lower limit).
-                    const newRadius = Math.max(radiusValue - 0.5, 0.5);
-                    modelViewer.cameraOrbit = `${orbit.theta} ${orbit.phi} ${newRadius}${unit}`;
+                // --- Zoom helpers using Field Of View (FOV) ---
+                function clamp(n, min, max) {
+                    return Math.min(max, Math.max(min, n));
+                }
+
+// Model-Viewer v4: getFieldOfView() returns a number (degrees, no unit).
+// Smaller FOV = zoom in. Larger FOV = zoom out.
+                const FOV_MIN = 10;   // v4 docs: default min ≈ 10deg
+                const FOV_MAX = 80;   // raise if you want wider
+                const FOV_STEP = 5;   // change zoom step to taste
+
+                $(document).delegate("#glbZoomIn", "click", function () {
+                    const fov = modelViewer.getFieldOfView();     // number (deg)
+                    const next = clamp(fov - FOV_STEP, FOV_MIN, FOV_MAX);
+                    modelViewer.setAttribute('field-of-view', `${next}deg`);
+                    if (typeof modelViewer.jumpCameraToGoal === 'function')
+                        modelViewer.jumpCameraToGoal();
                 });
 
-                $(document).delegate("#glbZoomOut", "click", function (e) {
-                    const orbit = modelViewer.getCameraOrbit();
-                    let radiusValue;
-                    let unit = 'm';
-
-                    if (typeof orbit.radius === 'string') {
-                        radiusValue = parseFloat(orbit.radius);
-                        const unitMatch = orbit.radius.match(/[a-zA-Z]+$/);
-                        if (unitMatch) {
-                            unit = unitMatch[0];
-                        }
-                    } else if (typeof orbit.radius === 'number') {
-                        radiusValue = orbit.radius;
-                    } else {
-                        radiusValue = 3;
-                    }
-
-                    // Increase the radius to zoom out.
-                    const newRadius = radiusValue + 0.5;
-                    modelViewer.cameraOrbit = `${orbit.theta} ${orbit.phi} ${newRadius}${unit}`;
+                $(document).delegate("#glbZoomOut", "click", function () {
+                    const fov = modelViewer.getFieldOfView();
+                    const next = clamp(fov + FOV_STEP, FOV_MIN, FOV_MAX);
+                    modelViewer.setAttribute('field-of-view', `${next}deg`);
+                    if (typeof modelViewer.jumpCameraToGoal === 'function')
+                        modelViewer.jumpCameraToGoal();
                 });
 
-                $(document).delegate("#glbResetView", "click", function (e) {
-                    if (typeof modelViewer.resetCameraOrbit === 'function') {
+                $(document).delegate("#glbResetView", "click", function () {
+                    // Reset both orbit and FOV for a true reset
+                    if (typeof modelViewer.resetCameraOrbit === 'function')
                         modelViewer.resetCameraOrbit();
-                    } else {
-                        // Fallback: Reset to the default orbit value.
-                        // This assumes you've set a default value in the camera-orbit attribute.
-                        const defaultOrbit = modelViewer.getAttribute('camera-orbit') || '0deg 75deg 3m';
-                        modelViewer.cameraOrbit = defaultOrbit;
-                    }
+                    const defaultOrbit = modelViewer.getAttribute('camera-orbit') || '0deg 75deg 3m';
+                    modelViewer.setAttribute('camera-orbit', defaultOrbit);
+                    modelViewer.setAttribute('field-of-view', 'auto'); // or a fixed value like '30deg'
+                    if (typeof modelViewer.jumpCameraToGoal === 'function')
+                        modelViewer.jumpCameraToGoal();
                 });
+
 
             </script>    
 
