@@ -42,7 +42,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/isPartOfDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator.loading-indicator-ispartof').addClass('d-none');
                     $('.row.ispartof-table-div').removeClass('d-none');
@@ -96,7 +96,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/collectionConceptDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.collection-concept-table-div').removeClass('d-none');
@@ -215,7 +215,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/hasMembersDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.row.hasmembers-table-div').removeClass('d-none');
                     if (response === undefined) {
@@ -265,7 +265,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/contributedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.contributed-table-div').removeClass('d-none');
@@ -388,7 +388,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/projectAssociatedDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     $('.row.spatial-table-div').removeClass('d-none');
@@ -447,7 +447,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/publicationInverseDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     $('.loading-indicator').addClass('d-none');
                     if (response === undefined) {
@@ -509,7 +509,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/publicationsDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     if (response === undefined) {
 
@@ -602,7 +602,7 @@ jQuery(function ($) {
             serverMethod: "post",
             ajax: {
                 url: "/browser/api/rprDT/" + resId + "/" + drupalSettings.arche_core_gui.gui_lang,
-                timeout: 10000,
+                timeout: 50000,
                 complete: function (response) {
                     if (response === undefined) {
                         if (displayedView == 'projectView') {
