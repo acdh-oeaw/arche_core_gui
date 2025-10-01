@@ -78,6 +78,17 @@ jQuery(function ($) {
 
     }
 
+     function displayArchetCite(url) {
+        $.get(url).done(function (data) {
+            const formattedJson = JSON.stringify(data, null, 2);
+            createCiteTab('Arche Citation', 'arche-citation');
+            createCiteContent(formattedJson, 'arche-citation', false, true);
+        }).fail(function (xhr) {
+            console.log("Arche Citation fetch is not possible!");
+            return;
+        });
+    }
+
     /**
      * Show the CITE block
      * @returns {undefined}
@@ -115,6 +126,7 @@ jQuery(function ($) {
                                 apa_loaded = false;
                             }).then(function (d) {
 
+                        displayArchetCite(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=arche-citation-style');        
                         //harvard
                         displayHarvard(cite, apa_loaded);
 
