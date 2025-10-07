@@ -754,3 +754,6 @@ msgstr "PRÄFERENZ"
 
 msgid "Add to CLARIN Virtual Collection"
 msgstr "Zur CLARIN-Virtual Collection hinzufügen"
+
+msgid "Arrangement"
+msgstr "Strukturierung"
