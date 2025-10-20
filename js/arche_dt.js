@@ -492,7 +492,7 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     window.fetchPublications = function (resId) {
-        console.log("publications DT");
+        
         return window.publicationsTable = new DataTable('#publicationsDT', {
             paging: true,
             destroy: true,
@@ -609,15 +609,9 @@ jQuery(function ($) {
                             $('.associated-project-table-div').addClass('d-none');
                             $('.loading-indicator').addClass('d-none');
                         } else {
-
-                            /*
-                             $('#associated-coll-res-tab').addClass('hidden');
-                             $('#associated-coll-res-tab-content').addClass('hidden');
-                             $('#associated-coll-res-tab').removeClass('active');
-                             $('#associated-coll-res-tab-content').removeClass('active');*/
-                            //window.hideEmptyTabs();
+                            //associated-coll-res-tab
+                             $('#associated-coll-res-tab').removeClass('d-none');                            
                         }
-
                         //$('.child-elements-div').hide();
                         return;
                     }
@@ -625,6 +619,9 @@ jQuery(function ($) {
                     if (displayedView == 'projectView') {
                         $('.associated-project-table-div').removeClass('d-none');
                         $('.loading-indicator').addClass('d-none');
+                    } else {
+                        $('.associated-coll-res-tab').removeClass('d-none');
+                        $('.associated-coll-res-tab-content').removeClass('d-none');
                     }
                 },
                 error: function (xhr, status, error) {
@@ -632,14 +629,7 @@ jQuery(function ($) {
                     if (displayedView == 'projectView') {
                         $('.associated-project-table-div').addClass('d-none');
                     } else {
-                        console.log("fetchRPR error");
-                        /*
-                         $('#associated-coll-res-tab').addClass('hidden');
-                         $('#associated-coll-res-tab-content').addClass('hidden');
-                         $('#associated-coll-res-tab').removeClass('active');
-                         $('#associated-coll-res-tab-content').removeClass('active');
-                         $('.rcr-elements-div').hide();*/
-                        //window.hideEmptyTabs();
+                        console.log("fetchRPR error");                        
                     }
                 }
             },
