@@ -87,6 +87,7 @@ jQuery(function ($) {
         if ($('.discover-content-main').is(':hidden')) {
             $('.discover-content-main').show();
         }
+        window.actualPage = 1;
         window.search();
     });
 
