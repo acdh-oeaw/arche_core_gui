@@ -45,7 +45,8 @@ class DisseminationController extends \Drupal\arche_core_gui\Controller\ArcheBas
     private function processCDLData(string $repoUrl): string
     {
         try {
-            $text = @file_get_contents(\Drupal::request()->getSchemeAndHttpHost() . '/browser/sites/default/files/coll_dl_script/collection_download_repo.py');
+            $path = \Drupal::service('file_system')->realpath('public://coll_dl_script/collection_download_repo.py');
+            $text = file_get_contents($path);
            
             return $this->changeCDLSText($text, $repoUrl);
         } catch (\Exception $e) {
