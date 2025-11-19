@@ -24,8 +24,6 @@ jQuery(function ($) {
             versionVisible = true;
         }
 
-        generateGoogleDataset();
-
         checkDetailCardEvents();
         loadAdditionalData(resId);
         // hide the summary div if there is no data inside it
@@ -43,7 +41,7 @@ jQuery(function ($) {
             $('#download-resource-section').removeClass('d-none');
         }
 
-
+        generateGoogleDataset();
     });
 
     /**
