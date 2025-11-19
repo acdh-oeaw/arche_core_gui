@@ -24,6 +24,7 @@ jQuery(function ($) {
             versionVisible = true;
         }
 
+        generateGoogleDataset();
 
         checkDetailCardEvents();
         loadAdditionalData(resId);
@@ -44,6 +45,41 @@ jQuery(function ($) {
 
 
     });
+
+/**
+ * #26347 Google Dataset
+ * @returns {undefined}
+ */
+    function generateGoogleDataset() {
+        var apiUrl = drupalSettings.arche_core_gui.apiUrl;
+        if (apiUrl.indexOf("arche.acdh.oeaw.ac.at") !== -1) {
+            if (acdhType === "topcollection") {
+                console.log(apiUrl);
+                console.log(drupalSettings.arche_core_gui);
+                console.log("topcollection");
+                var pid = $('#pidValue').text();
+                if (pid && pid.trim() !== '') {
+                    var encodedPid = encodeURIComponent(value);
+
+                    $.ajax({
+                        url: 'https://arche.acdh.oeaw.ac.at/oaipmh/?verb=GetRecordRaw&metadataPrefix=schema.org&format=application%2Fld%2Bjson&identifier=' + encodedPid,
+                        method: 'GET',
+                        dataType: 'text',
+                        success: function (structuredDataText) {
+                            var script = document.createElement('script');
+                            script.type = 'application/ld+json';
+                            script.textContent = structuredDataText;
+                            document.head.appendChild(script);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('AJAX error:', error);
+                        }
+                    });
+                }
+
+            }
+        }
+    }
 
     $(document).keydown(function (event) {
         if (event.which == "17")
@@ -121,14 +157,14 @@ jQuery(function ($) {
             $(this).text(Drupal.t('Expert view'));
         }
     });
-    
+
     $(document).delegate("#remove-resource-cart", "click", function (e) {
         e.preventDefault();
         window.removeCartItem(resId);
         $('#remove-resource-cart').addClass('d-none');
         $('#add-resource-cart').removeClass('d-none');
     });
-    
+
 
     function checkCartButton() {
         console.log("checkCartButton");
