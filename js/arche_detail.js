@@ -46,37 +46,36 @@ jQuery(function ($) {
 
     });
 
-/**
- * #26347 Google Dataset
- * @returns {undefined}
- */
+    /**
+     * #26347 Google Dataset
+     * @returns {undefined}
+     */
     function generateGoogleDataset() {
+
         var apiUrl = drupalSettings.arche_core_gui.apiUrl;
         if (apiUrl.indexOf("arche.acdh.oeaw.ac.at") !== -1) {
             if (acdhType === "topcollection") {
-                console.log(apiUrl);
-                console.log(drupalSettings.arche_core_gui);
-                console.log("topcollection");
+                
                 var pid = $('#pidValue').text();
                 if (pid && pid.trim() !== '') {
-                    var encodedPid = encodeURIComponent(value);
-
+                    var encodedPid = encodeURIComponent(pid);
+                    console.log('https://arche.acdh.oeaw.ac.at/oaipmh/?verb=GetRecordRaw&metadataPrefix=schema.org&format=application%2Fld%2Bjson&identifier=' + encodedPid);
                     $.ajax({
                         url: 'https://arche.acdh.oeaw.ac.at/oaipmh/?verb=GetRecordRaw&metadataPrefix=schema.org&format=application%2Fld%2Bjson&identifier=' + encodedPid,
                         method: 'GET',
                         dataType: 'text',
-                        success: function (structuredDataText) {
+                        success: function (structuredDataText) {                            
                             var script = document.createElement('script');
                             script.type = 'application/ld+json';
                             script.textContent = structuredDataText;
                             document.head.appendChild(script);
+                            console.log("Google OAIPMH success");
                         },
                         error: function (xhr, status, error) {
-                            console.error('AJAX error:', error);
+                            console.error('Google OAIPHM AJAX error:', error);
                         }
                     });
                 }
-
             }
         }
     }
