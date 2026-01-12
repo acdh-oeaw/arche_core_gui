@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl"
+       class="in-text"
+       version="1.0">
+
+  <info>
+    <title>ARCHE Repository Citation Style</title>
+    <title-short>ARCHE</title-short>
+    <id>http://www.arche.acdh.oeaw.ac.at/styles/arche-repository</id>
+    <link href="http://www.zotero.org/styles/apa-7th-edition" rel="template"/>
+    <updated>2025-01-01T00:00:00Z</updated>
+    <author>
+      <name>ARCHE Repository at ACDH-ÖAW</name>
+      <email>acdh-helpdesk@oeaw.ac.at</email>
+    </author>
+    <category citation-format="author-date"/>
+    <language>en-US</language>
+  </info>
+
+  <!-- ===================================================== -->
+  <!-- CORE MACROS                                           -->
+  <!-- ===================================================== -->
+
+  <!-- author → editor → title (forced fallback) -->
+  <macro name="primary-creator">
+    <choose>
+      <if variable="author">
+        <names variable="author">
+          <name form="long" and="symbol" delimiter=", "
+                name-as-sort-order="all"/>
+        </names>
+      </if>
+      <else-if variable="editor">
+        <names variable="editor">
+          <name form="long" and="symbol" delimiter=", "/>
+          <label form="short" prefix=" (" suffix=")"/>
+        </names>
+      </else-if>
+      <else>
+        <text variable="title"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="date">
+    <choose>
+      <if variable="issued">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+      </if>
+      <else>
+        <text term="no date"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="title">
+    <text variable="title"/>
+  </macro>
+
+  <macro name="title-italic">
+    <text variable="title" font-style="italic"/>
+  </macro>
+
+  <!-- ===================================================== -->
+  <!-- ARCHE ROLES                                           -->
+  <!-- ===================================================== -->
+
+  <macro name="original-author">
+    <names variable="original-author">
+      <label form="verb" suffix=" "/>
+      <name delimiter=", "/>
+    </names>
+  </macro>
+
+  <macro name="compiler">
+    <names variable="compiler">
+      <label form="verb" suffix=" "/>
+      <name delimiter=", "/>
+    </names>
+  </macro>
+
+  <macro name="organizer">
+    <names variable="organizer">
+      <label form="verb" suffix=" "/>
+      <name delimiter=", "/>
+    </names>
+  </macro>
+
+  <!-- ===================================================== -->
+  <!-- APA PUBLICATION MACROS                                -->
+  <!-- ===================================================== -->
+
+  <macro name="container-title">
+    <text variable="container-title" font-style="italic"/>
+  </macro>
+
+  <macro name="volume-issue">
+    <group>
+      <text variable="volume" font-style="italic"/>
+      <text variable="issue" prefix="(" suffix=")"/>
+    </group>
+  </macro>
+
+  <macro name="pages">
+    <text variable="page"/>
+  </macro>
+
+  <!-- ===================================================== -->
+  <!-- CONTAINER (TopCollection)                             -->
+  <!-- ===================================================== -->
+
+  <macro name="container-dataset">
+    <group>
+      <text term="in" text-case="capitalize-first" suffix=" "/>
+      <text variable="container-title" font-style="italic"/>
+      <names variable="editor" prefix=", ">
+        <name form="short"/>
+        <label form="short" prefix=" (" suffix=")"/>
+      </names>
+      <text value=" [Dataset]"/>
+    </group>
+  </macro>
+
+  <!-- ===================================================== -->
+  <!-- ACCESS                                                -->
+  <!-- ===================================================== -->
+
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <group delimiter=" ">
+          <text value="Retrieved from"/>
+          <text variable="DOI" prefix="https://doi.org/"/>
+        </group>
+      </if>
+      <else-if variable="URL">
+        <group delimiter=" ">
+          <text value="Retrieved from"/>
+          <text variable="URL"/>
+        </group>
+      </else-if>
+    </choose>
+  </macro>
+
+  <!-- ===================================================== -->
+  <!-- TERMS                                                 -->
+  <!-- ===================================================== -->
+
+  <locale xml:lang="en">
+    <terms>
+      <term name="original-author" form="verb">Original text by</term>
+      <term name="compiler" form="verb">Digitised by</term>
+      <term name="organizer" form="verb">With support from</term>
+    </terms>
+  </locale>
+
+  <!-- ===================================================== -->
+  <!-- BIBLIOGRAPHY                                          -->
+  <!-- ===================================================== -->
+
+  <bibliography hanging-indent="true">
+    <layout suffix=".">
+      <choose>
+
+        <!-- ================================================= -->
+        <!-- TopCollection (dataset without container)         -->
+        <!-- ================================================= -->
+        <if type="dataset" variable="container-title" match="none">
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <text macro="primary-creator"/>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text macro="title-italic"/>
+            <text value=" [Dataset]"/>
+            <text macro="organizer"/>
+            <text variable="publisher"/>
+            <text macro="access"/>
+          </group>
+        </if>
+
+        <!-- ================================================= -->
+        <!-- Collection / Resource (in TopCollection)          -->
+        <!-- ================================================= -->
+        <else-if variable="container-title">
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <text variable="title"/>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text value=" [Dataset]"/>
+            <group delimiter=". ">
+              <text macro="original-author"/>
+              <text macro="compiler"/>
+            </group>
+            <text macro="container-dataset"/>
+            <text macro="organizer"/>
+            <text variable="publisher"/>
+            <text macro="access"/>
+          </group>
+        </else-if>
+
+        <!-- ================================================= -->
+        <!-- Journal articles (APA)                            -->
+        <!-- ================================================= -->
+        <else-if type="article-journal">
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <names variable="author">
+                <name form="long" and="symbol" delimiter=", "/>
+              </names>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text macro="title"/>
+            <group delimiter=", ">
+              <text macro="container-title"/>
+              <text macro="volume-issue"/>
+              <text macro="pages"/>
+            </group>
+            <text macro="access"/>
+          </group>
+        </else-if>
+
+        <!-- ================================================= -->
+        <!-- Books (APA)                                       -->
+        <!-- ================================================= -->
+        <else-if type="book">
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <text macro="primary-creator"/>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text macro="title-italic"/>
+            <text variable="publisher"/>
+            <text macro="access"/>
+          </group>
+        </else-if>
+
+        <!-- ================================================= -->
+        <!-- Chapters (APA)                                    -->
+        <!-- ================================================= -->
+        <else-if type="chapter">
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <names variable="author">
+                <name form="long" and="symbol" delimiter=", "/>
+              </names>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text macro="title"/>
+            <group>
+              <text term="in" text-case="capitalize-first" suffix=" "/>
+              <names variable="editor">
+                <name form="short"/>
+                <label form="short" prefix=" (" suffix=")"/>
+              </names>
+              <text variable="container-title" font-style="italic" prefix=", "/>
+            </group>
+            <text macro="pages"/>
+            <text variable="publisher"/>
+            <text macro="access"/>
+          </group>
+        </else-if>
+
+        <!-- ================================================= -->
+        <!-- Safe fallback                                     -->
+        <!-- ================================================= -->
+        <else>
+          <group delimiter=". ">
+            <group delimiter=" ">
+              <text macro="primary-creator"/>
+              <text macro="date" prefix="(" suffix=")"/>
+            </group>
+            <text variable="title"/>
+            <text variable="publisher"/>
+            <text macro="access"/>
+          </group>
+        </else>
+
+      </choose>
+    </layout>
+  </bibliography>
+
+</style>
