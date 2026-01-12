@@ -30,12 +30,12 @@ jQuery(function ($) {
             selected = 'hidden';
         }
         var prewrap = "white-space: unset;";
-        if(json) {
+        if (json) {
             prewrap = "white-space: pre-wrap;"
         }
-        var html = "<span class='cite-content " + selected + "' style='"+prewrap+"' id='highlight-" + typeid.toLowerCase() + "'>" + data + "</span>";
+        var html = "<span class='cite-content " + selected + "' style='" + prewrap + "' id='highlight-" + typeid.toLowerCase() + "'>" + data + "</span>";
         $('#cite-content-figure').append(html);
-        
+
     }
 
     function displayHarvard(cite, apa_loaded) {
@@ -78,7 +78,7 @@ jQuery(function ($) {
 
     }
 
-     function displayArchetCite(url) {
+    function displayArchetCite(url) {
         $.get(url).done(function (data) {
             const formattedJson = JSON.stringify(data, null, 2);
             createCiteTab('Arche Citation', 'arche-citation');
@@ -122,11 +122,37 @@ jQuery(function ($) {
                                 opt.style = 'citation-' + templateName;
                                 opt.lang = 'en-US';
                                 createCiteTab('apa 6th', 'apa-6th');
-                                createCiteContent(cite.get(opt), 'apa-6th', true);
+                                createCiteContent(cite.get(opt), 'apa-6th', false, true);
                                 apa_loaded = false;
                             }).then(function (d) {
 
-                        displayArchetCite(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=arche-citation-style');        
+
+
+                        let archeTestCslName = 'arche-test';
+
+                        return url_csl_content("/browser/modules/contrib/arche_core_gui/csl/ARCHE_citation-style.csl")
+                                .done(function (archeTestCsl) {
+
+                                    Cite.CSL.register.addTemplate(archeTestCslName, archeTestCsl);
+
+                                    let archeTestOpt = {
+                                        format: 'string',
+                                        type: 'html',
+                                        style: 'citation-Arche-test',
+                                        lang: 'en-US'
+                                    };
+
+                                    createCiteTab('arche-test', 'arche-test');
+                                    createCiteContent(cite.get(archeTestOpt), 'arche-test', true);
+                                    apa_loaded = false;
+                                });
+
+                    }).then(function (d) {
+
+                        if (window.location.href.includes("https://arche-curation.acdh-dev.oeaw.ac.at/browser/")) {
+                            displayArchetCite(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=arche-citation-style');
+                        }
+
                         //harvard
                         displayHarvard(cite, apa_loaded);
 
@@ -209,7 +235,5 @@ jQuery(function ($) {
         }, 5000);
         e.preventDefault();
     });
-
-
 
 });
