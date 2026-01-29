@@ -126,11 +126,10 @@ jQuery(function ($) {
                                 apa_loaded = false;
                             }).then(function (d) {
 
-
-
                         let archeTestCslName = 'arche-test';
-
-                        return url_csl_content("/browser/modules/contrib/arche_core_gui/csl/ARCHE_citation-style.csl")
+                                
+                        if (window.location.href.includes("https://arche-dev.acdh-dev.oeaw.ac.at/browser/")) {
+                            return url_csl_content("/browser/modules/contrib/arche_core_gui/csl/ARCHE_citation-style.csl")
                                 .done(function (archeTestCsl) {
 
                                     Cite.CSL.register.addTemplate(archeTestCslName, archeTestCsl);
@@ -146,12 +145,13 @@ jQuery(function ($) {
                                     createCiteContent(cite.get(archeTestOpt), 'arche-test', true);
                                     apa_loaded = false;
                                 });
+                        }
 
                     }).then(function (d) {
 
-                        if (window.location.href.includes("https://arche-curation.acdh-dev.oeaw.ac.at/browser/")) {
-                            displayArchetCite(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=arche-citation-style');
-                        }
+                       // if (window.location.href.includes("https://arche-dev.acdh-dev.oeaw.ac.at/browser/")) {
+                         //   displayArchetCite(url + '&lang=' + drupalSettings.arche_core_gui.gui_lang + '&format=arche-citation-style');
+                       // }
 
                         //harvard
                         displayHarvard(cite, apa_loaded);
