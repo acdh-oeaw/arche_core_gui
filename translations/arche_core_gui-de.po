@@ -419,8 +419,8 @@ msgstr "enthält"
 msgid "ACDH runs a helpdesk offering advice for questions related to various digital humanities topics."
 msgstr "Das ACDH bietet über das Helpdesk-Service Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
 
-msgid "ACDH runs a <a href='mailto:acdh-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>helpdesk</a> offering advice for questions related to various digital humanities topics."
-msgstr "Das ACDH bietet über das <a href='mailto:acdh-helpdesk@oeaw.ac.at' class='footer-helpdesk-link'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
+msgid "ACDH runs a <a href='mailto:arche@oeaw.ac.at' class='footer-helpdesk-link'>helpdesk</a> offering advice for questions related to various digital humanities topics."
+msgstr "Das ACDH bietet über das <a href='mailto:arche@oeaw.ac.at' class='footer-helpdesk-link'>Helpdesk-Service</a> Beratung bei Fragen zu Digital Humanities-bezogenen Themen an."
  
 msgid "ASK US!"
 msgstr "KONTAKT"
