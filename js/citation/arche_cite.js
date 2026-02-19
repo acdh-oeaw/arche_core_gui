@@ -65,7 +65,7 @@ jQuery(function ($) {
 
         $controls.find('#dropdown-container').append($select);
         
-        $('#cite-main-div').empty().append($contentDiv, $controls);
+        $('#citations-div').empty().append($contentDiv, $controls);
         
         function escapeHtml(str) {
             return String(str)
