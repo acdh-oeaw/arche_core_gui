@@ -265,7 +265,7 @@ jQuery(function ($) {
                 '<div class="row justify-content-center align-items-center">' +
                 '<div class="col-8"><h6 class="mb-0 pb-0">' + fd.label + '</h6></div>' +
                 '<div class="col-2">' +
-                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon.png" class="tooltip-icon-cards '+formattedProperty+' "\n\
+                '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon_acc.svg" class="tooltip-icon-cards '+formattedProperty+' "\n\
                     data-bs-toggle="tooltip" data-bs-placement="top" alt="'+tooltip+'" title="'+tooltip+'"\n\
                     data-bs-trigger="hover focus click" >' +
                 '</div>' +
