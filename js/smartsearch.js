@@ -222,7 +222,7 @@ jQuery(function ($) {
         $('.main-content-row').html('<div class="container">' +
                 '<div class="row">' +
                 '<div class="col-12 mt-5">' +
-                '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif">' +
+                '<img class="mx-auto d-block" src="/browser/modules/contrib/arche_core_gui/images/arche_logo_flip_47px.gif"  alt="Loading...">' +
                 ' </div>' +
                 '</div>');
         $(".discover-left input, .discover-left textarea, .discover-left select, .discover-left button").prop("disabled", true);

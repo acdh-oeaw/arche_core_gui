@@ -35,7 +35,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...'/>",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -89,7 +89,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif'  alt='Loading...'/>",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -143,7 +143,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -208,7 +208,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -258,7 +258,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -324,7 +324,7 @@ jQuery(function ($) {
             searchDelay: 500, // Optional: Add a delay for user typing
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -381,7 +381,7 @@ jQuery(function ($) {
             searchDelay: 500, // Optional: Add a delay for user typing
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -440,7 +440,7 @@ jQuery(function ($) {
             ],
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -502,7 +502,7 @@ jQuery(function ($) {
             deferRender: true,
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -595,7 +595,7 @@ jQuery(function ($) {
             deferRender: true,
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             serverSide: true,
@@ -662,7 +662,7 @@ jQuery(function ($) {
     window.initExpertView = function () {
         window.expertTable = $('#expertDT').DataTable({
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
             deferRender: true
