@@ -98,10 +98,10 @@ jQuery(function ($) {
 
         //<-- title part
         results += '<div class="res-property">';
-        results += '<h5 class="h5-blue-title">';
+        results += '<h3 class="h3-blue-title">';
         results += '<button type="button" class="btn btn-sm-add searchInBtn" data-resource-id="' + searchInBtnId + '">' + searchInBtnLabel + '</button>';
         results += '<a href="' + archeBaseUrl + '/browser/metadata/' + result.id + '" taget="_blank">' + getLangValue(result.title, preferredLang) + '</a>';
-        results += '</h5>';
+        results += '</h3>';
         results += '</div>';
         //-->
 
@@ -263,7 +263,7 @@ jQuery(function ($) {
         text += '<div class="card metadata facets">' +
                 '<div class="card-header">' +
                 '<div class="row justify-content-center align-items-center">' +
-                '<div class="col-8"><h6 class="mb-0 pb-0">' + fd.label + '</h6></div>' +
+                '<div class="col-8"><h3 class="mb-0 pb-0">' + fd.label + '</h3></div>' +
                 '<div class="col-2">' +
                 '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon_acc.svg" class="tooltip-icon-cards '+formattedProperty+' "\n\
                     data-bs-toggle="tooltip" data-bs-placement="top" alt="'+tooltip+'" title="'+tooltip+'"\n\
