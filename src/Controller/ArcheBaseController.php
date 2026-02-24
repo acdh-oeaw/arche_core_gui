@@ -26,7 +26,7 @@ class ArcheBaseController extends ControllerBase {
 
     public function __construct() {
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language']) : $this->siteLang = "en";
-        $this->config = Config::fromYaml(\Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config-gui.yaml');
+        $this->config = Config::fromYaml(\Drupal::service('extension.list.module')->getPath('arche_core_gui') . '/config/config.yaml');
         $this->checkTmpDirs();
         try {
             $this->pdo = new \PDO($this->config->dbConnStr);
