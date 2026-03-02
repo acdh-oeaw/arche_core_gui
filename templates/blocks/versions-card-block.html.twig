@@ -12,7 +12,7 @@
         </div>
     </div>
     <div id="versionsBody" class="collapse show">
-        <div class="card-body meta-sidebar versions-body">
+        <div class="card-body meta-sidebar versions-body d-flex flex-column">
             <div class="versions-properties">
                 {% if data.getData('acdh:isNewVersionOf') %}
                     {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
