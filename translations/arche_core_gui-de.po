@@ -757,3 +757,6 @@ msgstr "Zur CLARIN-Virtual Collection hinzufügen"
 
 msgid "Arrangement"
 msgstr "Strukturierung"
+
+msgid "With support from"
+msgstr "Unterstützt durch"

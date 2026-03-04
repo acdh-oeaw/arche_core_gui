@@ -1146,6 +1146,10 @@ class ResourceCoreObject {
             'acdh:hasContributor' => 'In collaboration with',
             'acdh:hasDigitisingAgent' => 'Digitised by',
         ];
+        
+    if(strtolower($this->getAcdhType()) === "topcollection" ) {
+        $props['acdh:hasEnabler'] = 'With support from';
+    }
 
         foreach ($props as $k => $v) {
             if (isset($this->properties[$k])) {
