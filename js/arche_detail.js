@@ -222,7 +222,7 @@ jQuery(function ($) {
                 }
                 //if not then we have to check the actual logged user permissions
                 $.ajax({
-                    url: '/browser/api/checkUser/' + resourceId + '/' + accessLevel,
+                    url: '/browser/api/checkUser/' + resourceId + '/' + aclRead,
                     method: 'GET',
                     timeout: 10000,
                     success: function (data) {
