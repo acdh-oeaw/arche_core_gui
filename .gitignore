@@ -1,6 +1,7 @@
 # Ignore macOS specific files
 .DS_Store
 config/config-gui.yaml
+config/config.yaml
 
 # Build directories
 dist/
