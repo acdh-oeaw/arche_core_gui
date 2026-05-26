@@ -665,7 +665,9 @@ jQuery(function ($) {
                 processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='Loading...' />",
                 url: datatableLanguage
             },
-            deferRender: true
+            deferRender: true,
+            paging: false,
+            lengthChange: false
                     //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
     }
