@@ -4,9 +4,9 @@
             <div class="col-10"><h4 class="mb-0 pb-0">{{ "Credits"|trans }}</h4></div>
             <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div>-->
             <div class="col-2 text-end">
-                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#sourceBody">
-                    <i class="fa fa-solid fa-chevron-up"></i>
-                </a>
+                <button type="button" class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#sourceBody" aria-expanded="true" aria-controls="sourceBody" aria-label="{{ "Toggle credits section"|trans }}">
+            <i class="fa fa-solid fa-chevron-up"></i>
+        </button>
             </div>
         </div>
 
@@ -20,7 +20,7 @@
                         {% if val['externalUrl'] %}
                             <a href="{{ val['externalUrl'] }}" target="_blank">{{ values }}</a><br>
                         {% elseif val['id'] %} 
-                            <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                            <a href="/browser/metadata/{{ val['id'] }}" class="arche-href">{{ val['value'] }}</a><br>
                         {% else %}    
                             {{ val['value'] }}<br>
                         {% endif %}

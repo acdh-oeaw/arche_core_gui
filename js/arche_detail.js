@@ -54,7 +54,7 @@ jQuery(function ($) {
         if (apiUrl.indexOf("arche.acdh.oeaw.ac.at") !== -1) {
             if (acdhType === "topcollection") {
                 
-                var pid = $('#pidValue').text();
+                var pid = $('.pidValue').first().text();
                 if (pid && pid.trim() !== '') {
                     var encodedPid = encodeURIComponent(pid);
                     console.log('https://arche.acdh.oeaw.ac.at/oaipmh/?verb=GetRecordRaw&metadataPrefix=schema.org&format=application%2Fld%2Bjson&identifier=' + encodedPid);
@@ -123,9 +123,9 @@ jQuery(function ($) {
 
     $(document).delegate("a#copyPid", "click", function (e) {
         // Select the input field content
-        var text = $('#pidValue').text();
+        var text = $('.pidValue').first().text();
         var tempInput = $("<input>");
-        tempInput.val($('#pidValue').text());
+        tempInput.val(text);
         $("body").append(tempInput);
         tempInput.select();
         // Copy the selected text to the clipboard
@@ -177,7 +177,7 @@ jQuery(function ($) {
 
 
     /*
-     $(document).delegate("a#archeHref", "click", function (e) {
+     $(document).delegate("a.arche-href", "click", function (e) {
      $('#meta-content-container').html();
      var url = $(this).attr('href');
      if (url && url.indexOf("/browser/metadata/") >= 0 || url && url.indexOf("/browser//metadata/") >= 0) {
@@ -722,7 +722,7 @@ jQuery(function ($) {
     function checkDetailCardEvents() {
         $(".mdr-card-collapse-btn").click(function () {
             var dataValue = $(this).data('bs-target');
-            var targetLink = $('a[data-bs-target="' + dataValue + '"]');
+            var targetLink = $('.mdr-card-collapse-btn[data-bs-target="' + dataValue + '"]');
             if (targetLink.html() === '<i class="fa fa-solid fa-chevron-up"></i>') {
                 targetLink.html('<i class="fa fa-solid fa-chevron-down"></i>');
             } else {

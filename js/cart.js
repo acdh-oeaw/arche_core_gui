@@ -93,8 +93,8 @@ jQuery(function ($) {
             ],
             data: cartArray,
             columns: [
-                {data: 'downloadAll', title: '<input type="checkbox" id="check_all_cart_items">', render: function (data, type, row, meta) {
-                        return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" >';
+                {data: 'downloadAll', title: '<input type="checkbox" id="check_all_cart_items" aria-label="' + Drupal.t('Select all saved records') + '">', render: function (data, type, row, meta) {
+                        return '<input type="checkbox" class="check_cart_item" data-id="' + row.id + '" value="' + row.id + '" aria-label="' + Drupal.t('Select saved record') + '">';
                     }
                 }, /*
                  {className: 'dt-control',
@@ -282,7 +282,7 @@ jQuery(function ($) {
 
     $('#cartTable').on('change', '.check_cart_item', function () {
         const allChecked = $('.check_cart_item').length === $('.check_cart_item:checked').length;
-        $('#check_all_items').prop('checked', allChecked);
+        $('#check_all_cart_items').prop('checked', allChecked);
         if ($('#cartTable .check_cart_item:checked').length > 0) {
             $('.cart-dl-selected-files-div').removeClass('hidden');
         } else {

@@ -8,7 +8,7 @@
                     <span class="res-prop-value">
                         {% for val in value %}
                             {% if val['id'] %} 
-                                <a href="/browser/metadata/{{ val['id'] }}" id="archeHref">{{ val['value'] }}</a><br>
+                                <a href="/browser/metadata/{{ val['id'] }}" class="arche-href">{{ val['value'] }}</a><br>
                             {% else %}    
                                 {{ val['value'] }}<br>
                             {% endif %}

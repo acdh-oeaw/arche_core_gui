@@ -23,15 +23,15 @@ function init3dhop() {
 	var interval, id, ismousedown;
 	var button = 0;
 
-	jQuery('#toolbar img')
+		jQuery('#toolbar button')
 		.mouseenter(function(e) {
 			id = jQuery(this).attr('id');
-			if(!ismousedown) jQuery(this).css("opacity","0.8");
-			else jQuery(this).css("opacity","1.0");
+				if(!ismousedown) jQuery(this).find('img').css("opacity","0.8");
+				else jQuery(this).find('img').css("opacity","1.0");
 		})
 		.mouseout(function(e) {
 			clearInterval(interval); 
-			jQuery(this).css("opacity","0.5");
+				jQuery(this).find('img').css("opacity","0.5");
 		})
 		.mousedown(function(e) {
 			id = jQuery(this).attr('id');
@@ -46,18 +46,22 @@ function init3dhop() {
 				else {
 					clearInterval(interval); 
 				}
-				jQuery(this).css("opacity","1.0");
+					jQuery(this).find('img').css("opacity","1.0");
 				button=0;
 			}
 		})
-		.mouseup(function(e) {
+			.mouseup(function(e) {
 			ismousedown = false;
 			if(e.button==button){
 				clearInterval(interval); 
-				jQuery(this).css("opacity","0.8");
+					jQuery(this).find('img').css("opacity","0.8");
 				button=0;
 			}
-		})
+			})
+			.click(function(e) {
+				// Keyboard button activation does not trigger the mouse handlers above.
+				if (e.detail === 0) actionsToolbar(jQuery(this).attr('id'));
+			})
 		.on('touchstart', function(e) { 
 			button=2;
 		})
@@ -76,7 +80,7 @@ function init3dhop() {
 		})
 		.on('touchmove', function(e) {
 			clearInterval(interval); 
-			jQuery('#toolbar img').css("opacity","0.5");
+				jQuery('#toolbar img').css("opacity","0.5");
 		});
 
 	jQuery('#3dhop:not(#draw-canvas)').on('contextmenu', function(e) { return false; });
@@ -86,10 +90,10 @@ function init3dhop() {
 			if (!isMobile()) return false; //MOBILE DEVICES CHECK
 		})
 		.on('touchstart pointerdown', function(e) {
-			jQuery('#toolbar img').css("opacity","0.5");
+				jQuery('#toolbar img').css("opacity","0.5");
 		})
 		.mousedown(function(e) { 
-			jQuery('#toolbar img').css("opacity","0.5"); 
+				jQuery('#toolbar img').css("opacity","0.5");
 			if(e.preventDefault) e.preventDefault(); 
 			if (window.getSelection && window.getSelection()!='') window.getSelection().removeAllRanges();
 			else if (document.selection && document.selection.createRange()!='') document.selection.empty();

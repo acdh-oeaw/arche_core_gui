@@ -5,6 +5,7 @@
 <div class="col-12">
     <form class="d-flex" id="hero-smart-search-form">
         <div class="input-group ui-widget">
+            <label class="visually-hidden" for="sm-hero-str">{{ "Find resources"|trans }}</label>
             <input type="search" id="sm-hero-str" class="form-control hero-search-field" placeholder="{{ "Find resources"|trans }}..." aria-label="Search">
             <button class="smartsearch-btn btn hero-search-button" type="submit"><img class="img-fluid" src="{{ arche_theme_img_url }}/common/search_icon.png" alt="Search"  /></button>
         </div>        
@@ -23,9 +24,9 @@
             <div class="col-10"><h4 class="mb-0 pb-0">{{ "Extended Search"|trans }}</h4></div>
             <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div> -->
             <div class="col-2 text-end ">
-                <a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#extendedSearchBody">
-                    <i class="fa fa-solid fa-chevron-up"></i>
-                </a>
+                <button type="button" class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#extendedSearchBody" aria-expanded="true" aria-controls="extendedSearchBody" aria-label="{{ "Toggle extended search section"|trans }}">
+            <i class="fa fa-solid fa-chevron-up"></i>
+        </button>
             </div>
         </div>
     </div>
@@ -46,7 +47,7 @@
                             <div class="col-lg-12">
                                 <div class="form-outline">
                                     <input class="form-check-input ml-2" type="checkbox" checked="checked" id="linkNamedEntities">&nbsp;
-                                    <label class="form-check-label ml-2" for="followNamedEntities">{{ "Follow named entities"|trans }}</label>
+                                    <label class="form-check-label ml-2" for="linkNamedEntities">{{ "Follow named entities"|trans }}</label>
 
                                 </div>
                             </div>

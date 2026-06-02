@@ -26,25 +26,26 @@
 
         <div class="pdfviewer">
             <div class="pdftoolbar">
-                <button class="pushed" onclick="togglethumbs(this);"><i class="material-icons-outlined">view_sidebar</i></button>
+                <button class="pushed" aria-label="{{ "Toggle thumbnails"|trans }}" onclick="togglethumbs(this);"><i class="material-icons-outlined" aria-hidden="true">view_sidebar</i></button>
                 <div class="v-sep"></div>
-                <button onclick="pdfViewer.prev();"><i class="material-icons-outlined">arrow_upward</i></button>
+                <button aria-label="{{ "Previous page"|trans }}" onclick="pdfViewer.prev();"><i class="material-icons-outlined" aria-hidden="true">arrow_upward</i></button>
                 <div class="v-sep"></div>
-                <button onclick="pdfViewer.next();"><i class="material-icons-outlined">arrow_downward</i></button>
-                <input id="pageno" class="pageno" type="number" class="form-control form-control-sm d-inline w-auto" value="1" min="1" max="1000" onchange="pdfViewer.scrollToPage(parseInt(this.value))">
-                <span id="pagecount" class="pageno"></span>
+                <button aria-label="{{ "Next page"|trans }}" onclick="pdfViewer.next();"><i class="material-icons-outlined" aria-hidden="true">arrow_downward</i></button>
+                <label class="visually-hidden" for="pageno">{{ "Page number"|trans }}</label>
+                <input id="pageno" class="pageno form-control form-control-sm d-inline w-auto" type="number" value="1" min="1" max="1000" onchange="pdfViewer.scrollToPage(parseInt(this.value))">
+                <span id="pagecount" class="pageno" aria-live="polite"></span>
                 <div class="divider"></div>
-                <button onclick="pdfViewer.setZoom('in')"><i class="material-icons-outlined">add</i></button>
+                <button aria-label="{{ "Zoom in"|trans }}" onclick="pdfViewer.setZoom('in')"><i class="material-icons-outlined" aria-hidden="true">add</i></button>
                 <div class="v-sep"></div>
-                <button onclick="pdfViewer.setZoom('out')"><i class="material-icons-outlined">remove</i></button>
+                <button aria-label="{{ "Zoom out"|trans }}" onclick="pdfViewer.setZoom('out')"><i class="material-icons-outlined" aria-hidden="true">remove</i></button>
                 <div class="dropdown">
-                    <div class="dropdown-value" onclick="this.parentNode.classList.toggle('show');">
+                    <button type="button" class="dropdown-value" aria-label="{{ "Select zoom level"|trans }}" aria-haspopup="true" aria-expanded="false" onclick="this.parentNode.classList.toggle('show'); this.setAttribute('aria-expanded', this.parentNode.classList.contains('show'));">
                         <span class="zoomval">100%</span>
-                        <i class="material-icons-outlined">
+                        <i class="material-icons-outlined" aria-hidden="true">
                             keyboard_arrow_down
                         </i>                    
-                    </div>
-                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show');">
+                    </button>
+                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show'); this.parentNode.querySelector('.dropdown-value').setAttribute('aria-expanded', 'false');">
                         <a href="#" onclick='pdfViewer.setZoom("width");
                         return false;'>{{ "Adjust width"|trans }}</a>
                         <a href="#" onclick='pdfViewer.setZoom("height");
@@ -71,13 +72,14 @@
                 </div>
                 <div class="divider"></div>
                 <!-- <label class="button" for="opendoc"><i class="material-icons-outlined">file_open</i></label> -->
+                <label class="visually-hidden" for="opendoc">{{ "Open PDF document"|trans }}</label>
                 <input id="opendoc" type="file" accept="application/pdf">
-                <a id="filedownload" class="button"><i class="material-icons-outlined">file_download</i></a>
+                <a id="filedownload" class="button" href="#" aria-label="{{ "Download PDF document"|trans }}"><i class="material-icons-outlined" aria-hidden="true">file_download</i></a>
                 <div class="dropdown dropdown-right">
-                    <div onclick="this.parentNode.classList.toggle('show');">
-                        <button><i class="material-icons-outlined">keyboard_double_arrow_right</i></button>
+                    <div>
+                        <button type="button" aria-label="{{ "More PDF viewer options"|trans }}" aria-haspopup="true" aria-expanded="false" onclick="this.closest('.dropdown').classList.toggle('show'); this.setAttribute('aria-expanded', this.closest('.dropdown').classList.contains('show'));"><i class="material-icons-outlined" aria-hidden="true">keyboard_double_arrow_right</i></button>
                     </div>
-                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show');">
+                    <div class="dropdown-content" onclick="this.parentNode.classList.toggle('show'); this.parentNode.querySelector('button').setAttribute('aria-expanded', 'false');">
                         <a href="#" onclick='pdfViewer.scrollToPage(1);
                         return false;'><i class="material-icons-outlined">vertical_align_top</i>{{ "First page"|trans }}</a>
                         <a href="#" onclick='pdfViewer.scrollToPage(pdfViewer.pdf.numPages);

@@ -27,13 +27,13 @@
             <div id="3dhop" class="tdhop" onmousedown="if (event.preventDefault)
                         event.preventDefault()"><div id="tdhlg"></div>
                 <div id="toolbar" class="viewer-3d-basic-toolbar d-none">
-                    <img id="home"     title="Home"                  src="/browser/modules/contrib/arche_core_gui/images/viewer/home.png"   /><br/>
-                    <img id="zoomin"   title="Zoom In"               src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomin.png" /><br/>
-                    <img id="zoomout"  title="Zoom Out"              src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomout.png"/><br/>
-                    <img id="light_on" title="Disable Light Control" src="/browser/modules/contrib/arche_core_gui/images/viewer/light_on.png" style="position:absolute; visibility:hidden;"/>
-                    <img id="light"    title="Enable Light Control"  src="/browser/modules/contrib/arche_core_gui/images/viewer/light.png"/><br/>
-                    <img id="full_on"  title="Exit Full Screen"      src="/browser/modules/contrib/arche_core_gui/images/viewer/full_on.png" style="position:absolute; visibility:hidden;"/>
-                    <img id="full"     title="Full Screen"           src="/browser/modules/contrib/arche_core_gui/images/viewer/full.png"   />
+                    <button type="button" id="home" class="viewer-3d-toolbar-button" aria-label="{{ "Home"|trans }}"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/home.png"/></button><br/>
+                    <button type="button" id="zoomin" class="viewer-3d-toolbar-button" aria-label="{{ "Zoom In"|trans }}"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomin.png"/></button><br/>
+                    <button type="button" id="zoomout" class="viewer-3d-toolbar-button" aria-label="{{ "Zoom Out"|trans }}"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/zoomout.png"/></button><br/>
+                    <button type="button" id="light_on" class="viewer-3d-toolbar-button" aria-label="{{ "Disable Light Control"|trans }}" style="position:absolute; visibility:hidden;"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/light_on.png"/></button>
+                    <button type="button" id="light" class="viewer-3d-toolbar-button" aria-label="{{ "Enable Light Control"|trans }}"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/light.png"/></button><br/>
+                    <button type="button" id="full_on" class="viewer-3d-toolbar-button" aria-label="{{ "Exit Full Screen"|trans }}" style="position:absolute; visibility:hidden;"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/full_on.png"/></button>
+                    <button type="button" id="full" class="viewer-3d-toolbar-button" aria-label="{{ "Full Screen"|trans }}"><img alt="" src="/browser/modules/contrib/arche_core_gui/images/viewer/full.png"/></button>
                 </div>
                 <canvas id="draw-canvas" height="500px" />
             </div>

@@ -173,6 +173,7 @@ jQuery(function ($) {
                 
                 var div = $(document.getElementById(fd.property + 'values'));
                 var text = '';
+                var facet_id = fd.property.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
 
                 if (fd.type === 'continuous' && fdp.distribution >= 2) {
                     $.each(fd.values, function (n, i) {
@@ -182,7 +183,8 @@ jQuery(function ($) {
 
                 if (fd.type === 'object' || fd.type === 'literal' || fd.type === 'matchProperty' || fd.type === 'linkProperty') {
                     var title_id = fd.label.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
-                    select = '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
+                    select = '<label class="visually-hidden" for="smart-multi-' + title_id + '">' + fd.label + '</label>' +
+                            '<select class="facet mt-2 smart-search-multi-select" data-property="' + fd.property + '" id="smart-multi-' + title_id + '" name="' + title_id + '" multiple>';
                     $.each(fd.values, function (n, i) {
                         //iterate the param.facets to set the selected ones!!!!!!
                         if (param.facets[fd.property] && param.facets[fd.property].length > 0) {
@@ -202,10 +204,12 @@ jQuery(function ($) {
                     if (fd.type === 'continuous') {
                         select += '<div class="row">';
                         select += '<div class="col">';
-                        select += '<input class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
+                        select += '<label class="visually-hidden" for="facet-min-' + facet_id + '">' + fd.label + ' ' + Drupal.t('Minimum') + '</label>';
+                        select += '<input id="facet-min-' + facet_id + '" class="facet-min form-control" type="text" value="' + (fdp.min || '') + '" data-value="' + fd.property + '" placeholder="' + fd.min + '" />';
                         select += '</div>';
                         select += '<div class="col">';
-                        select += '<input class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
+                        select += '<label class="visually-hidden" for="facet-max-' + facet_id + '">' + fd.label + ' ' + Drupal.t('Maximum') + '</label>';
+                        select += '<input id="facet-max-' + facet_id + '" class="facet-max form-control" type="text" value="' + (fdp.max || '') + '" data-value="' + fd.property + '" placeholder="' + fd.max + '" />';
                         select += '</div>';
                         select += '</div>';
                     }
@@ -263,16 +267,16 @@ jQuery(function ($) {
         text += '<div class="card metadata facets">' +
                 '<div class="card-header">' +
                 '<div class="row justify-content-center align-items-center">' +
-                '<div class="col-8"><h3 class="mb-0 pb-0">' + fd.label + '</h3></div>' +
+                '<div class="col-8"><h3 class="mb-0 pb-0" id="' + idStr + '_heading">' + fd.label + '</h3></div>' +
                 '<div class="col-2">' +
                 '<img src="/browser/themes/contrib/arche-theme-bs/images/common/tooltip_icon_acc.svg" class="tooltip-icon-cards '+formattedProperty+' "\n\
                     data-bs-toggle="tooltip" data-bs-placement="top" alt="'+tooltip+'" title="'+tooltip+'"\n\
                     data-bs-trigger="hover focus click" >' +
                 '</div>' +
                 '<div class="col-2 text-end">' +
-                '<a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '">' +
+                '<button type="button" class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#' + idStr + '" aria-expanded="true" aria-controls="' + idStr + '" aria-labelledby="' + idStr + '_heading">' +
                 '<i class="fa fa-solid fa-chevron-up"></i>' +
-                '</a>' +
+                '</button>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +

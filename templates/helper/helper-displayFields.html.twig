@@ -24,11 +24,11 @@
                                     <a href="{{ v.externalUrl }}" target="_blank">{{ v.title|nl2br }}</a>
                                 {% elseif (v.type == 'ID') %}
                                     {% if (v.title and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.title|nl2br }}</a>
                                     {% elseif (v.value and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.value|nl2br}}</a>
                                     {% elseif (v.relvalue and v.repoid )  %}                            
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" target="_blank">{{ v.relvalue|nl2br }}</a>
                                     {% elseif (v.value) %}
                                         <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
                                         <a href="{{ v.value }}" target="_blank">{{ v.value|nl2br }}</a>
@@ -37,16 +37,16 @@
                                 {% elseif(v.type == 'REL') %}
                                     <!-- The ARCHE RELATIONS will open in the same window -->
                                     {% if (v.title and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" >{{ v.title|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" >{{ v.title|nl2br }}</a>
                                     {% elseif (v.value and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" >{{ v.value|trim }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" >{{ v.value|trim }}</a>
                                     {% elseif (v.relvalue and v.repoid )  %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" >{{ v.relvalue|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" >{{ v.relvalue|nl2br }}</a>
                                     {% elseif (v.value) %}
                                         <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
-                                        <a id='archeHref' href="/browser/metadata/{{ v.value }}" >{{ v.value|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.value }}" >{{ v.value|nl2br }}</a>
                                     {% elseif (v.repoid) %}
-                                        <a id='archeHref' href="/browser/metadata/{{ v.repoid }}" >{{ v.repoid|nl2br }}</a>
+                                        <a class="arche-href" href="/browser/metadata/{{ v.repoid }}" >{{ v.repoid|nl2br }}</a>
                                     {% endif %}
                                     {% if not loop.last %}<span>{{ limiter|raw }}</span>{% endif %}
                                 {% elseif( (v.type == 'URI') or (v.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}                                  
@@ -116,16 +116,16 @@
                         {% if (value.externalUrl )  %}
                             <a target="_blank" href="{{ value.externalUrl }}" >{{ value.value|nl2br }}</a>                        
                         {% elseif (value.title and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
+                            <a class="arche-href" href="/browser/metadata/{{ value.repoid }}" >{{ value.title|nl2br }}</a>
                         {% elseif (value.value and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.value|trim }}</a>
+                            <a class="arche-href" href="/browser/metadata/{{ value.repoid }}" >{{ value.value|trim }}</a>
                         {% elseif (value.relvalue and value.repoid )  %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>
+                            <a class="arche-href" href="/browser/metadata/{{ value.repoid }}" >{{ value.relvalue|nl2br }}</a>
                         {% elseif (value.value) %}
                             <!-- if we dont have a repoid then some ingestion problem, so we will just display simple value -->
-                            <a id='archeHref' href="/browser/metadata/{{ value.value }}" >{{ value.value|nl2br }}</a>
+                            <a class="arche-href" href="/browser/metadata/{{ value.value }}" >{{ value.value|nl2br }}</a>
                         {% elseif (value.repoid) %}
-                            <a id='archeHref' href="/browser/metadata/{{ value.repoid }}" >{{ value.repoid|nl2br }}</a>
+                            <a class="arche-href" href="/browser/metadata/{{ value.repoid }}" >{{ value.repoid|nl2br }}</a>
                         {% endif %}
                     {% elseif( (value.type == 'URI') or (value.type == 'http://www.w3.org/2001/XMLSchema#anyURI') ) %}
                         {% if (value.value)  %}

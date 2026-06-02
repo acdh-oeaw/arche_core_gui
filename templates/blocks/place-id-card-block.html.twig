@@ -4,16 +4,16 @@
         <div class="row justify-content-center align-items-center">
             <div class="col-10"><h4 class="mb-0 pb-0">{{ "Identifier"|trans }}</h4></div>
             <!-- <div class="col-2"><img src="{{arche_tooltip_ico}}" class="tooltip-icon-cards"></div> -->
-            <div class="col-2 text-end"><a class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#pidBody">
-                    <i class="fa fa-solid fa-chevron-up"></i>
-                </a>
+            <div class="col-2 text-end"><button type="button" class="btn btn-link mdr-card-collapse-btn" data-bs-toggle="collapse" data-bs-target="#pidBody" aria-expanded="true" aria-controls="pidBody" aria-label="{{ "Toggle persistent identifier section"|trans }}">
+            <i class="fa fa-solid fa-chevron-up"></i>
+        </button>
             </div>
         </div>
     </div>
     <div id="pidBody" class="collapse show">
         <div class="card-body meta-sidebar flex-column">
             {% for key, value in data %}
-                 <a href="{{ value['value'] }}" target="_blank" id="pidValue">{{ value['value'] }}</a>
+                 <a href="{{ value['value'] }}" target="_blank" class="pidValue">{{ value['value'] }}</a>
             {% endfor %}
            
             <!--
