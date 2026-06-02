@@ -77,12 +77,21 @@ jQuery(function ($) {
                 container.style.lineHeight = '30px';
                 container.style.textAlign = 'center';
                 container.style.cursor = 'pointer';
-                container.title = 'Delete All Layers';
+                container.setAttribute('role', 'button');
+                container.setAttribute('tabindex', '0');
+                container.setAttribute('aria-label', Drupal.t('Delete all layers'));
+                container.title = Drupal.t('Delete all layers');
 
-                container.innerHTML = '<img class="smartsearch_trash_icon" src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png"/>'; // Trash icon (can be replaced with an image or text)
+                container.innerHTML = '<img class="smartsearch_trash_icon" src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png" alt=""/>'; // The control title provides its accessible name.
 
                 container.onclick = function () {
                     window.mapRemoveSearchArea();
+                };
+                container.onkeydown = function (event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        window.mapRemoveSearchArea();
+                    }
                 };
 
                 // Prevent click propagation to the map
@@ -121,7 +130,7 @@ jQuery(function ($) {
         var coord = window.searchArea.getBounds();
         var label = '';
         if (coord._northEast) {
-            label = '<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn"><img src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png" class="smartsearch_trash_icon"></a> ' + coord.getWest().toPrecision(3) + ', ' + coord.getSouth().toPrecision(3) + ' - ' + coord.getEast().toPrecision(3) + ', ' + coord.getNorth().toPrecision(3) + '</div>';
+            label = '<div class="mapLabelDiv"><a href="#" id="mapRemoveFiltersBtn" aria-label="' + Drupal.t('Remove map filters') + '"><img src="/browser/modules/contrib/arche_core_gui/images/trash_icon.png" class="smartsearch_trash_icon" alt=""></a> ' + coord.getWest().toPrecision(3) + ', ' + coord.getSouth().toPrecision(3) + ' - ' + coord.getEast().toPrecision(3) + ', ' + coord.getNorth().toPrecision(3) + '</div>';
         }
         $('#mapLabel').html(label);
     }

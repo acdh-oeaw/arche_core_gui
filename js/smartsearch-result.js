@@ -149,11 +149,12 @@ jQuery(function ($) {
         results += '</div>';
                 
         var thumbImgUrl = result.url.replace('/browser/metadata/', '/api/');
+        var resourceTitle = $('<div>').text(getLangValue(result.title, preferredLang)).html().replace(/"/g, '&quot;');
         results += '<div class="col-lg-2" data-thumbnailid="' + resourceUrl + '">' +
                 '<div class="col-block discover-table-image-div">\n\
                             <div class="dt-single-res-thumb text-center" style="min-width: 120px;">\n\
                                 <center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=600" data-lightbox="detail-titleimage-' + result.id + '">\n\
-                                <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=200" onerror="window.hideThumbnail(this)" data-resourceurl="' + resourceUrl + '">\n\
+                                <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + thumbImgUrl  + '&width=200" alt="' + resourceTitle + '" onerror="window.hideThumbnail(this)" data-resourceurl="' + resourceUrl + '">\n\
                                 </a></center>\n\
                             </div>\n\
                         </div>';

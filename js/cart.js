@@ -59,7 +59,7 @@ jQuery(function ($) {
             deferRender: true,
             bInfo: false, // Hide table information
             language: {
-                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' />",
+                processing: "<img src='/browser/themes/contrib/arche-theme-bs/images/arche_logo_flip_47px.gif' alt='" + Drupal.t('Loading...') + "' />",
             },
             success: function (data) {
                 window.setCartCookieJson(data.cart_items);

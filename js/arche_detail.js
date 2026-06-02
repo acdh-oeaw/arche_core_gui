@@ -592,6 +592,7 @@ jQuery(function ($) {
     function showTitleImage() {
         var isPublic = $('#resource-access').val();
         var imgSrc = 'https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600';
+        var resourceTitle = $('<div>').text($('#resource-main-title').val()).html().replace(/"/g, '&quot;');
         $.ajax({
             url: imgSrc,
             type: 'GET',
@@ -599,7 +600,7 @@ jQuery(function ($) {
             success: function (data) {
                 $('.titleimage-loader').hide();
                 $('.card.metadata.titleimage').show().html('<center><a href="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=600" data-lightbox="detail-titleimage">\n\
-                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=200" >\n\
+                                        <img class="img-fluid" src="https://arche-thumbnails.acdh.oeaw.ac.at?id=' + apiUrl + '&width=200" alt="' + resourceTitle + '" >\n\
                                         </a></center>');
             },
             error: function () {

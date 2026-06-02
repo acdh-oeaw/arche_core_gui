@@ -30,7 +30,7 @@
             
             {% if logos %}
                 {% for key,value in logos %}
-                    <img src="{{ value['value'] }}" class="" style="max-height: 72px; width: 100%" /><br>
+                    <img src="{{ value['value'] }}" class="" style="max-height: 72px; width: 100%" alt="{{ key|default('Funding logo')|trans }}" /><br>
                 {% endfor %}  
             {% endif %}
         </div>
