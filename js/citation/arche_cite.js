@@ -30,7 +30,9 @@ jQuery(function ($) {
       <div class="row justify-content-end align-items-start">
         <div class="col-auto">
           <div class="cite-selector" id="cite-selector-div"></div>
-          <div id="dropdown-container"></div>
+          <div id="dropdown-container">
+            <label class="visually-hidden" id="cite-dropdown-label" for="cite-dropdown">Citation format</label>
+          </div>
         </div>
         <div class="col-auto">
           <a href="#" class="ms-auto btn btn-arche-blue cite" id="copyCite">Copy</a><br>
@@ -42,7 +44,8 @@ jQuery(function ($) {
 
         const $select = $('<select>', {
             id: 'cite-dropdown',
-            class: 'btn btn-secondary dropdown-toggle'
+            class: 'btn btn-secondary dropdown-toggle',
+            'aria-labelledby': 'cite-dropdown-label'
         });
 
         const labels = {
@@ -124,6 +127,7 @@ jQuery(function ($) {
 
             const $tmp = $('<textarea>')
                     .val(text)
+                    .attr('aria-label', 'Temporary citation copy field')
                     .css({position: 'fixed', left: '-9999px', top: '0'})
                     .appendTo('body');
 

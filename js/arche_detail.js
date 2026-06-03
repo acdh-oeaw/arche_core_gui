@@ -125,6 +125,7 @@ jQuery(function ($) {
         // Select the input field content
         var text = $('.pidValue').first().text();
         var tempInput = $("<input>");
+        tempInput.attr('aria-label', Drupal.t('Temporary PID copy field'));
         tempInput.val(text);
         $("body").append(tempInput);
         tempInput.select();

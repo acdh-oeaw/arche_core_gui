@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded', function(){
 			</div></td></tr>
 		<tr><td>Rendered</td>
 			<td><span id="nexusMonitorTriangles"></span></td></tr>
-		<tr><td></td>
-			<td><input type="checkbox" id="nexusMonitorNodes"> Show patches</td></tr>
-		<tr><td>Target Error</td>
-			<td><input type="number" min="0" max="100" id="nexusMonitorEditError"> px</td></tr>
+			<tr><td></td>
+				<td><input type="checkbox" id="nexusMonitorNodes"> <label for="nexusMonitorNodes">Show patches</label></td></tr>
+			<tr><td><label for="nexusMonitorEditError">Target Error</label></td>
+				<td><input type="number" min="0" max="100" id="nexusMonitorEditError"> px</td></tr>
 
 	</table>`;
 
