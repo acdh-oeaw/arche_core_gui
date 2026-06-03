@@ -95,7 +95,10 @@ function arche_core_gui_theme($existing, $type, $theme, $path)
         ],        
          'arche-cart' => [
             'variables' => ['data' => NULL],
-        ],  
+        ],
+        'arche-accessibility' => [
+            'variables' => ['content' => NULL]
+        ],
     ];
 }
 

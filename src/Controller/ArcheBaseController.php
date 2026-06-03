@@ -99,4 +99,14 @@ class ArcheBaseController extends ControllerBase {
         $destination = '/browser/metadata/' . $identifier; // Redirect to a path using the parameter
         return new \Symfony\Component\HttpFoundation\RedirectResponse($destination, 301);
     }
+    
+    public function displayAccessibilityPage() {
+        
+         return [
+                '#theme' => 'arche-accessibility',
+                '#cache' => ['max-age' => 0]
+            ];
+        
+        
+    }
 }

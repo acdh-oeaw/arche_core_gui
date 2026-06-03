@@ -760,3 +760,13 @@ msgstr "Strukturierung"
 
 msgid "With support from"
 msgstr "Unterstützt durch"
+
+msgid "Accessibility"
+msgstr "Barrierefreiheit"
+
+msgid "This website is partially compliant with conformance level AA of the “Web Content Accessibility Guidelines – WCAG 2.1” and with the applicable European standard EN 301 549 V3.2.1 (2021-03) according to Directive (EU) 2016/2102 of the European Parliament and of the Council."
+msgstr "Diese Website ist teilweise mit der Konformitätsstufe AA der „Richtlinien für barrierefreie Webinhalte – WCAG 2.1 beziehungsweise mit dem geltenden Europäischen Standard EN 301 549 V3.2.1 (2021-03) nach der Richtlinie (EU) 2016/2102 des Europäischen Parlaments und des Rates vereinbar.
+
+msgid "If you find any issues please let us know: <br> <a href='mailto:arche@acdh.oeaw.ac.at'>ARCHE Helpdesk</a>.<br> <a href='mailto:webmaster@oeaw.ac.at'>Public Relations & Communication of the Austrian Academy of Sciences</a> <br> <a href='mailto:barrierefreiheit@oeaw.ac.at'>Accessibility at the Austrian Academy of Sciences</a>"
+msgstr "Sollten Sie irgendwelche Probleme feststellen, teilen Sie uns dies bitte mit.: <br> <a href='mailto:arche@acdh.oeaw.ac.at'>ARCHE Helpdesk</a>.<br> <a href='mailto:webmaster@oeaw.ac.at'>Öffentlichkeit & Kommunikation der ÖAW</a> <br> <a href='mailto:barrierefreiheit@oeaw.ac.at'>Barrierefreiheit an der ÖAW</a>"
+

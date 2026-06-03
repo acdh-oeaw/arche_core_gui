@@ -83,6 +83,14 @@ arche_imprint:
     _permission: 'access content'
     _access: 'TRUE'
     
+arche_accessibility:
+  path: '/accessibility'
+  defaults:
+    _controller: '\Drupal\arche_core_gui\Controller\ArcheBaseController::displayAccessibilityPage'
+  requirements:    
+    _permission: 'access content'
+    _access: 'TRUE'    
+    
 arche_dissemination_collection_download_script:
   path: '/dissemination/collection_download_script/{identifier}'
   defaults:
