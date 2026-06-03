@@ -421,6 +421,9 @@ jQuery(function ($) {
                     }
                 }
             ],
+            initComplete: function () {
+                $('#projectAssociatedDT thead th').attr('scope', 'col');
+            },
             fnDrawCallback: function () {
             }
         });
@@ -481,6 +484,9 @@ jQuery(function ($) {
                 },
                 {data: 'acdhid', visible: false}
             ],
+            initComplete: function () {
+                $('#publicationInverseDT thead th').attr('scope', 'col');
+            },
             fnDrawCallback: function () {
             }
         });
@@ -538,6 +544,9 @@ jQuery(function ($) {
                 {data: 'type', visible: false},
                 {data: 'acdhid', visible: false}
             ],
+            initComplete: function () {
+                $('#publicationsDT thead th').attr('scope', 'col');
+            },
             createdRow: function (row, data, dataIndex) {
                 // Perform the AJAX request for the URL CS Content field
                 var cell = $('td', row).eq(0); // Adjust the index if the order of columns changes
@@ -582,7 +591,7 @@ jQuery(function ($) {
      * @returns {undefined}
      */
     window.fetchRPR = function (resId, displayedView = 'tabView') {
-        if (displayedView == 'projectView') {
+        if (displayedView === 'projectView') {
             $('.loading-indicator').removeClass('d-none');
         }
 
@@ -605,7 +614,7 @@ jQuery(function ($) {
                 timeout: 50000,
                 complete: function (response) {
                     if (response === undefined) {
-                        if (displayedView == 'projectView') {
+                        if (displayedView === 'projectView') {
                             $('.associated-project-table-div').addClass('d-none');
                             $('.loading-indicator').addClass('d-none');
                         } else {
@@ -616,7 +625,7 @@ jQuery(function ($) {
                         return;
                     }
 
-                    if (displayedView == 'projectView') {
+                    if (displayedView === 'projectView') {
                         $('.associated-project-table-div').removeClass('d-none');
                         $('.loading-indicator').addClass('d-none');
                     } else {
@@ -626,7 +635,7 @@ jQuery(function ($) {
                 },
                 error: function (xhr, status, error) {
                     //$(".loader-versions-div").hide();
-                    if (displayedView == 'projectView') {
+                    if (displayedView === 'projectView') {
                         $('.associated-project-table-div').addClass('d-none');
                     } else {
                         console.log("fetchRPR error");                        
@@ -654,6 +663,9 @@ jQuery(function ($) {
                 },
                 {data: 'acdhid', visible: false}
             ],
+            initComplete: function () {
+                $('#rcrDT thead th').attr('scope', 'col');
+            },
             fnDrawCallback: function () {
             }
         });
@@ -667,7 +679,10 @@ jQuery(function ($) {
             },
             deferRender: true,
             paging: false,
-            lengthChange: false
+            lengthChange: false,
+            initComplete: function () {
+                $('#expertDT thead th').attr('scope', 'col');
+            }
                     //"dom": '<"top"lfp<"clear">>rt<"bottom"i<"clear">>',
         });
     }
