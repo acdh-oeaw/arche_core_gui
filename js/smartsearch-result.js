@@ -3,6 +3,13 @@ jQuery(function ($) {
     var mapPins = null;
     var mapPinsAll = null;
 
+    function formatDescriptionHtml(value) {
+        return $('<div>')
+                .text(String(value || '').replace(/\\n/g, '\n'))
+                .html()
+                .replace(/\r\n|\r|\n/g, '<br>');
+    }
+
     /**
      * Display the smartsearch results
      * @param {type} data
@@ -107,7 +114,7 @@ jQuery(function ($) {
 
         if (result.description) {
             results += '<div class="res-property sm-description">';
-            results += window.getLangValue(result.description, window.preferredLang);
+            results += formatDescriptionHtml(window.getLangValue(result.description, window.preferredLang));
             results += '</div>';
         }
 

@@ -621,27 +621,56 @@ jQuery(function ($) {
      * @returns {String}
      */
     function truncateText(text, wordCount) {
-        return text.split(" ").splice(0, wordCount).join(" ");
+        var tokens = text.match(/\S+|\s+/g) || [];
+        var words = 0;
+
+        return tokens.filter(function (token) {
+            if (/\S/.test(token)) {
+                words++;
+            }
+            return words <= wordCount;
+        }).join('').trim();
     }
 
-    function stripHtml(html) {
-        var temporaryDiv = document.createElement("div");
-        temporaryDiv.innerHTML = html;
-        return temporaryDiv.textContent || temporaryDiv.innerText || "";
+    function getDescriptionText($element) {
+        var $copy = $element.clone();
+        $copy.find('br').replaceWith('\n');
+        $copy.find('.hasdescription-toggle-button').remove();
+
+        return $copy.text().replace(/\\n/g, '\n').trim();
+    }
+
+    function formatDescriptionHtml(value) {
+        return $('<div>')
+                .text(String(value || '').replace(/\\n/g, '\n'))
+                .html()
+                .replace(/\r\n|\r|\n/g, '<br>');
     }
 
     function addButtonToDescriptionText() {
-        var longText = $('.descriptionTextShort').html();
-        // Select the first 5 lines
-        if (longText === undefined) {
-            return;
-        }
-        var truncatedText = truncateText(longText, 150);
-        var strippedLongText = stripHtml(longText).trim();
-        var strippedTruncatedText = stripHtml(truncatedText).trim();
-        if (strippedLongText !== strippedTruncatedText) {
-            $('.descriptionTextShort').html(truncatedText + '...' + '<a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' + Drupal.t("Continue reading") + '</a>');
-        }
+        $('.descriptionTextShort').each(function () {
+            var $shortDescription = $(this);
+            var $longDescription = $shortDescription.siblings('.descriptionTextLong');
+            var longText = getDescriptionText($shortDescription);
+            var truncatedText = truncateText(longText, 150);
+
+            $longDescription.each(function () {
+                var $long = $(this);
+                var $showLessButton = $long.find('.hasdescription-toggle-button').detach();
+                $long.html(formatDescriptionHtml(longText)).append(' ', $showLessButton);
+            });
+
+            if (longText !== truncatedText) {
+                $shortDescription.html(
+                        formatDescriptionHtml(truncatedText) +
+                        '... <a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' +
+                        Drupal.t("Continue reading") +
+                        '</a>'
+                        );
+            } else {
+                $shortDescription.html(formatDescriptionHtml(longText));
+            }
+        });
     }
 
     window.redrawTabs = function () {
