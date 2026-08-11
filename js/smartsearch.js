@@ -100,6 +100,7 @@ jQuery(function ($) {
 
     $(document).delegate(".smartPageSize", "change", function (e) {
         e.preventDefault();
+        $('.smartPageSize').val($(this).val());
         $('html, body').animate({ scrollTop: 0 }, 'slow'); 
         window.actualPage = 1;
         window.search();
