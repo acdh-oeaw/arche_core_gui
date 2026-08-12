@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseController {
 
+    private const LINKSET_SERVICE_URL = 'https://arche-linkset.acdh.oeaw.ac.at/';
+
     public function __construct() {
         parent::__construct();
         $this->helper = new \Drupal\arche_core_gui\Helper\ArcheCoreHelper();
@@ -99,8 +101,56 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
                     ]
                 ]
             ];
+            $this->attachLinksetSignposting($return, $obj);
         }
         return $return;
+    }
+
+    /**
+     * Advertise the reusable ARCHE linkset service for this landing page.
+     *
+     * @param array $build
+     * @param \Drupal\arche_core_gui\Object\ResourceCoreObject $resource
+     * @return void
+     */
+    private function attachLinksetSignposting(array &$build, \Drupal\arche_core_gui\Object\ResourceCoreObject $resource): void {
+        $links = $this->getLinksetLinks($resource->getRepoUrl());
+        $headers = [];
+
+        foreach ($links as $link) {
+            $headers[] = '<' . $link['href'] . '>; rel="linkset"; type="' . $link['type'] . '"';
+            $build['#attached']['html_head_link'][] = [
+                [
+                    'rel' => 'linkset',
+                    'type' => $link['type'],
+                    'href' => $link['href'],
+                ],
+                false,
+            ];
+        }
+
+        $build['#attached']['http_header'][] = ['Link', implode(', ', $headers), false];
+    }
+
+    /**
+     * Build linkset service URLs for both supported serializations.
+     *
+     * @param string $resourceUri
+     * @return array
+     */
+    private function getLinksetLinks(string $resourceUri): array {
+        $encodedResourceUri = rawurlencode($resourceUri);
+
+        return [
+            [
+                'href' => self::LINKSET_SERVICE_URL . '?id=' . $encodedResourceUri . '&format=application%2Flinkset%2Bjson',
+                'type' => 'application/linkset+json',
+            ],
+            [
+                'href' => self::LINKSET_SERVICE_URL . '?id=' . $encodedResourceUri . '&format=application%2Flinkset',
+                'type' => 'application/linkset',
+            ],
+        ];
     }
 
     /**
