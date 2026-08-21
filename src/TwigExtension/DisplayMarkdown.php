@@ -70,6 +70,9 @@ class DisplayMarkdown extends AbstractExtension {
         $config = [
             'html_input' => 'escape',
             'allow_unsafe_links' => false,
+            'renderer' => [
+                'soft_break' => "<br>\n",
+            ],
         ];
 
         $converter = $format === 'gfm' && class_exists(GithubFlavoredMarkdownConverter::class)
@@ -96,7 +99,8 @@ class DisplayMarkdown extends AbstractExtension {
                 return;
             }
 
-            $html[] = '<p>' . $this->renderInlineMarkdown(implode(' ', $paragraph)) . '</p>';
+            $lines = array_map(fn(string $line): string => $this->renderInlineMarkdown($line), $paragraph);
+            $html[] = '<p>' . implode('<br>', $lines) . '</p>';
             $paragraph = [];
         };
 
@@ -184,6 +188,7 @@ class DisplayMarkdown extends AbstractExtension {
      */
     private function normalizeMarkdownInput(string $text): string {
         $text = str_replace(["\\r\\n", "\\n", "\\r"], "\n", $text);
+        $text = preg_replace('~(^|[\s>])/(?:r/n|n|r)(?=([\s<]|[-*+]|\d+\.|$))~', "$1\n", $text) ?? $text;
 
         return $this->normalizeInlineBulletList($text);
     }

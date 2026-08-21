@@ -640,6 +640,19 @@ jQuery(function ($) {
         return $copy.text().replace(/\\n/g, '\n').trim();
     }
 
+    function getDescriptionHtml($element) {
+        var $copy = $element.clone();
+        $copy.find('.hasdescription-toggle-button').remove();
+
+        return normalizeEscapedNewlinesInHtml($copy.html());
+    }
+
+    function normalizeEscapedNewlinesInHtml(html) {
+        return String(html || '')
+                .replace(/\\r\\n|\\n|\\r/g, '<br>')
+                .replace(/(^|[\s>])\/(?:r\/n|n|r)(?=([\s<]|[-*+]|\d+\.|$))/g, '$1<br>');
+    }
+
     function formatDescriptionHtml(value) {
         return $('<div>')
                 .text(String(value || '').replace(/\\n/g, '\n'))
@@ -653,11 +666,13 @@ jQuery(function ($) {
             var $longDescription = $shortDescription.siblings('.descriptionTextLong');
             var longText = getDescriptionText($shortDescription);
             var truncatedText = truncateText(longText, 150);
+            var shortHtml = getDescriptionHtml($shortDescription);
 
             $longDescription.each(function () {
                 var $long = $(this);
                 var $showLessButton = $long.find('.hasdescription-toggle-button').detach();
-                $long.html(formatDescriptionHtml(longText)).append(' ', $showLessButton);
+                var longHtml = getDescriptionHtml($long);
+                $long.html(longHtml).append(' ', $showLessButton);
             });
 
             if (longText !== truncatedText) {
@@ -668,7 +683,7 @@ jQuery(function ($) {
                         '</a>'
                         );
             } else {
-                $shortDescription.html(formatDescriptionHtml(longText));
+                $shortDescription.html(shortHtml);
             }
         });
     }
