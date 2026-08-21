@@ -154,9 +154,9 @@
 
     {% if data.getData('acdh:hasDescription') %}
         <div class="hasdescription-container" >
-            <p class="descriptionTextShort">{{ data.getData('acdh:hasDescription')[0].value|nl2br }}</p>
-            <p class="descriptionTextLong" style="display: none;">{{ data.getData('acdh:hasDescription')[0].value|nl2br }} 
-                <a class="hasdescription-toggle-button" id="descriptionTextLongBtn">{{ "Show Less"|t }}</a></p>
+            <div class="descriptionTextShort">{{ data.getData('acdh:hasDescription')[0].value|displayMarkdown }}</div>
+            <div class="descriptionTextLong" style="display: none;">{{ data.getData('acdh:hasDescription')[0].value|displayMarkdown }}
+                <a class="hasdescription-toggle-button" id="descriptionTextLongBtn">{{ "Show Less"|t }}</a></div>
 
         </div>
     {% endif %}
@@ -170,5 +170,3 @@
     {% endif %}
 
 </div>
-
-

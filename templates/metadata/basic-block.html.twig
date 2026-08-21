@@ -99,8 +99,9 @@
                             </div>
                             <div class="col-lg-12 " id="av-arrangement">
                                 {% if data.getData('acdh:hasArrangement') %}
-                                    {{ include(arche_core_gui_path ~ '/templates/helper/helper-displayFields.html.twig', 
-                                     {'data': data.getData('acdh:hasArrangement'), 'delimiter': '<br>' } ) }}
+                                    {% for arrangement in data.getData('acdh:hasArrangement') %}
+                                        <div class="arrangement-text">{{ arrangement.value|displayMarkdown }}</div>
+                                    {% endfor %}
                                 {% endif %}
                             </div>
                         </div>     

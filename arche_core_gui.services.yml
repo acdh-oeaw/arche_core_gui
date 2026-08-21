@@ -6,17 +6,21 @@ services:
     arche_core_gui_composer.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\ComposerTwigExtension
         tags:
-            - { name: twig.extension }         
+            - { name: twig.extension }
     arche_core_gui_session.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\SessionTwigExtension
         tags:
-            - { name: twig.extension } 
+            - { name: twig.extension }
     arche_core_gui_get_instance.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\GetInstanceTwigExtension
         tags:
-            - { name: twig.extension }         
+            - { name: twig.extension }
     arche_core_gui_site_language.twig_extension:
         class: Drupal\arche_core_gui\TwigExtension\SiteLanguageTwigExtension
+        tags:
+            - { name: twig.extension }
+    arche_core_gui_display_markdown.twig_extension:
+        class: Drupal\arche_core_gui\TwigExtension\DisplayMarkdown
         tags:
             - { name: twig.extension }
     acdh_core_gui_path_processor.path_processor:
@@ -26,4 +30,4 @@ services:
     arche.exception_subscribtr:
         class: Drupal\arche_core_gui\EventSubscriber\ExceptionSubscriber
         tags:
-            - { name: event_subscriber }        
+            - { name: event_subscriber }
