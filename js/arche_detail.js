@@ -643,6 +643,9 @@ jQuery(function ($) {
     function getDescriptionHtml($element) {
         var $copy = $element.clone();
         $copy.find('.hasdescription-toggle-button').remove();
+        $copy.find('p').filter(function () {
+            return $.trim($(this).text()) === '' && $(this).children().length === 0;
+        }).remove();
 
         return normalizeEscapedNewlinesInHtml($copy.html());
     }
@@ -659,13 +662,67 @@ jQuery(function ($) {
                 .replace(/\r\n|\r|\n/g, '<br>');
     }
 
+    function truncateHtmlByWords(html, wordCount) {
+        var $source = $('<div>').html(html);
+        var $result = $('<div>');
+        var words = 0;
+        var isTruncated = false;
+
+        function appendNode(node, $target) {
+            if (isTruncated) {
+                return;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                var tokens = node.nodeValue.match(/\S+|\s+/g) || [];
+                var text = '';
+
+                tokens.some(function (token) {
+                    if (/\S/.test(token)) {
+                        if (words >= wordCount) {
+                            isTruncated = true;
+                            return true;
+                        }
+                        words++;
+                    }
+                    text += token;
+                    return false;
+                });
+
+                if (text !== '') {
+                    $target.append(document.createTextNode(text));
+                }
+                return;
+            }
+
+            if (node.nodeType !== Node.ELEMENT_NODE) {
+                return;
+            }
+
+            var $clone = $(node).clone(false).empty();
+            $target.append($clone);
+
+            $(node).contents().each(function () {
+                appendNode(this, $clone);
+            });
+        }
+
+        $source.contents().each(function () {
+            appendNode(this, $result);
+        });
+
+        return {
+            html: normalizeEscapedNewlinesInHtml($result.html()).trim(),
+            isTruncated: isTruncated
+        };
+    }
+
     function addButtonToDescriptionText() {
         $('.descriptionTextShort').each(function () {
             var $shortDescription = $(this);
             var $longDescription = $shortDescription.siblings('.descriptionTextLong');
-            var longText = getDescriptionText($shortDescription);
-            var truncatedText = truncateText(longText, 150);
             var shortHtml = getDescriptionHtml($shortDescription);
+            var truncatedDescription = truncateHtmlByWords(shortHtml, 150);
 
             $longDescription.each(function () {
                 var $long = $(this);
@@ -674,9 +731,9 @@ jQuery(function ($) {
                 $long.html(longHtml).append(' ', $showLessButton);
             });
 
-            if (longText !== truncatedText) {
+            if (truncatedDescription.isTruncated) {
                 $shortDescription.html(
-                        formatDescriptionHtml(truncatedText) +
+                        truncatedDescription.html +
                         '... <a class="hasdescription-toggle-button" id="descriptionTextShortBtn">' +
                         Drupal.t("Continue reading") +
                         '</a>'
