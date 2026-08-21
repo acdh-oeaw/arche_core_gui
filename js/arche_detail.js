@@ -649,8 +649,7 @@ jQuery(function ($) {
 
     function normalizeEscapedNewlinesInHtml(html) {
         return String(html || '')
-                .replace(/\\r\\n|\\n|\\r/g, '<br>')
-                .replace(/(^|[\s>])\/(?:r\/n|n|r)(?=([\s<]|[-*+]|\d+\.|$))/g, '$1<br>');
+                .replace(/\\r\\n|\\n|\\r/g, '<br>');
     }
 
     function formatDescriptionHtml(value) {

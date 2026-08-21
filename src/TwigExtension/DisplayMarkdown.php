@@ -188,7 +188,6 @@ class DisplayMarkdown extends AbstractExtension {
      */
     private function normalizeMarkdownInput(string $text): string {
         $text = str_replace(["\\r\\n", "\\n", "\\r"], "\n", $text);
-        $text = preg_replace('~(^|[\s>])/(?:r/n|n|r)(?=([\s<]|[-*+]|\d+\.|$))~', "$1\n", $text) ?? $text;
 
         return $this->normalizeInlineBulletList($text);
     }
