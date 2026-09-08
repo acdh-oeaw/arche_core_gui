@@ -38,6 +38,7 @@ smart-search:
         js/smartsearch-url-func.js: {}
         js/smartsearch.js: {}
         js/smartsearch-map.js: {}
+        js/display-markdown.js: {}
         js/smartsearch-result.js: {}
         js/smartsearch-autocomplete.js: {}
         js/vcrSubmit.js: {}

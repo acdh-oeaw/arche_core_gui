@@ -4,6 +4,14 @@ jQuery(function ($) {
     var mapPinsAll = null;
 
     function formatDescriptionHtml(value) {
+        if (typeof window.renderMarkdownDescription === 'function') {
+            return window.renderMarkdownDescription(value);
+        }
+
+        return formatPlainDescriptionHtml(value);
+    }
+
+    function formatPlainDescriptionHtml(value) {
         return $('<div>')
                 .text(String(value || '').replace(/\\n/g, '\n'))
                 .html()
