@@ -16,7 +16,7 @@
             {% for key, value in data %}
                 <div>
                     <b>{{ key|trans }}:</b></br>
-                    {% for val in value %}
+                    {% for val in value|sort((a, b) => a['value'] <=> b['value']) %}
                         {% if val['externalUrl'] %}
                             <a href="{{ val['externalUrl'] }}" target="_blank">{{ values }}</a><br>
                         {% elseif val['id'] %} 
