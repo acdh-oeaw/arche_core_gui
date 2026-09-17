@@ -15,7 +15,8 @@
             {% for key, value in obj %}
                 <div>
                     <b>{{ key|trans }}:</b></br>
-                    {% for val in value|sort((a, b) => a['value'] <=> b['value']) %}
+                    
+                    {% for val in value|sort((a, b) => a['sortValue'] <=> b['sortValue']) %}
                         
                         {% set values = val['value'] %}
                         {% if val['externalUrl'] %}

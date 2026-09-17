@@ -41,7 +41,7 @@
 
     function renderInlineMarkdown(value) {
         var codeBlocks = [];
-        var text = String(value || '').replace(/`([^`]+)`/g, function (match, code) {
+        var text = String(value || '').replace(/(`+)([^`]+?)\1/g, function (match, ticks, code) {
             codeBlocks.push('<code>' + escapeHtml(code) + '</code>');
             return '\u0000CODE' + (codeBlocks.length - 1) + '\u0000';
         });
@@ -70,6 +70,7 @@
         var html = [];
         var paragraph = [];
         var listType = null;
+        var codeFence = null;
 
         function flushParagraph() {
             if (!paragraph.length) {
@@ -92,6 +93,24 @@
         lines.forEach(function (rawLine) {
             var line = $.trim(rawLine);
             var matches;
+
+            matches = line.match(/^```/);
+            if (matches) {
+                if (codeFence) {
+                    html.push('<pre><code>' + escapeHtml(codeFence.join('\n')) + '</code></pre>');
+                    codeFence = null;
+                } else {
+                    flushParagraph();
+                    closeList();
+                    codeFence = [];
+                }
+                return;
+            }
+
+            if (codeFence) {
+                codeFence.push(rawLine);
+                return;
+            }
 
             if (line === '') {
                 flushParagraph();
@@ -134,6 +153,10 @@
             closeList();
             paragraph.push(line);
         });
+
+        if (codeFence) {
+            html.push('<pre><code>' + escapeHtml(codeFence.join('\n')) + '</code></pre>');
+        }
 
         flushParagraph();
         closeList();

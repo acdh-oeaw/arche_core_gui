@@ -93,6 +93,7 @@ class DisplayMarkdown extends AbstractExtension {
         $html = [];
         $paragraph = [];
         $listType = null;
+        $codeFence = null;
 
         $flushParagraph = function () use (&$html, &$paragraph): void {
             if ($paragraph === []) {
@@ -114,7 +115,25 @@ class DisplayMarkdown extends AbstractExtension {
         };
 
         foreach ($lines as $line) {
+            $rawLine = $line;
             $line = trim($line);
+
+            if (str_starts_with($line, '```')) {
+                if ($codeFence !== null) {
+                    $html[] = '<pre><code>' . Html::escape(implode("\n", $codeFence)) . '</code></pre>';
+                    $codeFence = null;
+                } else {
+                    $flushParagraph();
+                    $closeList();
+                    $codeFence = [];
+                }
+                continue;
+            }
+
+            if ($codeFence !== null) {
+                $codeFence[] = $rawLine;
+                continue;
+            }
 
             if ($line === '') {
                 $flushParagraph();
@@ -156,6 +175,10 @@ class DisplayMarkdown extends AbstractExtension {
             $paragraph[] = $line;
         }
 
+        if ($codeFence !== null) {
+            $html[] = '<pre><code>' . Html::escape(implode("\n", $codeFence)) . '</code></pre>';
+        }
+
         $flushParagraph();
         $closeList();
 
@@ -171,7 +194,7 @@ class DisplayMarkdown extends AbstractExtension {
     private function renderInlineMarkdown(string $text): string {
         $text = Html::escape($text);
 
-        $text = preg_replace('/`([^`]+)`/', '<code>$1</code>', $text) ?? $text;
+        $text = preg_replace('/(`+)([^`]+?)\1/', '<code>$2</code>', $text) ?? $text;
         $text = preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', $text) ?? $text;
         $text = preg_replace('/__([^_]+)__/', '<strong>$1</strong>', $text) ?? $text;
         $text = preg_replace('/(?<!\*)\*([^*]+)\*(?!\*)/', '<em>$1</em>', $text) ?? $text;

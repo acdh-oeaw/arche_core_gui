@@ -13,6 +13,14 @@ basic:
         - core/drupal.form
         - core/drupalSettings
         - core/jquery    
+
+display-markdown:
+    version: 1.0
+    header: true
+    js:
+        js/display-markdown.js: {}
+    dependencies:
+        - core/jquery
         
 smart-search:
     version: 1.0
@@ -38,7 +46,6 @@ smart-search:
         js/smartsearch-url-func.js: {}
         js/smartsearch.js: {}
         js/smartsearch-map.js: {}
-        js/display-markdown.js: {}
         js/smartsearch-result.js: {}
         js/smartsearch-autocomplete.js: {}
         js/vcrSubmit.js: {}
@@ -47,6 +54,7 @@ smart-search:
         - core/drupal
         - core/drupal.form
         - core/drupalSettings
+        - arche_core_gui/display-markdown
         
 detail-view:
     version: 1.0
