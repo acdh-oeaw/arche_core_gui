@@ -13,6 +13,19 @@
     display: block;
     height: 800px;
 }
+
+ .tei-view {
+  max-height: 700px; overflow: auto; padding: 1em;
+  background: #1e1e24; color: #fff;
+  font-family: monospace; font-size: 14px; line-height: 1.5;
+}
+.tei-view .x-children { margin-left: 1.5em; }
+.tei-view summary { cursor: pointer; }
+.tei-view .x-tag  { color: #e06c75; font-weight: bold; }
+.tei-view .x-attr { color: #fff; font-weight: bold; }
+.tei-view .x-val  { color: #8fa8e8; }
+
+
 @media (min-width: 576px) {
     #tei-container {
         max-height: 200px;

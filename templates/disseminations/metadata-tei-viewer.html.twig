@@ -1,9 +1,73 @@
 {{ attach_library('arche_core_gui/dissemination-tei') }}
 
+<script>
+  const span = (cls, text) => {
+    const s = document.createElement('span');
+    s.className = cls;
+    s.textContent = text;
+    return s;
+  };
+
+  const openTag = (el, selfClose) => {
+    const f = document.createDocumentFragment();
+    f.append('<', span('x-tag', el.nodeName));
+    for (const a of el.attributes) {
+      f.append(' ', span('x-attr', a.name), '=', span('x-val', `"${a.value}"`));
+    }
+    f.append(selfClose ? '/>' : '>');
+    return f;
+  };
+
+  const closeTag = (el) => {
+    const f = document.createDocumentFragment();
+    f.append('</', span('x-tag', el.nodeName), '>');
+    return f;
+  };
+
+  function render(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const t = node.textContent.trim();
+      if (!t) return null;
+      const d = document.createElement('div');
+      d.textContent = t;
+      return d;
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return null;
+
+    // stays in one line
+    if (!node.children.length) {
+      const d = document.createElement('div');
+      const text = node.textContent.trim();
+      if (text) d.append(openTag(node), text, closeTag(node));
+      else d.append(openTag(node, true));
+      return d;
+    }
+
+    // child elements, closable
+    const details = document.createElement('details');
+    details.open = true;
+    const summary = document.createElement('summary');
+    summary.append(openTag(node));
+    const body = document.createElement('div');
+    body.className = 'x-children';
+    body.append(...[...node.childNodes].map(render).filter(Boolean));
+    const end = document.createElement('div');
+    end.append(closeTag(node));
+    details.append(summary, body, end);
+    return details;
+  }
+
+  fetch({{ teiUrl|json_encode|raw }})
+    .then(r => r.text())
+    .then(xml => {
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      document.getElementById('tei').append(render(doc.documentElement));
+    });
+</script>
+
 <div id="tei-container">
     <h2>{{ "TEI Document"|trans }}</h2>
     <div id="tei-content" >
-        <iframe type="text/plain"  src="{{ teiUrl }}?skipContentDisposition=true" class="tei-iframe" ></iframe>
-    
+        <div id="tei" class="tei-view"></div>
     </div>
 </div>
