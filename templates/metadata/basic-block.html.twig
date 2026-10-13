@@ -216,7 +216,7 @@
                 {% endif%}
                 
                 
-                {% if data.isTEI() and data.getBinarySize() < 500000 %} 
+                {% if data.isTEI() %} 
                     {{ include(arche_core_gui_path ~ '/templates/disseminations/metadata-tei-viewer.html.twig', {'teiUrl': data.getRepoUrl() } ) }}
                 {% endif%}
 

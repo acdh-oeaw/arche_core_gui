@@ -82,7 +82,10 @@ class MetadataController extends \Drupal\arche_core_gui\Controller\ArcheBaseCont
             $content = json_decode($content, true);
             $confObj = new \stdClass();
             $confObj->baseUrl = $this->repoDb->getBaseUrl();
-
+            $confObj->xmlFormatProp = $this->repoDb->getSchema()->mime;
+            $confObj->xmlSizeProp = (string)$this->repoDb->getSchema()->binarySize;
+            $confObj->xmlPreview = $this->config->xmlPreview;
+                        
             $obj = new \Drupal\arche_core_gui\Object\ResourceCoreObject($content['data'], $confObj, $this->siteLang);
             if ($obj->getRepoID() === '') {
                 return [

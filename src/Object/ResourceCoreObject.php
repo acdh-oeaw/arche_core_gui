@@ -835,14 +835,26 @@ class ResourceCoreObject {
     
     
     public function isTEI(): bool {
-        $cat = false;
+        $size = false;
         if (!$this->isPublic()) {
             return false;
         }
-
-        if (isset($this->properties["acdh:hasCategory"])) {
-            foreach ($this->properties["acdh:hasCategory"] as $category) {
-                if (isset($category['value']) && strtolower($category['value']) === strtolower("xml/tei") ) {
+        $xmlProp = str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:', $this->config->xmlFormatProp);
+        $xmlSizeProp =  str_replace('https://vocabs.acdh.oeaw.ac.at/schema#', 'acdh:', $this->config->xmlSizeProp);
+        if (isset($this->properties[$xmlSizeProp][0]['value']) ) {
+            if((int)$this->properties[$xmlSizeProp][0]['value'] <=  (int)$this->config->xmlPreview->maxSize) {
+                $size = true;
+            }
+        }
+        
+        if($size === false ) {
+            return false;
+        }
+        
+        if (isset($this->properties[$xmlProp])) {
+            foreach ($this->properties[$xmlProp] as $category) {
+                if(isset($category['value']) && in_array(strtolower($category['value']), (array)$this->config->xmlPreview->formats)) {
+                    
                     return true;
                 }
             }
