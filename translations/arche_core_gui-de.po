@@ -770,3 +770,8 @@ msgstr "Diese Website ist teilweise mit der Konformitätsstufe AA der „Richtli
 msgid "If you find any issues please let us know: <br> <a href='mailto:arche@acdh.oeaw.ac.at'>ARCHE Helpdesk</a>.<br> <a href='mailto:webmaster@oeaw.ac.at'>Public Relations & Communication of the Austrian Academy of Sciences</a> <br> <a href='mailto:barrierefreiheit@oeaw.ac.at'>Accessibility at the Austrian Academy of Sciences</a>"
 msgstr "Sollten Sie irgendwelche Probleme feststellen, teilen Sie uns dies bitte mit.: <br> <a href='mailto:arche@acdh.oeaw.ac.at'>ARCHE Helpdesk</a>.<br> <a href='mailto:webmaster@oeaw.ac.at'>Öffentlichkeit & Kommunikation der ÖAW</a> <br> <a href='mailto:barrierefreiheit@oeaw.ac.at'>Barrierefreiheit an der ÖAW</a>"
 
+msgid "Modified"
+msgstr "Geändert"
+
+msgid "More"
+msgstr "Mehr Info"
